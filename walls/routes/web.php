@@ -20,6 +20,8 @@ Route::put('/products/{id}', [MainController::class, 'update'])->name('products.
 
 Route::get('/', [WebsiteController::class, 'website'])->name('website');
 
+Route::get('/catalog' , [WebsiteController::class, 'catalog'])->name('catalog');
+
 
 
 

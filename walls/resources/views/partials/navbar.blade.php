@@ -100,7 +100,7 @@
                     <li class="nav-item"><a class="nav-link" href="#product-info">О нашей продукции</a></li>
                 </ul>
                 <div class="d-lg-flex justify-content-end">
-                    <a href="#catalog" class="catalog-btn mt-2 mt-lg-0">Каталог</a>
+                    <a href="{{ route('catalog') }}" class="catalog-btn mt-2 mt-lg-0">Каталог</a>
                 </div>
             </div>
         </div>

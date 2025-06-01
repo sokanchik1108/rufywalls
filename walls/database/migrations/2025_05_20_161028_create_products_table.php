@@ -22,7 +22,7 @@ class CreateProductsTable extends Migration
             $table->decimal('sale_price', 10, 2);
             $table->string('brand');
             $table->integer('quantity');
-            $table->integer('description');
+            $table->string('description');
             $table->foreignId('category_id')->constrained('categories');
             $table->json('images')->nullable();  // Для хранения путей к изображениям
             $table->timestamps();

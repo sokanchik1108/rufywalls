@@ -13,7 +13,7 @@
         </div>
 
         <div class="mt-3">
-            <a href="/database" class="btn-primary btn-custom">Каталог</a>
+            <a href="{{ route('catalog') }}" class="btn-primary btn-custom">Каталог</a>
         </div>
     </div>
 </section>
