@@ -106,70 +106,38 @@
             </div>
 
             <!-- JS для автообновления -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('filter-form');
-        const searchInput = document.getElementById('search-input');
-        const roomLinks = document.querySelectorAll('.filter-links a');
-        const productContainer = document.getElementById('product-container');
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const form = document.getElementById('filter-form');
+                    const roomLinks = document.querySelectorAll('.filter-links a');
 
-        function fetchFilteredProducts(extraParams = '') {
-            const formData = new FormData(form);
-            const params = new URLSearchParams(formData).toString();
-            const fullParams = params + (extraParams ? '&' + extraParams : '');
+                    roomLinks.forEach(link => {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            const roomId = this.dataset.room;
+                            document.getElementById('room_id').value = roomId;
+                            form.dispatchEvent(new Event('change'));
+                        });
+                    });
 
-            fetch(`{{ route('catalog') }}?${fullParams}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                }
-            })
-            .then(response => response.text())
-            .then(html => {
-                productContainer.innerHTML = html;
-                attachPaginationLinks(); // пересоздаем события пагинации
-            })
-            .catch(error => console.error('Ошибка при фильтрации:', error));
-        }
+                    form.addEventListener('change', function(e) {
+                        e.preventDefault();
+                        const formData = new FormData(form);
+                        const params = new URLSearchParams(formData).toString();
 
-        // Фильтры, кроме поиска
-        form.addEventListener('change', function(e) {
-            fetchFilteredProducts();
-        });
-
-        // Поиск — только при нажатии Enter
-        searchInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                fetchFilteredProducts();
-            }
-        });
-
-        // Выбор комнаты
-        roomLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const roomId = this.dataset.room;
-                document.getElementById('room_id').value = roomId;
-                fetchFilteredProducts();
-            });
-        });
-
-        // AJAX-пагинация
-        function attachPaginationLinks() {
-            document.querySelectorAll('.pagination a').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const url = new URL(this.href);
-                    const page = url.searchParams.get('page');
-                    fetchFilteredProducts('page=' + page);
+                        fetch(`{{ route('catalog') }}?${params}`, {
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                }
+                            })
+                            .then(response => response.text())
+                            .then(html => {
+                                document.getElementById('product-container').innerHTML = html;
+                            })
+                            .catch(error => console.error('Ошибка при фильтрации:', error));
+                    });
                 });
-            });
-        }
-
-        attachPaginationLinks(); // начальная привязка
-    });
-</script>
-
+            </script>
 
             <div class="filter-section">
                 <a href="{{ route('catalog') }}" class="filters-reset-btn">Сбросить фильтры</a>
