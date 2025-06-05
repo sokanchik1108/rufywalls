@@ -12,9 +12,11 @@
             <p><strong>Приходите в наш магазин — увидите всё своими глазами и найдёте именно то, что подойдёт вашему интерьеру.</strong></p>
         </div>
 
+        @if (!isset($showButton) || $showButton)
         <div class="mt-3">
             <a href="{{ route('catalog') }}" class="btn-primary btn-custom">Каталог</a>
         </div>
+        @endif
     </div>
 </section>
 
