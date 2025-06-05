@@ -8,96 +8,97 @@
 </div>
 
 <div class="catalog-container">
-    <!-- Фильтры -->
-    <div class="filters">
-        <h3>Фильтры</h3>
+    <!-- Кнопка для мобильных + фильтры рядом -->
+    <div class="filters-wrapper">
+        <button class="toggle-filters">Фильтры</button>
+        <!-- Фильтры -->
+        <div class="filters" id="filters">
+            <h3 style="margin-bottom: 15px;">Фильтры</h3>
 
-        <a href="{{ route('catalog') }}" style="color:black;text-decoration:none;">Все товары</a>
+            <a href="{{ route('catalog') }}" style="color:black;text-decoration:none;"><strong>Все товары</strong></a>
 
-        <form id="filter-form" method="GET" action="{{ route('catalog') }}" style="margin-top: 10px;">
+            <form id="filter-form" method="GET" action="{{ route('catalog') }}" style="margin-top: 15px;">
+                <input type="hidden" name="room_id" id="room_id" value="{{ request('room_id') }}">
 
+                <!-- Категории -->
+                <div class="mb-3">
+                    <label for="category_id" class="form-label">Категория</label>
+                    <select name="category_id" class="form-select" id="category_id">
+                        <option value="">Все</option>
+                        @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                            {{ $category->category_name }}
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
 
-            <input type="hidden" name="room_id" id="room_id" value="{{ request('room_id') }}">
-
-
-            <!-- Категории -->
-            <div class="mb-3">
-                <label for="category_id" class="form-label">Категория</label>
-                <select name="category_id" class="form-select" id="category_id">
-                    <option value="">Все</option>
-                    @foreach($categories as $category)
-                    <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                        {{ $category->category_name }}
-                    </option>
+                <!-- Комнаты -->
+                <ul class="filter-links mb-3">
+                    <li><a href="#" data-room="">Все</a></li>
+                    @foreach ($rooms as $room)
+                    <li>
+                        <a href="#" data-room="{{ $room->id }}" class="{{ request('room_id') == $room->id ? 'active' : '' }}">
+                            {{ $room->room_name }}
+                        </a>
+                    </li>
                     @endforeach
-                </select>
-            </div>
+                </ul>
 
-            <!-- Комнаты -->
-            <ul class="filter-links mb-3">
-                <li><a href="#" data-room="">Все</a></li>
-                @foreach ($rooms as $room)
-                <li>
-                    <a href="#" data-room="{{ $room->id }}" class="{{ request('room_id') == $room->id ? 'active' : '' }}">
-                        {{ $room->room_name }}
-                    </a>
-                </li>
-                @endforeach
-            </ul>
+                <!-- Цена -->
+                <div class="filter-section">
+                    <label>Цена от</label>
+                    <input type="number" name="price_min" value="{{ request('price_min') }}">
+                    <label>до</label>
+                    <input type="number" name="price_max" value="{{ request('price_max') }}">
+                </div>
 
-            <!-- Цена -->
-            <div class="filter-section">
-                <label>Цена от</label>
-                <input type="number" name="price_min" value="{{ request('price_min') }}">
-                <label>до</label>
-                <input type="number" name="price_max" value="{{ request('price_max') }}">
-            </div>
+                <!-- Наличие -->
+                <div class="filter-section">
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="in_stock" value="1" @if(request('in_stock')=='1' ) checked @endif>
+                        Только в наличии
+                    </label>
+                </div>
 
-            <!-- Наличие -->
-            <div class="filter-section">
-                <label class="checkbox-item">
-                    <input type="checkbox" name="in_stock" value="1" @if(request('in_stock')=='1' ) checked @endif>
-                    Только в наличии
-                </label>
-            </div>
+                <!-- Бренды -->
+                <div class="filter-section">
+                    <label>Бренды</label>
+                    @foreach($brands as $brand)
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="brand[]" value="{{ $brand }}" {{ is_array(request('brand')) && in_array($brand, request('brand')) ? 'checked' : '' }}>
+                        {{ $brand }}
+                    </label>
+                    @endforeach
+                </div>
 
-            <!-- Бренды -->
-            <div class="filter-section">
-                <label>Бренды</label>
-                @foreach($brands as $brand)
-                <label class="checkbox-item">
-                    <input type="checkbox" name="brand[]" value="{{ $brand }}" {{ is_array(request('brand')) && in_array($brand, request('brand')) ? 'checked' : '' }}>
-                    {{ $brand }}
-                </label>
-                @endforeach
-            </div>
+                <!-- Материалы -->
+                <div class="filter-section">
+                    <label>Материалы</label>
+                    @foreach($materials as $material)
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="material[]" value="{{ $material }}" {{ is_array(request('material')) && in_array($material, request('material')) ? 'checked' : '' }}>
+                        {{ $material }}
+                    </label>
+                    @endforeach
+                </div>
 
-            <!-- Материалы -->
-            <div class="filter-section">
-                <label>Материалы</label>
-                @foreach($materials as $material)
-                <label class="checkbox-item">
-                    <input type="checkbox" name="material[]" value="{{ $material }}" {{ is_array(request('material')) && in_array($material, request('material')) ? 'checked' : '' }}>
-                    {{ $material }}
-                </label>
-                @endforeach
-            </div>
+                <!-- Цвета -->
+                <div class="filter-section">
+                    <label>Цвета</label>
+                    @foreach($colors as $color)
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="color[]" value="{{ $color }}" {{ is_array(request('color')) && in_array($color, request('color')) ? 'checked' : '' }}>
+                        {{ $color }}
+                    </label>
+                    @endforeach
+                </div>
 
-            <!-- Цвета -->
-            <div class="filter-section">
-                <label>Цвета</label>
-                @foreach($colors as $color)
-                <label class="checkbox-item">
-                    <input type="checkbox" name="color[]" value="{{ $color }}" {{ is_array(request('color')) && in_array($color, request('color')) ? 'checked' : '' }}>
-                    {{ $color }}
-                </label>
-                @endforeach
-            </div>
-
-            <div class="filter-section">
-                <a href="{{ route('catalog') }}" class="filters-reset-btn">Сбросить фильтры</a>
-            </div>
-        </form>
+                <div class="filter-section">
+                    <a href="{{ route('catalog') }}" class="filters-reset-btn">Сбросить фильтры</a>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- Каталог -->
@@ -105,105 +106,86 @@
         @include('partials.products', ['products' => $products])
     </div>
 </div>
+</div>
 
-<!-- JavaScript для AJAX -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('filter-form');
 
-        initRoomLinks();
-        initTopBarListeners();
+        initAllListeners();
 
-        form.addEventListener('change', function(e) {
-            sendAjax();
-        });
-
-        document.addEventListener('click', function(e) {
-            const link = e.target.closest('.pagination a');
-            if (link) {
-                e.preventDefault();
-                fetch(link.href, {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    })
-                    .then(res => res.text())
-                    .then(html => {
-                        document.getElementById('product-container').innerHTML = html;
-                        window.scrollTo({
-                            top: 0,
-                            behavior: 'smooth'
-                        });
-                        initTopBarListeners();
-                    });
-            }
-        });
+        form.addEventListener('change', sendAjax);
 
         function sendAjax() {
             const formData = new FormData(form);
+            const search = document.getElementById('search');
+            const sort = document.getElementById('sort');
 
-            const searchInput = document.getElementById('search');
-            const sortSelect = document.getElementById('sort');
-            if (searchInput) formData.set('search', searchInput.value);
-            if (sortSelect) formData.set('sort', sortSelect.value);
+            if (search) formData.set('search', search.value);
+            if (sort) formData.set('sort', sort.value);
 
             const params = new URLSearchParams(formData).toString();
+            const url = `{{ route('catalog') }}?${params}`;
 
-            fetch(`{{ route('catalog') }}?${params}`, {
+            fetch(url, {
                     headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-Requested-With': 'XMLHttpRequest'
                     }
                 })
-                .then(response => response.text())
+                .then(res => res.text())
                 .then(html => {
                     document.getElementById('product-container').innerHTML = html;
                     window.scrollTo({
                         top: 0,
                         behavior: 'smooth'
                     });
-                    initTopBarListeners();
+                    initAllListeners();
                 })
-                .catch(error => console.error('Ошибка при фильтрации:', error));
+                .catch(err => console.error('Ошибка при фильтрации:', err));
+        }
+
+        function initAllListeners() {
+            initTopBarListeners();
+            initRoomLinks();
         }
 
         function initTopBarListeners() {
-            const searchInput = document.getElementById('search');
-            const sortSelect = document.getElementById('sort');
+            const search = document.getElementById('search');
+            const sort = document.getElementById('sort');
 
-            // Слушаем Enter в поле поиска (input type="text")
-            if (searchInput) {
-                searchInput.removeEventListener('keypress', searchInput._listener || (() => {}));
-                const handler = function(e) {
+            if (search) {
+                if (search._handler) search.removeEventListener('keypress', search._handler);
+                search._handler = function(e) {
                     if (e.key === 'Enter') {
                         e.preventDefault();
                         sendAjax();
                     }
                 };
-                searchInput.addEventListener('keypress', handler);
-                searchInput._listener = handler;
+                search.addEventListener('keypress', search._handler);
             }
 
-            // Изменение сортировки — сразу применяем
-            if (sortSelect) {
-                sortSelect.removeEventListener('change', sortSelect._listener || (() => {}));
-                const handler = sendAjax;
-                sortSelect.addEventListener('change', handler);
-                sortSelect._listener = handler;
+            if (sort) {
+                if (sort._handler) sort.removeEventListener('change', sort._handler);
+                sort._handler = sendAjax;
+                sort.addEventListener('change', sort._handler);
             }
         }
 
         function initRoomLinks() {
             document.querySelectorAll('.filter-links a').forEach(link => {
-                link.addEventListener('click', function(e) {
+                link.removeEventListener('click', link._handler || (() => {}));
+                link._handler = function(e) {
                     e.preventDefault();
                     const roomId = this.dataset.room;
                     document.getElementById('room_id').value = roomId;
                     sendAjax();
-                });
+                };
+                link.addEventListener('click', link._handler);
             });
         }
     });
 </script>
+
 
 
 
@@ -224,15 +206,28 @@
 
     .catalog-container {
         display: flex;
+        flex-wrap: wrap;
         padding: 30px;
         gap: 30px;
     }
 
+    .toggle-filters {
+        display: none;
+        margin-bottom: 15px;
+        padding: 10px 20px;
+        background-color: black;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
     .filters {
-        width: 20%;
-        padding: 20px;
+        width: 35%;
+        min-width: 310px;
         background-color: rgba(255, 255, 255, 0.8);
         backdrop-filter: blur(10px);
+        padding: 20px;
         border-radius: 10px;
     }
 
@@ -301,13 +296,49 @@
 
     .product-list {
         flex-grow: 1;
+        width: 62%;
     }
+
 
     .no-results {
         font-size: 18px;
         text-align: center;
         margin-top: 30px;
         color: #555;
+    }
+
+    @media (max-width: 992px) {
+
+        .filters-wrapper {
+            display: block;
+        }
+
+        .toggle-filters {
+            display: block;
+        }
+
+        .catalog-container {
+            flex-direction: column;
+        }
+
+        .filters {
+            display: none;
+            position: static;
+            width: 100%;
+            margin-top: 10px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .filters.visible {
+            display: block;
+        }
+
+        .product-list {
+            width: 100%;
+        }
     }
 </style>
 @endsection

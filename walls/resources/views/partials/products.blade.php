@@ -9,15 +9,27 @@
     </select>
 </div>
 
-
 <div class="product-grid">
     @forelse($products as $product)
     <div class="product-card">
+        @if($product->images)
         @php
-        $images = $product->images ? json_decode($product->images, true) : [];
-        $img = $images[0] ?? 'https://via.placeholder.com/300x200';
+        $images = json_decode($product->images);
         @endphp
-        <img src="{{ asset('storage/' . $img) }}" alt="{{ $product->name }}">
+        <div id="carousel{{ $product->id }}" class="carousel slide mb-3">
+            <div class="carousel-inner">
+                @foreach($images as $index => $image)
+                <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                    <img src="{{ asset('storage/' . $image) }}" class="d-block w-100" alt="Image">
+                </div>
+                @endforeach
+            </div>
+            @if(count($images) > 1)
+            @include('partials.carousel')
+            @endif
+
+        </div>
+        @endif
         <div class="product-info">
             <h4>{{ $product->name }}</h4>
             <p>{{ Str::limit($product->description, 60) }}</p>
@@ -29,7 +41,11 @@
     @endforelse
 </div>
 
-{{ $products->links() }}
+<div class="pagination-wrapper">
+    {{ $products->links('vendor.pagination.custom') }}
+</div>
+
+
 
 <style>
     .top-bar {
@@ -63,6 +79,7 @@
         overflow: hidden;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         transition: transform 0.3s ease;
+        max-width: 600px;
     }
 
     .product-card:hover {
@@ -71,7 +88,7 @@
 
     .product-card img {
         width: 100%;
-        height: 250px;
+        height: 500px;
         object-fit: cover;
     }
 
@@ -95,5 +112,44 @@
         font-size: 16px;
         font-weight: bold;
         color: #333;
+    }
+
+
+
+    /* 📱 Адаптивность */
+
+    @media (max-width: 992px) {
+        .catalog-container {
+            flex-direction: column;
+        }
+
+        .filters {
+            width: 100%;
+            order: 2;
+        }
+
+        .product-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .top-bar {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .top-bar input,
+        .top-bar select {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .product-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .product-card img {
+            height: 300px;
+        }
     }
 </style>
