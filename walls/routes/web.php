@@ -25,6 +25,14 @@ Route::get('/catalog' , [WebsiteController::class, 'catalog'])->name('catalog');
 Route::get('/product/{id}', [WebsiteController::class, 'show'])->name('product.show');
 
 
+Route::get('/cart', [WebsiteController::class, 'cart'])->name('cart');
+Route::post('/cart/add/{id}', [WebsiteController::class, 'addToCart'])->name('cart.add');
+Route::post('/cart/update/{id}', [WebsiteController::class, 'updateCart'])->name('cart.update');
+Route::post('/cart/remove/{id}', [WebsiteController::class, 'removeFromCart'])->name('cart.remove');
+Route::post('/cart/clear', [WebsiteController::class, 'clearCart'])->name('cart.clear');
+
+
+
 
 
 
