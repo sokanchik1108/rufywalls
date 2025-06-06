@@ -12,7 +12,7 @@ class Product extends Model
 
     protected $fillable = [
         'name', 'article', 'country', 'color', 'party', 'sticking', 'material',
-        'purchase_price', 'sale_price', 'brand', 'quantity', 'category_id','description',
+        'purchase_price', 'sale_price', 'brand', 'quantity', 'category_id','description','detailed',
         // Убери room_id из fillable — связи через many-to-many!
     ];
 

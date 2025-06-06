@@ -23,6 +23,7 @@ class CreateProductsTable extends Migration
             $table->string('brand');
             $table->integer('quantity');
             $table->string('description');
+            $table->text('detailed');
             $table->foreignId('category_id')->constrained('categories');
             $table->json('images')->nullable();  // Для хранения путей к изображениям
             $table->timestamps();

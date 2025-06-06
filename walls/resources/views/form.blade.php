@@ -148,6 +148,12 @@
                         <textarea name="description" class="form-control" rows="4" placeholder="Введите описание товара"></textarea>
                     </div>
 
+                    
+                    <div class="mb-3">
+                        <label for="detailed" class="form-label">Подробнее Описание товара</label>
+                        <textarea name="detailed" class="form-control" rows="4" placeholder="Введите описание товара"></textarea>
+                    </div>
+
 
                     <button type="submit" class="btn btn-success">Сохранить</button>
                 </form>

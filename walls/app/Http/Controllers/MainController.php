@@ -42,6 +42,7 @@ class MainController extends Controller
             'images' => 'nullable|array',
             'images.*' => 'image|max:2048',
             'description' => 'required',
+            'detailed' => 'required',
         ]);
 
         $product = Product::create($validated);
@@ -97,6 +98,7 @@ class MainController extends Controller
             'images' => 'nullable|array',
             'images.*' => 'image|max:2048',
             'description' => 'required',
+            'detailed' => 'required',
         ]);
 
 

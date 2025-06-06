@@ -22,6 +22,9 @@ Route::get('/', [WebsiteController::class, 'website'])->name('website');
 
 Route::get('/catalog' , [WebsiteController::class, 'catalog'])->name('catalog');
 
+Route::get('/product/{id}', [WebsiteController::class, 'show'])->name('product.show');
+
+
 
 
 

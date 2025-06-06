@@ -7,70 +7,71 @@
     <title>Все товары</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<style>
-    body {
-        background-color: #f9fafb;
-        font-family: 'Segoe UI', sans-serif;
-    }
+    <style>
+        body {
+            background-color: #f9fafb;
+            font-family: 'Segoe UI', sans-serif;
+        }
 
-    h2 {
-        font-weight: 600;
-        margin-bottom: 2rem;
-    }
+        h2 {
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
 
-    .card {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s ease;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
 
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-    }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
 
-    .card-img-top {
-        height: 260px;
-        object-fit: cover;
-        border-top-left-radius: 12px;
-        border-top-right-radius: 12px;
-    }
+        .card-img-top {
+            height: 260px;
+            object-fit: cover;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
 
-    .card-body {
-        padding: 1.25rem;
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-    }
+        .card-body {
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
 
-.card-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    line-height: 1.2;
-    min-height: 2.6em; /* Под 2 строки */
-    margin-bottom: 0.5rem;
-    overflow: hidden;
-}
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            line-height: 1.2;
+            min-height: 2.6em;
+            /* Под 2 строки */
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+        }
 
-.card-text {
-    flex-grow: 1;
-    font-size: 0.95rem;
-    color: #555;
-}
+        .card-text {
+            flex-grow: 1;
+            font-size: 0.95rem;
+            color: #555;
+        }
 
 
-    .btn {
-        font-size: 0.875rem;
-    }
+        .btn {
+            font-size: 0.875rem;
+        }
 
-    textarea.form-control {
-        resize: vertical;
-    }
-</style>
+        textarea.form-control {
+            resize: vertical;
+        }
+    </style>
 
 </head>
 
@@ -109,6 +110,7 @@
                         <h5 class="card-title">{{ $product->name }}</h5>
 
                         <div class="card-text mb-3">
+                            <strong>ID:</strong> {{ $product->id }}<br>
                             <strong>Цена продажи:</strong> {{ $product->sale_price }}<br>
                             <strong>Цена прихода:</strong> {{ $product->purchase_price }}<br>
                             <strong>Кол-во:</strong> {{ $product->quantity }}<br>
@@ -158,6 +160,7 @@
                                     aria-label="Закрыть"></button>
                             </div>
                             <div class="modal-body row g-3">
+
                                 <div class="col-md-6">
                                     <label class="form-label">Название</label>
                                     <input type="text" class="form-control" name="name" value="{{ $product->name }}" required>
@@ -192,7 +195,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Цена прихода</label>
-                                    <input type="number" step="0.01" class="form-control" name="purchase_price" value="{{ $product->purchase_price }}" required>
+                                    <input type="text" step="0.01" class="form-control" name="purchase_price" value="{{ $product->purchase_price }}" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Цена продажи</label>
@@ -224,7 +227,11 @@
                                 </div>
                                 <div class="col-md-12">
                                     <label class="form-label">Описание</label>
-                                    <textarea name="description" class="form-control" rows="4">{{ $product->description }}</textarea>
+                                    <textarea name="description" class="form-control" rows="4" required>{{ $product->description }}</textarea>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label">Подробное Описание</label>
+                                    <textarea name="detailed" class="form-control" rows="4" required>{{ $product->description }}</textarea>
                                 </div>
                                 <div class="col-md-12">
                                     <label class="form-label">Загрузить изображения</label>

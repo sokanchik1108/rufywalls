@@ -102,4 +102,10 @@ class WebsiteController extends Controller
             'colors' => Product::distinct()->pluck('color')->filter()->values(),
         ]);
     }
+
+    public function show($id)
+    {
+        $product = Product::with(['category', 'rooms'])->findOrFail($id);
+        return view('product-page', compact('product'));
+    }
 }
