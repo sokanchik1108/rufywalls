@@ -124,6 +124,8 @@
                             <strong>Категория:</strong> {{ $product->category->category_name }}<br>
                             <strong>Описание:</strong>
                             <textarea class="form-control mt-1 mb-2" rows="3" readonly>{{ $product->description }}</textarea>
+                            <strong>Подробное Описание:</strong>
+                            <textarea class="form-control mt-1 mb-2" rows="3" readonly>{{ $product->detailed }}</textarea>
                             <strong>Комнаты:</strong><br>
                             @foreach($product->rooms as $room)
                             <span class="badge bg-secondary mb-1">{{ $room->room_name }}</span>
@@ -231,7 +233,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <label class="form-label">Подробное Описание</label>
-                                    <textarea name="detailed" class="form-control" rows="4" required>{{ $product->description }}</textarea>
+                                    <textarea name="detailed" class="form-control" rows="4" required>{{ $product->detailed}}</textarea>
                                 </div>
                                 <div class="col-md-12">
                                     <label class="form-label">Загрузить изображения</label>
