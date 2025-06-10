@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
+use App\Models\Variant;
 
 class WebsiteController extends Controller
 {
@@ -19,86 +20,147 @@ class WebsiteController extends Controller
         return view('website', compact('products', 'categories', 'rooms'));
     }
 
+
     public function catalog(Request $request)
     {
-        $query = Product::query();
+        $categories = Category::all();
+        $rooms = Room::all();
 
-        // Фильтрация
+        // Базовый запрос вариантов с загрузкой связанных товаров
+        $variants = Variant::with('product');
+
+        // 🔎 Фильтрация по категории товара
         if ($request->filled('category_id')) {
-            $query->where('category_id', $request->input('category_id'));
-        }
-        if ($request->filled('brand')) {
-            $query->whereIn('brand', (array) $request->input('brand'));
-        }
-        if ($request->filled('material')) {
-            $query->whereIn('material', (array) $request->input('material'));
-        }
-        if ($request->filled('color')) {
-            $query->whereIn('color', (array) $request->input('color'));
-        }
-        if ($request->boolean('in_stock')) {
-            $query->where('quantity', '>', 0);
-        }
-        if ($request->filled('room_id')) {
-            $query->whereHas('rooms', function ($q) use ($request) {
-                $q->whereIn('rooms.id', (array) $request->input('room_id'));
+            $variants->whereHas('product', function ($q) use ($request) {
+                $q->where('category_id', $request->category_id);
             });
         }
+
+        // 🔎 Фильтрация по комнате
+        if ($request->filled('room_id')) {
+            $variants->whereHas('product.rooms', function ($q) use ($request) {
+                $q->where('rooms.id', $request->room_id);
+            });
+        }
+
+
+        // 🔎 По бренду
+        if ($request->filled('brand')) {
+            $brands = (array) $request->brand;
+            $variants->whereHas('product', function ($q) use ($brands) {
+                $q->whereIn('brand', $brands);
+            });
+        }
+
+        // 🔎 По материалу
+        if ($request->filled('material')) {
+            $materials = (array) $request->material;
+            $variants->whereHas('product', function ($q) use ($materials) {
+                $q->whereIn('material', $materials);
+            });
+        }
+
+        // 🔎 По наличию
+        if ($request->filled('in_stock')) {
+            $variants->where('stock', '>', 0);
+        }
+
+        // 🔎 По цене
         if ($request->filled('price_min')) {
-            $query->where('sale_price', '>=', $request->input('price_min'));
+            $variants->where('price', '>=', $request->price_min);
         }
         if ($request->filled('price_max')) {
-            $query->where('sale_price', '<=', $request->input('price_max'));
+            $variants->where('price', '<=', $request->price_max);
         }
 
-        // Поиск
+        // 🔎 По цвету (если ты сохраняешь в JSON или строку)
+        if ($request->filled('color')) {
+            $colors = (array) $request->color;
+            $variants->whereIn('color', $colors);
+        }
+
+
+        // 🔍 Поиск по названию
         if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('article', 'like', '%' . $search . '%');
+            $search = $request->search;
+            $variants->whereHas('product', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
             });
         }
 
-        // Сортировка
-        if ($request->filled('sort')) {
-            switch ($request->input('sort')) {
-                case 'price_asc':
-                    $query->orderBy('sale_price', 'asc');
-                    break;
-                case 'price_desc':
-                    $query->orderBy('sale_price', 'desc');
-                    break;
-                case 'name_asc':
-                    $query->orderBy('name', 'asc');
-                    break;
-                case 'name_desc':
-                    $query->orderBy('name', 'desc');
-                    break;
-            }
+        // 🔃 Сортировка
+        switch ($request->input('sort')) {
+            case 'price_asc':
+                $variants->orderBy('price', 'asc');
+                break;
+            case 'price_desc':
+                $variants->orderBy('price', 'desc');
+                break;
+            case 'name_asc':
+                $variants->join('products', 'variants.product_id', '=', 'products.id')
+                    ->orderBy('products.name', 'asc');
+                break;
+            case 'name_desc':
+                $variants->join('products', 'variants.product_id', '=', 'products.id')
+                    ->orderBy('products.name', 'desc');
+                break;
+            default:
+                $variants->latest();
         }
 
-        $products = $query->paginate(9)->appends($request->query());
+        // 🔢 Пагинация
+        $variants = $variants->paginate(7)->withQueryString();
 
         if ($request->ajax()) {
-            return view('partials.products', compact('products'))->render();
+            return view('partials.products', compact('variants'))->render();
         }
 
+        // 🔄 Сбор всех брендов/материалов из Product
+        $brands = Product::distinct()->pluck('brand');
+        $materials = Product::distinct()->pluck('material');
+        $colors = Variant::whereNotNull('color')
+            ->distinct()
+            ->pluck('color')
+            ->values();
+
+
         return view('catalog', [
-            'products' => $products,
-            'rooms' => Room::all(),
-            'categories' => Category::all(),
-            'brands' => Product::distinct()->pluck('brand')->filter()->values(),
-            'materials' => Product::distinct()->pluck('material')->filter()->values(),
-            'colors' => Product::distinct()->pluck('color')->filter()->values(),
+            'variants' => $variants,
+            'categories' => $categories,
+            'rooms' => $rooms,
+            'brands' => $brands,
+            'materials' => $materials,
+            'colors' => $colors,
         ]);
     }
 
+
+
     public function show($id)
     {
+        // Загружаем варианты, без with('color')
         $product = Product::with(['category', 'rooms'])->findOrFail($id);
-        return view('product-page', compact('product'));
+        $variants = $product->variants()->get();
+        $activeVariant = $variants->first(); // первый по умолчанию
+
+        return view('product-page', compact('product', 'variants', 'activeVariant'));
     }
+
+    public function variantData($id)
+    {
+        // Просто находим вариант без with('color')
+        $variant = Variant::findOrFail($id);
+
+        return response()->json([
+            'id' => $variant->id,
+            'sku' => $variant->sku,
+            'stock' => $variant->stock,
+            'color' => $variant->color, // просто строка
+            'images' => json_decode($variant->images),
+        ]);
+    }
+
+
 
     private function getCartData()
     {

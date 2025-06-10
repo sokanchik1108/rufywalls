@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Variant;
 
 class MainController extends Controller
 {
@@ -20,48 +21,74 @@ class MainController extends Controller
         return view('form', compact('categories', 'rooms'));
     }
 
+
     // Сохранить товар
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'article' => 'required|string|unique:products,' . ($product->id ?? 'NULL') . ',id',
             'country' => 'required|string',
-            'color' => 'required|string',
             'party' => 'nullable|string',
             'sticking' => 'required|string',
             'material' => 'required|string',
             'purchase_price' => 'required',
             'sale_price' => 'required|numeric',
             'brand' => 'required|string',
-            'quantity' => 'required|integer',
             'category_id' => 'required|exists:categories,id',
             'room_ids' => 'required|array',
             'room_ids.*' => 'exists:rooms,id',
-            'images' => 'nullable|array',
-            'images.*' => 'image|max:2048',
-            'description' => 'required',
-            'detailed' => 'required',
+            'description' => 'required|string',
+            'detailed' => 'required|string',
+
+            // Оттенки
+            'variants' => 'required|array|min:1',
+            'variants.*.color' => 'required|string',
+            'variants.*.sku' => 'required|string|distinct|unique:variants,sku',
+            'variants.*.stock' => 'required|integer|min:0',
+            'variants.*.images' => 'required|array|min:1',
+            'variants.*.images.*' => 'image|max:2048',
         ]);
 
-        $product = Product::create($validated);
+        // Сохраняем сам товар
+        $product = Product::create([
+            'name' => $validated['name'],
+            'country' => $validated['country'],
+            'party' => $validated['party'] ?? '',
+            'sticking' => $validated['sticking'],
+            'material' => $validated['material'],
+            'purchase_price' => $validated['purchase_price'],
+            'sale_price' => $validated['sale_price'],
+            'brand' => $validated['brand'],
+            'category_id' => $validated['category_id'],
+            'description' => $validated['description'],
+            'detailed' => $validated['detailed'],
+        ]);
 
-        // Связываем комнаты (many-to-many)
+        // Привязываем комнаты
         $product->rooms()->attach($validated['room_ids']);
 
-        // Сохранение изображений
-        if ($request->hasFile('images')) {
+        // Сохраняем оттенки
+        foreach ($validated['variants'] as $index => $variantData) {
             $imagePaths = [];
-            foreach ($request->file('images') as $image) {
-                $imagePaths[] = $image->store('product_images', 'public');
+
+            if ($request->hasFile("variants.$index.images")) {
+                foreach ($request->file("variants.$index.images") as $image) {
+                    $imagePaths[] = $image->store('variants', 'public');
+                }
             }
-            $product->images = json_encode($imagePaths);
-            $product->save();
+
+            $product->variants()->create([
+                'color' => $variantData['color'],
+                'sku' => $variantData['sku'],
+                'stock' => $variantData['stock'],
+                'images' => json_encode($imagePaths), // ← исправлено
+            ]);
         }
 
-        return redirect()->route('form')->with('success', 'Товар успешно добавлен');
+        return redirect()->route('form')->with('success', 'Товар с оттенками успешно добавлен');
     }
+
 
     // Показать все товары
     public function index()
@@ -124,24 +151,23 @@ class MainController extends Controller
     }
 
     public function destroy($id)
-{
-    $product = Product::findOrFail($id);
+    {
+        $product = Product::findOrFail($id);
 
-    // Опционально: удалить связанные изображения из storage
-    if ($product->images) {
-        $images = json_decode($product->images, true);
-        foreach ($images as $imagePath) {
-            Storage::disk('public')->delete($imagePath);
+        // Опционально: удалить связанные изображения из storage
+        if ($product->images) {
+            $images = json_decode($product->images, true);
+            foreach ($images as $imagePath) {
+                Storage::disk('public')->delete($imagePath);
+            }
         }
+
+        // Удаляем связи many-to-many с комнатами
+        $product->rooms()->detach();
+
+        // Удаляем сам товар
+        $product->delete();
+
+        return redirect()->route('database')->with('success', 'Товар успешно удалён');
     }
-
-    // Удаляем связи many-to-many с комнатами
-    $product->rooms()->detach();
-
-    // Удаляем сам товар
-    $product->delete();
-
-    return redirect()->route('database')->with('success', 'Товар успешно удалён');
-}
-
 }

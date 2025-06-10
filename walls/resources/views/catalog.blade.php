@@ -13,7 +13,7 @@
 
     <!-- Каталог -->
     <div class="product-list" id="product-container">
-        @include('partials.products', ['products' => $products])
+        @include('partials.products')
     </div>
 </div>
 

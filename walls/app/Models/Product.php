@@ -11,10 +11,24 @@ class Product extends Model
 
 
     protected $fillable = [
-        'name', 'article', 'country', 'color', 'party', 'sticking', 'material',
-        'purchase_price', 'sale_price', 'brand', 'quantity', 'category_id','description','detailed',
+        'name',
+        'country',
+        'party',
+        'sticking',
+        'material',
+        'purchase_price',
+        'sale_price',
+        'brand',
+        'category_id',
+        'description',
+        'detailed',
         // Убери room_id из fillable — связи через many-to-many!
     ];
+
+    public function variants()
+    {
+        return $this->hasMany(Variant::class);
+    }
 
     public function category()
     {
@@ -25,5 +39,4 @@ class Product extends Model
     {
         return $this->belongsToMany(Room::class);
     }
-
 }

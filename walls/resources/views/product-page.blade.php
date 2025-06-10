@@ -113,6 +113,29 @@
         .btn-dark:hover {
             background-color: #333;
         }
+
+        #variant-select {
+            border: 1px solid #ddd;
+            padding: 0.5rem 1rem;
+            font-size: 14px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        #variant-select:focus {
+            border-color: #000;
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+            outline: none;
+        }
+
+        label[for="variant-select"] {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
     </style>
 </head>
 
@@ -142,11 +165,11 @@
             <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 min-h-[400px]">
                 <!-- Галерея -->
                 <div class="lg:w-1/2 w-full flex flex-col">
-                    @if($product->images)
-                    @php $images = json_decode($product->images); @endphp
+                    @php $images = json_decode($activeVariant->images); @endphp
+                    @if ($images)
                     <div>
                         <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
-                            <div class="carousel-inner">
+                            <div class="carousel-inner" id="variant-images">
                                 @foreach($images as $index => $image)
                                 <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
                                     <img src="{{ asset('storage/' . $image) }}" alt="Изображение {{ $index + 1 }}">
@@ -163,6 +186,8 @@
                             @endif
                         </div>
                     </div>
+
+
 
                     <div class="thumbnail-container mt-3">
                         @foreach($images as $index => $image)
@@ -200,7 +225,7 @@
 
                                 <div class="input-group" style="width: 110px;">
                                     <button type="button" class="btn btn-outline-secondary py-1 px-2" onclick="changeQuantity(-1)">−</button>
-                                    <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ $product->quantity }}"
+                                    <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ $activeVariant->stock }}"
                                         class="form-control text-center" required style="font-size: 14px;">
                                     <button type="button" class="btn btn-outline-secondary py-1 px-2" onclick="changeQuantity(1)">+</button>
                                 </div>
@@ -211,8 +236,9 @@
 
                             <div>
                                 <p class="uppercase text-xs text-gray-400">Артикул</p>
-                                <p>{{ $product->article }}</p>
+                                <p id="variant-sku">{{ $activeVariant->sku }}</p>
                             </div>
+
                             <div>
                                 <p class="uppercase text-xs text-gray-400">Бренд</p>
                                 <p>{{ $product->brand }}</p>
@@ -221,10 +247,7 @@
                                 <p class="uppercase text-xs text-gray-400">Страна</p>
                                 <p>{{ $product->country }}</p>
                             </div>
-                            <div>
-                                <p class="uppercase text-xs text-gray-400">Цвет</p>
-                                <p>{{ $product->color }}</p>
-                            </div>
+
                             <div>
                                 <p class="uppercase text-xs text-gray-400">Материал</p>
                                 <p>{{ $product->material }}</p>
@@ -235,14 +258,28 @@
                             </div>
                             <div>
                                 <p class="uppercase text-xs text-gray-400">Остаток</p>
-                                <p>{{ $product->quantity }} шт.</p>
+                                <p id="variant-stock">{{ $activeVariant->stock }} шт.</p>
                             </div>
+
                         </div>
 
                         <div class="text-sm text-gray-600 mt-3">
                             <p class="mb-1 font-semibold text-black">Размеры рулона:</p>
                             <p class="mb-1">Высота: 10.05 м</p>
                             <p>Ширина: 1.06 м</p>
+                        </div>
+
+
+
+                        <div class="mb-3" style="max-width: 180px;">
+                            <label for="variant-select" class="form-label">Выберите оттенок:</label>
+                            <select id="variant-select" class="form-select" style="max-width: 300px;">
+                                @foreach ($variants as $variant)
+                                <option value="{{ $variant->id }}" {{ $variant->id === $activeVariant->id ? 'selected' : '' }}>
+                                    {{ $variant->color }} ({{ $variant->sku }})
+                                </option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -262,19 +299,72 @@
 
     <!-- Скрипт -->
     <script>
+        const quantityInput = document.getElementById('quantity');
+
+        document.getElementById('variant-select').addEventListener('change', function() {
+            const variantId = this.value;
+
+            fetch(`/variant/${variantId}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Обновление SKU и остатка
+                    document.getElementById('variant-sku').textContent = data.sku;
+                    document.getElementById('variant-stock').textContent = data.stock;
+
+                    // Обновление количества
+                    if (quantityInput) {
+                        quantityInput.max = data.stock;
+                        quantityInput.setAttribute('max', data.stock);
+                        quantityInput.value = Math.min(parseInt(quantityInput.value) || 1, data.stock);
+                    }
+
+                    // Обновление изображений в карусели
+                    const carouselInner = document.getElementById('variant-images');
+                    carouselInner.innerHTML = '';
+
+                    data.images.forEach((img, index) => {
+                        const div = document.createElement('div');
+                        div.className = 'carousel-item' + (index === 0 ? ' active' : '');
+                        div.innerHTML = `<img src="/storage/${img}" alt="Изображение ${index + 1}">`;
+                        carouselInner.appendChild(div);
+                    });
+
+                    // Обновление миниатюр
+                    const thumbnailContainer = document.querySelector('.thumbnail-container');
+                    thumbnailContainer.innerHTML = '';
+
+                    data.images.forEach((img, index) => {
+                        const thumb = document.createElement('img');
+                        thumb.src = `/storage/${img}`;
+                        thumb.alt = `Миниатюра ${index + 1}`;
+                        thumb.className = index === 0 ? 'active' : '';
+                        thumb.setAttribute('data-bs-target', '#mainCarousel');
+                        thumb.setAttribute('data-bs-slide-to', index);
+
+                        thumb.addEventListener('click', () => {
+                            document.querySelectorAll('.thumbnail-container img').forEach(i => i.classList.remove('active'));
+                            thumb.classList.add('active');
+                        });
+
+                        thumbnailContainer.appendChild(thumb);
+                    });
+                });
+        });
+
         function changeQuantity(delta) {
-            const input = document.getElementById('quantity');
-            let value = parseInt(input.value) || 1;
-            const min = parseInt(input.min);
-            const max = parseInt(input.max);
+            if (!quantityInput) return;
+            let value = parseInt(quantityInput.value) || 1;
+            const min = parseInt(quantityInput.min) || 1;
+            const max = parseInt(quantityInput.max) || 999;
+
             value += delta;
-            input.value = Math.max(min, Math.min(max, value));
+            quantityInput.value = Math.max(min, Math.min(max, value));
         }
 
         document.getElementById('add-to-cart-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const productId = document.getElementById('product-id').value;
-            const quantity = document.getElementById('quantity').value;
+            const quantity = quantityInput.value;
             const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
             fetch(`/cart/add/${productId}`, {
@@ -320,21 +410,17 @@
                 });
         });
 
-        document.querySelectorAll('.thumbnail-container img').forEach(thumb => {
-            thumb.addEventListener('click', () => {
-                document.querySelectorAll('.thumbnail-container img').forEach(img => img.classList.remove('active'));
-                thumb.classList.add('active');
-            });
-        });
-
-        const thumbnails = document.querySelectorAll('.thumbnail-container img');
+        // Синхронизация миниатюр с каруселью
         const carousel = document.getElementById('mainCarousel');
         carousel.addEventListener('slid.bs.carousel', (event) => {
             const index = event.to;
+            const thumbnails = document.querySelectorAll('.thumbnail-container img');
             thumbnails.forEach(img => img.classList.remove('active'));
             if (thumbnails[index]) thumbnails[index].classList.add('active');
         });
     </script>
+
+
 </body>
 
 </html>

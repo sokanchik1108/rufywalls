@@ -22,7 +22,7 @@ Route::get('/', [WebsiteController::class, 'website'])->name('website');
 
 Route::get('/catalog' , [WebsiteController::class, 'catalog'])->name('catalog');
 
-Route::get('/product/{id}', [WebsiteController::class, 'show'])->name('product.show');
+
 
 
 Route::get('/cart', [WebsiteController::class, 'cart'])->name('cart');
@@ -30,6 +30,10 @@ Route::post('/cart/add/{id}', [WebsiteController::class, 'addToCart'])->name('ca
 Route::post('/cart/update/{id}', [WebsiteController::class, 'updateCart'])->name('cart.update');
 Route::post('/cart/remove/{id}', [WebsiteController::class, 'removeFromCart'])->name('cart.remove');
 Route::post('/cart/clear', [WebsiteController::class, 'clearCart'])->name('cart.clear');
+
+Route::get('/product/{product}', [WebsiteController::class, 'show'])->name('product.show');
+Route::get('/variant/{id}', [WebsiteController::class, 'variantData'])->name('variant.data');
+
 
 
 
