@@ -258,7 +258,7 @@
                             </div>
                             <div>
                                 <p class="uppercase text-xs text-gray-400">Остаток</p>
-                                <p id="variant-stock">{{ $activeVariant->stock }} шт.</p>
+                                <p id="variant-stock"> {{ $totalStock }} шт.</p>
                             </div>
 
                         </div>

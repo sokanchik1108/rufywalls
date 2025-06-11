@@ -138,13 +138,20 @@ class WebsiteController extends Controller
 
     public function show($id)
     {
-        // Загружаем варианты, без with('color')
-        $product = Product::with(['category', 'rooms'])->findOrFail($id);
-        $variants = $product->variants()->get();
-        $activeVariant = $variants->first(); // первый по умолчанию
+        $product = Product::with([
+            'category',
+            'rooms',
+            'variants.batches'
+        ])->findOrFail($id);
 
-        return view('product-page', compact('product', 'variants', 'activeVariant'));
+        $variants = $product->variants;
+        $activeVariant = $variants->first();
+        $totalStock = $variants->flatMap->batches->sum('stock');
+
+        return view('product-page', compact('product', 'variants', 'activeVariant', 'totalStock'));
     }
+
+
 
     public function variantData($id)
     {

@@ -13,7 +13,6 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('country');
-            $table->string('party');
             $table->string('sticking');
             $table->string('material');
             $table->string('purchase_price');

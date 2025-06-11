@@ -3,251 +3,302 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Все товары</title>
+    <title>Варианты товаров</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <style>
         body {
-            background-color: #f9fafb;
+            background-color: #f2f4f7;
             font-family: 'Segoe UI', sans-serif;
-        }
-
-        h2 {
-            font-weight: 600;
-            margin-bottom: 2rem;
         }
 
         .card {
             border: none;
-            border-radius: 12px;
-            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
         }
 
         .card-img-top {
-            height: 260px;
+            height: 220px;
             object-fit: cover;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
         }
 
-        .card-body {
-            padding: 1.25rem;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
+        .badge-room {
+            margin-right: 4px;
+            background-color: #6c757d;
         }
 
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            line-height: 1.2;
-            min-height: 2.6em;
-            /* Под 2 строки */
-            margin-bottom: 0.5rem;
-            overflow: hidden;
+        .modal-header,
+        .modal-footer {
+            border: none;
         }
 
-        .card-text {
-            flex-grow: 1;
-            font-size: 0.95rem;
-            color: #555;
+        .form-label {
+            font-weight: 500;
         }
 
-
-        .btn {
-            font-size: 0.875rem;
+        .form-control,
+        .form-select,
+        textarea {
+            border-radius: 10px;
         }
 
-        textarea.form-control {
-            resize: vertical;
+        .modal-content {
+            border-radius: 16px;
+        }
+
+        img.preview {
+            border-radius: 6px;
+            border: 1px solid #ddd;
         }
     </style>
-
 </head>
 
 <body>
-
     <div class="container my-5">
-        <h2 class="text-center">Все товары</h2>
+        <h2 class="text-center fw-bold mb-4">Варианты товаров (Оттенки)</h2>
 
         @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
+        <div class="alert alert-success text-center">{{ session('success') }}</div>
         @endif
 
         <div class="row g-4">
             @foreach($products as $product)
-            <div class="col-sm-6 col-md-4 col-lg-3 d-flex">
-                <div class="card w-100 d-flex flex-column">
-                    @if($product->images)
-                    @php $images = json_decode($product->images); @endphp
-                    <div id="carousel{{ $product->id }}" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            @foreach($images as $index => $image)
-                            <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                                <img src="{{ asset('storage/' . $image) }}" class="d-block w-100 card-img-top" alt="Image">
-                            </div>
-                            @endforeach
-                        </div>
-                        @if(count($images) > 1)
-                        @include('partials.carousel')
-                        @endif
-                    </div>
+            @foreach($product->variants as $variant)
+            @php $images = json_decode($variant->images ?? '[]', true); @endphp
+
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100">
+                    @if(!empty($images))
+                    <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top" alt="Изображение">
                     @endif
 
-                    <div class="card-body flex-grow-1 d-flex flex-column">
-                        <h5 class="card-title">{{ $product->name }}</h5>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title mb-1">Название: {{ $product->name }}</h5>
+                        <h5 class="card-title mb-1 text-primary">Артикул: {{ $variant->sku }}</h5>
+                        <p class="text-muted mb-2">Оттенок: <strong>{{ $variant->color }}</strong></p>
 
-                        <div class="card-text mb-3">
-                            <strong>ID:</strong> {{ $product->id }}<br>
-                            <strong>Цена продажи:</strong> {{ $product->sale_price }}<br>
-                            <strong>Цена прихода:</strong> {{ $product->purchase_price }}<br>
-                            <strong>Кол-во:</strong> {{ $product->quantity }}<br>
-                            <strong>Бренд:</strong> {{ $product->brand }}<br>
-                            <strong>Артикул:</strong> {{ $product->article }}<br>
-                            <strong>Страна:</strong> {{ $product->country }}<br>
-                            <strong>Цвет:</strong> {{ $product->color }}<br>
-                            <strong>Партия:</strong> {{ $product->party }}<br>
-                            <strong>Поклейка:</strong> {{ $product->sticking }}<br>
-                            <strong>Материал:</strong> {{ $product->material }}<br>
-                            <strong>Категория:</strong> {{ $product->category->category_name }}<br>
-                            <strong>Описание:</strong>
-                            <textarea class="form-control mt-1 mb-2" rows="3" readonly>{{ $product->description }}</textarea>
-                            <strong>Подробное Описание:</strong>
-                            <textarea class="form-control mt-1 mb-2" rows="3" readonly>{{ $product->detailed }}</textarea>
-                            <strong>Комнаты:</strong><br>
+                    
+                        <p class="mb-1"><strong>Категория:</strong> {{ $product->category->category_name ?? '—' }}</p>
+                        <p class="mb-1"><strong>Бренд:</strong> {{ $product->brand }}</p>
+                        <p class="mb-1"><strong>Страна:</strong> {{ $product->country }}</p>
+                        <p class="mb-1"><strong>Материал:</strong> {{ $product->material }}</p>
+                        <p class="mb-1"><strong>Цена прихода:</strong> {{ $product->purchase_price }}</p>
+                        <p class="mb-1"><strong>Цена продажи:</strong> {{ $product->sale_price }}</p>
+
+                        <p class="mb-2"><strong>Комнаты:</strong><br>
                             @foreach($product->rooms as $room)
-                            <span class="badge bg-secondary mb-1">{{ $room->room_name }}</span>
+                            <span class="badge badge-room">{{ $room->room_name }}</span>
                             @endforeach
-                        </div>
+                        </p>
 
-                        <div class="mt-auto d-flex justify-content-between">
-                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#editModal{{ $product->id }}">Редактировать</button>
+                        <p class="mb-3"><strong>Описание:</strong><br>{{ $product->description }}</p>
 
-                            <form action="{{ route('products.destroy', $product->id) }}" method="POST"
-                                onsubmit="return confirm('Удалить этот товар?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
-                            </form>
+                        <div class="mt-auto">
+                            @php $totalStock = $variant->batches->sum('stock'); @endphp
+                            <p class="fw-semibold">Общий остаток: {{ $totalStock }} шт.</p>
+                            <p class="mb-1"><strong>Партии:</strong></p>
+                            <ul class="small ps-3">
+                                @foreach($variant->batches as $batch)
+                                <li>Партия {{ $batch->batch_code ?? '—' }}: {{ $batch->stock }} шт.</li>
+                                @endforeach
+                            </ul>
+
+                            <div class="d-flex justify-content-between mt-3">
+                                <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#editModal{{ $variant->id }}">Редактировать</button>
+
+                                <form action="{{ route('products.destroy', $product->id) }}" method="POST"
+                                    onsubmit="return confirm('Удалить этот товар?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">Удалить</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Modal -->
-            <div class="modal fade" id="editModal{{ $product->id }}" tabindex="-1"
-                aria-labelledby="editModalLabel{{ $product->id }}" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
+            <!-- Модальное окно редактирования -->
+            <div class="modal fade" id="editModal{{ $variant->id }}" tabindex="-1"
+                aria-labelledby="editModalLabel{{ $variant->id }}" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                         <form action="{{ route('products.update', $product->id) }}" method="POST"
                             enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
+
                             <div class="modal-header">
-                                <h5 class="modal-title" id="editModalLabel{{ $product->id }}">Редактировать товар</h5>
+                                <h5 class="modal-title text-primary">Редактировать товар и оттенок</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Закрыть"></button>
                             </div>
-                            <div class="modal-body row g-3">
 
-                                <div class="col-md-6">
-                                    <label class="form-label">Название</label>
-                                    <input type="text" class="form-control" name="name" value="{{ $product->name }}" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Артикул</label>
-                                    <input type="text" class="form-control" name="article" value="{{ $product->article }}" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Бренд</label>
-                                    <input type="text" class="form-control" name="brand" value="{{ $product->brand }}" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Страна</label>
-                                    <input type="text" class="form-control" name="country" value="{{ $product->country }}" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Цвет</label>
-                                    <input type="text" class="form-control" name="color" value="{{ $product->color }}" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Партия</label>
-                                    <input type="text" class="form-control" name="party" value="{{ $product->party }}">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Тип поклейки</label>
-                                    <input type="text" class="form-control" name="sticking" value="{{ $product->sticking }}" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Материал</label>
-                                    <input type="text" class="form-control" name="material" value="{{ $product->material }}" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Цена прихода</label>
-                                    <input type="text" step="0.01" class="form-control" name="purchase_price" value="{{ $product->purchase_price }}" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Цена продажи</label>
-                                    <input type="number" step="0.01" class="form-control" name="sale_price" value="{{ $product->sale_price }}" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Количество</label>
-                                    <input type="number" class="form-control" name="quantity" value="{{ $product->quantity }}" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Категория</label>
-                                    <select name="category_id" class="form-select" required>
-                                        @foreach($categories as $category)
-                                        <option value="{{ $category->id }}" {{ $product->category_id == $category->id ? 'selected' : '' }}>
-                                            {{ $category->category_name }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Комнаты</label>
-                                    <select name="room_ids[]" class="form-select" multiple required>
-                                        @foreach($rooms as $room)
-                                        <option value="{{ $room->id }}" {{ $product->rooms->contains($room->id) ? 'selected' : '' }}>
-                                            {{ $room->room_name }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-12">
-                                    <label class="form-label">Описание</label>
-                                    <textarea name="description" class="form-control" rows="4" required>{{ $product->description }}</textarea>
-                                </div>
-                                <div class="col-md-12">
-                                    <label class="form-label">Подробное Описание</label>
-                                    <textarea name="detailed" class="form-control" rows="4" required>{{ $product->detailed}}</textarea>
-                                </div>
-                                <div class="col-md-12">
-                                    <label class="form-label">Загрузить изображения</label>
-                                    <input type="file" class="form-control" name="images[]" multiple>
+                            <div class="modal-body">
+                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Название</label>
+                                        <input type="text" name="name" class="form-control"
+                                            value="{{ $product->name }}" required>
+                                    </div>
+
+                                    <h5 class="text-primary">Редактирование оттенка</h5>
+
+                                    <input type="hidden" name="variants[{{ $variant->id }}][id]"
+                                        value="{{ $variant->id }}">
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Артикул</label>
+                                        <input type="text" name="variants[{{ $variant->id }}][sku]"
+                                            class="form-control" value="{{ $variant->sku }}" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Цвет</label>
+                                        <input type="text" name="variants[{{ $variant->id }}][color]"
+                                            class="form-control" value="{{ $variant->color }}" required>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label class="form-label">Изображения</label>
+                                        <input type="file"
+                                            name="variants[{{ $variant->id }}][images][]"
+                                            class="form-control" multiple>
+
+                                        @if (!empty($images))
+                                        <div class="mt-2">
+                                            @foreach($images as $img)
+                                            <img src="{{ asset('storage/' . $img) }}" width="80"
+                                                class="me-2 mb-2 preview">
+                                            @endforeach
+                                        </div>
+                                        @endif
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label class="form-label">Партии</label>
+                                        <div class="list-group">
+                                            @foreach($variant->batches as $batch)
+                                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <strong>Партия:</strong> {{ $batch->batch_code ?? '—' }}
+                                                    <input type="hidden"
+                                                        name="variants[{{ $variant->id }}][batches][{{ $batch->id }}][batch_code]"
+                                                        value="{{ $batch->batch_code }}">
+                                                </div>
+                                                <div style="max-width: 120px;">
+                                                    <input type="number"
+                                                        name="variants[{{ $variant->id }}][batches][{{ $batch->id }}][stock]"
+                                                        class="form-control form-control-sm"
+                                                        value="{{ $batch->stock }}"
+                                                        placeholder="Остаток">
+                                                </div>
+                                            </div>
+                                            @endforeach
+                                        </div>
+                                        <p class="fw-semibold mt-2">Общий остаток по партиям: {{ $variant->batches->sum('stock') }} шт.</p>
+                                    </div>
+
+
+                                    <hr>
+
+                                    <h5 class="text-primary">Редактирование товара</h5>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Бренд</label>
+                                        <input type="text" name="brand" class="form-control"
+                                            value="{{ $product->brand }}" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Страна</label>
+                                        <input type="text" name="country" class="form-control"
+                                            value="{{ $product->country }}">
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Тип поклейки</label>
+                                        <input type="text" name="sticking" class="form-control"
+                                            value="{{ $product->sticking }}">
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Материал</label>
+                                        <input type="text" name="material" class="form-control"
+                                            value="{{ $product->material }}">
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Цена прихода</label>
+                                        <input type="number" step="0.01" name="purchase_price"
+                                            class="form-control" value="{{ $product->purchase_price }}">
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Цена продажи</label>
+                                        <input type="number" step="0.01" name="sale_price"
+                                            class="form-control" value="{{ $product->sale_price }}">
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Категория</label>
+                                        <select name="category_id" class="form-select">
+                                            @foreach($categories as $category)
+                                            <option value="{{ $category->id }}"
+                                                {{ $product->category_id == $category->id ? 'selected' : '' }}>
+                                                {{ $category->category_name }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Комнаты</label>
+                                        <select name="room_ids[]" class="form-select" multiple>
+                                            @foreach($rooms as $room)
+                                            <option value="{{ $room->id }}"
+                                                {{ $product->rooms->contains($room->id) ? 'selected' : '' }}>
+                                                {{ $room->room_name }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label class="form-label">Описание</label>
+                                        <textarea name="description"
+                                            class="form-control">{{ $product->description }}</textarea>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label class="form-label">Подробное описание</label>
+                                        <textarea name="detailed"
+                                            class="form-control">{{ $product->detailed }}</textarea>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="modal-footer mt-3">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Отмена</button>
                                 <button type="submit" class="btn btn-success">Сохранить</button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
+
+            @endforeach
             @endforeach
         </div>
     </div>

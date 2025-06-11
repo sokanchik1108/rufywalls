@@ -13,7 +13,6 @@ class Product extends Model
     protected $fillable = [
         'name',
         'country',
-        'party',
         'sticking',
         'material',
         'purchase_price',

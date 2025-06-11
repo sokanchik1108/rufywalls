@@ -12,5 +12,15 @@ class Variant extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+        public function batches()
+    {
+        return $this->hasMany(Batch::class);
+    }
+
+    public function getTotalStockAttribute()
+    {
+        return $this->batches->sum('stock');
+    }
 }
 
