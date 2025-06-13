@@ -5,13 +5,14 @@
 
         <div class="row g-4">
             <!-- Карточка 1 -->
-            @foreach($products as $product)
+            @foreach ($variants as $variant)
+            @php
+            $product = $variant->product;
+            $images = json_decode($variant->images, true);
+            @endphp
             <div class="col-md-4">
                 <div class="rafy-card h-100">
-                    @if($product->images)
-                    @php
-                    $images = json_decode($product->images);
-                    @endphp
+
                     <div id="carousel{{ $product->id }}" class="carousel slide mb-3">
                         <div class="carousel-inner">
                             @foreach($images as $index => $image)
@@ -27,14 +28,14 @@
                         @endif
 
                     </div>
-                    @endif
+
                     <div class="rafy-card-body">
                         <h5 class="rafy-card-title">{{ $product->name ?? 'Название товара' }}</h5>
                         <p class="rafy-card-text">{{ $product->description ?? 'Описание товара' }}</p>
 
-                        <p class="rafy-card-price">{{ $product->sale_price }} ₸.</p>
+                        <p class="rafy-card-price">{{ number_format($product->sale_price, 0, ',', ' ') }} ₸</p>
 
-                        <a href="#" class="btn btn-dark btn-more">Подробнее</a>
+                        <a href="{{ route('product.show', $product->id) }}" class="btn btn-dark btn-more">Подробнее</a>
                     </div>
 
                 </div>
@@ -45,7 +46,7 @@
 </section>
 
 <style>
-      /* cards */
+    /* cards */
 
     .rafy-title {
         font-size: 2.0rem;

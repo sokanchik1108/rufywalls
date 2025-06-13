@@ -43,7 +43,7 @@
 
             <div class="product-desc-price">
                 <p>{{ $product->description }}</p>
-                <span>{{ number_format($variant->price, 0, '.', ' ') }} ₸</span>
+                <span>{{ number_format($product->sale_price, 0, '.', ' ') }} ₸</span>
             </div>
 
             <div class="btn-wrapper">

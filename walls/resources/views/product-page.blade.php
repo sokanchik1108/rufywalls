@@ -139,7 +139,57 @@
     </style>
 </head>
 
+
+
+
+
 <body class="text-gray-900">
+
+    <a href="{{ route('cart') }}"
+        class="text-decoration-none"
+        style="position: fixed; top: 30px; right: 40px; z-index: 1050;">
+        <div class="cart-icon">
+            <i class="bi bi-bag"></i>
+            <span class="cart-count" id="cart-count">{{ $cartCount }}</span>
+        </div>
+    </a>
+
+
+
+
+
+    <style>
+        .cart-icon {
+            position: relative;
+            font-size: 1.4rem;
+            color: #222;
+            margin-left: 1rem;
+        }
+
+        .cart-icon:hover {
+            color: #007bff;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            background: #dc3545;
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 50%;
+        }
+    </style>
+
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+
+
+
+
 
     <!-- Уведомление -->
     <div id="cart-message" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-xs sm:max-w-sm md:max-w-md hidden">
@@ -153,6 +203,7 @@
             <span id="cart-message-text" class="flex-1">Товар добавлен в корзину</span>
         </div>
     </div>
+
     <!-- Назад -->
     <div class="absolute left-4 sm:left-6 z-10 top-6">
         <a href="{{ route('catalog') }}" class="text-base text-gray-500 hover:text-gray-800">
@@ -216,6 +267,8 @@
                             <form id="add-to-cart-form" class="d-flex flex-wrap gap-2 mt-3">
                                 @csrf
                                 <input type="hidden" id="product-id" value="{{ $product->id }}">
+                                <input type="hidden" name="variant_id" id="variant-id-input" value="{{ $activeVariant->id }}">
+
 
                                 <button type="submit"
                                     class="btn btn-dark flex-shrink-0 px-4 py-2"
@@ -225,11 +278,12 @@
 
                                 <div class="input-group" style="width: 110px;">
                                     <button type="button" class="btn btn-outline-secondary py-1 px-2" onclick="changeQuantity(-1)">−</button>
-                                    <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ $activeVariant->stock }}"
+                                    <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ $variantStock }}"
                                         class="form-control text-center" required style="font-size: 14px;">
                                     <button type="button" class="btn btn-outline-secondary py-1 px-2" onclick="changeQuantity(1)">+</button>
                                 </div>
                             </form>
+
                         </div>
 
                         <div class="grid grid-cols-2 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm text-gray-600">
@@ -258,7 +312,7 @@
                             </div>
                             <div>
                                 <p class="uppercase text-xs text-gray-400">Остаток</p>
-                                <p id="variant-stock"> {{ $totalStock }} шт.</p>
+                                <p id="variant-stock"> {{ $variantStock }} шт.</p>
                             </div>
 
                         </div>
@@ -300,6 +354,7 @@
     <!-- Скрипт -->
     <script>
         const quantityInput = document.getElementById('quantity');
+        const variantInput = document.getElementById('variant-id-input');
 
         document.getElementById('variant-select').addEventListener('change', function() {
             const variantId = this.value;
@@ -307,21 +362,23 @@
             fetch(`/variant/${variantId}`)
                 .then(response => response.json())
                 .then(data => {
-                    // Обновление SKU и остатка
-                    document.getElementById('variant-sku').textContent = data.sku;
-                    document.getElementById('variant-stock').textContent = data.stock;
+                    // Обновить скрытое поле variant_id
+                    variantInput.value = data.id;
 
-                    // Обновление количества
+                    // Обновить артикул и остаток
+                    document.getElementById('variant-sku').textContent = data.sku;
+                    document.getElementById('variant-stock').textContent = data.stock + ' шт.';
+
+                    // Обновить ограничение количества
                     if (quantityInput) {
                         quantityInput.max = data.stock;
                         quantityInput.setAttribute('max', data.stock);
                         quantityInput.value = Math.min(parseInt(quantityInput.value) || 1, data.stock);
                     }
 
-                    // Обновление изображений в карусели
+                    // Обновить изображения в карусели
                     const carouselInner = document.getElementById('variant-images');
                     carouselInner.innerHTML = '';
-
                     data.images.forEach((img, index) => {
                         const div = document.createElement('div');
                         div.className = 'carousel-item' + (index === 0 ? ' active' : '');
@@ -329,10 +386,9 @@
                         carouselInner.appendChild(div);
                     });
 
-                    // Обновление миниатюр
+                    // Обновить миниатюры
                     const thumbnailContainer = document.querySelector('.thumbnail-container');
                     thumbnailContainer.innerHTML = '';
-
                     data.images.forEach((img, index) => {
                         const thumb = document.createElement('img');
                         thumb.src = `/storage/${img}`;
@@ -356,18 +412,18 @@
             let value = parseInt(quantityInput.value) || 1;
             const min = parseInt(quantityInput.min) || 1;
             const max = parseInt(quantityInput.max) || 999;
-
             value += delta;
             quantityInput.value = Math.max(min, Math.min(max, value));
         }
 
         document.getElementById('add-to-cart-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            const productId = document.getElementById('product-id').value;
+
+            const variantId = variantInput.value;
             const quantity = quantityInput.value;
             const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-            fetch(`/cart/add/${productId}`, {
+            fetch('/cart/add', {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': token,
@@ -376,6 +432,7 @@
                         'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: JSON.stringify({
+                        variant_id: variantId,
                         quantity
                     })
                 })
@@ -393,10 +450,16 @@
                     messageBox.classList.remove('hidden');
                     setTimeout(() => messageBox.classList.add('hidden'), 3000);
 
+                    // Если элемент есть, обновляем
                     if (document.querySelector('#cart-count')) {
                         document.querySelector('#cart-count').textContent = data.cart_count;
                     }
+
+                    // ⚠️ Обновляем localStorage, чтобы другие страницы заметили
+                    localStorage.setItem('cartUpdated', Date.now());
+
                 })
+
                 .catch(() => {
                     const messageBox = document.getElementById('cart-message');
                     const innerBox = document.getElementById('cart-message-inner');
@@ -419,6 +482,7 @@
             if (thumbnails[index]) thumbnails[index].classList.add('active');
         });
     </script>
+
 
 
 </body>

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Минималистичная шапка</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 
     <style>
         header {
@@ -55,6 +56,28 @@
             text-decoration: none;
         }
 
+        .cart-icon {
+            position: relative;
+            font-size: 1.4rem;
+            color: #222;
+            margin-left: 1rem;
+        }
+
+        .cart-icon:hover {
+            color: #007bff;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            background: #dc3545;
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 50%;
+        }
+
         @media (max-width: 991.98px) {
             .navbar-collapse {
                 background-color: #fff;
@@ -73,40 +96,83 @@
                 gap: 0.5rem;
                 margin-bottom: 0.5rem;
             }
+
+            .cart-icon {
+                margin-top: 10px;
+                margin-left: 10px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-<header>
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <!-- Логотип -->
-            <a class="navbar-brand" href="/">RAFY WALLS</a>
+    <header>
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <!-- Логотип -->
+                <a class="navbar-brand" href="/">RAFY WALLS</a>
 
-            <!-- Бургер-кнопка -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                <!-- Бургер-кнопка -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить навигацию">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-            <!-- Меню и кнопка -->
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto d-flex align-items-lg-center gap-3">
-                    <li class="nav-item"><a class="nav-link" href="#contacts">Адрес</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#contacts">Контакты</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#delivery">Доставка</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#product-info">О нашей продукции</a></li>
-                </ul>
-                <div class="d-lg-flex justify-content-end">
-                    <a href="{{ route('catalog') }}" class="catalog-btn mt-2 mt-lg-0">Каталог</a>
+                <!-- Меню и кнопка -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto d-flex align-items-lg-center gap-3">
+                        <li class="nav-item"><a class="nav-link" href="#contacts">Адрес</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#contacts">Контакты</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#delivery">Доставка</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#product-info">О нашей продукции</a></li>
+                    </ul>
+
+                    <!-- Блок корзины и каталога -->
+                    <div class="d-flex align-items-center mt-2 mt-lg-0 gap-3">
+                        <!-- Иконка корзины -->
+                        <a href="{{ route('cart') }}" class="cart-icon position-relative">
+                            <i class="bi bi-bag"></i>
+                            <span class="cart-count">{{ $cartCount }}</span>
+                        </a>
+
+                        <!-- Кнопка Каталога -->
+                        <a href="{{ route('catalog') }}" class="catalog-btn">Каталог</a>
+                    </div>
                 </div>
             </div>
-        </div>
-    </nav>
-</header>
+        </nav>
+    </header>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function updateCartCount() {
+            fetch('/cart/count')
+                .then(response => response.json())
+                .then(data => {
+                    const countElement = document.querySelector('.cart-count');
+                    if (countElement) {
+                        countElement.textContent = data.count;
+                    }
+                })
+                .catch(console.error);
+        }
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'cartUpdated') {
+                updateCartCount();
+            }
+        });
+
+
+        // Автообновление при загрузке
+        document.addEventListener('DOMContentLoaded', updateCartCount);
+    </script>
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

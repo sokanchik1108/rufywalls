@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\WebsiteController;
+use Illuminate\Support\Facades\Cookie;
+
+
 
 Route::get('/', function () {
     return view('website');
@@ -22,17 +25,27 @@ Route::get('/', [WebsiteController::class, 'website'])->name('website');
 
 Route::get('/catalog' , [WebsiteController::class, 'catalog'])->name('catalog');
 
+Route::get('/product/{product}', [WebsiteController::class, 'show'])->name('product.show');
 
-
+Route::get('/variant/{id}', [WebsiteController::class, 'variantData'])->name('variant.data');
 
 Route::get('/cart', [WebsiteController::class, 'cart'])->name('cart');
-Route::post('/cart/add/{id}', [WebsiteController::class, 'addToCart'])->name('cart.add');
-Route::post('/cart/update/{id}', [WebsiteController::class, 'updateCart'])->name('cart.update');
-Route::post('/cart/remove/{id}', [WebsiteController::class, 'removeFromCart'])->name('cart.remove');
+
+Route::post('/cart/add', [WebsiteController::class, 'addToCart'])->name('cart.add');
+
+Route::post('/cart/update/{variantId}', [WebsiteController::class, 'updateCart'])->name('cart.update');
+
+Route::post('/cart/remove/{variantId}', [WebsiteController::class, 'removeFromCart'])->name('cart.remove');
+
 Route::post('/cart/clear', [WebsiteController::class, 'clearCart'])->name('cart.clear');
 
-Route::get('/product/{product}', [WebsiteController::class, 'show'])->name('product.show');
-Route::get('/variant/{id}', [WebsiteController::class, 'variantData'])->name('variant.data');
+Route::get('/cart/count', [WebsiteController::class, 'count']);
+
+
+
+
+
+
 
 
 
