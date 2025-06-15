@@ -16,6 +16,7 @@
                     <li><a href="/database" class="footer-link">Каталог</a></li>
                     <li><a href="#product-info" class="footer-link">О продукции</a></li>
                     <li><a href="#contact" class="footer-link">Контакты</a></li>
+                    <li><a href="{{ route('how-to-order') }} " class="footer-link">Как оформить заказ?</a></li>
                 </ul>
             </div>
 

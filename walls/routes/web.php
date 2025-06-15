@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\WebsiteController;
 use Illuminate\Support\Facades\Cookie;
+use App\Http\Controllers\OrderController;
 
 
 
@@ -40,6 +41,24 @@ Route::post('/cart/remove/{variantId}', [WebsiteController::class, 'removeFromCa
 Route::post('/cart/clear', [WebsiteController::class, 'clearCart'])->name('cart.clear');
 
 Route::get('/cart/count', [WebsiteController::class, 'count']);
+
+
+Route::get('/how-to-order', [WebsiteController::class, 'howToOrder'])->name('how-to-order');
+
+
+Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
+Route::post('/checkout', [OrderController::class, 'submit'])->name('checkout.submit');
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/orders', [OrderController::class, 'adminIndex'])->name('orders');
+    Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+    Route::delete('/orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
+
+    // ✅ Добавленный маршрут для удаления всех заказов
+    Route::delete('/orders', [OrderController::class, 'clearAll'])->name('orders.clear');
+});
+
+
 
 
 

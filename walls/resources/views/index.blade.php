@@ -5,22 +5,33 @@
 @section('content')
 <div class="container py-5">
 
-
-    @if(session('success'))
+@if(session('success_html') || session('success'))
     <div id="blade-toast" class="position-fixed top-0 start-50 translate-middle-x mt-4 z-1050 animate-fade-in-down" style="max-width: 90%; width: 350px;">
-        <div class="d-flex align-items-center gap-2 px-4 py-3 rounded shadow text-white bg-dark position-relative">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M16.707 5.293a1 1 0 010 1.414l-7.414 7.414a1 1 0 01-1.414 0L3.293 9.414a1 1 0 111.414-1.414L8 11.586l7.293-7.293a1 1 0 011.414 0z" />
-            </svg>
-            <span class="flex-grow-1 small">{{ session('success') }}</span>
+        <div class="d-flex align-items-center bg-dark text-white p-3 rounded shadow position-relative">
+
+            {{-- Показываем иконку только если это обычное сообщение --}}
+            @if(session('success') && !session('success_html'))
+                <i class="bi bi-check-circle-fill me-2 fs-4"></i>
+            @endif
+
+            {{-- Текст сообщения --}}
+            <span style="max-width: 300px; word-wrap: break-word; white-space: normal;">
+                {!! session('success_html') ?? e(session('success')) !!}
+            </span>
+
+            {{-- Кнопка закрытия --}}
             <button type="button"
-                class="btn-close btn-close-white position-absolute end-0 top-50 translate-middle-y me-3"
-                aria-label="Закрыть"
-                onclick="document.getElementById('blade-toast').remove()">
-            </button>
+                    class="btn-close btn-close-white position-absolute end-0 top-50 translate-middle-y me-3"
+                    aria-label="Закрыть"
+                    onclick="document.getElementById('blade-toast').remove()"></button>
         </div>
     </div>
-    @endif
+@endif
+
+
+
+
+
 
     <h1 class="mb-4 fw-semibold text-body-emphasis">Корзина</h1>
 
@@ -147,7 +158,7 @@
     </div>
 
     <div class="d-flex justify-content-end mt-4">
-        <a href="#" class="btn btn-dark rounded-pill px-4 py-2 shadow-sm">
+        <a href="{{ route('checkout') }}" class="btn btn-dark rounded-pill px-4 py-2 shadow-sm">
             Оформить заказ
         </a>
     </div>
@@ -164,6 +175,8 @@
     </div>
 </div>
 
+
+
 <style>
     @keyframes fade-in-down {
         0% {
@@ -179,6 +192,11 @@
 
     .animate-fade-in-down {
         animation: fade-in-down 0.4s ease-out;
+    }
+
+    .fade-out {
+        opacity: 0;
+        transition: opacity 0.4s ease;
     }
 </style>
 

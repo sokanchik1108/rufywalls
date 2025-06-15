@@ -22,6 +22,11 @@ public function website()
     return view('website', compact('products', 'categories', 'rooms', 'variants'));
 }
 
+public function howToOrder()
+{
+    return view('partials.ordermake');
+}
+
 
     public function catalog(Request $request)
     {

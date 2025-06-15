@@ -126,6 +126,7 @@
                         <li class="nav-item"><a class="nav-link" href="#contacts">Контакты</a></li>
                         <li class="nav-item"><a class="nav-link" href="#delivery">Доставка</a></li>
                         <li class="nav-item"><a class="nav-link" href="#product-info">О нашей продукции</a></li>
+                        <li class="nav-item"><a class="nav-link" href=" {{ route('how-to-order') }} ">Как оформить заказ</a></li>
                     </ul>
 
                     <!-- Блок корзины и каталога -->
