@@ -8,9 +8,6 @@ use App\Http\Controllers\OrderController;
 
 
 
-Route::get('/', function () {
-    return view('website');
-});
 
 Route::get('/product/create', [MainController::class, 'create'])->name('form');
 

@@ -38,4 +38,25 @@ class Product extends Model
     {
         return $this->belongsToMany(Room::class);
     }
+
+        public function companions()
+    {
+        return $this->belongsToMany(
+            Product::class,
+            'product_companions',
+            'product_id',
+            'companion_id'
+        );
+    }
+
+    // Обратная связь — этот товар может быть компаньоном другого
+    public function companionFor()
+    {
+        return $this->belongsToMany(
+            Product::class,
+            'product_companions',
+            'companion_id',
+            'product_id'
+        );
+    }
 }

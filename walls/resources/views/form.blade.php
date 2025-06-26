@@ -6,132 +6,215 @@
     <title>Добавить обои</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        body {
+            background: #f8f9fa;
+            font-family: system-ui, sans-serif;
+            font-size: 14px;
+        }
+
         .form-container {
-            max-width: 900px;
-            margin: auto;
+            max-width: 800px;
+            margin: 30px auto;
+        }
+
+        .card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+        }
+
+        .card-header {
+            background: #ffffff;
+            border-bottom: 1px solid #dee2e6;
+            padding: 10px 15px;
+        }
+
+        .card-header h4 {
+            font-size: 18px;
+            margin: 0;
+        }
+
+        label {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        input,
+        select,
+        textarea {
+            border-radius: 4px !important;
+            font-size: 14px;
+            padding: 6px 10px;
         }
 
         .variant-group,
         .batch-group {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 5px;
+            background: #ffffff;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 12px;
             position: relative;
         }
 
         .remove-variant,
         .remove-batch {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 6px;
+            right: 6px;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 14px;
+        }
+
+        .remove-variant:hover,
+        .remove-batch:hover {
+            color: #dc3545;
+        }
+
+        .btn-sm {
+            padding: 4px 10px;
+            font-size: 13px;
+        }
+
+        .form-section-title {
+            font-size: 15px;
+            margin: 15px 0 8px;
+            font-weight: 600;
         }
     </style>
 </head>
 
-<body class="bg-light">
-    <div class="container mt-5 form-container">
+<body>
+
+    <div class="container form-container">
         <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">Добавить обои</h4>
+            <div class="card-header">
+                <h4>Добавить обои</h4>
             </div>
             <div class="card-body">
-                @if(session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-                @endif
 
-                @if($errors->any())
-                <div class="alert alert-danger">
-                    <ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
+                {{-- Уведомление об успешном сохранении --}}
+                @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
                 </div>
                 @endif
+
+                {{-- Вывод ошибок валидации --}}
+                @if($errors->any())
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
+
 
                 <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
-                    <!-- Основные поля товара -->
-                    <div class="mb-3"><label class="form-label">Название</label><input type="text" name="name" class="form-control" required></div>
-                    <div class="mb-3"><label class="form-label">Страна</label><input type="text" name="country" class="form-control" required></div>
-                    <div class="mb-3"><label class="form-label">Тип поклейки</label><input type="text" name="sticking" class="form-control" required></div>
-                    <div class="mb-3"><label class="form-label">Материал</label><input type="text" name="material" class="form-control" required></div>
-                    <div class="mb-3"><label class="form-label">Цена прихода</label><input type="text" name="purchase_price" class="form-control" required></div>
-                    <div class="mb-3"><label class="form-label">Цена продажи</label><input type="number" name="sale_price" class="form-control" required></div>
-                    <div class="mb-3"><label class="form-label">Бренд</label><input type="text" name="brand" class="form-control" required></div>
-                    <div class="mb-3">
-                        <label class="form-label">Категория</label>
-                        <select name="category_id" class="form-select" required>
-                            @foreach($categories as $category)
-                            <option value="{{ $category->id }}">{{ $category->category_name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Комнаты</label>
-                        <select name="room_ids[]" class="form-select" multiple required>
-                            @foreach($rooms as $room)
-                            <option value="{{ $room->id }}">{{ $room->room_name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-3"><label class="form-label">Описание</label><textarea name="description" class="form-control" rows="2"></textarea></div>
-                    <div class="mb-3"><label class="form-label">Подробнее</label><textarea name="detailed" class="form-control" rows="3"></textarea></div>
+                    <div class="row g-2">
+                        <div class="col-md-6"><label>Название</label><input type="text" name="name" class="form-control" required></div>
+                        <div class="col-md-6"><label>Страна</label><input type="text" name="country" class="form-control" required></div>
+                        <div class="col-md-6"><label>Тип поклейки</label><input type="text" name="sticking" class="form-control" required></div>
+                        <div class="col-md-6"><label>Материал</label><input type="text" name="material" class="form-control" required></div>
+                        <div class="col-md-6"><label>Цена прихода</label><input type="text" name="purchase_price" class="form-control" required></div>
+                        <div class="col-md-6"><label>Цена продажи</label><input type="number" name="sale_price" class="form-control" required></div>
+                        <div class="col-md-6"><label>Бренд</label><input type="text" name="brand" class="form-control" required></div>
+                        <div class="col-md-6">
+                            <label>Категория</label>
+                            <select name="category_id" class="form-select" required>
+                                @foreach($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->category_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label>Комнаты</label>
+                            <select name="room_ids[]" class="form-select" multiple required>
+                                @foreach($rooms as $room)
+                                <option value="{{ $room->id }}">{{ $room->room_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-12"><label>Описание</label><textarea name="description" class="form-control" rows="2"></textarea></div>
+                        <div class="col-12"><label>Подробнее</label><textarea name="detailed" class="form-control" rows="3"></textarea></div>
 
-                    <!-- Оттенки -->
-                    <hr>
-                    <h5>Оттенки</h5>
+                        <div class="col-12">
+                            <label>Компаньоны (другие товары)</label>
+                            <select name="companions[]" class="form-select" multiple>
+                                @foreach($allProducts as $other)
+                                @php
+                                $skus = $other->variants->pluck('sku')->filter()->implode(', ');
+                                @endphp
+                                <option value="{{ $other->id }}">
+                                    {{ $skus ?: '(без артикулов)' }}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Варианты -->
+                    <div class="form-section-title">Оттенки</div>
                     <div id="variants-container">
-                        <!-- Один вариант по умолчанию -->
-                        <div class="variant-group mb-3">
+                        <div class="variant-group">
                             <div class="mb-2"><label>Артикул</label><input type="text" name="variants[0][sku]" class="form-control" required></div>
                             <div class="mb-2"><label>Цвет</label><input type="text" name="variants[0][color]" class="form-control" required></div>
                             <div class="mb-2"><label>Изображения</label><input type="file" name="variants[0][images][]" class="form-control" multiple required></div>
 
-                            <!-- Партии внутри варианта -->
-                            <div class="batches-container mt-3">
-                                <h6>Партии</h6>
-                                <div class="batch-group mb-2">
+                            <!-- Партии -->
+                            <div class="batches-container mt-2">
+                                <label class="d-block fw-semibold mb-2">Партии:</label>
+                                <div class="batch-group">
                                     <div class="mb-2"><label>Код партии</label><input type="text" name="variants[0][batches][0][batch_code]" class="form-control" required></div>
                                     <div class="mb-2"><label>Остаток</label><input type="number" name="variants[0][batches][0][stock]" class="form-control" required></div>
-                                    <button type="button" class="btn btn-sm btn-danger remove-batch">Удалить партию</button>
+                                    <button type="button" class="remove-batch">&times;</button>
                                 </div>
+                                <button type="button" class="btn btn-outline-secondary btn-sm add-batch mt-2">+ Партия</button>
                             </div>
-                            <button type="button" class="btn btn-sm btn-secondary add-batch">Добавить партию</button>
 
-                            <button type="button" class="btn btn-danger btn-sm remove-variant mt-3">Удалить оттенок</button>
+                            <button type="button" class="remove-variant">&times;</button>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-secondary mb-3" id="add-variant">Добавить оттенок</button>
 
-                    <button type="submit" class="btn btn-success">Сохранить</button>
+                    <!-- Кнопка добавить вариант -->
+                    <div class="text-end mt-2 mb-3">
+                        <button type="button" class="btn btn-outline-primary btn-sm" id="add-variant">+ Оттенок</button>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark">Сохранить</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- JS для динамического добавления -->
     <script>
         let variantIndex = 1;
 
         document.getElementById('add-variant').addEventListener('click', () => {
             const container = document.getElementById('variants-container');
-
             const variantHtml = `
-            <div class="variant-group mb-3">
+            <div class="variant-group">
                 <div class="mb-2"><label>Артикул</label><input type="text" name="variants[${variantIndex}][sku]" class="form-control" required></div>
                 <div class="mb-2"><label>Цвет</label><input type="text" name="variants[${variantIndex}][color]" class="form-control" required></div>
                 <div class="mb-2"><label>Изображения</label><input type="file" name="variants[${variantIndex}][images][]" class="form-control" multiple required></div>
 
-                <div class="batches-container mt-3">
-                    <h6>Партии</h6>
-                    <div class="batch-group mb-2">
+                <div class="batches-container mt-2">
+                    <label class="d-block fw-semibold mb-2">Партии:</label>
+                    <div class="batch-group">
                         <div class="mb-2"><label>Код партии</label><input type="text" name="variants[${variantIndex}][batches][0][batch_code]" class="form-control" required></div>
                         <div class="mb-2"><label>Остаток</label><input type="number" name="variants[${variantIndex}][batches][0][stock]" class="form-control" required></div>
-                        <button type="button" class="btn btn-sm btn-danger remove-batch">Удалить партию</button>
+                        <button type="button" class="remove-batch">&times;</button>
                     </div>
+                    <button type="button" class="btn btn-outline-secondary btn-sm add-batch mt-2">+ Партия</button>
                 </div>
-                <button type="button" class="btn btn-sm btn-secondary add-batch">Добавить партию</button>
-                <button type="button" class="btn btn-danger btn-sm remove-variant mt-3">Удалить оттенок</button>
-            </div>
-        `;
+
+                <button type="button" class="remove-variant">&times;</button>
+            </div>`;
             container.insertAdjacentHTML('beforeend', variantHtml);
             variantIndex++;
         });
@@ -149,12 +232,11 @@
                 const batchIdx = batchGroups.length;
 
                 const batchHtml = `
-                <div class="batch-group mb-2">
+                <div class="batch-group">
                     <div class="mb-2"><label>Код партии</label><input type="text" name="variants[${variantIdx}][batches][${batchIdx}][batch_code]" class="form-control" required></div>
                     <div class="mb-2"><label>Остаток</label><input type="number" name="variants[${variantIdx}][batches][${batchIdx}][stock]" class="form-control" required></div>
-                    <button type="button" class="btn btn-sm btn-danger remove-batch">Удалить партию</button>
-                </div>
-            `;
+                    <button type="button" class="remove-batch">&times;</button>
+                </div>`;
                 batchesContainer.insertAdjacentHTML('beforeend', batchHtml);
             }
 
@@ -163,6 +245,7 @@
             }
         });
     </script>
+
 </body>
 
 </html>

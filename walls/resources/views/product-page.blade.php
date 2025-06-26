@@ -335,6 +335,26 @@
                                 @endforeach
                             </select>
                         </div>
+
+                        @if($product->companions->count())
+                        <div class="mt-6">
+                            <h2 class="text-base font-semibold mb-2">Компаньоны</h2>
+
+                            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                                @foreach($product->companions as $companion)
+                                @foreach($companion->variants as $variant)
+                                <a href="{{ route('product.show', $companion->id) }}"
+                                    class="block border rounded p-2 hover:shadow-sm transition text-sm leading-tight">
+                                    <p class="font-medium truncate" style="margin-bottom: 3px;"> {{ $companion->name }}</p>
+                                    <p class="text-gray-600">{{ $variant->sku }}</p>
+                                    <p class="text-gray-600">{{ $variant->color }}</p>
+                                </a>
+                                @endforeach
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+
                     </div>
                 </div>
             </div>

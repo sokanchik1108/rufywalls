@@ -58,6 +58,32 @@
             border-radius: 6px;
             border: 1px solid #ddd;
         }
+
+        .form-select[multiple] {
+            height: auto;
+            min-height: 120px;
+            padding: 10px;
+            border-radius: 12px;
+            background-color: #fff;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            font-size: 14px;
+        }
+
+        .form-select[multiple]:focus {
+            border-color: #80bdff;
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .form-select option {
+            padding: 5px 10px;
+        }
+
+        .form-select option:checked {
+            background-color: #0d6efd !important;
+            color: white;
+        }
     </style>
 </head>
 
@@ -85,7 +111,6 @@
                         <h5 class="card-title mb-1 text-primary">Артикул: {{ $variant->sku }}</h5>
                         <p class="text-muted mb-2">Оттенок: <strong>{{ $variant->color }}</strong></p>
 
-                    
                         <p class="mb-1"><strong>Категория:</strong> {{ $product->category->category_name ?? '—' }}</p>
                         <p class="mb-1"><strong>Бренд:</strong> {{ $product->brand }}</p>
                         <p class="mb-1"><strong>Страна:</strong> {{ $product->country }}</p>
@@ -98,6 +123,21 @@
                             <span class="badge badge-room">{{ $room->room_name }}</span>
                             @endforeach
                         </p>
+
+                        @if($product->companions->isNotEmpty())
+                        <div class="mt-2">
+                            <p class="mb-1"><strong>Компаньоны:</strong></p>
+                            <ul class="small ps-3">
+                                @foreach($product->companions as $companion)
+                                <li>{{ $companion->name }} —
+                                    @php $compSkus = $companion->variants->pluck('sku')->filter()->implode(', ') @endphp
+                                    {{ $compSkus }}
+                                </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @endif
+
 
                         <p class="mb-3"><strong>Описание:</strong><br>{{ $product->description }}</p>
 
@@ -138,7 +178,6 @@
                             @method('PUT')
 
                             <div class="modal-header">
-                                <h5 class="modal-title text-primary">Редактировать товар и оттенок</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Закрыть"></button>
                             </div>
@@ -147,11 +186,7 @@
                                 <input type="hidden" name="product_id" value="{{ $product->id }}">
 
                                 <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Название</label>
-                                        <input type="text" name="name" class="form-control"
-                                            value="{{ $product->name }}" required>
-                                    </div>
+
 
                                     <h5 class="text-primary">Редактирование оттенка</h5>
 
@@ -216,6 +251,12 @@
                                     <h5 class="text-primary">Редактирование товара</h5>
 
                                     <div class="col-md-6">
+                                        <label class="form-label">Название</label>
+                                        <input type="text" name="name" class="form-control"
+                                            value="{{ $product->name }}" required>
+                                    </div>
+
+                                    <div class="col-md-6">
                                         <label class="form-label">Бренд</label>
                                         <input type="text" name="brand" class="form-control"
                                             value="{{ $product->brand }}" required>
@@ -241,7 +282,7 @@
 
                                     <div class="col-md-6">
                                         <label class="form-label">Цена прихода</label>
-                                        <input type="number" step="0.01" name="purchase_price"
+                                        <input type="text" name="purchase_price"
                                             class="form-control" value="{{ $product->purchase_price }}">
                                     </div>
 
@@ -288,6 +329,31 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <hr class="mt-4">
+
+                            <h5 class="text-primary mt-3" style="margin-left: 20px;">Привязка компаньонов</h5>
+
+                            <div class="col-md-12 mt-2" style="margin-left: 20px;max-width:95%;">
+                                <label class="form-label">Компаньоны (другие товары)</label>
+                                <select name="companion_variant_ids[]" class="form-select" multiple>
+                                    @foreach($allProducts as $other)
+                                    @if($other->id !== $product->id)
+                                    @php
+                                    $skus = $other->variants->pluck('sku')->filter()->implode(', ');
+                                    $firstVariantId = $other->variants->first()?->id;
+                                    $selected = $product->companions->contains($other->id);
+                                    @endphp
+                                    @if($firstVariantId)
+                                    <option value="{{ $firstVariantId }}" {{ $selected ? 'selected' : '' }}>
+                                        {{ $skus }} ({{ $other->name }})
+                                    </option>
+                                    @endif
+                                    @endif
+                                    @endforeach
+                                </select>
+                            </div>
+
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Отмена</button>

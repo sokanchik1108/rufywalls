@@ -11,21 +11,21 @@ use Illuminate\Support\Facades\Cookie;
 
 class WebsiteController extends Controller
 {
-public function website()
-{
-    $products = Product::with('category', 'rooms')->take(3)->get();
-    $categories = Category::all();
-    $rooms = Room::all();
+    public function website()
+    {
+        $products = Product::with('category', 'rooms')->take(3)->get();
+        $categories = Category::all();
+        $rooms = Room::all();
 
-    $variants = Variant::with(['product', 'batches'])->take(3)->get();
+        $variants = Variant::with(['product', 'batches'])->take(3)->get();
 
-    return view('website', compact('products', 'categories', 'rooms', 'variants'));
-}
+        return view('website', compact('products', 'categories', 'rooms', 'variants'));
+    }
 
-public function howToOrder()
-{
-    return view('partials.ordermake');
-}
+    public function howToOrder()
+    {
+        return view('partials.ordermake');
+    }
 
 
     public function catalog(Request $request)
@@ -109,16 +109,22 @@ public function howToOrder()
 
     public function show($id)
     {
-        $product = Product::with(['category', 'rooms', 'variants.batches'])->findOrFail($id);
+        $product = Product::with([
+            'category',
+            'rooms',
+            'variants.batches',
+            'companions.variants' // загружаем компаньонов и их варианты
+        ])->findOrFail($id);
+
         $variants = $product->variants;
         $activeVariant = $variants->first();
         $variantStock = $activeVariant
             ? $activeVariant->batches->sum('stock')
             : 0;
 
-
         return view('product-page', compact('product', 'variants', 'activeVariant', 'variantStock'));
     }
+
 
     public function variantData($id)
     {
