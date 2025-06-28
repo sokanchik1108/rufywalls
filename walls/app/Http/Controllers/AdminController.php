@@ -68,10 +68,21 @@ class AdminController extends Controller
 
             $product->rooms()->attach($validated['room_ids']);
 
+            // Сохраняем связи с компаньонами в обе стороны
             if (!empty($validated['companions'])) {
+                // Связь текущего товара с компаньонами
                 $product->companions()->sync($validated['companions']);
+
+                // Обратная связь: связываем каждого компаньона с текущим товаром
+                foreach ($validated['companions'] as $companionId) {
+                    $companion = Product::find($companionId);
+                    if ($companion) {
+                        $companion->companions()->syncWithoutDetaching([$product->id]);
+                    }
+                }
             }
 
+            // Сохраняем варианты и партии
             foreach ($validated['variants'] as $variantIndex => $variantData) {
                 $imagePaths = [];
                 if ($request->hasFile("variants.$variantIndex.images")) {
@@ -103,6 +114,7 @@ class AdminController extends Controller
     }
 
 
+
     public function index()
     {
 
@@ -126,97 +138,127 @@ class AdminController extends Controller
     }
 
 
-    public function update(Request $request, $id)
-    {
-        $product = Product::findOrFail($id);
+   public function update(Request $request, $id)
+{
+    $product = Product::findOrFail($id);
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'country' => 'required|string',
-            'sticking' => 'required|string',
-            'material' => 'required|string',
-            'purchase_price' => 'required',
-            'sale_price' => 'required|numeric',
-            'brand' => 'required|string',
-            'category_id' => 'required|exists:categories,id',
-            'room_ids' => 'required|array',
-            'room_ids.*' => 'exists:rooms,id',
-            'description' => 'required',
-            'detailed' => 'required',
-        ]);
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'country' => 'required|string',
+        'sticking' => 'required|string',
+        'material' => 'required|string',
+        'purchase_price' => 'required',
+        'sale_price' => 'required|numeric',
+        'brand' => 'required|string',
+        'category_id' => 'required|exists:categories,id',
+        'room_ids' => 'required|array',
+        'room_ids.*' => 'exists:rooms,id',
+        'description' => 'required|string',
+        'detailed' => 'required|string',
 
-        DB::beginTransaction();
-        try {
-            // Обновляем товар
-            $product->update($validated);
-            $product->rooms()->sync($validated['room_ids']);
+        // 👇 добавляем companion_variant_ids
+        'companion_variant_ids' => 'nullable|array',
+        'companion_variant_ids.*' => 'exists:variants,id',
+    ]);
 
-            // Обновление компаньонов через variant_id → product_id
-            if ($request->has('companion_variant_ids')) {
-                $variantIds = $request->input('companion_variant_ids', []);
+    DB::beginTransaction();
 
-                $companionProductIds = Variant::whereIn('id', $variantIds)
-                    ->pluck('product_id')
-                    ->unique()
-                    ->toArray();
+    try {
+        // Обновление основного товара
+        $product->update($validated);
+        $product->rooms()->sync($validated['room_ids']);
 
-                // Исключаем сам товар
-                $companionProductIds = array_diff($companionProductIds, [$product->id]);
+        // 🔁 Компаньоны по variant_id → product_id
+        if (!empty($validated['companion_variant_ids'])) {
+            // Получаем ID товаров по variant_id
+            $companionProductIds = Variant::whereIn('id', $validated['companion_variant_ids'])
+                ->pluck('product_id')
+                ->unique()
+                ->toArray();
 
-                $product->companions()->sync($companionProductIds);
-            }
+            // Исключаем текущий товар
+            $companionProductIds = array_diff($companionProductIds, [$product->id]);
 
-            // Обновление изображений товара
-            if ($request->hasFile('images')) {
-                $imagePaths = [];
-                foreach ($request->file('images') as $image) {
-                    $imagePaths[] = $image->store('product_images', 'public');
-                }
-                $product->images = json_encode($imagePaths);
-                $product->save();
-            }
+            // Обновляем связи
+            $product->companions()->sync($companionProductIds);
 
-            // Обновление вариантов и партий
-            if ($request->has('variants')) {
-                foreach ($request->input('variants') as $variantId => $variantData) {
-                    $variant = $product->variants()->find($variantId);
-                    if (!$variant) continue;
-
-                    $variant->sku = $variantData['sku'] ?? $variant->sku;
-                    $variant->color = $variantData['color'] ?? $variant->color;
-
-                    if ($request->hasFile("variants.$variantId.images")) {
-                        $images = $request->file("variants.$variantId.images");
-                        $paths = [];
-                        foreach ($images as $img) {
-                            $paths[] = $img->store('variant_images', 'public');
-                        }
-                        $variant->images = json_encode($paths);
-                    }
-
-                    $variant->save();
-
-                    // Обновление партий
-                    if (isset($variantData['batches'])) {
-                        foreach ($variantData['batches'] as $batchId => $batchData) {
-                            $batch = $variant->batches()->find($batchId);
-                            if (!$batch) continue;
-
-                            $batch->batch_code = $batchData['batch_code'] ?? $batch->batch_code;
-                            $batch->stock = $batchData['stock'] ?? $batch->stock;
-                            $batch->save();
-                        }
-                    }
+            // Обратные связи
+            foreach ($companionProductIds as $companionId) {
+                $companion = Product::find($companionId);
+                if ($companion) {
+                    $companion->companions()->syncWithoutDetaching([$product->id]);
                 }
             }
 
-            DB::commit();
-            return redirect()->route('admin.database')->with('success', 'Товар успешно обновлён');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->back()->withErrors(['error' => 'Ошибка при обновлении: ' . $e->getMessage()]);
+            // Удалим устаревшие обратные связи
+            $oldCompanions = Product::whereHas('companions', function ($q) use ($product) {
+                $q->where('companion_id', $product->id);
+            })->get();
+
+            foreach ($oldCompanions as $oldCompanion) {
+                if (!in_array($oldCompanion->id, $companionProductIds)) {
+                    $oldCompanion->companions()->detach($product->id);
+                }
+            }
+        } else {
+            // Удаляем все связи, если ничего не пришло
+            foreach ($product->companions as $companion) {
+                $companion->companions()->detach($product->id);
+            }
+            $product->companions()->detach();
         }
+
+        // Обновляем изображения товара
+        if ($request->hasFile('images')) {
+            $imagePaths = [];
+            foreach ($request->file('images') as $image) {
+                $imagePaths[] = $image->store('product_images', 'public');
+            }
+            $product->images = json_encode($imagePaths);
+            $product->save();
+        }
+
+        // Обновляем варианты и партии
+        if ($request->has('variants')) {
+            foreach ($request->input('variants') as $variantId => $variantData) {
+                $variant = $product->variants()->find($variantId);
+                if (!$variant) continue;
+
+                $variant->sku = $variantData['sku'] ?? $variant->sku;
+                $variant->color = $variantData['color'] ?? $variant->color;
+
+                if ($request->hasFile("variants.$variantId.images")) {
+                    $paths = [];
+                    foreach ($request->file("variants.$variantId.images") as $img) {
+                        $paths[] = $img->store('variant_images', 'public');
+                    }
+                    $variant->images = json_encode($paths);
+                }
+
+                $variant->save();
+
+                // Обновляем партии
+                if (isset($variantData['batches'])) {
+                    foreach ($variantData['batches'] as $batchId => $batchData) {
+                        $batch = $variant->batches()->find($batchId);
+                        if (!$batch) continue;
+
+                        $batch->batch_code = $batchData['batch_code'] ?? $batch->batch_code;
+                        $batch->stock = $batchData['stock'] ?? $batch->stock;
+                        $batch->save();
+                    }
+                }
+            }
+        }
+
+        DB::commit();
+        return redirect()->route('admin.database')->with('success', 'Товар успешно обновлён');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->back()->withErrors(['error' => 'Ошибка при обновлении: ' . $e->getMessage()]);
     }
+}
+
 
 
 
@@ -323,4 +365,4 @@ class AdminController extends Controller
 
         return redirect()->back()->with('success', 'Права пользователя обновлены.');
     }
-} 
+}

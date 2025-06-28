@@ -59,4 +59,10 @@ class Product extends Model
             'product_id'
         );
     }
+
+    public function companionOf()
+{
+ return $this->belongsToMany(Product::class, 'product_companions', 'product_id', 'companion_id');
+}
+
 }

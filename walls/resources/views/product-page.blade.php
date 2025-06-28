@@ -341,7 +341,12 @@
                             <h2 class="text-base font-semibold mb-2">Компаньоны</h2>
 
                             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                                @foreach($product->companions as $companion)
+                                @php
+                                $companions = $product->companions->merge($product->companionOf)->unique('id');
+                                @endphp
+
+
+                                @foreach ($companions as $companion)
                                 @foreach($companion->variants as $variant)
                                 <a href="{{ route('product.show', $companion->id) }}"
                                     class="block border rounded p-2 hover:shadow-sm transition text-sm leading-tight">
@@ -354,6 +359,8 @@
                             </div>
                         </div>
                         @endif
+
+
 
                     </div>
                 </div>
