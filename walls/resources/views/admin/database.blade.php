@@ -155,7 +155,7 @@
                                 <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#editModal{{ $variant->id }}">Редактировать</button>
 
-                                <form action="{{ route('products.destroy', $product->id) }}" method="POST"
+                                <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST"
                                     onsubmit="return confirm('Удалить этот товар?');">
                                     @csrf
                                     @method('DELETE')
@@ -172,7 +172,7 @@
                 aria-labelledby="editModalLabel{{ $variant->id }}" aria-hidden="true">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
-                        <form action="{{ route('products.update', $product->id) }}" method="POST"
+                        <form action="{{ route('admin.products.update', $product->id) }}" method="POST"
                             enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
