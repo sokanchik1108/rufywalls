@@ -8,9 +8,21 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Auth;
 
+Route::get('/address', function () {
+    return view('navigations.address');
+});
+
+Route::get('/delivery', function () {
+    return view('navigations.delivery');
+});
+
+Route::get('/about-products', function () {
+    return view('navigations.about-products');
+});
 
 
 
+Route::get('/calculator', [WebsiteController::class, 'Calculator'])->name('calculator');
 
 Route::get('/', [WebsiteController::class, 'website'])->name('website');
 

@@ -122,11 +122,12 @@
                 <!-- Меню и кнопка -->
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav mx-auto d-flex align-items-lg-center gap-3">
-                        <li class="nav-item"><a class="nav-link" href="#contacts">Адрес</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#contacts">Контакты</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#delivery">Доставка</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#product-info">О нашей продукции</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/address">Адрес</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/address">Контакты</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/delivery">Доставка</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/about-products">О нашей продукции</a></li>
                         <li class="nav-item"><a class="nav-link" href=" {{ route('how-to-order') }} ">Как оформить заказ</a></li>
+                        <li class="nav-item"><a class="nav-link" href=" {{ route('calculator') }} ">Калькулятор обоев</a></li>
                     </ul>
 
                     <!-- Блок корзины и каталога -->

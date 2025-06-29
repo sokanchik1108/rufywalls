@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="ru">
+@extends('layouts.app') 
 
-<head>
-    <meta charset="UTF-8">
-    <title>Добавить обои</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+@section('title', 'Добавить товары')
+
+@section('content')
     <style>
         body {
             background: #f8f9fa;
@@ -119,7 +117,7 @@
                     <div class="row g-2">
                         <div class="col-md-6"><label>Название</label><input type="text" name="name" class="form-control" required></div>
                         <div class="col-md-6"><label>Страна</label><input type="text" name="country" class="form-control" required></div>
-                        <div class="col-md-6"><label>Тип поклейки</label><input type="text" name="sticking" class="form-control" required></div>
+                        <div class="col-md-6"><label>Раппорт</label><input type="text" name="sticking" class="form-control" required></div>
                         <div class="col-md-6"><label>Материал</label><input type="text" name="material" class="form-control" required></div>
                         <div class="col-md-6"><label>Цена прихода</label><input type="text" name="purchase_price" class="form-control" required></div>
                         <div class="col-md-6"><label>Цена продажи</label><input type="number" name="sale_price" class="form-control" required></div>
@@ -248,4 +246,4 @@
 
 </body>
 
-</html>
+@endsection

@@ -5,8 +5,13 @@
     <div class="row justify-content-center">
         <div class="col-lg-10">
             <div class="card shadow-sm border-0 rounded-4">
-                <div class="card-header bg-white border-bottom-0">
+                <div class="card-header bg-white border-bottom-0 d-flex justify-content-between align-items-center">
                     <h4 class="mb-0 text-dark fw-semibold">{{ __('Панель администратора') }}</h4>
+
+                    {{-- Кнопка перехода на сайт --}}
+                    <a href="{{ route('website') }}" class="btn btn-sm btn-outline-primary rounded-pill">
+                        🌐 Перейти на сайт
+                    </a>
                 </div>
 
                 <div class="card-body">

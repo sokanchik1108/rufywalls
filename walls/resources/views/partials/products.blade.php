@@ -10,49 +10,50 @@
 </div>
 
 <div class="product-grid">
-    @foreach ($variants as $variant)
-    @php
-        $product = $variant->product;
-        $images = json_decode($variant->images, true);
-    @endphp
+    @forelse ($variants as $variant)
+        @php
+            $product = $variant->product;
+            $images = json_decode($variant->images, true);
+        @endphp
 
-    <div class="product-card">
-        @if (!empty($images))
-        <div id="carousel{{ $variant->id }}" class="carousel slide mb-3">
-            <div class="carousel-inner">
-                @foreach ($images as $index => $image)
-                <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                    <img src="{{ asset('storage/' . $image) }}" class="d-block w-100" alt="Изображение {{ $index + 1 }}">
+        <div class="product-card">
+            @if (!empty($images))
+                <div id="carousel{{ $variant->id }}" class="carousel slide mb-3">
+                    <div class="carousel-inner">
+                        @foreach ($images as $index => $image)
+                            <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                                <img src="{{ asset('storage/' . $image) }}" class="d-block w-100" alt="Изображение {{ $index + 1 }}">
+                            </div>
+                        @endforeach
+                    </div>
+
+                    @if (count($images) > 1)
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ $variant->id }}" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ $variant->id }}" data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </button>
+                    @endif
                 </div>
-                @endforeach
-            </div>
-
-            @if (count($images) > 1)
-            <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ $variant->id }}" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ $variant->id }}" data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
-            </button>
             @endif
-        </div>
-        @endif
 
-        <div class="product-info">
-            <h4 class="product-title">{{ $product->name }} ({{ $variant->color }})</h4>
+            <div class="product-info">
+                <h4 class="product-title">{{ $product->name }} ({{ $variant->color }})</h4>
 
-            <div class="product-desc-price">
-                <p>{{ $product->description }}</p>
-                <span>{{ number_format($product->sale_price, 0, '.', ' ') }} ₸</span>
+                <div class="product-desc-price">
+                    <p>{{ $product->description }}</p>
+                    <span>{{ number_format($product->sale_price, 0, '.', ' ') }} ₸</span>
+                </div>
+
+                <div class="btn-wrapper">
+                    <a href="{{ route('product.show', $product->id) }}" class="btn btn-dark">Подробнее</a>
+                </div>
             </div>
-
-            <div class="btn-wrapper">
-                <a href="{{ route('product.show', $product->id) }}" class="btn btn-dark">Подробнее</a>
-            </div>
         </div>
-    </div>
-@endforeach
-
+    @empty
+    <p>Товары не найдены.</p>
+    @endforelse
 </div>
 
 <div class="pagination-wrapper">
@@ -119,7 +120,6 @@
         margin-bottom: 5px;
         line-height: 1.2;
         min-height: 48px;
-        /* устойчиво для двух строк */
         overflow: hidden;
     }
 

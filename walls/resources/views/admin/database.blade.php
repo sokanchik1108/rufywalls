@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="ru">
+@extends('layouts.app') 
 
-<head>
-    <meta charset="UTF-8">
-    <title>Варианты товаров</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+@section('content')
     <style>
         body {
             background-color: #f2f4f7;
@@ -117,6 +113,7 @@
                         <p class="mb-1"><strong>Материал:</strong> {{ $product->material }}</p>
                         <p class="mb-1"><strong>Цена прихода:</strong> {{ $product->purchase_price }}</p>
                         <p class="mb-1"><strong>Цена продажи:</strong> {{ $product->sale_price }}</p>
+                        <p class="mb-1"><strong>Раппорт:</strong> {{ $product->sticking }}</p>
 
                         <p class="mb-2"><strong>Комнаты:</strong><br>
                             @foreach($product->rooms as $room)
@@ -269,7 +266,7 @@
                                     </div>
 
                                     <div class="col-md-6">
-                                        <label class="form-label">Тип поклейки</label>
+                                        <label class="form-label">Раппорт</label>
                                         <input type="text" name="sticking" class="form-control"
                                             value="{{ $product->sticking }}">
                                     </div>
@@ -371,5 +368,4 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
-</html>
+@endsection

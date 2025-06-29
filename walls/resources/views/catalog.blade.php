@@ -17,21 +17,8 @@
     </div>
 </div>
 
-<div class="sections-wrapper">
-
-    <div class="section-block section-about">
-        @include('sections.about-products', ['showButton' => false])
-    </div>
-
-    <div class="section-block section-delivery">
-        @include('sections.delivery')
-    </div>
-
-    @include('sections.contacts')
-
     @include('partials.footer')
 
-</div>
 
 
 <script>
@@ -121,42 +108,7 @@
 </script>
 
 <style>
-     .sections-wrapper {
-        margin-top: 80px;
-    }
 
-    .section-block {
-        padding: 80px 20px;
-        max-width: 1200px;
-        margin: 0 auto;
-        position: relative;
-    }
-
-    .section-block+.section-block::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 5%;
-        width: 90%;
-        height: 1px;
-        background: linear-gradient(to right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.02));
-    }
-
-    .section-about,
-    .section-delivery,
-    .section-contacts {
-        background-color: #ffffff;
-        border-radius: 20px;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
-        margin-bottom: 60px;
-    }
-
-    .section-footer {
-        background-color: #01142f;
-        color: #fff;
-        padding: 80px 20px 40px;
-        border-radius: 20px 20px 0 0;
-    }
     
     .catalog-header {
         text-align: center;

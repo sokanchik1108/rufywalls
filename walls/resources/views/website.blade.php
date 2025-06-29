@@ -4,6 +4,8 @@
 
 @section('content')
 
+@include('sections.sale')
+
 @include('sections.title')
 
 @include('sections.about-products')

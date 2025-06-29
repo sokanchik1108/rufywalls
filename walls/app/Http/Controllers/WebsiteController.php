@@ -24,7 +24,12 @@ class WebsiteController extends Controller
 
     public function howToOrder()
     {
-        return view('partials.ordermake');
+        return view('navigations.ordermake');
+    }
+
+        public function Calculator()
+    {
+        return view('navigations.calculator');
     }
 
 
@@ -94,7 +99,7 @@ class WebsiteController extends Controller
                 $variants->latest();
         }
 
-        $variants = $variants->paginate(7)->withQueryString();
+        $variants = $variants->paginate(15)->withQueryString();
 
         if ($request->ajax()) {
             return view('partials.products', compact('variants'))->render();

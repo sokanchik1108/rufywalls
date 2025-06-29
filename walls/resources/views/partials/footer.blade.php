@@ -13,10 +13,11 @@
                 <h6 class="text-uppercase fw-bold mb-2">Навигация</h6>
                 <ul class="list-unstyled">
                     <li><a href="/" class="footer-link">Главная</a></li>
-                    <li><a href="/database" class="footer-link">Каталог</a></li>
-                    <li><a href="#product-info" class="footer-link">О продукции</a></li>
-                    <li><a href="#contact" class="footer-link">Контакты</a></li>
+                    <li><a href="/catalog" class="footer-link">Каталог</a></li>
+                    <li><a href="/about-products" class="footer-link">О нашей продукции</a></li>
+                    <li><a href="/address" class="footer-link">Контакты</a></li>
                     <li><a href="{{ route('how-to-order') }} " class="footer-link">Как оформить заказ?</a></li>
+                    <li><a href="{{ route('calculator') }} " class="footer-link">Калькулятор</a></li>
                 </ul>
             </div>
 
