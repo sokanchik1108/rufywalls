@@ -42,7 +42,7 @@
         /* Смартфоны */
         @media (max-width: 768px) {
             .carousel-item img {
-                height: 300px;
+                height: 500px;
             }
         }
 
@@ -136,29 +136,7 @@
             margin-bottom: 0.5rem;
             display: block;
         }
-    </style>
-</head>
 
-
-
-
-
-<body class="text-gray-900">
-
-    <a href="{{ route('cart') }}"
-        class="text-decoration-none"
-        style="position: fixed; top: 30px; right: 40px; z-index: 1050;">
-        <div class="cart-icon">
-            <i class="bi bi-bag"></i>
-            <span class="cart-count" id="cart-count">{{ $cartCount }}</span>
-        </div>
-    </a>
-
-
-
-
-
-    <style>
         .cart-icon {
             position: relative;
             font-size: 1.4rem;
@@ -181,14 +159,21 @@
             border-radius: 50%;
         }
     </style>
+</head>
 
+<body class="text-gray-900">
+
+    <a href="{{ route('cart') }}"
+        class="text-decoration-none"
+        style="position: fixed; top: 30px; right: 40px; z-index: 1050;">
+        <div class="cart-icon">
+            <i class="bi bi-bag"></i>
+            <span class="cart-count" id="cart-count">{{ $cartCount }}</span>
+        </div>
+    </a>
 
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
-
-
-
 
 
     <!-- Уведомление -->
@@ -219,7 +204,7 @@
                     @php $images = json_decode($activeVariant->images); @endphp
                     @if ($images)
                     <div>
-                        <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div id="mainCarousel" class="carousel slide">
                             <div class="carousel-inner" id="variant-images">
                                 @foreach($images as $index => $image)
                                 <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
@@ -237,8 +222,6 @@
                             @endif
                         </div>
                     </div>
-
-
 
                     <div class="thumbnail-container mt-3">
                         @foreach($images as $index => $image)
@@ -307,7 +290,7 @@
                                 <p>{{ $product->material }}</p>
                             </div>
                             <div>
-                                <p class="uppercase text-xs text-gray-400">Поклейка</p>
+                                <p class="uppercase text-xs text-gray-400">Раппорт</p>
                                 <p>{{ $product->sticking }}</p>
                             </div>
                             <div>
@@ -379,138 +362,199 @@
     </div>
 
     <!-- Скрипт -->
-    <script>
-        const quantityInput = document.getElementById('quantity');
-        const variantInput = document.getElementById('variant-id-input');
+<script>
+    const quantityInput = document.getElementById('quantity');
+    const variantInput = document.getElementById('variant-id-input');
+    let zoomImages = [];
+    let currentZoomIndex = 0;
 
-        document.getElementById('variant-select').addEventListener('change', function() {
-            const variantId = this.value;
+    function openZoom(src) {
+        const zoomModal = document.getElementById('zoomModal');
+        const zoomImage = document.getElementById('zoomImage');
 
-            fetch(`/variant/${variantId}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Обновить скрытое поле variant_id
-                    variantInput.value = data.id;
+        currentZoomIndex = zoomImages.indexOf(src);
+        if (currentZoomIndex === -1) currentZoomIndex = 0;
 
-                    // Обновить артикул и остаток
-                    document.getElementById('variant-sku').textContent = data.sku;
-                    document.getElementById('variant-stock').textContent = data.stock + ' шт.';
+        zoomImage.src = zoomImages[currentZoomIndex];
+        zoomModal.classList.remove('hidden');
+    }
 
-                    // Обновить ограничение количества
-                    if (quantityInput) {
-                        quantityInput.max = data.stock;
-                        quantityInput.setAttribute('max', data.stock);
-                        quantityInput.value = Math.min(parseInt(quantityInput.value) || 1, data.stock);
-                    }
+    function closeZoom() {
+        document.getElementById('zoomModal').classList.add('hidden');
+    }
 
-                    // Обновить изображения в карусели
-                    const carouselInner = document.getElementById('variant-images');
-                    carouselInner.innerHTML = '';
-                    data.images.forEach((img, index) => {
-                        const div = document.createElement('div');
-                        div.className = 'carousel-item' + (index === 0 ? ' active' : '');
-                        div.innerHTML = `<img src="/storage/${img}" alt="Изображение ${index + 1}">`;
-                        carouselInner.appendChild(div);
+    function showZoomImage() {
+        const zoomImage = document.getElementById('zoomImage');
+        zoomImage.src = zoomImages[currentZoomIndex];
+    }
+
+    function prevZoomImage() {
+        currentZoomIndex = (currentZoomIndex - 1 + zoomImages.length) % zoomImages.length;
+        showZoomImage();
+    }
+
+    function nextZoomImage() {
+        currentZoomIndex = (currentZoomIndex + 1) % zoomImages.length;
+        showZoomImage();
+    }
+
+    document.getElementById('variant-select').addEventListener('change', function () {
+        const variantId = this.value;
+
+        fetch(`/variant/${variantId}`)
+            .then(response => response.json())
+            .then(data => {
+                variantInput.value = data.id;
+
+                document.getElementById('variant-sku').textContent = data.sku;
+                document.getElementById('variant-stock').textContent = data.stock + ' шт.';
+
+                if (quantityInput) {
+                    quantityInput.max = data.stock;
+                    quantityInput.setAttribute('max', data.stock);
+                    quantityInput.value = Math.min(parseInt(quantityInput.value) || 1, data.stock);
+                }
+
+                const carouselInner = document.getElementById('variant-images');
+                carouselInner.innerHTML = '';
+                zoomImages = [];
+
+                data.images.forEach((img, index) => {
+                    const fullImgSrc = `/storage/${img}`;
+                    zoomImages.push(fullImgSrc);
+
+                    const div = document.createElement('div');
+                    div.className = 'carousel-item' + (index === 0 ? ' active' : '');
+                    div.innerHTML = `<img src="${fullImgSrc}" alt="Изображение ${index + 1}" style="cursor: zoom-in;">`;
+                    div.querySelector('img').addEventListener('click', () => openZoom(fullImgSrc));
+                    carouselInner.appendChild(div);
+                });
+
+                const thumbnailContainer = document.querySelector('.thumbnail-container');
+                thumbnailContainer.innerHTML = '';
+                data.images.forEach((img, index) => {
+                    const thumb = document.createElement('img');
+                    thumb.src = `/storage/${img}`;
+                    thumb.alt = `Миниатюра ${index + 1}`;
+                    thumb.className = index === 0 ? 'active' : '';
+                    thumb.setAttribute('data-bs-target', '#mainCarousel');
+                    thumb.setAttribute('data-bs-slide-to', index);
+
+                    thumb.addEventListener('click', () => {
+                        document.querySelectorAll('.thumbnail-container img').forEach(i => i.classList.remove('active'));
+                        thumb.classList.add('active');
                     });
 
-                    // Обновить миниатюры
-                    const thumbnailContainer = document.querySelector('.thumbnail-container');
-                    thumbnailContainer.innerHTML = '';
-                    data.images.forEach((img, index) => {
-                        const thumb = document.createElement('img');
-                        thumb.src = `/storage/${img}`;
-                        thumb.alt = `Миниатюра ${index + 1}`;
-                        thumb.className = index === 0 ? 'active' : '';
-                        thumb.setAttribute('data-bs-target', '#mainCarousel');
-                        thumb.setAttribute('data-bs-slide-to', index);
-
-                        thumb.addEventListener('click', () => {
-                            document.querySelectorAll('.thumbnail-container img').forEach(i => i.classList.remove('active'));
-                            thumb.classList.add('active');
-                        });
-
-                        thumbnailContainer.appendChild(thumb);
-                    });
+                    thumbnailContainer.appendChild(thumb);
                 });
+            });
+    });
+
+    function changeQuantity(delta) {
+        if (!quantityInput) return;
+        let value = parseInt(quantityInput.value) || 1;
+        const min = parseInt(quantityInput.min) || 1;
+        const max = parseInt(quantityInput.max) || 999;
+        value += delta;
+        quantityInput.value = Math.max(min, Math.min(max, value));
+    }
+
+    document.getElementById('add-to-cart-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const variantId = variantInput.value;
+        const quantity = quantityInput.value;
+        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        fetch('/cart/add', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                variant_id: variantId,
+                quantity
+            })
+        })
+            .then(async response => {
+                const data = await response.json();
+                const messageBox = document.getElementById('cart-message');
+                const innerBox = document.getElementById('cart-message-inner');
+                const textBox = document.getElementById('cart-message-text');
+
+                if (!response.ok) throw new Error(data.message || 'Ошибка запроса');
+
+                innerBox.classList.remove('bg-red-500');
+                innerBox.classList.add('bg-black');
+                textBox.textContent = data.message || 'Товар добавлен в корзину';
+                messageBox.classList.remove('hidden');
+                setTimeout(() => messageBox.classList.add('hidden'), 3000);
+
+                if (document.querySelector('#cart-count')) {
+                    document.querySelector('#cart-count').textContent = data.cart_count;
+                }
+
+                localStorage.setItem('cartUpdated', Date.now());
+            })
+
+            .catch(() => {
+                const messageBox = document.getElementById('cart-message');
+                const innerBox = document.getElementById('cart-message-inner');
+                const textBox = document.getElementById('cart-message-text');
+
+                innerBox.classList.remove('bg-black');
+                innerBox.classList.add('bg-red-500');
+                textBox.textContent = 'Не удалось добавить товар. Попробуйте позже.';
+                messageBox.classList.remove('hidden');
+                setTimeout(() => messageBox.classList.add('hidden'), 3000);
+            });
+    });
+
+    const carousel = document.getElementById('mainCarousel');
+    carousel.addEventListener('slid.bs.carousel', (event) => {
+        const index = event.to;
+        const thumbnails = document.querySelectorAll('.thumbnail-container img');
+        thumbnails.forEach(img => img.classList.remove('active'));
+        if (thumbnails[index]) thumbnails[index].classList.add('active');
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        zoomImages = Array.from(document.querySelectorAll('#variant-images img')).map(img => img.src);
+
+        document.querySelectorAll('#variant-images img').forEach((img, index) => {
+            img.style.cursor = 'zoom-in';
+            img.addEventListener('click', () => openZoom(img.src));
         });
+    });
 
-        function changeQuantity(delta) {
-            if (!quantityInput) return;
-            let value = parseInt(quantityInput.value) || 1;
-            const min = parseInt(quantityInput.min) || 1;
-            const max = parseInt(quantityInput.max) || 999;
-            value += delta;
-            quantityInput.value = Math.max(min, Math.min(max, value));
-        }
+    // Клавиатурная навигация (опционально)
+    document.addEventListener('keydown', (e) => {
+        const zoomModal = document.getElementById('zoomModal');
+        if (zoomModal.classList.contains('hidden')) return;
 
-        document.getElementById('add-to-cart-form').addEventListener('submit', function(e) {
-            e.preventDefault();
+        if (e.key === 'ArrowLeft') prevZoomImage();
+        if (e.key === 'ArrowRight') nextZoomImage();
+        if (e.key === 'Escape') closeZoom();
+    });
+</script>
 
-            const variantId = variantInput.value;
-            const quantity = quantityInput.value;
-            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+>
+<!-- Модальное окно для увеличения изображения -->
+<div id="zoomModal" class="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center hidden">
+    <span class="absolute top-4 right-6 text-white text-3xl cursor-pointer z-10" onclick="closeZoom()">×</span>
+    
+    <!-- Стрелки -->
+    <button id="prevZoom" class="absolute left-4 text-white text-4xl z-10" onclick="prevZoomImage()">‹</button>
+    <button id="nextZoom" class="absolute right-4 text-white text-4xl z-10" onclick="nextZoomImage()">›</button>
 
-            fetch('/cart/add', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': token,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify({
-                        variant_id: variantId,
-                        quantity
-                    })
-                })
-                .then(async response => {
-                    const data = await response.json();
-                    const messageBox = document.getElementById('cart-message');
-                    const innerBox = document.getElementById('cart-message-inner');
-                    const textBox = document.getElementById('cart-message-text');
-
-                    if (!response.ok) throw new Error(data.message || 'Ошибка запроса');
-
-                    innerBox.classList.remove('bg-red-500');
-                    innerBox.classList.add('bg-black');
-                    textBox.textContent = data.message || 'Товар добавлен в корзину';
-                    messageBox.classList.remove('hidden');
-                    setTimeout(() => messageBox.classList.add('hidden'), 3000);
-
-                    // Если элемент есть, обновляем
-                    if (document.querySelector('#cart-count')) {
-                        document.querySelector('#cart-count').textContent = data.cart_count;
-                    }
-
-                    // ⚠️ Обновляем localStorage, чтобы другие страницы заметили
-                    localStorage.setItem('cartUpdated', Date.now());
-
-                })
-
-                .catch(() => {
-                    const messageBox = document.getElementById('cart-message');
-                    const innerBox = document.getElementById('cart-message-inner');
-                    const textBox = document.getElementById('cart-message-text');
-
-                    innerBox.classList.remove('bg-black');
-                    innerBox.classList.add('bg-red-500');
-                    textBox.textContent = 'Не удалось добавить товар. Попробуйте позже.';
-                    messageBox.classList.remove('hidden');
-                    setTimeout(() => messageBox.classList.add('hidden'), 3000);
-                });
-        });
-
-        // Синхронизация миниатюр с каруселью
-        const carousel = document.getElementById('mainCarousel');
-        carousel.addEventListener('slid.bs.carousel', (event) => {
-            const index = event.to;
-            const thumbnails = document.querySelectorAll('.thumbnail-container img');
-            thumbnails.forEach(img => img.classList.remove('active'));
-            if (thumbnails[index]) thumbnails[index].classList.add('active');
-        });
-    </script>
-
-
+    <img id="zoomImage"
+         src=""
+         alt="Увеличенное изображение"
+         class="object-contain rounded shadow-lg max-w-[95vw] max-h-[95vh] sm:max-w-[90vw] sm:max-h-[90vh]">
+</div>
 
 </body>
 

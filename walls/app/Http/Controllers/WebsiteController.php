@@ -99,7 +99,7 @@ class WebsiteController extends Controller
                 $variants->latest();
         }
 
-        $variants = $variants->paginate(15)->withQueryString();
+        $variants = $variants->paginate(9)->withQueryString();
 
         if ($request->ajax()) {
             return view('partials.products', compact('variants'))->render();

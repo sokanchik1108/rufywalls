@@ -13,12 +13,10 @@
             <div class="col-md-4">
                 <div class="rafy-card h-100">
 
-                    <div id="carousel{{ $product->id }}" class="carousel slide mb-3">
+                    <div id="carousel{{ $variant->id }}" class="carousel slide mb-3">
                         <div class="carousel-inner">
                             @foreach($images as $index => $image)
                             <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-
-
                                 <img src="{{ asset('storage/' . $image) }}" class="rafy-card-img" alt="Rafy Walls 3">
                             </div>
                             @endforeach
