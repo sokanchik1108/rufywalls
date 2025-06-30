@@ -225,6 +225,12 @@
         color: #555;
     }
 
+    .checkbox-item input[type="radio"]:checked + label {
+    font-weight: bold;
+    color: black;
+}
+
+
     @media (max-width: 992px) {
 
         .filters-wrapper {

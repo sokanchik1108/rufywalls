@@ -15,7 +15,7 @@
                 <h5 class="fw-semibold">Адрес:</h5>
                 <p class="text-secondary mb-0">
                     <a href="https://go.2gis.com/9VZVk" class="text-decoration-none text-primary" target="_blank">
-                        Рыскулова pозыбакиева, рынок Сауран, новое здание №109,
+                        Рыскулова Розыбакиева, рынок Сауран, новое здание №109,
                         Казахстан, Алматы
                     </a>
                 </p>

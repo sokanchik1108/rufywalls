@@ -27,7 +27,7 @@ class WebsiteController extends Controller
         return view('navigations.ordermake');
     }
 
-        public function Calculator()
+    public function Calculator()
     {
         return view('navigations.calculator');
     }
@@ -61,6 +61,19 @@ class WebsiteController extends Controller
         if ($request->filled('in_stock')) {
             $variants->whereHas('batches', fn($q) => $q->where('stock', '>', 0));
         }
+
+        if ($request->filled('sticking')) {
+            $variants->whereHas('product', function ($q) use ($request) {
+                if ($request->sticking === 'yes') {
+                    $q->whereRaw("LOWER(sticking) != 'Нет'");
+                } elseif ($request->sticking === 'no') {
+                    $q->whereRaw("LOWER(sticking) = 'Нет'");
+                }
+            });
+        }
+
+
+
 
         if ($request->filled('price_min')) {
             $variants->whereHas('product', fn($q) => $q->where('sale_price', '>=', $request->price_min));
@@ -99,7 +112,7 @@ class WebsiteController extends Controller
                 $variants->latest();
         }
 
-        $variants = $variants->paginate(9)->withQueryString();
+        $variants = $variants->paginate(6)->withQueryString();
 
         if ($request->ajax()) {
             return view('partials.products', compact('variants'))->render();

@@ -1,86 +1,86 @@
-@extends('layouts.app') 
+@extends('layouts.app')
 
 @section('title', 'Добавить товары')
 
 @section('content')
-    <style>
-        body {
-            background: #f8f9fa;
-            font-family: system-ui, sans-serif;
-            font-size: 14px;
-        }
+<style>
+    body {
+        background: #f8f9fa;
+        font-family: system-ui, sans-serif;
+        font-size: 14px;
+    }
 
-        .form-container {
-            max-width: 800px;
-            margin: 30px auto;
-        }
+    .form-container {
+        max-width: 800px;
+        margin: 30px auto;
+    }
 
-        .card {
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-        }
+    .card {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+    }
 
-        .card-header {
-            background: #ffffff;
-            border-bottom: 1px solid #dee2e6;
-            padding: 10px 15px;
-        }
+    .card-header {
+        background: #ffffff;
+        border-bottom: 1px solid #dee2e6;
+        padding: 10px 15px;
+    }
 
-        .card-header h4 {
-            font-size: 18px;
-            margin: 0;
-        }
+    .card-header h4 {
+        font-size: 18px;
+        margin: 0;
+    }
 
-        label {
-            font-weight: 500;
-            margin-bottom: 4px;
-        }
+    label {
+        font-weight: 500;
+        margin-bottom: 4px;
+    }
 
-        input,
-        select,
-        textarea {
-            border-radius: 4px !important;
-            font-size: 14px;
-            padding: 6px 10px;
-        }
+    input,
+    select,
+    textarea {
+        border-radius: 4px !important;
+        font-size: 14px;
+        padding: 6px 10px;
+    }
 
-        .variant-group,
-        .batch-group {
-            background: #ffffff;
-            border: 1px solid #dee2e6;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 12px;
-            position: relative;
-        }
+    .variant-group,
+    .batch-group {
+        background: #ffffff;
+        border: 1px solid #dee2e6;
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 12px;
+        position: relative;
+    }
 
-        .remove-variant,
-        .remove-batch {
-            position: absolute;
-            top: 6px;
-            right: 6px;
-            background: none;
-            border: none;
-            color: #888;
-            font-size: 14px;
-        }
+    .remove-variant,
+    .remove-batch {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        background: none;
+        border: none;
+        color: #888;
+        font-size: 14px;
+    }
 
-        .remove-variant:hover,
-        .remove-batch:hover {
-            color: #dc3545;
-        }
+    .remove-variant:hover,
+    .remove-batch:hover {
+        color: #dc3545;
+    }
 
-        .btn-sm {
-            padding: 4px 10px;
-            font-size: 13px;
-        }
+    .btn-sm {
+        padding: 4px 10px;
+        font-size: 13px;
+    }
 
-        .form-section-title {
-            font-size: 15px;
-            margin: 15px 0 8px;
-            font-weight: 600;
-        }
-    </style>
+    .form-section-title {
+        font-size: 15px;
+        margin: 15px 0 8px;
+        font-weight: 600;
+    }
+</style>
 </head>
 
 <body>
@@ -110,6 +110,10 @@
                 </div>
                 @endif
 
+                <div class="alert alert-warning" style="background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 12px 15px; border-radius: 6px; font-size: 14px;">
+                    ⚠️ <strong>Важно:</strong> начинайте заполнять названия, описания и другие текстовые поля с <strong>большой буквы</strong>, чтобы информация отображалась корректно на сайте.
+                </div>
+
 
                 <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
@@ -117,7 +121,7 @@
                     <div class="row g-2">
                         <div class="col-md-6"><label>Название</label><input type="text" name="name" class="form-control" required></div>
                         <div class="col-md-6"><label>Страна</label><input type="text" name="country" class="form-control" required></div>
-                        <div class="col-md-6"><label>Раппорт</label><input type="text" name="sticking" class="form-control" required></div>
+                        <div class="col-md-6"><label>Раппорт</label><input type="text" name="sticking" class="form-control"></div>
                         <div class="col-md-6"><label>Материал</label><input type="text" name="material" class="form-control" required></div>
                         <div class="col-md-6"><label>Цена прихода</label><input type="text" name="purchase_price" class="form-control" required></div>
                         <div class="col-md-6"><label>Цена продажи</label><input type="number" name="sale_price" class="form-control" required></div>

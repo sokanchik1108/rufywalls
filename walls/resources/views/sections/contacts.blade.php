@@ -6,7 +6,7 @@
             <p class="contact-phone">+7 707 712 1255</p>
             <p class="contact-address">
                 <a href="https://go.2gis.com/9VZVk" target="_blank" class="address-link">
-                    Рыскулова pозыбакиева, рынок Сауран, новое здание №109,<br />
+                    Рыскулова Розыбакиева, рынок Сауран, новое здание №109,<br />
                     Казахстан, Алматы
                 </a>
             </p>
