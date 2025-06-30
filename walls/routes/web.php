@@ -62,6 +62,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::delete('/orders', [AdminController::class, 'clearAll'])->name('orders.clear');
     Route::get('/users', [AdminController::class, 'users'])->name('users');
     Route::post('/users/{user}/toggle-admin', [AdminController::class, 'toggleAdmin'])->name('toggleAdmin');
+    Route::delete('/variants/{id}', [AdminController::class, 'deleteVariant'])->name('variant.delete');
+
 });
 
 Auth::routes();

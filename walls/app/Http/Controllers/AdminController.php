@@ -281,6 +281,27 @@ class AdminController extends Controller
         return redirect()->route('admin.database')->with('success', 'Товар успешно удалён');
     }
 
+    public function deleteVariant($id)
+{
+    $variant = Variant::findOrFail($id);
+
+    // Удаляем изображения
+    if ($variant->images) {
+        $images = json_decode($variant->images, true);
+        foreach ($images as $imagePath) {
+            Storage::disk('public')->delete($imagePath);
+        }
+    }
+
+    // Удаляем партии
+    $variant->batches()->delete();
+
+    // Удаляем сам вариант
+    $variant->delete();
+
+    return redirect()->back()->with('success', 'Вариант успешно удалён');
+}
+
 
     public function adminIndex()
     {

@@ -1,86 +1,86 @@
-@extends('layouts.app') 
+@extends('layouts.app')
 
 @section('content')
-    <style>
-        body {
-            background-color: #f2f4f7;
-            font-family: 'Segoe UI', sans-serif;
-        }
+<style>
+    body {
+        background-color: #f2f4f7;
+        font-family: 'Segoe UI', sans-serif;
+    }
 
-        .card {
-            border: none;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
+    .card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
 
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-        }
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    }
 
-        .card-img-top {
-            height: 220px;
-            object-fit: cover;
-            border-top-left-radius: 16px;
-            border-top-right-radius: 16px;
-        }
+    .card-img-top {
+        height: 220px;
+        object-fit: cover;
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+    }
 
-        .badge-room {
-            margin-right: 4px;
-            background-color: #6c757d;
-        }
+    .badge-room {
+        margin-right: 4px;
+        background-color: #6c757d;
+    }
 
-        .modal-header,
-        .modal-footer {
-            border: none;
-        }
+    .modal-header,
+    .modal-footer {
+        border: none;
+    }
 
-        .form-label {
-            font-weight: 500;
-        }
+    .form-label {
+        font-weight: 500;
+    }
 
-        .form-control,
-        .form-select,
-        textarea {
-            border-radius: 10px;
-        }
+    .form-control,
+    .form-select,
+    textarea {
+        border-radius: 10px;
+    }
 
-        .modal-content {
-            border-radius: 16px;
-        }
+    .modal-content {
+        border-radius: 16px;
+    }
 
-        img.preview {
-            border-radius: 6px;
-            border: 1px solid #ddd;
-        }
+    img.preview {
+        border-radius: 6px;
+        border: 1px solid #ddd;
+    }
 
-        .form-select[multiple] {
-            height: auto;
-            min-height: 120px;
-            padding: 10px;
-            border-radius: 12px;
-            background-color: #fff;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
-            transition: border-color 0.2s, box-shadow 0.2s;
-            font-size: 14px;
-        }
+    .form-select[multiple] {
+        height: auto;
+        min-height: 120px;
+        padding: 10px;
+        border-radius: 12px;
+        background-color: #fff;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+        transition: border-color 0.2s, box-shadow 0.2s;
+        font-size: 14px;
+    }
 
-        .form-select[multiple]:focus {
-            border-color: #80bdff;
-            outline: none;
-            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-        }
+    .form-select[multiple]:focus {
+        border-color: #80bdff;
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
 
-        .form-select option {
-            padding: 5px 10px;
-        }
+    .form-select option {
+        padding: 5px 10px;
+    }
 
-        .form-select option:checked {
-            background-color: #0d6efd !important;
-            color: white;
-        }
-    </style>
+    .form-select option:checked {
+        background-color: #0d6efd !important;
+        color: white;
+    }
+</style>
 </head>
 
 <body>
@@ -148,17 +148,34 @@
                                 @endforeach
                             </ul>
 
-                            <div class="d-flex justify-content-between mt-3">
-                                <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
-                                    data-bs-target="#editModal{{ $variant->id }}">Редактировать</button>
+                            <div class="d-flex flex-wrap gap-2 mt-3">
+                                <!-- Редактировать -->
+                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                    data-bs-target="#editModal{{ $variant->id }}">
+                                    ✏️ Редактировать
+                                </button>
 
-                                <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST"
-                                    onsubmit="return confirm('Удалить этот товар?');">
+                                <!-- Удалить вариант -->
+                                <form action="{{ route('admin.variant.delete', $variant->id) }}" method="POST"
+                                    onsubmit="return confirm('Вы уверены, что хотите удалить этот вариант?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-outline-danger btn-sm">Удалить</button>
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        🗑️ Удалить вариант
+                                    </button>
+                                </form>
+
+                                <!-- Удалить товар -->
+                                <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST"
+                                    onsubmit="return confirm('Вы уверены, что хотите удалить весь товар со всеми вариантами?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        ❌ Удалить товар
+                                    </button>
                                 </form>
                             </div>
+
                         </div>
                     </div>
                 </div>
