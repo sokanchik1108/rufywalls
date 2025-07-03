@@ -63,6 +63,12 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/users', [AdminController::class, 'users'])->name('users');
     Route::post('/users/{user}/toggle-admin', [AdminController::class, 'toggleAdmin'])->name('toggleAdmin');
     Route::delete('/variants/{id}', [AdminController::class, 'deleteVariant'])->name('variant.delete');
+    Route::get('/variants/search', [AdminController::class, 'searchVariants'])->name('variants.search');
+    Route::get('/variants/autocomplete', [AdminController::class, 'autocomplete'])->name('variants.autocomplete');
+    Route::get('/stock/edit', [AdminController::class, 'editStock'])->name('stock.edit');
+   Route::post('/stock/update', [AdminController::class, 'updateStockAjax'])->name('stock.update');
+   Route::delete('/batches/{id}', [AdminController::class, 'deleteBatch'])->name('batches.delete');
+
 
 });
 

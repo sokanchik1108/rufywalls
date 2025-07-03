@@ -290,7 +290,7 @@
                                 <p>{{ $product->material }}</p>
                             </div>
                             <div>
-                                <p class="uppercase text-xs text-gray-400">Раппорт</p>
+                                <p class="uppercase text-xs text-gray-400">Раппорт (стыковка)</p>
                                 <p>{{ $product->sticking }}</p>
                             </div>
                             <div>

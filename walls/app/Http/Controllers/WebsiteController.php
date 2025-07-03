@@ -88,8 +88,13 @@ class WebsiteController extends Controller
         }
 
         if ($request->filled('search')) {
-            $variants->whereHas('product', fn($q) => $q->where('name', 'like', '%' . $request->search . '%'));
+            $searchTerm = $request->search;
+            $variants->where(function ($query) use ($searchTerm) {
+                $query->where('sku', 'like', "%$searchTerm%")
+                    ->orWhereHas('product', fn($q) => $q->where('name', 'like', "%$searchTerm%"));
+            });
         }
+
 
         switch ($request->input('sort')) {
             case 'price_asc':
@@ -112,7 +117,7 @@ class WebsiteController extends Controller
                 $variants->latest();
         }
 
-        $variants = $variants->paginate(6)->withQueryString();
+        $variants = $variants->paginate(12)->withQueryString();
 
         if ($request->ajax()) {
             return view('partials.products', compact('variants'))->render();
