@@ -1,6 +1,6 @@
 <section class="info-section py-5 bg-white" id="product-info">
     <div class="container px-3 px-md-4" style="max-width: 1000px;">
-        <h2 class="section-title mb-4">Обои, которые создают уют и легко справляются с повседневностью</h2>
+        <h2 class="section-title mb-3 text-start">Обои, которые создают уют и легко справляются с повседневностью</h2>
 
         <div class="section-text">
             <p>В нашем магазине вы найдёте только качественные <strong>моющиеся обои</strong> — практичное решение для тех, кто ценит комфорт, эстетику и долговечность.</p>
@@ -18,74 +18,97 @@
     </div>
 </section>
 
-
 <style>
-    .info-section {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: #333;
-    }
+.info-section {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
 
+.section-title {
+    font-weight: 700;
+    font-size: 2rem;
+    text-align: left;
+    line-height: 1.3;
+}
+
+.section-text p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    font-weight: 400;
+    margin-bottom: 0.9rem;
+    text-align: justify;
+}
+
+.btn-custom {
+    background-color: #01142f;
+    color: white;
+    border: none;
+    padding: 13px 34px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-custom:hover {
+    color: white;
+    text-decoration: none;
+    box-shadow: 0 6px 18px rgba(0, 86, 179, 0.4);
+    transform: translateY(-2px);
+    background-color: #02214b;
+}
+
+/* Планшеты */
+@media (min-width: 768px) {
     .section-title {
-        font-weight: 700;
         font-size: 2.2rem;
-        text-align: center;
-        max-width: 100%;
     }
 
     .section-text p {
-        font-size: 1.1rem;
-        line-height: 1.7;
-        font-weight: 400;
-        margin-bottom: 0.8rem;
-        text-align: justify;
+        font-size: 1.15rem;
     }
 
     .btn-custom {
-        background-color: #01142f;
-        color: white;
-        border: none;
-        padding: 14px 36px;
-        font-size: 1rem;
-        font-weight: 600;
-        border-radius: 30px;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-block;
+        padding: 15px 42px;
+    }
+}
+
+/* Десктоп */
+@media (min-width: 992px) {
+    .section-title {
+        font-size: 2.4rem;
     }
 
-    .btn-custom:hover {
-        color: white;
-        text-decoration: none;
-        box-shadow: 0 6px 18px rgba(0, 86, 179, 0.4);
-        transform: translateY(-2px);
-        background-color: #02214b;
+    .btn-custom {
+        padding: 16px 48px;
+        font-size: 1.05rem;
+    }
+}
+
+/* Мобильные устройства */
+@media (max-width: 576px) {
+    .section-title {
+        font-size: 1.5rem;
+        margin-bottom: 0.8rem;
     }
 
-    /* Responsive adjustments */
-    @media (min-width: 768px) {
-        .section-title {
-            font-size: 2.5rem;
-            text-align: left;
-        }
-
-        .section-text p {
-            font-size: 1.25rem;
-            text-align: left;
-        }
-
-        .btn-custom {
-            padding: 16px 44px;
-        }
+    .section-text p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 0.7rem;
     }
 
-    @media (min-width: 992px) {
-        .section-title {
-            font-size: 3rem;
-        }
-
-        .btn-custom {
-            padding: 18px 50px;
-            font-size: 1.1rem;
-        }
+    .btn-custom {
+        padding: 11px 24px;
+        font-size: 0.95rem;
+        border-radius: 24px;
     }
+
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
 </style>

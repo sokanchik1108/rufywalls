@@ -1,33 +1,64 @@
 <section class="hero-section py-5 bg-light text-center">
-    <div class="container" style="margin-top: 70px;margin-bottom:70px;">
-        <h1 class="hero-title mb-3 ">ПРЕВРАТИ СТЕНЫ В ИСКУССТВО</h1>
-        <p class="hero-paragraph mb-2">Обои, которые делают интерьер живым, тёплым и по-настоящему твоим.</p>
-        <p class="hero-paragraph ">Мы не просто продаём обои — мы помогаем создавать пространство, в которое хочется возвращаться.</p>
+    <div class="container hero-container">
+        <h1 class="hero-title mb-2">ПРЕВРАТИ СТЕНЫ В ИСКУССТВО</h1>
+        <p class="hero-paragraph mb-1">
+            Обои, которые делают интерьер живым, тёплым и по-настоящему твоим.
+        </p>
+        <p class="hero-paragraph mb-0">
+            Мы не просто продаём обои — мы помогаем создавать пространство, в которое хочется возвращаться.
+        </p>
     </div>
 </section>
 
 <style>
-        /* title  */
+.hero-section {
+    background-color: #f8f9fa;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
 
+.hero-container {
+    margin-top: 70px;
+    margin-bottom: 70px;
+}
+
+.hero-title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+.hero-paragraph {
+    font-size: 1.35rem;
+    max-width: 600px;
+    margin: 0 auto 1rem auto;
+    line-height: 1.5;
+}
+
+/* Адаптив: компактно, но с немного увеличенным шрифтом */
+@media (max-width: 576px) {
     .hero-section {
-        background-color: #f8f9fa;
-        /* светлый фон */
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    .hero-container {
+        margin-top: 25px;
+        margin-bottom: 25px;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
     }
 
     .hero-title {
-        font-size: 2.5rem;
-        /* чуть меньше display-5 */
-        font-weight: 600;
-        /* менее жирный */
-        letter-spacing: 2px;
+        font-size: 1.4rem; /* увеличено с 1.2rem */
+        line-height: 1.3;
+        margin-bottom: 0.6rem;
     }
 
     .hero-paragraph {
-        font-size: 1.35rem;
-        /* чуть больше */
-        max-width: 600px;
-        margin: 0 auto 1rem auto;
-        /* центрируем и добавляем отступ снизу */
-        line-height: 1.5;
+        font-size: 0.85rem; /* увеличено с 0.75rem */
+        line-height: 1.4;
+        margin-bottom: 0.5rem;
     }
+}
 </style>

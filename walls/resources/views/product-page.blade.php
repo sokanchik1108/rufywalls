@@ -308,7 +308,7 @@
 
 
 
-                        <div class="mb-3" style="max-width: 180px;">
+                        <div class="mb-3" style="max-width: 250px;">
                             <label for="variant-select" class="form-label">Выберите оттенок:</label>
                             <select id="variant-select" class="form-select" style="max-width: 300px;">
                                 @foreach ($variants as $variant)

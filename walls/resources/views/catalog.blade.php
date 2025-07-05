@@ -17,8 +17,13 @@
     </div>
 </div>
 
-    @include('partials.footer')
+@include('partials.footer')
 
+
+<!-- Подключи jQuery и jQuery UI если ещё не подключены -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 
 
 <script>
@@ -35,7 +40,9 @@
 
         initAllListeners();
 
-        form.addEventListener('change', sendAjax);
+        if (form) {
+            form.addEventListener('change', sendAjax);
+        }
 
         function sendAjax() {
             const formData = new FormData(form);
@@ -73,8 +80,91 @@
         function initTopBarListeners() {
             const search = document.getElementById('search');
             const sort = document.getElementById('sort');
+            const clearBtn = document.getElementById('clearSearch');
+
+            if (search && clearBtn) {
+                clearBtn.style.display = search.value.length > 0 ? 'block' : 'none';
+
+                search.addEventListener('input', function() {
+                    clearBtn.style.display = this.value.length > 0 ? 'block' : 'none';
+                });
+
+                clearBtn.addEventListener('click', function() {
+                    search.value = '';
+                    clearBtn.style.display = 'none';
+                    sendAjax();
+                });
+            }
 
             if (search) {
+                if (search) {
+                    $(search).autocomplete({
+                            source: function(request, response) {
+                                $.ajax({
+                                    url: '{{ route("admin.variants.autocomplete") }}',
+                                    data: {
+                                        term: request.term
+                                    },
+                                    success: function(data) {
+                                        if (data.length === 0) {
+                                            response([{
+                                                label: 'Товары не найдены',
+                                                value: '',
+                                                disabled: true
+                                            }]);
+                                        } else {
+                                            response(data);
+                                        }
+                                    }
+                                });
+                            },
+                            minLength: 1,
+                            delay: 100,
+                            select: function(event, ui) {
+                                if (ui.item.disabled || ui.item.value === '') {
+                                    event.preventDefault();
+                                    return false;
+                                }
+                                search.value = ui.item.value;
+                                if (clearBtn) clearBtn.style.display = 'block';
+                                sendAjax();
+                            }
+                        })
+                        .autocomplete("instance")._renderItem = function(ul, item) {
+                            const li = $("<li>");
+                            const wrapper = $("<div>").text(item.label);
+
+                            if (item.disabled) {
+                                wrapper.css({
+                                    color: "#000",
+                                    fontStyle: "italic",
+                                    pointerEvents: "none",
+                                    cursor: "default"
+                                });
+                            }
+
+                            wrapper.addClass("ui-menu-item-wrapper");
+                            return li.append(wrapper).appendTo(ul);
+                        };
+
+                    // По Enter
+                    if (search._handler) search.removeEventListener('keypress', search._handler);
+                    search._handler = function(e) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            sendAjax();
+                        }
+                    };
+                    search.addEventListener('keypress', search._handler);
+                }
+
+
+
+
+                $(document).on('menufocus', '.ui-menu-item-wrapper.no-results', function(e) {
+                    e.preventDefault();
+                });
+
                 if (search._handler) search.removeEventListener('keypress', search._handler);
                 search._handler = function(e) {
                     if (e.key === 'Enter') {
@@ -107,9 +197,12 @@
     });
 </script>
 
-<style>
 
-    
+
+
+
+
+<style>
     .catalog-header {
         text-align: center;
         background-color: #f0f0f0;
@@ -225,10 +318,10 @@
         color: #555;
     }
 
-    .checkbox-item input[type="radio"]:checked + label {
-    font-weight: bold;
-    color: black;
-}
+    .checkbox-item input[type="radio"]:checked+label {
+        font-weight: bold;
+        color: black;
+    }
 
 
     @media (max-width: 992px) {
@@ -263,6 +356,16 @@
         .product-list {
             width: 100%;
         }
+    }
+
+    .ui-menu-item-wrapper.no-results,
+    .ui-menu-item-wrapper.no-results.ui-state-active,
+    .ui-menu-item-wrapper.no-results:hover {
+        background-color: transparent !important;
+        color: #999 !important;
+        font-style: italic;
+        cursor: default !important;
+        pointer-events: none !important;
     }
 </style>
 @endsection

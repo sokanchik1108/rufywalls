@@ -68,6 +68,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/stock/edit', [AdminController::class, 'editStock'])->name('stock.edit');
    Route::post('/stock/update', [AdminController::class, 'updateStockAjax'])->name('stock.update');
    Route::delete('/batches/{id}', [AdminController::class, 'deleteBatch'])->name('batches.delete');
+   Route::post('/batches', [AdminController::class, 'storeBatch'])->name('batches.store');
+
 
 
 });

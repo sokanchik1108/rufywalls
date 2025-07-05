@@ -49,6 +49,13 @@
                                     <span class="me-2">👥</span> <span>Пользователи</span>
                                 </a>
                             </div>
+
+                            {{-- Новая кнопка --}}
+                            <div class="col-md-3">
+                                <a href="{{ route('admin.stock.edit') }}" class="btn btn-outline-warning w-100 py-3 shadow-sm rounded-3 d-flex align-items-center justify-content-center">
+                                    <span class="me-2">📊</span> <span>Остатки товаров</span>
+                                </a>
+                            </div>
                         </div>
                     @else
                         <div class="alert alert-warning mt-4">

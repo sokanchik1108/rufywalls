@@ -13,6 +13,7 @@
                 <h6 class="text-uppercase fw-bold mb-2">Навигация</h6>
                 <ul class="list-unstyled">
                     <li><a href="/" class="footer-link">Главная</a></li>
+                    <li><a href="/delivery" class="footer-link">Доставка</a></li>
                     <li><a href="/catalog" class="footer-link">Каталог</a></li>
                     <li><a href="/about-products" class="footer-link">О нашей продукции</a></li>
                     <li><a href="/address" class="footer-link">Контакты</a></li>

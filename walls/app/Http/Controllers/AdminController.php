@@ -127,7 +127,7 @@ class AdminController extends Controller
         // Пагинация по Variant
         $variants = Variant::with(['product.category', 'product.rooms', 'batches'])
             ->when($sku, fn($q) => $q->where('sku', 'like', "%$sku%"))
-            ->paginate(1);
+            ->paginate(12);
 
         $categories = Category::all();
         $rooms = Room::all();
@@ -391,31 +391,52 @@ class AdminController extends Controller
 
 
 
-    public function autocomplete(Request $request)
-    {
-        $term = $request->get('term');
+public function autocomplete(Request $request)
+{
+    $term = $request->get('term');
 
-        $skus = Variant::where('sku', 'LIKE', '%' . $term . '%')
-            ->pluck('sku')
-            ->take(10);
+    $variants = Variant::with('product')
+        ->where('sku', 'LIKE', '%' . $term . '%')
+        ->orWhereHas('product', function ($query) use ($term) {
+            $query->where('name', 'LIKE', '%' . $term . '%');
+        })
+        ->limit(10)
+        ->get();
 
-        return response()->json($skus);
-    }
+    $results = $variants->map(function ($variant) {
+        return [
+            'label' => $variant->sku . ' — ' . ($variant->product->name ?? ''),
+            'value' => $variant->sku
+        ];
+    });
+
+    return response()->json($results);
+}
+
 
 
 
     public function editStock(Request $request)
     {
-        $query = Variant::with(['product', 'batches']);
+        $query = Variant::with(['product', 'batches'])
+            ->withSum('batches as total_stock', 'stock'); // ← сумма остатков
 
         if ($request->filled('sku')) {
             $query->where('sku', 'like', '%' . $request->sku . '%');
         }
 
-        $variants = $query->paginate(1)->withQueryString(); // пагинация
+        // Сортировка по total_stock
+        if ($request->sort === 'asc') {
+            $query->orderBy('total_stock', 'asc');
+        } elseif ($request->sort === 'desc') {
+            $query->orderBy('total_stock', 'desc');
+        }
+
+        $variants = $query->paginate(50)->withQueryString();
 
         return view('admin.stock-edit', compact('variants'));
     }
+
 
 
 
@@ -440,4 +461,25 @@ class AdminController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+    public function storeBatch(Request $request)
+{
+    $data = $request->validate([
+        'variant_id' => 'required|exists:variants,id',
+        'batch_code' => 'nullable|string|max:255',
+        'stock' => 'required|integer|min:0',
+    ]);
+
+    $batch = \App\Models\Batch::create([
+        'variant_id' => $data['variant_id'],
+        'batch_code' => $data['batch_code'],
+        'stock' => $data['stock'],
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'batch' => $batch
+    ]);
+}
+
 }

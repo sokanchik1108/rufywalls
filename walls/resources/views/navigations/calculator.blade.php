@@ -3,7 +3,7 @@
 @section('title', 'Калькулятор обоев')
 
 @section('content')
-<div class="container pt-5 mt-5 d-flex justify-content-center align-items-start min-vh-100">
+<div class="container pt-5 mt-5 mb-5 d-flex justify-content-center align-items-start min-vh-100">
     <div class="card shadow-lg border-0 rounded-4 w-100" style="max-width: 900px; background-color: #fff;">
         <div class="card-body p-5">
 
@@ -51,22 +51,36 @@
                 <h6 class="fw-semibold text-dark mt-4 mb-2">Размер окна:</h6>
                 <div class="row mb-3">
                     <div class="col">
-                        <input type="number" step="0.01" min="0" class="form-control border-secondary-subtle" id="windowWidth" value="1.2" placeholder="Ширина окна">
+                        <label class="form-label text-dark">Ширина окна</label>
+                        <input type="number" step="0.01" min="0" class="form-control border-secondary-subtle" id="windowWidth" value="1.2">
                     </div>
                     <div class="col">
-                        <input type="number" step="0.01" min="0" class="form-control border-secondary-subtle" id="windowHeight" value="1.4" placeholder="Высота окна">
+                        <label class="form-label text-dark">Высота окна</label>
+                        <input type="number" step="0.01" min="0" class="form-control border-secondary-subtle" id="windowHeight" value="1.4">
+                    </div>
+                    <div class="col">
+                        <label class="form-label text-dark">Количество окон</label>
+                        <input type="number" min="0" class="form-control border-secondary-subtle" id="windowCount" value="1">
                     </div>
                 </div>
+
 
                 <h6 class="fw-semibold text-dark mb-2">Размер двери:</h6>
                 <div class="row mb-4">
                     <div class="col">
-                        <input type="number" step="0.01" min="0" class="form-control border-secondary-subtle" id="doorWidth" value="0.9" placeholder="Ширина двери">
+                        <label class="form-label text-dark">Ширина двери</label>
+                        <input type="number" step="0.01" min="0" class="form-control border-secondary-subtle" id="doorWidth" value="0.9">
                     </div>
                     <div class="col">
-                        <input type="number" step="0.01" min="0" class="form-control border-secondary-subtle" id="doorHeight" value="2.0" placeholder="Высота двери">
+                        <label class="form-label text-dark">Высота двери</label>
+                        <input type="number" step="0.01" min="0" class="form-control border-secondary-subtle" id="doorHeight" value="2.0">
+                    </div>
+                    <div class="col">
+                        <label class="form-label text-dark">Количество дверей</label>
+                        <input type="number" min="0" class="form-control border-secondary-subtle" id="doorCount" value="1">
                     </div>
                 </div>
+
 
                 <div class="mb-3 text-muted small">
                     Рулон: <strong>1.06 м</strong> шириной и <strong>10 м</strong> длиной
@@ -102,10 +116,14 @@
         const length = parseFloat(document.getElementById('length').value);
         const width = parseFloat(document.getElementById('width').value);
         const height = parseFloat(document.getElementById('height').value);
+
         const windowWidth = parseFloat(document.getElementById('windowWidth').value);
         const windowHeight = parseFloat(document.getElementById('windowHeight').value);
+        const windowCount = parseInt(document.getElementById('windowCount').value) || 0;
+
         const doorWidth = parseFloat(document.getElementById('doorWidth').value);
         const doorHeight = parseFloat(document.getElementById('doorHeight').value);
+        const doorCount = parseInt(document.getElementById('doorCount').value) || 0;
 
         const rollWidth = 1.06;
         const rollLength = 10;
@@ -117,8 +135,8 @@
 
         const perimeter = 2 * (length + width);
         const wallArea = perimeter * height;
-        const windowArea = windowWidth * windowHeight;
-        const doorArea = doorWidth * doorHeight;
+        const windowArea = windowWidth * windowHeight * windowCount;
+        const doorArea = doorWidth * doorHeight * doorCount;
         const adjustedArea = wallArea - windowArea - doorArea;
 
         const stripsPerRoll = Math.floor(rollLength / height);
@@ -131,8 +149,10 @@
         explanationList.innerHTML = `
             <li>Периметр: <code>2 × (${length} + ${width}) = ${perimeter.toFixed(2)} м</code></li>
             <li>Площадь стен: <code>${perimeter.toFixed(2)} × ${height} = ${wallArea.toFixed(2)} м²</code></li>
-            <li>Окно: <code>${windowWidth} × ${windowHeight} = ${windowArea.toFixed(2)} м²</code></li>
-            <li>Дверь: <code>${doorWidth} × ${doorHeight} = ${doorArea.toFixed(2)} м²</code></li>
+            <li>Окна: <code>${windowWidth} × ${windowHeight} × ${windowCount} = ${windowArea.toFixed(2)} м²</code></li>
+            <li>Двери: <code>${doorWidth} × ${doorHeight} × ${doorCount} = ${doorArea.toFixed(2)} м²</code></li>
+            <li>Количество окон: <code>${windowCount}</code></li>
+            <li>Количество дверей: <code>${doorCount}</code></li>
             <li>Чистая площадь: <code>${adjustedArea.toFixed(2)} м²</code></li>
             <li>Полос из рулона: <code>10 ÷ ${height} = ${stripsPerRoll}</code></li>
             <li>Покрытие рулона: <code>${rollCoverageArea.toFixed(2)} м²</code></li>
@@ -141,5 +161,6 @@
         document.getElementById('detailedExplanation').style.display = 'block';
     });
 </script>
+
 @include('partials.footer')
 @endsection
