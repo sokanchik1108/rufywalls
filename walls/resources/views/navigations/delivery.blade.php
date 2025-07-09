@@ -1,6 +1,11 @@
 @extends('layouts.main')
 
-@section('title', 'Доставка')
+@section('title', 'Доставка - RAFY WALLS')
+
+@section('meta')
+<meta name="description" content="Узнайте о способах доставки заказов RAFY WALLS: самовывоз, курьерская доставка, сроки и условия." />
+@endsection
+
 
 @section('content')
 <div class="container pt-5 mt-5 d-flex justify-content-center align-items-start min-vh-100 px-2" style="margin-bottom: 200px;">

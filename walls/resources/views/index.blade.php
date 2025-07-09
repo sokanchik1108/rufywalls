@@ -1,6 +1,11 @@
 @extends('layouts.main')
 
-@section('title', 'Корзина')
+@section('title', 'Корзина - RAFY WALLS')
+
+@section('meta')
+    <meta name="description" content="Ваша корзина RAFY WALLS — шаг до стильного интерьера. Проверьте товары и оформите заказ легко и быстро.">
+@endsection
+
 
 @section('content')
 <div class="container py-5">

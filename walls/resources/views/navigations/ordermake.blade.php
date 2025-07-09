@@ -1,6 +1,11 @@
 @extends('layouts.main')
 
-@section('title', 'Как оформить заказ')
+@section('title', 'Как оформить заказ - RAFY WALLS')
+
+@section('meta')
+<meta name="description" content="Как оформить заказ на сайте RAFY WALLS — простая инструкция по покупке обоев.">
+@endsection
+
 
 @section('content')
 <div class="container py-5 px-3 px-md-4">
@@ -46,8 +51,8 @@
                     <u>Без подтверждения</u> заказ не будет обработан. Просто нажмите кнопку ниже и отправьте сообщение.
                 </p>
                 <a href="https://wa.me/77077121255?text=Здравствуйте,%20я%20хочу%20подтвердить%20заказ"
-                   class="btn btn-success btn-lg px-4 py-2 rounded-pill shadow-sm w-100 w-md-auto"
-                   target="_blank">
+                    class="btn btn-success btn-lg px-4 py-2 rounded-pill shadow-sm w-100 w-md-auto"
+                    target="_blank">
                     📲 Подтвердить через WhatsApp
                 </a>
             </div>

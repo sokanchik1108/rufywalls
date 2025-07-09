@@ -1,6 +1,10 @@
 @extends('layouts.main')
 
-@section('title', 'Каталог')
+@section('title', 'Каталог - RAFY WALLS')
+
+@section('meta')
+    <meta name="description" content="Каталог обоев RAFY WALLS — широкий выбор и быстрая доставка.">
+@endsection 
 
 @section('content')
 <div class="catalog-header">
@@ -20,10 +24,15 @@
 @include('partials.footer')
 
 
-<!-- Подключи jQuery и jQuery UI если ещё не подключены -->
+@section('styles')
+<link rel="stylesheet" href="{{ asset('css/catalog.min.css') }}?v=1.0.0">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+@endsection
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+
 
 
 <script>
@@ -97,74 +106,52 @@
             }
 
             if (search) {
-                if (search) {
-                    $(search).autocomplete({
-                            source: function(request, response) {
-                                $.ajax({
-                                    url: '{{ route("admin.variants.autocomplete") }}',
-                                    data: {
-                                        term: request.term
-                                    },
-                                    success: function(data) {
-                                        if (data.length === 0) {
-                                            response([{
-                                                label: 'Товары не найдены',
-                                                value: '',
-                                                disabled: true
-                                            }]);
-                                        } else {
-                                            response(data);
-                                        }
-                                    }
-                                });
+                $(search).autocomplete({
+                    source: function(request, response) {
+                        $.ajax({
+                            url: '{{ route("admin.variants.autocomplete") }}',
+                            data: {
+                                term: request.term
                             },
-                            minLength: 1,
-                            delay: 100,
-                            select: function(event, ui) {
-                                if (ui.item.disabled || ui.item.value === '') {
-                                    event.preventDefault();
-                                    return false;
-                                }
-                                search.value = ui.item.value;
-                                if (clearBtn) clearBtn.style.display = 'block';
-                                sendAjax();
+                            success: function(data) {
+                                response(data.length === 0 ? [{
+                                        label: 'Товары не найдены',
+                                        value: '',
+                                        disabled: true
+                                    }] :
+                                    data);
                             }
-                        })
-                        .autocomplete("instance")._renderItem = function(ul, item) {
-                            const li = $("<li>");
-                            const wrapper = $("<div>").text(item.label);
-
-                            if (item.disabled) {
-                                wrapper.css({
-                                    color: "#000",
-                                    fontStyle: "italic",
-                                    pointerEvents: "none",
-                                    cursor: "default"
-                                });
-                            }
-
-                            wrapper.addClass("ui-menu-item-wrapper");
-                            return li.append(wrapper).appendTo(ul);
-                        };
-
-                    // По Enter
-                    if (search._handler) search.removeEventListener('keypress', search._handler);
-                    search._handler = function(e) {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                            sendAjax();
+                        });
+                    },
+                    minLength: 1,
+                    delay: 100,
+                    select: function(event, ui) {
+                        if (ui.item.disabled || ui.item.value === '') {
+                            event.preventDefault();
+                            return false;
                         }
-                    };
-                    search.addEventListener('keypress', search._handler);
-                }
+                        search.value = ui.item.value;
+                        if (clearBtn) clearBtn.style.display = 'block';
+                        sendAjax();
+                    }
+                }).autocomplete("instance")._renderItem = function(ul, item) {
+                    const li = $("<li>");
+                    const wrapper = $("<div>").text(item.label);
 
+                    if (item.disabled) {
+                        wrapper.css({
+                            color: "#000",
+                            fontStyle: "italic",
+                            pointerEvents: "none",
+                            cursor: "default"
+                        });
+                    }
 
+                    wrapper.addClass("ui-menu-item-wrapper");
+                    return li.append(wrapper).appendTo(ul);
+                };
 
-
-                $(document).on('menufocus', '.ui-menu-item-wrapper.no-results', function(e) {
-                    e.preventDefault();
-                });
-
+                // По Enter
                 if (search._handler) search.removeEventListener('keypress', search._handler);
                 search._handler = function(e) {
                     if (e.key === 'Enter') {
@@ -173,6 +160,10 @@
                     }
                 };
                 search.addEventListener('keypress', search._handler);
+
+                $(document).on('menufocus', '.ui-menu-item-wrapper.no-results', function(e) {
+                    e.preventDefault();
+                });
             }
 
             if (sort) {
@@ -202,170 +193,5 @@
 
 
 
-<style>
-    .catalog-header {
-        text-align: center;
-        background-color: #f0f0f0;
-        padding: 50px 0;
-    }
 
-    .catalog-header h1 {
-        font-size: 48px;
-        font-weight: bold;
-        color: #333;
-        text-transform: uppercase;
-    }
-
-    .catalog-container {
-        display: flex;
-        flex-wrap: wrap;
-        padding: 30px;
-        gap: 30px;
-    }
-
-    .toggle-filters {
-        display: none;
-        margin-bottom: 15px;
-        padding: 10px 20px;
-        background-color: black;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    .filters {
-        width: 35%;
-        min-width: 310px;
-        background-color: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(10px);
-        padding: 20px;
-        border-radius: 10px;
-    }
-
-    .filters h3 {
-        font-size: 22px;
-        margin-bottom: 10px;
-    }
-
-    .filter-section {
-        margin-bottom: 20px;
-    }
-
-    .filter-section label {
-        font-size: 14px;
-        color: #555;
-        display: block;
-        margin-bottom: 8px;
-    }
-
-    .filter-links {
-        padding-left: 0;
-        margin: 0;
-    }
-
-    .filter-links li {
-        list-style: none;
-        margin-bottom: 6px;
-    }
-
-    .filter-links li a {
-        text-decoration: none;
-        color: #333;
-        font-size: 14px;
-        transition: transform 0.2s ease, color 0.3s ease;
-        display: inline-block;
-    }
-
-    .filter-links li a:hover {
-        transform: scale(1.05);
-        color: black;
-    }
-
-    .checkbox-item {
-        display: block;
-        margin: 5px 0;
-        font-size: 14px;
-        color: #333;
-    }
-
-    .filters-reset-btn {
-        display: inline-block;
-        width: 100%;
-        padding: 12px;
-        background-color: black;
-        color: white;
-        text-align: center;
-        text-decoration: none;
-        border-radius: 5px;
-        font-size: 14px;
-        transition: background-color 0.3s ease;
-    }
-
-    .filters-reset-btn:hover {
-        background-color: #222;
-    }
-
-    .product-list {
-        flex-grow: 1;
-        width: 62%;
-    }
-
-    .no-results {
-        font-size: 18px;
-        text-align: center;
-        margin-top: 30px;
-        color: #555;
-    }
-
-    .checkbox-item input[type="radio"]:checked+label {
-        font-weight: bold;
-        color: black;
-    }
-
-
-    @media (max-width: 992px) {
-
-        .filters-wrapper {
-            display: block;
-        }
-
-        .toggle-filters {
-            display: block;
-        }
-
-        .catalog-container {
-            flex-direction: column;
-        }
-
-        .filters {
-            display: none;
-            position: static;
-            width: 100%;
-            margin-top: 10px;
-            padding: 15px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .filters.visible {
-            display: block;
-        }
-
-        .product-list {
-            width: 100%;
-        }
-    }
-
-    .ui-menu-item-wrapper.no-results,
-    .ui-menu-item-wrapper.no-results.ui-state-active,
-    .ui-menu-item-wrapper.no-results:hover {
-        background-color: transparent !important;
-        color: #999 !important;
-        font-style: italic;
-        cursor: default !important;
-        pointer-events: none !important;
-    }
-</style>
 @endsection

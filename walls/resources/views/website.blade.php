@@ -1,6 +1,11 @@
 @extends('layouts.main')
 
-@section('title', 'Веб-сайт')
+@section('title', 'Главная - RAFY WALLS')
+
+@section('meta')
+    <meta name="description" content="RAFY WALLS — стильные обои с быстрым самовывозом и доставкой. Подчеркни характер интерьера с нашей коллекцией.">
+@endsection
+
 
 @section('content')
 

@@ -7,7 +7,6 @@
     <title>Минималистичная шапка</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-
     <style>
         header {
             background-color: #fff;
@@ -104,11 +103,10 @@
                 margin-left: 10px;
             }
         }
+        
     </style>
 </head>
-
 <body>
-
     <header>
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">

@@ -1,6 +1,11 @@
 @extends('layouts.main')
 
-@section('title', 'Калькулятор обоев')
+@section('title', 'Калькулятор обоев - RAFY WALLS')
+
+@section('meta')
+<meta name="description" content="Рассчитайте, сколько рулонов обоев нужно для вашей комнаты с помощью удобного калькулятора RAFY WALLS." />
+@endsection
+
 
 @section('content')
 <div class="container pt-5 mt-5 mb-5 d-flex justify-content-center align-items-start min-vh-100">

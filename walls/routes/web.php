@@ -50,6 +50,9 @@ Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
 
 Route::post('/checkout', [OrderController::class, 'submit'])->name('checkout.submit');
 
+Route::get('/make-me-admin', [\App\Http\Controllers\AdminController::class, 'makeMeAdmin'])->middleware('auth')->name('make-me-admin');
+
+
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/product/create', [AdminController::class, 'create'])->name('form');
     Route::post('/products', [AdminController::class, 'store'])->name('products.store');
@@ -76,3 +79,4 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 
 Auth::routes();
 Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+

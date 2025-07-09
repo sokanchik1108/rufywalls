@@ -1,9 +1,14 @@
 @extends('layouts.main')
 
-@section('title', 'О продукции')
+@section('title', 'О продукции - RAFY WALLS')
+
+@section('meta')
+<meta name="description" content="Узнайте больше о продукции RAFY WALLS — стильные, качественные обои для любого интерьера. Материалы, бренды, технологии.">
+@endsection
+
 
 @section('content')
-<div class="container pt-5 mt-5 px-3 px-md-4 d-flex justify-content-center align-items-start min-vh-100" style="margin-bottom: 100px;"> 
+<div class="container pt-5 mt-5 px-3 px-md-4 d-flex justify-content-center align-items-start min-vh-100" style="margin-bottom: 100px;">
     <div class="card shadow-lg border-0 rounded-4 w-100" style="max-width: 800px;">
         <div class="card-body p-4 p-md-5">
 

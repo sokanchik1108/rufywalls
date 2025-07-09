@@ -1,6 +1,11 @@
 @extends('layouts.main')
 
-@section('title', 'Наш адрес')
+@section('title', 'Наш адрес - RAFY WALLS')
+
+@section('meta')
+<meta name="description" content="Контактная информация и адрес магазина RAFY WALLS. Свяжитесь с нами или приезжайте лично." />
+@endsection
+
 
 @section('content')
 <div class="container pt-5 mt-5 d-flex justify-content-center align-items-start min-vh-100">

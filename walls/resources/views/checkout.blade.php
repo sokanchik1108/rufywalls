@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Оформление заказа')
+@section('title', 'Оформление заказа - RAFY WALLS')
 
 @section('content')
 <div class="container py-5">
