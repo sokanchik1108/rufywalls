@@ -3,8 +3,8 @@
 @section('title', 'Каталог - RAFY WALLS')
 
 @section('meta')
-    <meta name="description" content="Каталог обоев RAFY WALLS — широкий выбор и быстрая доставка.">
-@endsection 
+<meta name="description" content="Каталог обоев RAFY WALLS — широкий выбор и быстрая доставка.">
+@endsection
 
 @section('content')
 <div class="catalog-header">
@@ -48,6 +48,7 @@
         }
 
         initAllListeners();
+        initLazyImages(); // 👈 запускаем при первой загрузке
 
         if (form) {
             form.addEventListener('change', sendAjax);
@@ -77,6 +78,7 @@
                         behavior: 'smooth'
                     });
                     initAllListeners();
+                    initLazyImages(); // 👈 запускаем после ajax
                 })
                 .catch(err => console.error('Ошибка при фильтрации:', err));
         }
@@ -115,11 +117,10 @@
                             },
                             success: function(data) {
                                 response(data.length === 0 ? [{
-                                        label: 'Товары не найдены',
-                                        value: '',
-                                        disabled: true
-                                    }] :
-                                    data);
+                                    label: 'Товары не найдены',
+                                    value: '',
+                                    disabled: true
+                                }] : data);
                             }
                         });
                     },
@@ -185,8 +186,48 @@
                 link.addEventListener('click', link._handler);
             });
         }
+
+        // 🔁 Lazy loading изображений — функция
+        function initLazyImages() {
+            const lazyImages = document.querySelectorAll('img.lazy-img');
+
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            img.src = img.dataset.src;
+                            img.addEventListener('load', () => hideOverlay(img));
+                            img.addEventListener('error', () => hideOverlay(img));
+                            img.classList.remove('lazy-img');
+                            observer.unobserve(img);
+                        }
+                    });
+                }, {
+                    rootMargin: "100px 0px",
+                    threshold: 0.01
+                });
+
+                lazyImages.forEach(img => observer.observe(img));
+            } else {
+                lazyImages.forEach(img => {
+                    img.src = img.dataset.src;
+                    img.addEventListener('load', () => hideOverlay(img));
+                    img.addEventListener('error', () => hideOverlay(img));
+                    img.classList.remove('lazy-img');
+                });
+            }
+
+            function hideOverlay(img) {
+                const overlay = img.previousElementSibling;
+                if (overlay && overlay.classList.contains('loading-overlay')) {
+                    overlay.style.display = 'none';
+                }
+            }
+        }
     });
 </script>
+
 
 
 

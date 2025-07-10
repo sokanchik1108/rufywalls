@@ -206,27 +206,27 @@
                 </form>
 
                 <div class="row mt-3">
-                    <div class="col-sm-6 mb-2">
+                    <div class="col-sm-6 mb-3">
                         <div class="text-muted small">АРТИКУЛ</div>
                         <div class="text-dark small" id="variant-sku">{{ $activeVariant->sku }}</div>
                     </div>
-                    <div class="col-sm-6 mb-2">
+                    <div class="col-sm-6 mb-3">
                         <div class="text-muted small">БРЕНД</div>
                         <div class="text-dark small">{{ $product->brand }}</div>
                     </div>
-                    <div class="col-sm-6 mb-2">
+                    <div class="col-sm-6 mb-3">
                         <div class="text-muted small">СТРАНА</div>
                         <div class="text-dark small">{{ $product->country }}</div>
                     </div>
-                    <div class="col-sm-6 mb-2">
+                    <div class="col-sm-6 mb-3">
                         <div class="text-muted small">МАТЕРИАЛ</div>
                         <div class="text-dark small">{{ $product->material }}</div>
                     </div>
-                    <div class="col-sm-6 mb-2">
+                    <div class="col-sm-6 mb-3">
                         <div class="text-muted small">РАППОРТ (СТЫКОВКА)</div>
                         <div class="text-dark small">{{ $product->sticking }}</div>
                     </div>
-                    <div class="col-sm-6 mb-2">
+                    <div class="col-sm-6 mb-3">
                         <div class="text-muted small">ОСТАТОК</div>
                         <div class="text-dark small" id="variant-stock">{{ $variantStock }} шт.</div>
                     </div>

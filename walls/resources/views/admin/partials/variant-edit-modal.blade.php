@@ -34,7 +34,7 @@
                             @if (!empty($images))
                             <div class="mt-2">
                                 @foreach($images as $img)
-                                <img src="{{ asset('storage/' . $img) }}" width="80" class="me-2 mb-2 preview">
+                                <img src="{{ asset('storage/' . $img) }}" width="80" class="me-2 mb-2 preview" loading="lazy">
                                 @endforeach
                             </div>
                             @endif

@@ -142,8 +142,8 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-12"><label>Описание</label><textarea name="description" class="form-control" rows="2"></textarea></div>
-                        <div class="col-12"><label>Подробнее</label><textarea name="detailed" class="form-control" rows="3"></textarea></div>
+                        <div class="col-12"><label>Описание</label><textarea name="description" class="form-control" rows="2" required></textarea></div>
+                        <div class="col-12"><label>Подробнее</label><textarea name="detailed" class="form-control" rows="3" required></textarea></div>
 
                         <div class="col-12">
                             <label>Компаньоны (другие товары)</label>

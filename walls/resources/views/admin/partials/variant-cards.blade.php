@@ -5,7 +5,7 @@
 <div class="col-6 col-sm-4 col-md-3 col-lg-2">
     <div class="card h-100">
         @if(!empty($images))
-        <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top" alt="Изображение">
+        <img src="{{ asset('storage/' . $images[0]) }}" class="card-img-top" alt="Изображение" loading="lazy">
         @endif
 
         <div class="card-body d-flex flex-column">
