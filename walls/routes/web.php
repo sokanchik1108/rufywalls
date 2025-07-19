@@ -20,11 +20,14 @@ Route::get('/about-products', function () {
     return view('navigations.about-products');
 });
 
+Route::get('/', function () {
+    return view('welcome');
+});
 
 
 Route::get('/calculator', [WebsiteController::class, 'Calculator'])->name('calculator');
 
-Route::get('/', [WebsiteController::class, 'website'])->name('website');
+//Route::get('/', [WebsiteController::class, 'website'])->name('website');
 
 Route::get('/catalog', [WebsiteController::class, 'catalog'])->name('catalog');
 
