@@ -20,6 +20,10 @@ Route::get('/about-products', function () {
     return view('navigations.about-products');
 });
 
+Route::get('/welcome', function () {
+    return view('welcome');
+});
+
 
 Route::get('/calculator', [WebsiteController::class, 'Calculator'])->name('calculator');
 

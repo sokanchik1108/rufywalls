@@ -29,7 +29,7 @@
                 <p class="text-secondary mb-0">
                     Вы можете забрать заказ самостоятельно по адресу:
                     <br>
-                    <a href="https://go.2gis.com/9VZVk" class="text-decoration-none text-primary" target="_blank">
+                    <a href="https://2gis.kz/almaty/firm/70000001102986031?m=76.884534%2C43.272083%2F16" class="text-decoration-none text-primary" target="_blank">
                         Рыскулова Розыбакиева, рынок Сауран, новое здание №109, Казахстан, Алматы
                     </a>
                 </p>

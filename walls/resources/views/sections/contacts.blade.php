@@ -5,7 +5,7 @@
         <div class="contact-info mb-4">
             <p class="contact-phone">+7 707 712 1255</p>
             <p class="contact-address">
-                <a href="https://go.2gis.com/9VZVk" target="_blank" class="address-link">
+                <a href="https://2gis.kz/almaty/firm/70000001102986031?m=76.884534%2C43.272083%2F16" target="_blank" class="address-link">
                     Рыскулова Розыбакиева, рынок Сауран, новое здание №109,<br />
                     Казахстан, Алматы
                 </a>
