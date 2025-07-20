@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cookie;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\SaleController;
 
 Route::get('/address', function () {
     return view('navigations.address');
@@ -23,6 +24,12 @@ Route::get('/about-products', function () {
 Route::get('/welcome', function () {
     return view('welcome');
 });
+
+
+
+
+
+
 
 
 Route::get('/calculator', [WebsiteController::class, 'Calculator'])->name('calculator');
@@ -72,14 +79,13 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/variants/search', [AdminController::class, 'searchVariants'])->name('variants.search');
     Route::get('/variants/autocomplete', [AdminController::class, 'autocomplete'])->name('variants.autocomplete');
     Route::get('/stock/edit', [AdminController::class, 'editStock'])->name('stock.edit');
-   Route::post('/stock/update', [AdminController::class, 'updateStockAjax'])->name('stock.update');
-   Route::delete('/batches/{id}', [AdminController::class, 'deleteBatch'])->name('batches.delete');
-   Route::post('/batches', [AdminController::class, 'storeBatch'])->name('batches.store');
-
-
-
+    Route::post('/stock/update', [AdminController::class, 'updateStockAjax'])->name('stock.update');
+    Route::delete('/batches/{id}', [AdminController::class, 'deleteBatch'])->name('batches.delete');
+    Route::post('/batches', [AdminController::class, 'storeBatch'])->name('batches.store');
+    Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
+    Route::post('/sales', [SaleController::class, 'store'])->name('sales.store');
+    Route::delete('/sales/{sale}', [SaleController::class, 'destroy'])->name('sales.destroy');
 });
 
 Auth::routes();
 Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
