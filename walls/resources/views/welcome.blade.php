@@ -83,7 +83,7 @@
 
 <div class="welcome-container">
     <h1>
-        Добро пожаловать <br> в RAFY WALLS
+        Добро пожаловать <br> в RAFY WALLS!!
         <span class="mt-1">Мир качественных обоев</span>
     </h1>
 
