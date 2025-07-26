@@ -205,32 +205,36 @@
                     </div>
                 </form>
 
-                <div class="row mt-3">
-                    <div class="col-sm-6 mb-3">
+                <div class="row mt-4">
+                    <div class="col-4 col-sm-6 mb-3">
                         <div class="text-muted small">АРТИКУЛ</div>
                         <div class="text-dark small" id="variant-sku">{{ $activeVariant->sku }}</div>
                     </div>
-                    <div class="col-sm-6 mb-3">
+                    <div class="col-4 col-sm-6 mb-3">
                         <div class="text-muted small">БРЕНД</div>
                         <div class="text-dark small">{{ $product->brand }}</div>
                     </div>
-                    <div class="col-sm-6 mb-3">
+                    <div class="col-4 col-sm-6 mb-3">
                         <div class="text-muted small">СТРАНА</div>
                         <div class="text-dark small">{{ $product->country }}</div>
                     </div>
-                    <div class="col-sm-6 mb-3">
+                    <div class="col-4 col-sm-6 mb-3">
                         <div class="text-muted small">МАТЕРИАЛ</div>
                         <div class="text-dark small">{{ $product->material }}</div>
                     </div>
-                    <div class="col-sm-6 mb-3">
+                    <div class="col-4 col-sm-6 mb-3">
                         <div class="text-muted small">РАППОРТ (СТЫКОВКА)</div>
                         <div class="text-dark small">{{ $product->sticking }}</div>
                     </div>
-                    <div class="col-sm-6 mb-3">
+                    <div class="col-4 col-sm-6 mb-3">
                         <div class="text-muted small">ОСТАТОК</div>
                         <div class="text-dark small" id="variant-stock">{{ $variantStock }} шт.</div>
                     </div>
                 </div>
+
+
+
+
 
 
 
@@ -283,7 +287,7 @@
         </div>
 
         @if($product->detailed)
-        <div class="mt-5 pt-4 border-top">
+        <div class="mt-5 pt-4 border-top" style="margin-bottom: 70px;">
             <h5 class="mb-3">Подробное описание</h5>
             <p class="text-muted" style="white-space: pre-line;">{{ $product->detailed }}</p>
         </div>
