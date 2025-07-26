@@ -7,9 +7,24 @@
 @endsection
 
 @section('content')
-<div class="catalog-header">
-    <h1>КАТАЛОГ ОБОЕВ RAFY WALLS</h1>
+<div class="py-5 px-3 text-center text-dark" style="background-color: #f2f2f2;">
+    <h1 class="h2 fw-bold text-uppercase mb-2">Rafy Walls</h1>
+    <p class="fs-5 mb-2">Стены — важнейший элемент атмосферы</p>
+    <p class="fs-6 text-muted mb-0" style="max-width: 700px; margin: 0 auto;">
+        Мы верим, что стены должны вдохновлять. Наш каталог объединяет коллекции,
+        в которых каждая текстура и оттенок создают настроение. Найдите то, что близко именно вам.
+    </p>
 </div>
+
+
+
+
+
+
+
+
+
+
 
 <div class="catalog-container">
 

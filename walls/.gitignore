@@ -21,3 +21,12 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+# Не трогать базу данных
+/database/*.sqlite
+
+# Не трогать загруженные изображения
+/public/uploads
+
+# Не трогать логи и кэш
+/storage/logs/*
+/storage/framework/*
