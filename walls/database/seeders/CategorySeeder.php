@@ -22,5 +22,6 @@ class CategorySeeder extends Seeder
         Category::create(['category_name' => 'Фактурные']);
         Category::create(['category_name' => 'Классические']);
         Category::create(['category_name' => 'Современные']);
+        Category::create(['category_name' => 'С 3D эффектом']);
     }
 }

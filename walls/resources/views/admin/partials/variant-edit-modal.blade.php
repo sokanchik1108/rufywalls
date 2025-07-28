@@ -98,15 +98,17 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label">Категория</label>
-                            <select name="category_id" class="form-select">
+                            <label class="form-label">Категории</label>
+                            <select name="category_ids[]" class="form-select" multiple required>
                                 @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ $product->category_id == $category->id ? 'selected' : '' }}>
+                                <option value="{{ $category->id }}"
+                                    {{ $product->categories->contains($category->id) ? 'selected' : '' }}>
                                     {{ $category->category_name }}
                                 </option>
                                 @endforeach
                             </select>
                         </div>
+
 
                         <div class="col-md-6">
                             <label class="form-label">Комнаты</label>

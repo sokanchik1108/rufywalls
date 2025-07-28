@@ -13,7 +13,7 @@ class WebsiteController extends Controller
 {
     public function website()
     {
-        $products = Product::with('category', 'rooms')->take(3)->get();
+        $products = Product::with('categories', 'rooms')->take(3)->get();
         $categories = Category::all();
         $rooms = Room::all();
 
@@ -41,8 +41,12 @@ class WebsiteController extends Controller
         $variants = Variant::with(['product', 'batches']);
 
         if ($request->filled('category_id')) {
-            $variants->whereHas('product', fn($q) => $q->where('category_id', $request->category_id));
+            $variants->whereHas('product.categories', function ($q) use ($request) {
+                $q->where('categories.id', $request->category_id);
+            });
         }
+
+
 
         if ($request->filled('room_id')) {
             $variants->whereHas('product.rooms', fn($q) => $q->where('rooms.id', $request->room_id));
@@ -133,7 +137,7 @@ class WebsiteController extends Controller
     public function show($id)
     {
         $product = Product::with([
-            'category',
+            'categories',
             'rooms',
             'variants.batches',
             'companions.variants' // загружаем компаньонов и их варианты

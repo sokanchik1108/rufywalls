@@ -18,7 +18,6 @@ class Product extends Model
         'purchase_price',
         'sale_price',
         'brand',
-        'category_id',
         'description',
         'detailed',
         // Убери room_id из fillable — связи через many-to-many!
@@ -29,17 +28,18 @@ class Product extends Model
         return $this->hasMany(Variant::class);
     }
 
-    public function category()
+    public function categories()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsToMany(Category::class);
     }
+
 
     public function rooms()
     {
         return $this->belongsToMany(Room::class);
     }
 
-        public function companions()
+    public function companions()
     {
         return $this->belongsToMany(
             Product::class,
@@ -61,8 +61,7 @@ class Product extends Model
     }
 
     public function companionOf()
-{
- return $this->belongsToMany(Product::class, 'product_companions', 'product_id', 'companion_id');
-}
-
+    {
+        return $this->belongsToMany(Product::class, 'product_companions', 'product_id', 'companion_id');
+    }
 }

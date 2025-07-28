@@ -52,7 +52,7 @@
                         <img
                             data-src="{{ asset('storage/' . $image) }}"
                             class="d-block w-100 lazy-img"
-                            alt="Изображение {{ $index + 1 }}"
+                            alt="Фото товара {{ $product->name ?? '' }}"
                             width="100%">
 
                     </div>

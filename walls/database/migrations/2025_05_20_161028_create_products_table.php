@@ -20,7 +20,6 @@ class CreateProductsTable extends Migration
             $table->string('brand');
             $table->string('description');
             $table->text('detailed');
-            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->timestamps();
         });
     }

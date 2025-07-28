@@ -11,17 +11,18 @@
             <input type="hidden" name="room_id" id="room_id" value="{{ request('room_id') }}">
 
             <!-- Категории -->
-            <div class="mb-3">
-                <label for="category_id" class="form-label">Категория</label>
-                <select name="category_id" class="form-select" id="category_id">
-                    <option value="">Все</option>
-                    @foreach($categories as $category)
-                    <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                        {{ $category->category_name }}
-                    </option>
-                    @endforeach
-                </select>
-            </div>
+<div class="mb-3">
+    <label for="category_id" class="form-label">Категория</label>
+    <select name="category_id" class="form-select" id="category_id">
+        <option value="">Все категории</option>
+        @foreach($categories as $category)
+        <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+            {{ $category->category_name }}
+        </option>
+        @endforeach
+    </select>
+</div>
+
 
             <!-- Комнаты -->
             <ul class="filter-links mb-3">

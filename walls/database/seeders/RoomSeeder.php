@@ -18,7 +18,6 @@ class RoomSeeder extends Seeder
         Room::create(['room_name' => 'Кухня']);
         Room::create(['room_name' => 'Детская']);
         Room::create(['room_name' => 'Прихожая']);
-        Room::create(['room_name' => 'Ванная']);
         Room::create(['room_name' => 'Кабинет']);
         Room::create(['room_name' => 'Столовая']);
         Room::create(['room_name' => 'Балкон']);

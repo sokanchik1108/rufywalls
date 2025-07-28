@@ -126,14 +126,15 @@
                         <div class="col-md-6"><label>Цена прихода</label><input type="text" name="purchase_price" class="form-control" required></div>
                         <div class="col-md-6"><label>Цена продажи</label><input type="number" name="sale_price" class="form-control" required></div>
                         <div class="col-md-6"><label>Бренд</label><input type="text" name="brand" class="form-control" required></div>
-                        <div class="col-md-6">
-                            <label>Категория</label>
-                            <select name="category_id" class="form-select" required>
+                        <div class="col-12">
+                            <label>Категории</label>
+                            <select name="category_ids[]" class="form-select" multiple required>
                                 @foreach($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->category_name }}</option>
                                 @endforeach
                             </select>
                         </div>
+
                         <div class="col-12">
                             <label>Комнаты</label>
                             <select name="room_ids[]" class="form-select" multiple required>

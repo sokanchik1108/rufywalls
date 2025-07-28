@@ -35,7 +35,8 @@ class AdminController extends Controller
             'purchase_price' => 'required',
             'sale_price' => 'required|numeric',
             'brand' => 'required|string',
-            'category_id' => 'required|exists:categories,id',
+            'category_ids' => 'required|array',
+            'category_ids.*' => 'exists:categories,id',
             'room_ids' => 'required|array',
             'room_ids.*' => 'exists:rooms,id',
             'description' => 'required|string',
@@ -46,14 +47,11 @@ class AdminController extends Controller
             'variants.*.color' => 'required|string',
             'variants.*.sku' => 'required|string|distinct|unique:variants,sku',
             'variants.*.images' => 'required|array|min:1',
-            'variants.*.images.*' => 'image|max:2048',
+            'variants.*.images.*' => 'image',
             'variants.*.batches' => 'required|array|min:1',
             'variants.*.batches.*.batch_code' => 'required|string',
             'variants.*.batches.*.stock' => 'required|integer|min:0',
         ]);
-
-        
-
 
         DB::beginTransaction();
 
@@ -66,19 +64,15 @@ class AdminController extends Controller
                 'purchase_price' => $validated['purchase_price'],
                 'sale_price' => $validated['sale_price'],
                 'brand' => $validated['brand'],
-                'category_id' => $validated['category_id'],
                 'description' => $validated['description'],
                 'detailed' => $validated['detailed'],
             ]);
 
             $product->rooms()->attach($validated['room_ids']);
+            $product->categories()->attach($validated['category_ids']);
 
-            // Сохраняем связи с компаньонами в обе стороны
             if (!empty($validated['companions'])) {
-                // Связь текущего товара с компаньонами
                 $product->companions()->sync($validated['companions']);
-
-                // Обратная связь: связываем каждого компаньона с текущим товаром
                 foreach ($validated['companions'] as $companionId) {
                     $companion = Product::find($companionId);
                     if ($companion) {
@@ -87,7 +81,6 @@ class AdminController extends Controller
                 }
             }
 
-            // Сохраняем варианты и партии
             foreach ($validated['variants'] as $variantIndex => $variantData) {
                 $imagePaths = [];
                 if ($request->hasFile("variants.$variantIndex.images")) {
@@ -129,7 +122,7 @@ class AdminController extends Controller
         $sku = $request->get('sku');
 
         // Пагинация по Variant
-        $variants = Variant::with(['product.category', 'product.rooms', 'batches'])
+        $variants = Variant::with(['product.categories', 'product.rooms', 'batches'])
             ->when($sku, fn($q) => $q->where('sku', 'like', "%$sku%"))
             ->paginate(12);
 
@@ -158,13 +151,12 @@ class AdminController extends Controller
             'purchase_price' => 'required',
             'sale_price' => 'required|numeric',
             'brand' => 'required|string',
-            'category_id' => 'required|exists:categories,id',
+            'category_ids' => 'required|array',
+            'category_ids.*' => 'exists:categories,id',
             'room_ids' => 'required|array',
             'room_ids.*' => 'exists:rooms,id',
             'description' => 'required|string',
             'detailed' => 'required|string',
-
-            // 👇 добавляем companion_variant_ids
             'companion_variant_ids' => 'nullable|array',
             'companion_variant_ids.*' => 'exists:variants,id',
         ]);
@@ -172,25 +164,33 @@ class AdminController extends Controller
         DB::beginTransaction();
 
         try {
-            // Обновление основного товара
-            $product->update($validated);
-            $product->rooms()->sync($validated['room_ids']);
+            // Обновление товара
+            $product->update([
+                'name' => $validated['name'],
+                'country' => $validated['country'],
+                'sticking' => $validated['sticking'],
+                'material' => $validated['material'],
+                'purchase_price' => $validated['purchase_price'],
+                'sale_price' => $validated['sale_price'],
+                'brand' => $validated['brand'],
+                'description' => $validated['description'],
+                'detailed' => $validated['detailed'],
+            ]);
 
-            // 🔁 Компаньоны по variant_id → product_id
+            $product->rooms()->sync($validated['room_ids']);
+            $product->categories()->sync($validated['category_ids']);
+
+            // Компаньоны
             if (!empty($validated['companion_variant_ids'])) {
-                // Получаем ID товаров по variant_id
                 $companionProductIds = Variant::whereIn('id', $validated['companion_variant_ids'])
                     ->pluck('product_id')
                     ->unique()
                     ->toArray();
 
-                // Исключаем текущий товар
                 $companionProductIds = array_diff($companionProductIds, [$product->id]);
 
-                // Обновляем связи
                 $product->companions()->sync($companionProductIds);
 
-                // Обратные связи
                 foreach ($companionProductIds as $companionId) {
                     $companion = Product::find($companionId);
                     if ($companion) {
@@ -198,7 +198,7 @@ class AdminController extends Controller
                     }
                 }
 
-                // Удалим устаревшие обратные связи
+                // Удаляем устаревшие обратные связи
                 $oldCompanions = Product::whereHas('companions', function ($q) use ($product) {
                     $q->where('companion_id', $product->id);
                 })->get();
@@ -209,14 +209,14 @@ class AdminController extends Controller
                     }
                 }
             } else {
-                // Удаляем все связи, если ничего не пришло
+                // Если нет компаньонов — удаляем связи
                 foreach ($product->companions as $companion) {
                     $companion->companions()->detach($product->id);
                 }
                 $product->companions()->detach();
             }
 
-            // Обновляем изображения товара
+            // Изображения товара
             if ($request->hasFile('images')) {
                 $imagePaths = [];
                 foreach ($request->file('images') as $image) {
@@ -226,7 +226,7 @@ class AdminController extends Controller
                 $product->save();
             }
 
-            // Обновляем варианты и партии
+            // Обновление вариантов и партий
             if ($request->has('variants')) {
                 foreach ($request->input('variants') as $variantId => $variantData) {
                     $variant = $product->variants()->find($variantId);
@@ -266,6 +266,7 @@ class AdminController extends Controller
             return redirect()->back()->withErrors(['error' => 'Ошибка при обновлении: ' . $e->getMessage()]);
         }
     }
+
 
 
     public function delete($id)
@@ -395,27 +396,27 @@ class AdminController extends Controller
 
 
 
-public function autocomplete(Request $request)
-{
-    $term = $request->get('term');
+    public function autocomplete(Request $request)
+    {
+        $term = $request->get('term');
 
-    $variants = Variant::with('product')
-        ->where('sku', 'LIKE', '%' . $term . '%')
-        ->orWhereHas('product', function ($query) use ($term) {
-            $query->where('name', 'LIKE', '%' . $term . '%');
-        })
-        ->limit(10)
-        ->get();
+        $variants = Variant::with('product')
+            ->where('sku', 'LIKE', '%' . $term . '%')
+            ->orWhereHas('product', function ($query) use ($term) {
+                $query->where('name', 'LIKE', '%' . $term . '%');
+            })
+            ->limit(10)
+            ->get();
 
-    $results = $variants->map(function ($variant) {
-        return [
-            'label' => $variant->sku . ' — ' . ($variant->product->name ?? ''),
-            'value' => $variant->sku
-        ];
-    });
+        $results = $variants->map(function ($variant) {
+            return [
+                'label' => $variant->sku . ' — ' . ($variant->product->name ?? ''),
+                'value' => $variant->sku
+            ];
+        });
 
-    return response()->json($results);
-}
+        return response()->json($results);
+    }
 
 
 
@@ -467,43 +468,41 @@ public function autocomplete(Request $request)
     }
 
     public function storeBatch(Request $request)
-{
-    $data = $request->validate([
-        'variant_id' => 'required|exists:variants,id',
-        'batch_code' => 'nullable|string|max:255',
-        'stock' => 'required|integer|min:0',
-    ]);
+    {
+        $data = $request->validate([
+            'variant_id' => 'required|exists:variants,id',
+            'batch_code' => 'nullable|string|max:255',
+            'stock' => 'required|integer|min:0',
+        ]);
 
-    $batch = \App\Models\Batch::create([
-        'variant_id' => $data['variant_id'],
-        'batch_code' => $data['batch_code'],
-        'stock' => $data['stock'],
-    ]);
+        $batch = \App\Models\Batch::create([
+            'variant_id' => $data['variant_id'],
+            'batch_code' => $data['batch_code'],
+            'stock' => $data['stock'],
+        ]);
 
-    return response()->json([
-        'success' => true,
-        'batch' => $batch
-    ]);
-}
-
-
-
-public function makeMeAdmin(Request $request)
-{
-    $user = auth()->user();
-
-    if (
-        $user->email === 'kurbanov.abdurrohman2010@mail.ru' &&
-        Hash::check('adil1986', $user->password)
-    ) {
-        $user->is_admin = true;
-        $user->save();
-
-        return redirect()->route('home')->with('status', 'Вы стали админом.');
+        return response()->json([
+            'success' => true,
+            'batch' => $batch
+        ]);
     }
 
-    abort(403, 'Доступ запрещён.');
-}
 
 
+    public function makeMeAdmin(Request $request)
+    {
+        $user = auth()->user();
+
+        if (
+            $user->email === 'kurbanov.abdurrohman2010@mail.ru' &&
+            Hash::check('adil1986', $user->password)
+        ) {
+            $user->is_admin = true;
+            $user->save();
+
+            return redirect()->route('home')->with('status', 'Вы стали админом.');
+        }
+
+        abort(403, 'Доступ запрещён.');
+    }
 }
