@@ -61,6 +61,8 @@ Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
 Route::post('/checkout', [OrderController::class, 'submit'])->name('checkout.submit');
 
 Route::get('/make-me-admin', [\App\Http\Controllers\AdminController::class, 'makeMeAdmin'])->middleware('auth')->name('make-me-admin');
+Route::get('/admin/batches/by-sku/{sku}', [SaleController::class, 'bySku'])->middleware('auth');
+
 
 
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
