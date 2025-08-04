@@ -49,19 +49,27 @@
                                 <span class="me-2">👥</span> <span>Пользователи</span>
                             </a>
                         </div>
+                        
 
                         <div class="col-md-3">
-                            <a href="{{ route('admin.stock.edit') }}" class="btn btn-outline-warning w-100 py-3 shadow-sm rounded-3 d-flex align-items-center justify-content-center">
-                                <span class="me-2">📊</span> <span>Остатки товаров</span>
-                            </a>
-                        </div>
-
-                        {{-- Кнопка Продажи --}}
-                        <div class="col-md-3">
-                            <a href="{{ route('admin.sales.index') }}" class="btn btn-outline-danger w-100 py-3 shadow-sm rounded-3 d-flex align-items-center justify-content-center">
+                            <a href="{{ route('admin.sales.select_warehouse') }}" class="btn btn-outline-danger w-100 py-3 shadow-sm rounded-3 d-flex align-items-center justify-content-center">
                                 <span class="me-2">💰</span> <span>Продажи</span>
                             </a>
                         </div>
+
+                        {{-- ✅ Новая кнопка: Склады --}}
+                        <div class="col-md-3">
+                            <a href="{{ route('admin.stocks.warehouses') }}" class="btn btn-outline-info w-100 py-3 shadow-sm rounded-3 d-flex align-items-center justify-content-center">
+                                <span class="me-2">🏬</span> <span>Добавить товар на склад</span>
+                            </a>
+                        </div>
+
+                        <div class="col-md-3">
+                            <a href="{{ route('admin.warehouses.overview') }}" class="btn btn-outline-secondary w-100 py-3 shadow-sm rounded-3 d-flex align-items-center justify-content-center">
+                                <span class="me-2">📂</span> <span>Остатки товаров</span>
+                            </a>
+                        </div>
+
                     </div>
 
                     @else

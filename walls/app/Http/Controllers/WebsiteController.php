@@ -139,18 +139,25 @@ class WebsiteController extends Controller
         $product = Product::with([
             'categories',
             'rooms',
-            'variants.batches',
-            'companions.variants' // загружаем компаньонов и их варианты
+            'variants.batches.warehouses',
+            'companions.variants'
         ])->findOrFail($id);
 
         $variants = $product->variants;
         $activeVariant = $variants->first();
-        $variantStock = $activeVariant
-            ? $activeVariant->batches->sum('stock')
-            : 0;
+
+        $variantStock = 0;
+
+        if ($activeVariant) {
+            $variantStock = $activeVariant->batches->flatMap(function ($batch) {
+                return $batch->warehouses;
+            })->sum('pivot.quantity'); // <- тут используем quantity
+        }
 
         return view('product-page', compact('product', 'variants', 'activeVariant', 'variantStock'));
     }
+
+
 
 
     public function variantData($id)

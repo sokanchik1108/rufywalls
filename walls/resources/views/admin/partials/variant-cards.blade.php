@@ -1,6 +1,8 @@
 @foreach($variants as $variant)
-    @php $product = $variant->product; @endphp
-@php $images = json_decode($variant->images ?? '[]', true); @endphp
+@php
+$product = $variant->product;
+$images = json_decode($variant->images ?? '[]', true);
+@endphp
 
 <div class="col-6 col-sm-4 col-md-3 col-lg-2">
     <div class="card h-100">
@@ -13,13 +15,17 @@
             <h5 class="card-title mb-1 text-primary">Артикул: {{ $variant->sku }}</h5>
             <p class="text-muted mb-2">Оттенок: <strong>{{ $variant->color }}</strong></p>
 
-            <p class="mb-1"><strong>Категория:</strong> {{ $product->category->category_name ?? '—' }}</p>
+            <p class="mb-1"><strong>Категории:</strong>
+                {{ $product->categories->pluck('category_name')->implode(', ') ?: '—' }}
+            </p>
+
             <p class="mb-1"><strong>Бренд:</strong> {{ $product->brand }}</p>
             <p class="mb-1"><strong>Страна:</strong> {{ $product->country }}</p>
             <p class="mb-1"><strong>Материал:</strong> {{ $product->material }}</p>
             <p class="mb-1"><strong>Цена прихода:</strong> {{ $product->purchase_price }}</p>
             <p class="mb-1"><strong>Цена продажи:</strong> {{ $product->sale_price }}</p>
             <p class="mb-1"><strong>Раппорт:</strong> {{ $product->sticking }}</p>
+            <p class="mb-1"><strong>Остаток:</strong> {{ $variant->total_stock ?? 0 }} шт.</p>
 
             <p class="mb-2"><strong>Комнаты:</strong><br>
                 @foreach($product->rooms as $room)
@@ -44,15 +50,6 @@
             <p class="mb-3"><strong>Описание:</strong><br>{{ $product->description }}</p>
 
             <div class="mt-auto">
-                @php $totalStock = $variant->batches->sum('stock'); @endphp
-                <p class="fw-semibold">Общий остаток: {{ $totalStock }} шт.</p>
-                <p class="mb-1"><strong>Партии:</strong></p>
-                <ul class="small ps-3">
-                    @foreach($variant->batches as $batch)
-                    <li>Партия {{ $batch->batch_code ?? '—' }}: {{ $batch->stock }} шт.</li>
-                    @endforeach
-                </ul>
-
                 <div class="d-grid gap-2">
                     <!-- Редактировать -->
                     <button class="btn btn-sm btn-outline-primary w-100" data-bs-toggle="modal"
@@ -80,8 +77,6 @@
                         </button>
                     </form>
                 </div>
-
-
             </div>
         </div>
     </div>
@@ -96,9 +91,7 @@
 'rooms' => $rooms,
 'allProducts' => $allProducts
 ])
-
 @endforeach
-
 
 @if ($variants->hasPages())
 <div class="mt-4 d-flex justify-content-center">

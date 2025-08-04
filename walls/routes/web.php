@@ -8,6 +8,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\WarehouseController;
 
 Route::get('/address', function () {
     return view('navigations.address');
@@ -61,7 +62,33 @@ Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
 Route::post('/checkout', [OrderController::class, 'submit'])->name('checkout.submit');
 
 Route::get('/make-me-admin', [\App\Http\Controllers\AdminController::class, 'makeMeAdmin'])->middleware('auth')->name('make-me-admin');
+
 Route::get('/admin/batches/by-sku/{sku}', [SaleController::class, 'bySku'])->middleware('auth');
+
+Route::get('/admin/sales/warehouses', [SaleController::class, 'selectWarehouse'])->name('admin.sales.select_warehouse');
+
+
+Route::get('/admin/warehouses/{warehouse}/stocks', [WarehouseController::class, 'editWarehouse'])->middleware('auth')->name('admin.stocks.edit_warehouse');
+
+Route::post('/admin/warehouses/{warehouse}/stocks', [WarehouseController::class, 'updateWarehouse'])->middleware('auth')->name('admin.stocks.update_warehouse');
+
+Route::get('/admin/warehouses', [WarehouseController::class, 'listWarehouses'])->middleware('auth')->name('admin.stocks.warehouses');
+
+Route::get('/admin/stocks/view-all', [WarehouseController::class, 'viewAllBatches'])->middleware('auth')->name('admin.stocks.view_all');
+
+Route::post('/admin/batches/add', [WarehouseController::class, 'addBatchToWarehouse'])->middleware('auth')->name('admin.batches.add');
+
+Route::post('/admin/batches/delete', [WarehouseController::class, 'removeBatch'])->middleware('auth')->name('admin.batches.remove');
+
+Route::post('/admin/batches/update', [WarehouseController::class, 'updateQuantity'])->middleware('auth')->name('admin.batches.update');
+
+Route::post('/admin/warehouses', [WarehouseController::class, 'storeWarehouse'])->middleware('auth')->name('warehouses.store');
+
+Route::delete('/warehouses/{warehouse}', [WarehouseController::class, 'destroyWarehouse'])->middleware('auth')->name('warehouses.destroy');
+
+Route::get('/admin/warehouse/{id}/batches', [WarehouseController::class, 'batchOverview'])->middleware('auth')->name('admin.stocks.batch_overview');
+
+Route::get('/admin/warehouses/overview', [WarehouseController::class, 'stockWarehousesPage'])->middleware('auth')->name('admin.warehouses.overview');
 
 
 
@@ -80,10 +107,6 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::delete('/variants/{id}', [AdminController::class, 'deleteVariant'])->name('variant.delete');
     Route::get('/variants/search', [AdminController::class, 'searchVariants'])->name('variants.search');
     Route::get('/variants/autocomplete', [AdminController::class, 'autocomplete'])->name('variants.autocomplete');
-    Route::get('/stock/edit', [AdminController::class, 'editStock'])->name('stock.edit');
-    Route::post('/stock/update', [AdminController::class, 'updateStockAjax'])->name('stock.update');
-    Route::delete('/batches/{id}', [AdminController::class, 'deleteBatch'])->name('batches.delete');
-    Route::post('/batches', [AdminController::class, 'storeBatch'])->name('batches.store');
     Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
     Route::post('/sales', [SaleController::class, 'store'])->name('sales.store');
     Route::delete('/sales/{sale}', [SaleController::class, 'destroy'])->name('sales.destroy');

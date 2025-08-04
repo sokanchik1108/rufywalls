@@ -13,14 +13,16 @@ class Variant extends Model
         return $this->belongsTo(Product::class);
     }
 
-        public function batches()
+    public function batches()
     {
         return $this->hasMany(Batch::class);
     }
 
     public function getTotalStockAttribute()
     {
-        return $this->batches->sum('stock');
+        return $this->batches
+            ->flatMap(fn($batch) => $batch->warehouses)
+            ->sum('pivot.quantity');
     }
+    
 }
-

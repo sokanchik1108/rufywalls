@@ -12,5 +12,18 @@ class Batch extends Model
     {
         return $this->belongsTo(Variant::class);
     }
-}
 
+    public function warehouses()
+    {
+        return $this->belongsToMany(Warehouse::class, 'batch_warehouse')
+            ->withPivot('quantity')
+            ->withTimestamps();
+    }
+
+    public function getTotalStockAttribute()
+    {
+        return $this->warehouses()->sum('quantity');
+    }
+
+    
+}

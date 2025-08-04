@@ -32,10 +32,7 @@
         transition: transform 0.2s ease, box-shadow 0.2s ease;
         background: white;
         height: 100%;
-        min-height: 100%;
     }
-
-
 
     .card-img-top {
         height: 220px;
@@ -49,7 +46,6 @@
         font-size: 0.875rem;
         font-weight: 500;
     }
-
 
     .badge-room {
         margin-right: 4px;
@@ -202,10 +198,10 @@
 
     <div id="variant-list-container" class="row g-4 justify-content-center">
         @include('admin.partials.variant-cards', [
-        'variants' => $variants,
-        'allProducts' => $allProducts,
-        'categories' => $categories,
-        'rooms' => $rooms
+            'variants' => $variants,
+            'allProducts' => $allProducts,
+            'categories' => $categories,
+            'rooms' => $rooms
         ])
     </div>
 </div>
@@ -216,7 +212,6 @@
         const $clearBtn = $('#clearSearch');
         const $container = $('#variant-list-container');
 
-        // Автозаполнение
         $input.autocomplete({
             source: function (request, response) {
                 $.ajax({
@@ -231,34 +226,29 @@
             delay: 100
         });
 
-        // Отправка при Enter
         $input.on('keydown', function (e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                fetchVariants(1); // поиск с первой страницы
+                fetchVariants(1);
             }
         });
 
-        // Очистка
         $clearBtn.on('click', function () {
             $input.val('').focus();
             $(this).hide();
             fetchVariants(1);
         });
 
-        // Отображать кнопку очистки
         $input.on('input', function () {
             $clearBtn.toggle($(this).val().length > 0);
         });
 
-        // Обработка клика по пагинации
         $(document).on('click', '.pagination a', function (e) {
             e.preventDefault();
             const page = $(this).attr('href').split('page=')[1];
             fetchVariants(page);
         });
 
-        // Загрузка вариантов по номеру страницы и артикулу
         function fetchVariants(page = 1) {
             const sku = $input.val().trim();
 
@@ -271,7 +261,7 @@
                 },
                 success: function (data) {
                     $container.html(data.html);
-                    history.pushState(null, '', '?sku=' + encodeURIComponent(sku) + '&page=' + page); // обновление адреса
+                    history.pushState(null, '', '?sku=' + encodeURIComponent(sku) + '&page=' + page);
                 },
                 error: function () {
                     alert('Ошибка при загрузке данных');
@@ -279,7 +269,6 @@
             });
         }
 
-        // Авто-загрузка, если уже был sku в адресе
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('sku')) {
             $input.val(urlParams.get('sku'));
@@ -288,6 +277,4 @@
         }
     });
 </script>
-
-
 @endsection

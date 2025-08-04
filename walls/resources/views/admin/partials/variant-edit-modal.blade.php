@@ -32,30 +32,12 @@
                             <label class="form-label">Изображения</label>
                             <input type="file" name="variants[{{ $variant->id }}][images][]" class="form-control" multiple>
                             @if (!empty($images))
-                            <div class="mt-2">
-                                @foreach($images as $img)
-                                <img src="{{ asset('storage/' . $img) }}" width="80" class="me-2 mb-2 preview" loading="lazy">
-                                @endforeach
-                            </div>
-                            @endif
-                        </div>
-
-                        <div class="col-md-12">
-                            <label class="form-label">Партии</label>
-                            <div class="list-group">
-                                @foreach($variant->batches as $batch)
-                                <div class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <strong>Партия:</strong> {{ $batch->batch_code ?? '—' }}
-                                        <input type="hidden" name="variants[{{ $variant->id }}][batches][{{ $batch->id }}][batch_code]" value="{{ $batch->batch_code }}">
-                                    </div>
-                                    <div style="max-width: 120px;">
-                                        <input type="number" name="variants[{{ $variant->id }}][batches][{{ $batch->id }}][stock]" class="form-control form-control-sm" value="{{ $batch->stock }}" placeholder="Остаток">
-                                    </div>
+                                <div class="mt-2">
+                                    @foreach($images as $img)
+                                        <img src="{{ asset('storage/' . $img) }}" width="80" class="me-2 mb-2 preview" loading="lazy">
+                                    @endforeach
                                 </div>
-                                @endforeach
-                            </div>
-                            <p class="fw-semibold mt-2">Общий остаток по партиям: {{ $variant->batches->sum('stock') }} шт.</p>
+                            @endif
                         </div>
 
                         <hr>
@@ -101,22 +83,21 @@
                             <label class="form-label">Категории</label>
                             <select name="category_ids[]" class="form-select" multiple required>
                                 @foreach($categories as $category)
-                                <option value="{{ $category->id }}"
-                                    {{ $product->categories->contains($category->id) ? 'selected' : '' }}>
-                                    {{ $category->category_name }}
-                                </option>
+                                    <option value="{{ $category->id }}"
+                                        {{ $product->categories->contains($category->id) ? 'selected' : '' }}>
+                                        {{ $category->category_name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
-
 
                         <div class="col-md-6">
                             <label class="form-label">Комнаты</label>
                             <select name="room_ids[]" class="form-select" multiple>
                                 @foreach($rooms as $room)
-                                <option value="{{ $room->id }}" {{ $product->rooms->contains($room->id) ? 'selected' : '' }}>
-                                    {{ $room->room_name }}
-                                </option>
+                                    <option value="{{ $room->id }}" {{ $product->rooms->contains($room->id) ? 'selected' : '' }}>
+                                        {{ $room->room_name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -137,22 +118,22 @@
 
                 <h5 class="text-primary mt-3" style="margin-left: 20px;">Привязка компаньонов</h5>
 
-                <div class="col-md-12 mt-2" style="margin-left: 20px;max-width:95%;">
+                <div class="col-md-12 mt-2" style="margin-left: 20px; max-width:95%;">
                     <label class="form-label">Компаньоны (другие товары)</label>
                     <select name="companion_variant_ids[]" class="form-select" multiple>
                         @foreach($allProducts as $other)
-                        @if($other->id !== $product->id)
-                        @php
-                        $skus = $other->variants->pluck('sku')->filter()->implode(', ');
-                        $firstVariantId = $other->variants->first()?->id;
-                        $selected = $product->companions->contains($other->id);
-                        @endphp
-                        @if($firstVariantId)
-                        <option value="{{ $firstVariantId }}" {{ $selected ? 'selected' : '' }}>
-                            {{ $skus }} ({{ $other->name }})
-                        </option>
-                        @endif
-                        @endif
+                            @if($other->id !== $product->id)
+                                @php
+                                    $skus = $other->variants->pluck('sku')->filter()->implode(', ');
+                                    $firstVariantId = $other->variants->first()?->id;
+                                    $selected = $product->companions->contains($other->id);
+                                @endphp
+                                @if($firstVariantId)
+                                    <option value="{{ $firstVariantId }}" {{ $selected ? 'selected' : '' }}>
+                                        {{ $skus }} ({{ $other->name }})
+                                    </option>
+                                @endif
+                            @endif
                         @endforeach
                     </select>
                 </div>

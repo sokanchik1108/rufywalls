@@ -48,9 +48,6 @@ class AdminController extends Controller
             'variants.*.sku' => 'required|string|distinct|unique:variants,sku',
             'variants.*.images' => 'required|array|min:1',
             'variants.*.images.*' => 'image',
-            'variants.*.batches' => 'required|array|min:1',
-            'variants.*.batches.*.batch_code' => 'required|string',
-            'variants.*.batches.*.stock' => 'required|integer|min:0',
         ]);
 
         DB::beginTransaction();
@@ -89,22 +86,15 @@ class AdminController extends Controller
                     }
                 }
 
-                $variant = $product->variants()->create([
+                $product->variants()->create([
                     'color' => $variantData['color'],
                     'sku' => $variantData['sku'],
                     'images' => json_encode($imagePaths),
                 ]);
-
-                foreach ($variantData['batches'] as $batch) {
-                    $variant->batches()->create([
-                        'batch_code' => $batch['batch_code'],
-                        'stock' => $batch['stock'],
-                    ]);
-                }
             }
 
             DB::commit();
-            return redirect()->route('admin.form')->with('success', 'Товар и партии успешно добавлены');
+            return redirect()->route('admin.form')->with('success', 'Товар успешно добавлен');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withErrors(['error' => 'Ошибка при сохранении: ' . $e->getMessage()]);
@@ -122,7 +112,7 @@ class AdminController extends Controller
         $sku = $request->get('sku');
 
         // Пагинация по Variant
-        $variants = Variant::with(['product.categories', 'product.rooms', 'batches'])
+        $variants = Variant::with(['product.categories', 'product.rooms'])
             ->when($sku, fn($q) => $q->where('sku', 'like', "%$sku%"))
             ->paginate(12);
 
@@ -209,7 +199,6 @@ class AdminController extends Controller
                     }
                 }
             } else {
-                // Если нет компаньонов — удаляем связи
                 foreach ($product->companions as $companion) {
                     $companion->companions()->detach($product->id);
                 }
@@ -226,7 +215,7 @@ class AdminController extends Controller
                 $product->save();
             }
 
-            // Обновление вариантов и партий
+            // Обновление вариантов (без партий)
             if ($request->has('variants')) {
                 foreach ($request->input('variants') as $variantId => $variantData) {
                     $variant = $product->variants()->find($variantId);
@@ -244,18 +233,6 @@ class AdminController extends Controller
                     }
 
                     $variant->save();
-
-                    // Обновляем партии
-                    if (isset($variantData['batches'])) {
-                        foreach ($variantData['batches'] as $batchId => $batchData) {
-                            $batch = $variant->batches()->find($batchId);
-                            if (!$batch) continue;
-
-                            $batch->batch_code = $batchData['batch_code'] ?? $batch->batch_code;
-                            $batch->stock = $batchData['stock'] ?? $batch->stock;
-                            $batch->save();
-                        }
-                    }
                 }
             }
 
@@ -266,6 +243,7 @@ class AdminController extends Controller
             return redirect()->back()->withErrors(['error' => 'Ошибка при обновлении: ' . $e->getMessage()]);
         }
     }
+
 
 
 
@@ -300,8 +278,6 @@ class AdminController extends Controller
             }
         }
 
-        // Удаляем партии
-        $variant->batches()->delete();
 
         // Удаляем сам вариант
         $variant->delete();
@@ -419,73 +395,6 @@ class AdminController extends Controller
     }
 
 
-
-
-    public function editStock(Request $request)
-    {
-        $query = Variant::with(['product', 'batches'])
-            ->withSum('batches as total_stock', 'stock'); // ← сумма остатков
-
-        if ($request->filled('sku')) {
-            $query->where('sku', 'like', '%' . $request->sku . '%');
-        }
-
-        // Сортировка по total_stock
-        if ($request->sort === 'asc') {
-            $query->orderBy('total_stock', 'asc');
-        } elseif ($request->sort === 'desc') {
-            $query->orderBy('total_stock', 'desc');
-        }
-
-        $variants = $query->paginate(50)->withQueryString();
-
-        return view('admin.stock-edit', compact('variants'));
-    }
-
-
-
-
-    public function updateStockAjax(Request $request)
-    {
-        $stocks = $request->stocks;
-
-        foreach ($stocks as $batchId => $stock) {
-            \App\Models\Batch::where('id', $batchId)->update(['stock' => (int) $stock]);
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Остатки успешно обновлены.'
-        ]);
-    }
-
-    public function deleteBatch($id)
-    {
-        $batch = \App\Models\Batch::findOrFail($id);
-        $batch->delete();
-
-        return response()->json(['success' => true]);
-    }
-
-    public function storeBatch(Request $request)
-    {
-        $data = $request->validate([
-            'variant_id' => 'required|exists:variants,id',
-            'batch_code' => 'nullable|string|max:255',
-            'stock' => 'required|integer|min:0',
-        ]);
-
-        $batch = \App\Models\Batch::create([
-            'variant_id' => $data['variant_id'],
-            'batch_code' => $data['batch_code'],
-            'stock' => $data['stock'],
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'batch' => $batch
-        ]);
-    }
 
 
 
