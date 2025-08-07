@@ -176,12 +176,8 @@
                     @endif
                 </div>
 
-                <div class="thumbnail-container mt-3">
-                    @foreach($images as $index => $image)
-                    <img src="{{ asset('storage/' . $image) }}" class="{{ $index == 0 ? 'active' : '' }}"
-                        data-bs-target="#mainCarousel" data-bs-slide-to="{{ $index }}" alt="Миниатюра {{ $index + 1 }}">
-                    @endforeach
-                </div>
+
+
                 @endif
             </div>
 
@@ -232,13 +228,6 @@
                     </div>
                 </div>
 
-
-
-
-
-
-
-
                 <div class="mt-3 mb-3">
                     <div class="text-dark medium">Размеры рулона:</div>
                     <div class="text-muted small">Высота: 10.05 м</div>
@@ -284,6 +273,22 @@
                 </div>
                 @endif
             </div>
+
+            <div class="mt-3">
+                <h4 class="fw-bold mb-3">Текстуры обоев</h4>
+
+                <div class="thumbnail-container d-flex flex-wrap gap-1">
+                    @foreach($images as $index => $image)
+                    <img src="{{ asset('storage/' . $image) }}"
+                        class="img-thumbnail {{ $index == 0 ? 'active' : '' }}"
+                        style="width: 200px; height: 200px; object-fit: cover; cursor: pointer;"
+                        data-bs-target="#mainCarousel"
+                        data-bs-slide-to="{{ $index }}"
+                        alt="Миниатюра {{ $index + 1 }}">
+                    @endforeach
+                </div>
+            </div>
+
         </div>
 
         @if($product->detailed)
@@ -378,6 +383,13 @@
 
                         thumbnailContainer.appendChild(thumb);
                     });
+
+                    // ✅ Обновляем баннер на последнюю картинку
+                    const banner = document.getElementById('variant-banner');
+                    if (banner && data.images.length > 0) {
+                        const lastImage = data.images[data.images.length - 1];
+                        banner.src = `/storage/${lastImage}`;
+                    }
                 });
         });
 
@@ -458,6 +470,12 @@
                 img.style.cursor = 'zoom-in';
                 img.addEventListener('click', () => openZoom(img.src));
             });
+
+            // ✅ Инициализируем баннер на первом рендере
+            const banner = document.getElementById('variant-banner');
+            if (banner && zoomImages.length > 0) {
+                banner.src = zoomImages[zoomImages.length - 1];
+            }
         });
 
         document.addEventListener('keydown', (e) => {
@@ -469,6 +487,7 @@
             if (e.key === 'Escape') closeZoom();
         });
     </script>
+
 
 
 
@@ -495,6 +514,11 @@
             style="max-width: 90vw; max-height: 90vh;">
     </div>
 
+    <div id="variant-banner-wrapper" style="margin-top: 100px;margin-bottom:50px">
+        <img id="variant-banner" src="" alt="Баннер варианта" style="width: 100%; height: auto; object-fit: cover;">
+    </div>
+
+    @include('partials.footer')
 
 
 </body>
