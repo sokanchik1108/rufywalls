@@ -90,6 +90,8 @@ Route::get('/admin/warehouse/{id}/batches', [WarehouseController::class, 'batchO
 
 Route::get('/admin/warehouses/overview', [WarehouseController::class, 'stockWarehousesPage'])->middleware('auth')->name('admin.warehouses.overview');
 
+Route::get('/admin/variants/autocomplete', [AdminController::class, 'autocomplete'])->name('admin.variants.autocomplete');
+
 
 
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
@@ -106,7 +108,6 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::post('/users/{user}/toggle-admin', [AdminController::class, 'toggleAdmin'])->name('toggleAdmin');
     Route::delete('/variants/{id}', [AdminController::class, 'deleteVariant'])->name('variant.delete');
     Route::get('/variants/search', [AdminController::class, 'searchVariants'])->name('variants.search');
-    Route::get('/variants/autocomplete', [AdminController::class, 'autocomplete'])->name('variants.autocomplete');
     Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
     Route::post('/sales', [SaleController::class, 'store'])->name('sales.store');
     Route::delete('/sales/{sale}', [SaleController::class, 'destroy'])->name('sales.destroy');

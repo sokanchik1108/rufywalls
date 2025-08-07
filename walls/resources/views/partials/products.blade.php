@@ -19,34 +19,49 @@
 </div>
 
 <div class="product-grid">
-    @forelse ($variants as $variant)
+    @forelse ($variants as $item)
     @php
-    $product = $variant->product;
-    $images = json_decode($variant->images, true);
+    if (isset($item->product)) {
+    $product = $item->product;
+    $images = json_decode($item->images ?? '[]', true) ?: [];
+    $color = $item->color ?? null;
+    } else {
+    $product = $item;
+    $color = null;
+
+    $images = [];
+    foreach ($product->variants as $variant) {
+    $variantImages = json_decode($variant->images ?? '[]', true);
+    if (!empty($variantImages)) {
+    $images[] = $variantImages[0];
+    }
+    }
+    $images = array_unique($images);
+    }
     @endphp
 
     <div class="product-card">
         @if (!empty($images))
-        <div id="carousel{{ $variant->id }}" class="carousel slide mb-3">
+        <div id="carousel{{ $item->id ?? $product->id }}" class="carousel slide mb-3">
             <div class="carousel-inner">
                 @foreach ($images as $index => $image)
                 <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
                     <div class="position-relative" style="width: 100%; height: auto;">
                         <div class="loading-overlay"
                             style="
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                        background: rgba(255, 255, 255, 0.7);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        z-index: 10;
-                        font-size: 14px;
-                        color: #555;
-                    ">
+                                            position: absolute;
+                                            top: 0;
+                                            left: 0;
+                                            width: 100%;
+                                            height: 100%;
+                                            background: rgba(255, 255, 255, 0.7);
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            z-index: 10;
+                                            font-size: 14px;
+                                            color: #555;
+                                        ">
                             Загружаем...
                         </div>
                         <img
@@ -54,18 +69,16 @@
                             class="d-block w-100 lazy-img"
                             alt="Фото товара {{ $product->name ?? '' }}"
                             width="100%">
-
                     </div>
                 </div>
                 @endforeach
             </div>
 
-
             @if (count($images) > 1)
-            <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ $variant->id }}" data-bs-slide="prev">
+            <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon"></span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ $variant->id }}" data-bs-slide="next">
+            <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="next">
                 <span class="carousel-control-next-icon"></span>
             </button>
             @endif
@@ -73,7 +86,12 @@
         @endif
 
         <div class="product-info">
-            <h4 class="product-title">{{ $product->name }} ({{ $variant->color }})</h4>
+            <h4 class="product-title">
+                {{ $product->name }}
+                @if ($color)
+                ({{ $color }})
+                @endif
+            </h4>
             <div class="product-desc-price">
                 <p>{{ $product->description }}</p>
                 <span>{{ number_format($product->sale_price, 0, '.', ' ') }} ₸</span>

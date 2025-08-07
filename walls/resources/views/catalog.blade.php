@@ -242,12 +242,4 @@
         }
     });
 </script>
-
-
-
-
-
-
-
-
 @endsection
