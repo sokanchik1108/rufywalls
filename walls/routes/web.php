@@ -124,6 +124,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
         return view('admin.hidden_product_form');
     })->name('hidden.form');
     Route::post('/hidden-store', [AdminController::class, 'storeHidden'])->name('hidden.store');
+    Route::get('/products/create/select', [AdminController::class, 'selectCreateForm'])->name('products.selectCreateForm');
+
 });
 
 Auth::routes();

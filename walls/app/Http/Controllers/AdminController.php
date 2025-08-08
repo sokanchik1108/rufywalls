@@ -478,4 +478,9 @@ class AdminController extends Controller
             return redirect()->back()->withErrors(['error' => 'Ошибка: ' . $e->getMessage()]);
         }
     }
+
+    public function selectCreateForm()
+    {
+        return view('admin.select-form');
+    }
 }
