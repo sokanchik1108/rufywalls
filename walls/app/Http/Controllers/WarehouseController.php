@@ -16,7 +16,7 @@ class WarehouseController extends Controller
             $q->whereHas('warehouses', fn($q) => $q->where('warehouse_id', $warehouse->id));
         }, 'batches.warehouses'])
             ->when($request->filled('sku'), fn($q) => $q->where('sku', 'like', '%' . $request->sku . '%'))
-            ->paginate(15);
+            ->paginate(25);
 
         return view('admin.stocks.edit-warehouse', compact('warehouse', 'variants'));
     }
@@ -125,7 +125,7 @@ class WarehouseController extends Controller
         }
 
         // Ручная пагинация после сортировки
-        $perPage = 20;
+        $perPage = 25;
         $page = $request->input('page', 1);
         $paginated = new \Illuminate\Pagination\LengthAwarePaginator(
             $variants->forPage($page, $perPage),
@@ -269,7 +269,7 @@ class WarehouseController extends Controller
         }
 
         // Пагинация вручную
-        $perPage = 20;
+        $perPage = 25;
         $page = LengthAwarePaginator::resolveCurrentPage();
         $items = $grouped->values(); // переиндексация
         $paginated = new LengthAwarePaginator(

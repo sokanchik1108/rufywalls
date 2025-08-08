@@ -103,6 +103,7 @@ class AdminController extends Controller
 
 
 
+
     public function index(Request $request)
     {
         if (!Auth::check() || !Auth::user()->is_admin) {
@@ -413,5 +414,68 @@ class AdminController extends Controller
         }
 
         abort(403, 'Доступ запрещён.');
+    }
+
+
+    public function toggleHidden(Request $request, Product $product)
+    {
+        $product->is_hidden = $request->has('is_hidden');
+        $product->save();
+
+        return back()->with('success', 'Статус отображения товара обновлён.');
+    }
+
+
+
+
+
+    public function storeHidden(Request $request)
+    {
+        $validated = $request->validate([
+            'variants' => 'required|array|min:1',
+            'variants.*.color' => 'required|string',
+            'variants.*.sku' => 'required|string|distinct|unique:variants,sku',
+            'variants.*.images.*' => 'nullable|image',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $product = Product::create([
+                'name' => 'Cкрытый товар',
+                'country' => '—',
+                'sticking' => '—',
+                'material' => '—',
+                'purchase_price' => 0,
+                'sale_price' => 0,
+                'brand' => '—',
+                'description' => '—',
+                'detailed' => '—',
+                'is_hidden' => true,
+            ]);
+
+            foreach ($validated['variants'] as $index => $variantData) {
+                $imagePaths = [];
+
+                if ($request->hasFile("variants.$index.images")) {
+                    foreach ($request->file("variants.$index.images") as $image) {
+                        $imagePaths[] = $image->store('variants', 'public');
+                    }
+                }
+
+                $product->variants()->create([
+                    'color' => $variantData['color'],
+                    'sku' => $variantData['sku'],
+                    'images' => json_encode($imagePaths),
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Скрытый товар успешно добавлен');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withErrors(['error' => 'Ошибка: ' . $e->getMessage()]);
+        }
     }
 }

@@ -32,129 +32,123 @@ class WebsiteController extends Controller
         return view('navigations.calculator');
     }
 
+    public function catalog(Request $request)
+    {
+        $categories = Category::all();
+        $rooms = Room::all();
+        $brands = Product::where('is_hidden', false)->distinct()->pluck('brand');
+        $materials = Product::where('is_hidden', false)->distinct()->pluck('material');
+        $colors = Variant::whereNotNull('color')->distinct()->pluck('color');
 
-public function catalog(Request $request)
-{
-    $categories = Category::all();
-    $rooms = Room::all();
+        // Условие: показывать варианты только если есть поиск или выбран цвет
+        $showVariants = $request->filled('color') || $request->filled('search');
 
-    $brands = Product::distinct()->pluck('brand');
-    $materials = Product::distinct()->pluck('material');
-    $colors = Variant::whereNotNull('color')->distinct()->pluck('color');
+        if ($showVariants) {
+            $variants = Variant::with(['product', 'batches'])
+                ->whereHas('product', fn($q) => $q->where('is_hidden', false));
 
-    // Условие: показывать варианты только если есть поиск или выбран цвет
-    $showVariants = function () use ($request) {
-        return $request->filled('color') || $request->filled('search');
-    };
+            if ($request->filled('category_id')) {
+                $variants->whereHas('product.categories', fn($q) => $q->where('categories.id', $request->category_id));
+            }
 
-    if ($showVariants()) {
-        // Работаем с вариантами
-        $variants = Variant::with(['product', 'batches']);
+            if ($request->filled('room_id')) {
+                $variants->whereHas('product.rooms', fn($q) => $q->where('rooms.id', $request->room_id));
+            }
 
-        if ($request->filled('category_id')) {
-            $variants->whereHas('product.categories', function ($q) use ($request) {
-                $q->where('categories.id', $request->category_id);
-            });
+            if ($request->filled('brand')) {
+                $variants->whereHas('product', fn($q) => $q->whereIn('brand', (array) $request->brand));
+            }
+
+            if ($request->filled('material')) {
+                $variants->whereHas('product', fn($q) => $q->whereIn('material', (array) $request->material));
+            }
+
+            if ($request->filled('in_stock')) {
+                $variants->whereHas('batches', fn($q) => $q->where('stock', '>', 0));
+            }
+
+            if ($request->filled('sticking')) {
+                $variants->whereHas('product', function ($q) use ($request) {
+                    if ($request->sticking === 'yes') {
+                        $q->whereRaw("LOWER(sticking) != 'нет'");
+                    } elseif ($request->sticking === 'no') {
+                        $q->whereRaw("LOWER(sticking) = 'нет'");
+                    }
+                });
+            }
+
+            if ($request->filled('price_min')) {
+                $variants->whereHas('product', fn($q) => $q->where('sale_price', '>=', $request->price_min));
+            }
+
+            if ($request->filled('price_max')) {
+                $variants->whereHas('product', fn($q) => $q->where('sale_price', '<=', $request->price_max));
+            }
+
+            if ($request->filled('color')) {
+                $variants->whereIn('color', (array) $request->color);
+            }
+
+            if ($request->filled('search')) {
+                $searchTerm = $request->search;
+                $variants->where(function ($query) use ($searchTerm) {
+                    $query->where('sku', 'like', "%$searchTerm%")
+                        ->orWhereHas(
+                            'product',
+                            fn($q) =>
+                            $q->where('name', 'like', "%$searchTerm%")
+                        );
+                });
+            }
+
+            switch ($request->input('sort')) {
+                case 'price_asc':
+                    $variants->orderBy(
+                        Product::select('sale_price')
+                            ->whereColumn('products.id', 'variants.product_id')
+                            ->limit(1),
+                        'asc'
+                    );
+                    break;
+                case 'price_desc':
+                    $variants->orderBy(
+                        Product::select('sale_price')
+                            ->whereColumn('products.id', 'variants.product_id')
+                            ->limit(1),
+                        'desc'
+                    );
+                    break;
+                case 'name_asc':
+                    $variants->orderBy(
+                        Product::select('name')
+                            ->whereColumn('products.id', 'variants.product_id')
+                            ->limit(1),
+                        'asc'
+                    );
+                    break;
+                case 'name_desc':
+                    $variants->orderBy(
+                        Product::select('name')
+                            ->whereColumn('products.id', 'variants.product_id')
+                            ->limit(1),
+                        'desc'
+                    );
+                    break;
+                default:
+                    $variants->latest();
+            }
+
+            $variants = $variants->paginate(12)->withQueryString();
+
+            if ($request->ajax()) {
+                return view('partials.products', compact('variants'))->render();
+            }
+
+            return view('catalog', compact('variants', 'categories', 'rooms', 'brands', 'materials', 'colors'));
         }
 
-        if ($request->filled('room_id')) {
-            $variants->whereHas('product.rooms', fn($q) => $q->where('rooms.id', $request->room_id));
-        }
-
-        if ($request->filled('brand')) {
-            $brandsFilter = (array) $request->brand;
-            $variants->whereHas('product', fn($q) => $q->whereIn('brand', $brandsFilter));
-        }
-
-        if ($request->filled('material')) {
-            $materialsFilter = (array) $request->material;
-            $variants->whereHas('product', fn($q) => $q->whereIn('material', $materialsFilter));
-        }
-
-        if ($request->filled('in_stock')) {
-            $variants->whereHas('batches', fn($q) => $q->where('stock', '>', 0));
-        }
-
-        if ($request->filled('sticking')) {
-            $variants->whereHas('product', function ($q) use ($request) {
-                if ($request->sticking === 'yes') {
-                    $q->whereRaw("LOWER(sticking) != 'нет'");
-                } elseif ($request->sticking === 'no') {
-                    $q->whereRaw("LOWER(sticking) = 'нет'");
-                }
-            });
-        }
-
-        if ($request->filled('price_min')) {
-            $variants->whereHas('product', fn($q) => $q->where('sale_price', '>=', $request->price_min));
-        }
-
-        if ($request->filled('price_max')) {
-            $variants->whereHas('product', fn($q) => $q->where('sale_price', '<=', $request->price_max));
-        }
-
-        if ($request->filled('color')) {
-            $colorsFilter = (array) $request->color;
-            $variants->whereIn('color', $colorsFilter);
-        }
-
-        if ($request->filled('search')) {
-            $searchTerm = $request->search;
-            $variants->where(function ($query) use ($searchTerm) {
-                $query->where('sku', 'like', "%$searchTerm%")
-                      ->orWhereHas('product', fn($q) => $q->where('name', 'like', "%$searchTerm%"));
-            });
-        }
-
-        // Сортировка для вариантов через подзапросы
-        switch ($request->input('sort')) {
-            case 'price_asc':
-                $variants->orderBy(
-                    Product::select('sale_price')
-                        ->whereColumn('products.id', 'variants.product_id')
-                        ->limit(1),
-                    'asc'
-                );
-                break;
-            case 'price_desc':
-                $variants->orderBy(
-                    Product::select('sale_price')
-                        ->whereColumn('products.id', 'variants.product_id')
-                        ->limit(1),
-                    'desc'
-                );
-                break;
-            case 'name_asc':
-                $variants->orderBy(
-                    Product::select('name')
-                        ->whereColumn('products.id', 'variants.product_id')
-                        ->limit(1),
-                    'asc'
-                );
-                break;
-            case 'name_desc':
-                $variants->orderBy(
-                    Product::select('name')
-                        ->whereColumn('products.id', 'variants.product_id')
-                        ->limit(1),
-                    'desc'
-                );
-                break;
-            default:
-                $variants->latest();
-        }
-
-        $variants = $variants->paginate(12)->withQueryString();
-
-        if ($request->ajax()) {
-            return view('partials.products', compact('variants'))->render();
-        }
-
-        return view('catalog', compact('variants', 'categories', 'rooms', 'brands', 'materials', 'colors'));
-
-    } else {
         // Без поиска и цвета — показываем продукты
-        $products = Product::query();
+        $products = Product::where('is_hidden', false);
 
         if ($request->filled('category_id')) {
             $products->whereHas('categories', fn($q) => $q->where('categories.id', $request->category_id));
@@ -192,7 +186,6 @@ public function catalog(Request $request)
             $products->where('sale_price', '<=', $request->price_max);
         }
 
-        // Сортировка
         switch ($request->input('sort')) {
             case 'price_asc':
                 $products->orderBy('sale_price', 'asc');
@@ -217,7 +210,7 @@ public function catalog(Request $request)
         }
 
         return view('catalog', [
-            'variants' => $products, // используем ту же переменную, чтобы не менять шаблон
+            'variants' => $products,
             'categories' => $categories,
             'rooms' => $rooms,
             'brands' => $brands,
@@ -225,7 +218,6 @@ public function catalog(Request $request)
             'colors' => $colors
         ]);
     }
-}
 
 
 
@@ -432,5 +424,33 @@ public function catalog(Request $request)
         }
 
         return response()->json(['count' => $count]);
+    }
+
+    public function catalogAutocomplete(Request $request)
+    {
+        $term = $request->get('term');
+
+        $variants = Variant::with('product')
+            ->where(function ($query) use ($term) {
+                $query->where('sku', 'LIKE', '%' . $term . '%')
+                    ->orWhereHas('product', function ($subQuery) use ($term) {
+                        $subQuery->where('name', 'LIKE', '%' . $term . '%')
+                            ->where('is_hidden', false); // исключаем скрытые товары
+                    });
+            })
+            ->whereHas('product', function ($query) {
+                $query->where('is_hidden', false); // гарантируем только видимые
+            })
+            ->limit(10)
+            ->get();
+
+        $results = $variants->map(function ($variant) {
+            return [
+                'label' => $variant->sku . ' — ' . ($variant->product->name ?? ''),
+                'value' => $variant->sku
+            ];
+        });
+
+        return response()->json($results);
     }
 }

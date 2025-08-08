@@ -16,16 +16,6 @@
     </p>
 </div>
 
-
-
-
-
-
-
-
-
-
-
 <div class="catalog-container">
 
     @include('partials.filters')
@@ -126,7 +116,7 @@
                 $(search).autocomplete({
                     source: function(request, response) {
                         $.ajax({
-                            url: '{{ route("admin.variants.autocomplete") }}',
+                            url: '{{ route("catalog.autocomplete") }}',
                             data: {
                                 term: request.term
                             },

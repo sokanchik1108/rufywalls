@@ -76,6 +76,22 @@ $images = json_decode($variant->images ?? '[]', true);
                             🗑️ Удалить товар
                         </button>
                     </form>
+
+
+                    <!-- Скрыть/показать товар -->
+                    <form action="{{ route('admin.products.toggle-hidden', $product->id) }}" method="POST" class="mt-2">
+                        @csrf
+                        @method('PATCH')
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="is_hidden" id="hideProduct{{ $product->id }}"
+                                onchange="this.form.submit()" {{ $product->is_hidden ? 'checked' : '' }}>
+                            <label class="form-check-label" for="hideProduct{{ $product->id }}">
+                                🔒 Скрыть товар
+                            </label>
+                        </div>
+                    </form>
+
                 </div>
             </div>
         </div>

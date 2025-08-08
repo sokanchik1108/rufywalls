@@ -92,6 +92,13 @@ Route::get('/admin/warehouses/overview', [WarehouseController::class, 'stockWare
 
 Route::get('/admin/variants/autocomplete', [AdminController::class, 'autocomplete'])->name('admin.variants.autocomplete');
 
+Route::get('/catalog-autocomplete', [WebsiteController::class, 'catalogAutocomplete'])->name('catalog.autocomplete');
+
+
+
+
+
+
 
 
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
@@ -111,6 +118,12 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
     Route::post('/sales', [SaleController::class, 'store'])->name('sales.store');
     Route::delete('/sales/{sale}', [SaleController::class, 'destroy'])->name('sales.destroy');
+    Route::patch('/products/{product}/toggle-hidden', [AdminController::class, 'toggleHidden'])
+    ->name('products.toggle-hidden');
+    Route::get('/hidden-form', function () {
+        return view('admin.hidden_product_form');
+    })->name('hidden.form');
+    Route::post('/hidden-store', [AdminController::class, 'storeHidden'])->name('hidden.store');
 });
 
 Auth::routes();

@@ -9,6 +9,11 @@ class Product extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'is_hidden' => 'boolean',
+    ];
+    
+
 
     protected $fillable = [
         'name',
@@ -20,6 +25,7 @@ class Product extends Model
         'brand',
         'description',
         'detailed',
+        'is_hidden',
         // Убери room_id из fillable — связи через many-to-many!
     ];
 
