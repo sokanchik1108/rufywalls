@@ -1,7 +1,7 @@
 <section class="rafy-walls-section py-5 bg-light">
     <div class="container" style="margin-bottom: 50px;margin-top:50px;">
-        <h2 class="text-center mb-3 rafy-title">Обои Rafy Walls</h2>
-        <p class="text-center rafy-subtitle ">Премиум материалы и уникальный дизайн для создания уютного и модного пространства в вашем доме</p>
+        <h2 class="text-center mb-3 rafy-title">Обои от RAFY WALLS</h2>
+        <p class="text-center rafy-subtitle ">Премиум материалы и уникальный дизайн для создания уютного и модного пространства в вашем доме.</p>
 
         <div class="row g-4">
             <!-- Карточка 1 -->

@@ -17,7 +17,13 @@ class WebsiteController extends Controller
         $categories = Category::all();
         $rooms = Room::all();
 
-        $variants = Variant::with(['product', 'batches'])->take(3)->get();
+        $variants = Variant::selectRaw('MIN(id) as id, product_id')
+            ->groupBy('product_id')
+            ->take(3)
+            ->get()
+            ->map(fn($v) => Variant::with(['product', 'batches'])->find($v->id));
+
+
 
         return view('website', compact('products', 'categories', 'rooms', 'variants'));
     }
