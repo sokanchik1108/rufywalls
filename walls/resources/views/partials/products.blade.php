@@ -20,32 +20,32 @@
 
 <div class="product-grid">
     @forelse ($variants as $item)
-    @php
-    if (isset($item->product)) {
+@php
+static $variantIndex = 0; // общий счётчик для всех карточек на странице
+
+if (isset($item->product)) {
+    // Если это конкретный вариант
     $product = $item->product;
     $images = json_decode($item->images ?? '[]', true) ?: [];
     $color = $item->color ?? null;
-    } else {
+} else {
+    // Если это продукт — выбираем вариант по очереди
     $product = $item;
     $color = null;
-
     $images = [];
-    $color = null;
 
     if ($product->variants->isNotEmpty()) {
-    // Берём случайный вариант
-    $randomVariant = $product->variants->random();
-    $color = $randomVariant->color ?? null;
+        // Определяем вариант по текущему индексу
+        $variant = $product->variants[$variantIndex % $product->variants->count()];
+        $color = $variant->color ?? null;
+        $images = json_decode($variant->images ?? '[]', true) ?: [];
+    }
+}
 
-    // Берём все картинки этого варианта
-    $variantImages = json_decode($randomVariant->images ?? '[]', true);
-    if (!empty($variantImages)) {
-    $images = $variantImages;
-    }
-    }
+// Увеличиваем счётчик, чтобы следующий товар взял следующий вариант
+$variantIndex++;
+@endphp
 
-    }
-    @endphp
 
     <div class="product-card">
         @if (!empty($images))
