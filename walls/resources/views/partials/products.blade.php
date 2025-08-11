@@ -30,13 +30,16 @@
     $color = null;
 
     $images = [];
-    foreach ($product->variants as $variant) {
-    $variantImages = json_decode($variant->images ?? '[]', true);
+    if ($product->variants->isNotEmpty()) {
+    // Берём случайный вариант
+    $randomVariant = $product->variants->random();
+
+    // Получаем картинки этого варианта
+    $variantImages = json_decode($randomVariant->images ?? '[]', true);
     if (!empty($variantImages)) {
     $images[] = $variantImages[0];
     }
     }
-    $images = array_unique($images);
     }
     @endphp
 
