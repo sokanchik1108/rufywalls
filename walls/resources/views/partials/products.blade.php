@@ -30,16 +30,20 @@
     $color = null;
 
     $images = [];
+    $color = null;
+
     if ($product->variants->isNotEmpty()) {
     // Берём случайный вариант
     $randomVariant = $product->variants->random();
+    $color = $randomVariant->color ?? null;
 
-    // Получаем картинки этого варианта
+    // Берём все картинки этого варианта
     $variantImages = json_decode($randomVariant->images ?? '[]', true);
     if (!empty($variantImages)) {
-    $images[] = $variantImages[0];
+    $images = $variantImages;
     }
     }
+
     }
     @endphp
 
