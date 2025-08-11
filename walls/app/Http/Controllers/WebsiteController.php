@@ -135,7 +135,7 @@ class WebsiteController extends Controller
                     );
                     break;
                 default:
-                    $variants->latest();
+                    $variants->oldest();
             }
 
             $variants = $variants->paginate(12)->withQueryString();
@@ -200,7 +200,7 @@ class WebsiteController extends Controller
                 $products->orderBy('name', 'desc');
                 break;
             default:
-                $products->latest();
+                $products->oldest();
         }
 
         $products = $products->paginate(12)->withQueryString();

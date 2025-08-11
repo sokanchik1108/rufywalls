@@ -273,7 +273,7 @@
                 </div>
                 <div class="mb-3" style="margin-top: 68px;">
                     <div class="text-dark mb-1" style="font-size: 20px;">Все оттенки</div>
-                    <div class="d-flex flex-wrap gap-3" id="variant-thumbnails">
+                    <div class="d-flex flex-wrap gap-4" id="variant-thumbnails">
                         @foreach ($variants as $variant)
                         <div style="text-align: center; cursor: pointer;">
                             <img
@@ -282,7 +282,7 @@
                                 data-variant-id="{{ $variant->id }}"
                                 class="variant-thumbnail {{ $variant->id === $activeVariant->id ? 'border border-dark border-2' : '' }}"
 
-                                style="width: 100px; height: 100px; object-fit: cover; border-radius: 0;">
+                                style="width: 120px; height: 135px; object-fit: cover; border-radius: 0;">
                             <div style="font-size: 14px; margin-top: 6px; color: #333;">
                                 <div>{{ $variant->sku }}</div>
                             </div>
