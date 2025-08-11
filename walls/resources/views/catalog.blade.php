@@ -7,14 +7,17 @@
 @endsection
 
 @section('content')
-<div class="py-5 px-3 text-center text-dark" style="background-color: #f2f2f2;">
-    <h1 class="h2 fw-bold text-uppercase mb-2">Rafy Walls</h1>
+<div class="py-5 px-3 text-center" style="background-color: #01142f; color: #FFFFDD;">
+<h1 class="h2 text-uppercase mb-2" style="font-weight: 450;font-size:30px;">Каталог RAFY WALLS</h1>
+
     <p class="fs-5 mb-2">Стены — важнейший элемент атмосферы</p>
-    <p class="fs-6 text-muted mb-0" style="max-width: 700px; margin: 0 auto;">
+    <p class="fs-6 mb-0" style="max-width: 700px; margin: 0 auto;">
         Мы верим, что стены должны вдохновлять. Наш каталог объединяет коллекции,
         в которых каждая текстура и оттенок создают настроение. Найдите то, что близко именно вам!
     </p>
 </div>
+
+
 
 <div class="catalog-container">
 

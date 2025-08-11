@@ -111,7 +111,7 @@
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
                 <!-- Логотип -->
-                <a class="navbar-brand" href="/">RAFY WALLS</a>
+                <a class="navbar-brand" href="/" style="color: #01142f;">RAFY WALLS</a>
 
                 <!-- Бургер-кнопка -->
                 <button class="navbar-toggler" type="button" aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить навигацию" id="customToggler">

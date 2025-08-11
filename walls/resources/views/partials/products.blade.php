@@ -20,31 +20,31 @@
 
 <div class="product-grid">
     @forelse ($variants as $item)
-@php
-static $variantIndex = 0; // общий счётчик для всех карточек на странице
+    @php
+    static $variantIndex = 0; // общий счётчик для всех карточек на странице
 
-if (isset($item->product)) {
+    if (isset($item->product)) {
     // Если это конкретный вариант
     $product = $item->product;
     $images = json_decode($item->images ?? '[]', true) ?: [];
     $color = $item->color ?? null;
-} else {
+    } else {
     // Если это продукт — выбираем вариант по очереди
     $product = $item;
     $color = null;
     $images = [];
 
     if ($product->variants->isNotEmpty()) {
-        // Определяем вариант по текущему индексу
-        $variant = $product->variants[$variantIndex % $product->variants->count()];
-        $color = $variant->color ?? null;
-        $images = json_decode($variant->images ?? '[]', true) ?: [];
+    // Определяем вариант по текущему индексу
+    $variant = $product->variants[$variantIndex % $product->variants->count()];
+    $color = $variant->color ?? null;
+    $images = json_decode($variant->images ?? '[]', true) ?: [];
     }
-}
+    }
 
-// Увеличиваем счётчик, чтобы следующий товар взял следующий вариант
-$variantIndex++;
-@endphp
+    // Увеличиваем счётчик, чтобы следующий товар взял следующий вариант
+    $variantIndex++;
+    @endphp
 
 
     <div class="product-card">

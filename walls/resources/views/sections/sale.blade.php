@@ -1,10 +1,10 @@
 <section class="discount-section py-5" style="background-color: #01142f;">
     <div class="container text-center px-3 px-md-4">
-        <h2 class="discount-title fw-bold text-white mb-1">
+        <h2 class="discount-title mb-1" style="color:#FFFFDD;font-weight: 400;font-size:30px;">
             Скидка 5% при онлайн-заказе!
         </h2>
         <p class="discount-text text-white-50 mb-0">
-            Закажите через сайт и получите <strong class="text-white">5% скидки</strong>.
+            Закажите через сайт и получите <strong style="color: #FFFFDD;;">5% скидки</strong>.
             Подтверждение — в WhatsApp.
         </p>
     </div>
