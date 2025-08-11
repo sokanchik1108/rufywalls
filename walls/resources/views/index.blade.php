@@ -3,20 +3,20 @@
 @section('title', 'Корзина - RAFY WALLS')
 
 @section('meta')
-    <meta name="description" content="Ваша корзина RAFY WALLS — шаг до стильного интерьера. Проверьте товары и оформите заказ легко и быстро.">
+<meta name="description" content="Ваша корзина RAFY WALLS — шаг до стильного интерьера. Проверьте товары и оформите заказ легко и быстро.">
 @endsection
 
 
 @section('content')
 <div class="container py-5">
 
-@if(session('success_html') || session('success'))
+    @if(session('success_html') || session('success'))
     <div id="blade-toast" class="position-fixed top-0 start-50 translate-middle-x mt-4 z-1050 animate-fade-in-down" style="max-width: 90%; width: 350px;">
         <div class="d-flex align-items-center bg-dark text-white p-3 rounded shadow position-relative">
 
             {{-- Показываем иконку только если это обычное сообщение --}}
             @if(session('success') && !session('success_html'))
-                <i class="bi bi-check-circle-fill me-2 fs-4"></i>
+            <i class="bi bi-check-circle-fill me-2 fs-4"></i>
             @endif
 
             {{-- Текст сообщения --}}
@@ -26,12 +26,12 @@
 
             {{-- Кнопка закрытия --}}
             <button type="button"
-                    class="btn-close btn-close-white position-absolute end-0 top-50 translate-middle-y me-3"
-                    aria-label="Закрыть"
-                    onclick="document.getElementById('blade-toast').remove()"></button>
+                class="btn-close btn-close-white position-absolute end-0 top-50 translate-middle-y me-3"
+                aria-label="Закрыть"
+                onclick="document.getElementById('blade-toast').remove()"></button>
         </div>
     </div>
-@endif
+    @endif
 
 
 
@@ -96,10 +96,8 @@
                             value="{{ $item['quantity'] }}"
                             min="1"
                             data-variant-id="{{ $item['variant_id'] }}"
-                            data-max="{{ $item['variant']->batches->sum('stock') }}"
                             class="form-control form-control-sm quantity-input"
                             style="width: 70px;">
-
                     </td>
                     <td class="text-muted item-total">{{ number_format($item['total'], 2) }} ₸</td>
                     <td>
@@ -143,7 +141,6 @@
                         value="{{ $item['quantity'] }}"
                         min="1"
                         data-variant-id="{{ $item['variant_id'] }}"
-                        data-max="{{ $item['variant']->batches->sum('stock') }}"
                         class="form-control form-control-sm quantity-input"
                         style="width: 70px;">
 
@@ -249,13 +246,8 @@
             input.addEventListener('change', () => {
                 const variantId = input.dataset.variantId;
                 const quantity = parseInt(input.value);
-                const max = parseInt(input.dataset.max);
 
-                if (quantity > max) {
-                    input.value = max;
-                    showToast(`Доступно только ${max} шт.`, 'error');
-                    return;
-                }
+                // Убрана проверка по max
 
                 fetch(`/cart/update/${variantId}`, {
                         method: 'POST',

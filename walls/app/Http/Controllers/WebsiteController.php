@@ -285,14 +285,9 @@ class WebsiteController extends Controller
         }
 
         $variant = Variant::with(['product', 'batches'])->findOrFail($variantId);
-        $stock = $variant->batches->sum('stock');
         $quantity = max(1, (int) $request->input('quantity', 1));
 
-        if ($quantity > $stock) {
-            return response()->json([
-                'message' => 'Недостаточно товара на складе',
-            ], 400);
-        }
+        // ❌ Удалена проверка на наличие stock
 
         $cart = $this->getCartData();
 
@@ -365,11 +360,8 @@ class WebsiteController extends Controller
         }
 
         $variant = Variant::with('product', 'batches')->findOrFail($variantId);
-        $stock = $variant->batches->sum('stock');
 
-        if ($quantity > $stock) {
-            return response()->json(['error' => 'Недостаточно на складе'], 400);
-        }
+
 
         $cart[$variantId]['quantity'] = $quantity;
 
@@ -382,7 +374,7 @@ class WebsiteController extends Controller
 
         $cartTotal = 0;
         foreach ($cart as $id => $item) {
-            $v = $variants->get((int) $id); // Явно приводим к int
+            $v = $variants->get((int) $id);
             if ($v && $v->product) {
                 $cartTotal += $v->product->sale_price * $item['quantity'];
             }
@@ -395,6 +387,7 @@ class WebsiteController extends Controller
             'cartTotal' => $cartTotal,
         ]);
     }
+
 
 
     public function removeFromCart($variantId)

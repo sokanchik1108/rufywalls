@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="{{ $product->name }} — обои, которые работают на стиль. RAFY WALLS.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
 
 
     <!-- Bootstrap -->
@@ -15,6 +17,13 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     <style>
+        html,
+        body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+
         body {
             background-color: #ffffff;
         }
@@ -175,9 +184,12 @@
                     </button>
                     @endif
                 </div>
-
-
-
+                <div class="thumbnail-container mt-3">
+                    @foreach($images as $index => $image)
+                    <img src="{{ asset('storage/' . $image) }}" class="{{ $index == 0 ? 'active' : '' }}"
+                        data-bs-target="#mainCarousel" data-bs-slide-to="{{ $index }}" alt="Миниатюра {{ $index + 1 }}">
+                    @endforeach
+                </div>
                 @endif
             </div>
 
@@ -195,108 +207,219 @@
 
                     <div class="input-group" style="width: 110px;">
                         <button type="button" class="btn btn-outline-secondary py-1 px-2" onclick="changeQuantity(-1)">−</button>
-                        <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ $variantStock }}"
+                        <input type="number" name="quantity" id="quantity" value="1" min="1"
                             class="form-control text-center" required>
                         <button type="button" class="btn btn-outline-secondary py-1 px-2" onclick="changeQuantity(1)">+</button>
                     </div>
                 </form>
 
                 <div class="row mt-4">
-                    <div class="col-4 col-sm-6 mb-3">
+                    <div class="col-4 col-sm-6 mb-4">
                         <div class="text-muted small">АРТИКУЛ</div>
                         <div class="text-dark small" id="variant-sku">{{ $activeVariant->sku }}</div>
                     </div>
-                    <div class="col-4 col-sm-6 mb-3">
+                    <div class="col-4 col-sm-6 mb-4">
                         <div class="text-muted small">БРЕНД</div>
                         <div class="text-dark small">{{ $product->brand }}</div>
                     </div>
-                    <div class="col-4 col-sm-6 mb-3">
+                    <div class="col-4 col-sm-6 mb-4">
                         <div class="text-muted small">СТРАНА</div>
                         <div class="text-dark small">{{ $product->country }}</div>
                     </div>
-                    <div class="col-4 col-sm-6 mb-3">
+                    <div class="col-4 col-sm-6 mb-4">
                         <div class="text-muted small">МАТЕРИАЛ</div>
                         <div class="text-dark small">{{ $product->material }}</div>
                     </div>
-                    <div class="col-4 col-sm-6 mb-3">
+                    <div class="col-4 col-sm-6 mb-4">
                         <div class="text-muted small">РАППОРТ (СТЫКОВКА)</div>
                         <div class="text-dark small">{{ $product->sticking }}</div>
                     </div>
-                    <div class="col-4 col-sm-6 mb-3">
-                        <div class="text-muted small">ОСТАТОК</div>
-                        <div class="text-dark small" id="variant-stock">{{ $variantStock }} шт.</div>
+                    <div class="col-4 col-sm-6 mb-4">
+                        <div class="text-muted small">ЦВЕТ</div>
+                        <div class="text-dark small" id="variant-color">{{ $activeVariant->color }}</div>
                     </div>
+
+                    <div class="col-4 col-sm-6 mb-4">
+                        <div class="text-muted small">Размеры рулона:</div>
+                        <div class="text-dark small" id="variant-color">1.06 x 10 м</div>
+                    </div>
+
+                    @php
+                    $companions = $product->companions->merge($product->companionOf)->unique('id');
+                    $firstCompanion = $companions->first();
+                    $firstVariant = $firstCompanion ? $firstCompanion->variants->first() : null;
+                    $companionDisplay = null;
+
+                    if ($firstVariant && $firstVariant->sku) {
+                    $sku = $firstVariant->sku;
+
+                    // Если есть 5 цифр перед дефисом — показываем только их
+                    if (preg_match('/^(\d{5})-/', $sku, $matches)) {
+                    $companionDisplay = $matches[1];
+                    } else {
+                    // Иначе показываем весь артикул как есть
+                    $companionDisplay = $sku;
+                    }
+                    }
+                    @endphp
+
+                    <div class="col-4 col-sm-6 mb-3">
+                        <div class="text-muted small">Компаньон</div>
+                        <div class="text-dark small" id="variant-color">
+                            {{ $companionDisplay ?? '' }}
+                        </div>
+                    </div>
+
                 </div>
-
-                <div class="mt-3 mb-3">
-                    <div class="text-dark medium">Размеры рулона:</div>
-                    <div class="text-muted small">Высота: 10.05 м</div>
-                    <div class="text-muted small">Ширина: 1.06 м</div>
-                </div>
-
-
-                <div class="mb-3" style="max-width: 240px;">
-                    <label for="variant-select" class="form-label text-dark mb-1" style="font-size: 14px;">Выберите оттенок</label>
-                    <select id="variant-select"
-                        class="form-select text-dark"
-                        style="font-size: 14px; padding: 6px 10px; height: 38px;">
+                <div class="mb-3" style="margin-top: 68px;">
+                    <div class="text-dark mb-1" style="font-size: 20px;">Все оттенки</div>
+                    <div class="d-flex flex-wrap gap-3" id="variant-thumbnails">
                         @foreach ($variants as $variant)
-                        <option value="{{ $variant->id }}" {{ $variant->id === $activeVariant->id ? 'selected' : '' }}>
-                            {{ $variant->color }} ({{ $variant->sku }})
-                        </option>
-                        @endforeach
-                    </select>
-                </div>
+                        <div style="text-align: center; cursor: pointer;">
+                            <img
+                                src="{{ asset('storage/' . json_decode($variant->images)[0]) }}"
+                                alt="{{ $variant->color }}"
+                                data-variant-id="{{ $variant->id }}"
+                                class="variant-thumbnail {{ $variant->id === $activeVariant->id ? 'border border-dark border-2' : '' }}"
 
-
-                @if($product->companions->count())
-                <div class="mt-4">
-                    <h5 class="mb-2">Компаньоны</h5>
-                    <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 g-2">
-                        @php
-                        $companions = $product->companions->merge($product->companionOf)->unique('id');
-                        @endphp
-                        @foreach ($companions as $companion)
-                        @foreach($companion->variants as $variant)
-                        <div class="col">
-                            <a href="{{ route('product.show', $companion->id) }}"
-                                class="text-decoration-none border rounded p-2 d-block bg-white hover-shadow-sm">
-                                <div class="fw-semibold text-dark small">{{ $companion->name }}</div>
-                                <div class="text-muted small">{{ $variant->sku }}</div>
-                                <div class="text-muted small">{{ $variant->color }}</div>
-                            </a>
+                                style="width: 100px; height: 100px; object-fit: cover; border-radius: 0;">
+                            <div style="font-size: 14px; margin-top: 6px; color: #333;">
+                                <div>{{ $variant->sku }}</div>
+                            </div>
                         </div>
                         @endforeach
-                        @endforeach
                     </div>
-
-                </div>
-                @endif
-            </div>
-
-            <div class="mt-3">
-                <h4 class="fw-bold mb-3">Текстуры обоев</h4>
-
-                <div class="thumbnail-container d-flex flex-wrap gap-1">
-                    @foreach($images as $index => $image)
-                    <img src="{{ asset('storage/' . $image) }}"
-                        class="img-thumbnail {{ $index == 0 ? 'active' : '' }}"
-                        style="width: 200px; height: 200px; object-fit: cover; cursor: pointer;"
-                        data-bs-target="#mainCarousel"
-                        data-bs-slide-to="{{ $index }}"
-                        alt="Миниатюра {{ $index + 1 }}">
-                    @endforeach
                 </div>
             </div>
-
         </div>
 
-        @if($product->detailed)
-        <div class="mt-5 pt-4 border-top" style="margin-bottom: 70px;">
+        @php
+        $companions = $product->companions->merge($product->companionOf)->unique('id');
+        $firstCompanion = $companions->first();
+        $firstVariant = $firstCompanion ? $firstCompanion->variants->first() : null;
+        $companionDisplaySku = null;
+
+        if ($firstVariant && $firstVariant->sku) {
+        $sku = $firstVariant->sku;
+
+        // Если SKU начинается с 5 цифр перед дефисом, например: 11275-01
+        if (preg_match('/^(\d{5})-/', $sku, $matches)) {
+        $companionDisplaySku = $matches[1]; // Только первые 5 цифр
+        } else {
+        $companionDisplaySku = $sku; // Показываем весь SKU как есть
+        }
+        }
+        @endphp
+
+
+<div class="mt-5 pt-4 border-top" style="margin-bottom: 70px;">
+    <div class="row g-4">
+
+        {{-- Описание --}}
+        <div class="col-md-8">
             <h5 class="mb-3">Подробное описание</h5>
             <p class="text-muted" style="white-space: pre-line;">{{ $product->detailed }}</p>
         </div>
+
+        {{-- Компаньон --}}
+        @if($firstCompanion && $firstVariant)
+        <div class="col-md-4">
+            <div class="companion-wrapper">
+                {{-- Фото --}}
+                @if(isset(json_decode($firstVariant->images)[0]))
+                <img src="{{ asset('storage/' . json_decode($firstVariant->images)[0]) }}"
+                     alt="{{ $firstCompanion->name }}"
+                     class="companion-bg">
+                @else
+                <div class="companion-bg d-flex justify-content-center align-items-center text-muted">
+                    Фото нет
+                </div>
+                @endif
+
+                {{-- Малый блок с инфо --}}
+                <div class="companion-info">
+                    @if($companionDisplaySku)
+                    <div class="sku">{{ $companionDisplaySku }}</div>
+                    @endif
+                    <h5 class="companion-title">{{ $firstCompanion->name }}</h5>
+                    <a href="{{ route('product.show', $firstCompanion->id) }}" class="btn btn-dark btn-sm px-3 rounded-pill">
+                        Подробнее
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .companion-wrapper {
+                position: relative;
+                border-radius: 12px;
+                overflow: hidden;
+                height: 380px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            }
+
+            .companion-bg {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                filter: brightness(0.85);
+                transition: transform 0.4s ease;
+            }
+
+            .companion-wrapper:hover .companion-bg {
+                transform: scale(1.03);
+            }
+
+            .companion-info {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(255, 255, 255, 0.88);
+                padding: 14px 16px;
+                border-radius: 10px;
+                width: 130px;
+                text-align: center;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+                backdrop-filter: blur(6px);
+            }
+
+            .companion-title {
+                font-size: 1rem;
+                font-weight: 600;
+                color: #111;
+                font-family: 'Inter', sans-serif;
+                letter-spacing: -0.2px;
+                margin-bottom: 8px;
+            }
+
+            .sku {
+                font-size: 0.80rem;
+                color: #666;
+                margin-bottom: 6px;
+                font-family: 'Inter', sans-serif;
+            }
+
+            .btn {
+                font-size: 0.8rem;
+                font-weight: 500;
+            }
+        </style>
         @endif
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
     </div>
 
     <script>
@@ -335,72 +458,104 @@
             showZoomImage();
         }
 
-        document.getElementById('variant-select').addEventListener('change', function() {
-            const variantId = this.value;
+        // 🆕 Добавляем обработку кликов по миниатюрам оттенков
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.variant-thumbnail').forEach(img => {
+                img.addEventListener('click', () => {
+                    const variantId = img.getAttribute('data-variant-id');
 
-            fetch(`/variant/${variantId}`)
-                .then(response => response.json())
-                .then(data => {
-                    variantInput.value = data.id;
-                    document.getElementById('variant-sku').textContent = data.sku;
-                    document.getElementById('variant-stock').textContent = data.stock + ' шт.';
-
-                    if (quantityInput) {
-                        quantityInput.max = data.stock;
-                        quantityInput.setAttribute('max', data.stock);
-                        quantityInput.value = Math.min(parseInt(quantityInput.value) || 1, data.stock);
-                    }
-
-                    const carouselInner = document.getElementById('variant-images');
-                    carouselInner.innerHTML = '';
-                    zoomImages = [];
-
-                    data.images.forEach((img, index) => {
-                        const fullImgSrc = `/storage/${img}`;
-                        zoomImages.push(fullImgSrc);
-
-                        const div = document.createElement('div');
-                        div.className = 'carousel-item' + (index === 0 ? ' active' : '');
-                        div.innerHTML = `<img src="${fullImgSrc}" class="d-block w-100" alt="Изображение ${index + 1}" style="cursor: zoom-in;">`;
-                        div.querySelector('img').addEventListener('click', () => openZoom(fullImgSrc));
-                        carouselInner.appendChild(div);
+                    // Обновляем стили активной миниатюры
+                    document.querySelectorAll('.variant-thumbnail').forEach(i => {
+                        i.classList.remove('border', 'border-2', 'border-dark');
                     });
 
-                    const thumbnailContainer = document.querySelector('.thumbnail-container');
-                    thumbnailContainer.innerHTML = '';
-                    data.images.forEach((img, index) => {
-                        const thumb = document.createElement('img');
-                        thumb.src = `/storage/${img}`;
-                        thumb.alt = `Миниатюра ${index + 1}`;
-                        thumb.className = index === 0 ? 'active' : '';
-                        thumb.setAttribute('data-bs-target', '#mainCarousel');
-                        thumb.setAttribute('data-bs-slide-to', index);
+                    img.classList.add('border', 'border-dark', 'border-2');
 
-                        thumb.addEventListener('click', () => {
-                            document.querySelectorAll('.thumbnail-container img').forEach(i => i.classList.remove('active'));
-                            thumb.classList.add('active');
+
+                    // Обновляем hidden input
+                    variantInput.value = variantId;
+
+                    // Загружаем данные по варианту
+                    fetch(`/variant/${variantId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('variant-sku').textContent = data.sku;
+                            document.getElementById('variant-color').textContent = data.color;
+
+                            // Обновляем карусель
+                            const carouselInner = document.getElementById('variant-images');
+                            carouselInner.innerHTML = '';
+                            zoomImages = [];
+
+                            data.images.forEach((img, index) => {
+                                const fullImgSrc = `/storage/${img}`;
+                                zoomImages.push(fullImgSrc);
+
+                                const div = document.createElement('div');
+                                div.className = 'carousel-item' + (index === 0 ? ' active' : '');
+                                div.innerHTML = `<img src="${fullImgSrc}" class="d-block w-100" alt="Изображение ${index + 1}" style="cursor: zoom-in;">`;
+                                div.querySelector('img').addEventListener('click', () => openZoom(fullImgSrc));
+                                carouselInner.appendChild(div);
+                            });
+
+                            // Обновляем миниатюры под каруселью
+                            const thumbnailContainer = document.querySelector('.thumbnail-container');
+                            thumbnailContainer.innerHTML = '';
+                            data.images.forEach((img, index) => {
+                                const thumb = document.createElement('img');
+                                thumb.src = `/storage/${img}`;
+                                thumb.alt = `Миниатюра ${index + 1}`;
+                                thumb.className = index === 0 ? 'active' : '';
+                                thumb.setAttribute('data-bs-target', '#mainCarousel');
+                                thumb.setAttribute('data-bs-slide-to', index);
+
+                                thumb.addEventListener('click', () => {
+                                    document.querySelectorAll('.thumbnail-container img').forEach(i => i.classList.remove('active'));
+                                    thumb.classList.add('active');
+                                });
+
+                                thumbnailContainer.appendChild(thumb);
+                            });
+
+                            // Обновляем баннер снизу
+                            const banner = document.getElementById('variant-banner');
+                            if (banner && data.images.length > 0) {
+                                const lastImage = data.images[data.images.length - 1];
+                                banner.src = `/storage/${lastImage}`;
+                            }
                         });
-
-                        thumbnailContainer.appendChild(thumb);
-                    });
-
-                    // ✅ Обновляем баннер на последнюю картинку
-                    const banner = document.getElementById('variant-banner');
-                    if (banner && data.images.length > 0) {
-                        const lastImage = data.images[data.images.length - 1];
-                        banner.src = `/storage/${lastImage}`;
-                    }
                 });
+            });
+
+            // Инициализируем zoom-изображения
+            zoomImages = Array.from(document.querySelectorAll('#variant-images img')).map(img => img.src);
+
+            document.querySelectorAll('#variant-images img').forEach((img, index) => {
+                img.style.cursor = 'zoom-in';
+                img.addEventListener('click', () => openZoom(img.src));
+            });
+
+            const banner = document.getElementById('variant-banner');
+            if (banner && zoomImages.length > 0) {
+                banner.src = zoomImages[zoomImages.length - 1];
+            }
         });
 
         function changeQuantity(delta) {
+            const quantityInput = document.getElementById('quantity');
             if (!quantityInput) return;
+
             let value = parseInt(quantityInput.value) || 1;
             const min = parseInt(quantityInput.min) || 1;
-            const max = parseInt(quantityInput.max) || 999;
+            // const max = parseInt(quantityInput.max) || 999;  // убрали max
+
             value += delta;
-            quantityInput.value = Math.max(min, Math.min(max, value));
+            if (value < min) value = min;
+            // не ограничиваем сверху
+
+            quantityInput.value = value;
         }
+
 
         document.getElementById('add-to-cart-form').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -463,21 +618,6 @@
             if (thumbnails[index]) thumbnails[index].classList.add('active');
         });
 
-        document.addEventListener('DOMContentLoaded', () => {
-            zoomImages = Array.from(document.querySelectorAll('#variant-images img')).map(img => img.src);
-
-            document.querySelectorAll('#variant-images img').forEach((img, index) => {
-                img.style.cursor = 'zoom-in';
-                img.addEventListener('click', () => openZoom(img.src));
-            });
-
-            // ✅ Инициализируем баннер на первом рендере
-            const banner = document.getElementById('variant-banner');
-            if (banner && zoomImages.length > 0) {
-                banner.src = zoomImages[zoomImages.length - 1];
-            }
-        });
-
         document.addEventListener('keydown', (e) => {
             const zoomModal = document.getElementById('zoomModal');
             if (zoomModal.classList.contains('d-none')) return;
@@ -487,9 +627,6 @@
             if (e.key === 'Escape') closeZoom();
         });
     </script>
-
-
-
 
     <!-- Модальное окно для увеличения изображения -->
     <div id="zoomModal"
@@ -514,12 +651,31 @@
             style="max-width: 90vw; max-height: 90vh;">
     </div>
 
-    <div id="variant-banner-wrapper" style="margin-top: 100px;margin-bottom:50px">
-        <img id="variant-banner" src="" alt="Баннер варианта" style="width: 100%; height: auto; object-fit: cover;">
+    <style>
+        #zoomImage {
+            max-width: 90vw !important;
+            max-height: 90vh !important;
+        }
+
+        @media (max-width: 768px) {
+            #zoomImage {
+                max-width: 100vw !important;
+                max-height: 100vh !important;
+            }
+        }
+    </style>
+
+
+    <div id="variant-banner-wrapper" style="margin-top: 100px; margin-bottom: 50px;">
+        <img id="variant-banner"
+            src=""
+            alt="Баннер варианта"
+            loading="lazy"
+            style="width: 100%; height: auto; object-fit: cover;">
     </div>
 
-    @include('partials.footer')
 
+    @include('partials.footer')
 
 </body>
 
