@@ -1,10 +1,11 @@
 @extends('layouts.main')
 
-@section('title', 'Наш адрес - RAFY WALLS')
+@section('title', 'Как нас найти — адрес и контакты RAFY WALLS в Алматы')
 
 @section('meta')
-<meta name="description" content="Контактная информация и адрес магазина RAFY WALLS. Свяжитесь с нами или приезжайте лично." />
+<meta name="description" content="Адрес и контакты магазина RAFY WALLS в Алматы. Загляните к нам и подберите обои, которые преобразят ваш интерьер." />
 @endsection
+
 
 
 @section('content')

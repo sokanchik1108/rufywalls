@@ -1,14 +1,25 @@
 @extends('layouts.main')
 
-@section('title', 'Каталог - RAFY WALLS')
+@section('title', 'RAFY WALLS — купить обои в Алматы и по Казахстану')
+
 
 @section('meta')
-<meta name="description" content="Каталог обоев RAFY WALLS — широкий выбор и быстрая доставка.">
+<meta name="description" content="Купить обои в Алматы и по Казахстану — RAFy WALLS. Большой выбор дизайнов, доставка по стране. Обновите интерьер стильно и легко." />
 @endsection
 
 @section('content')
+<style>
+@media (max-width: 576px) {
+    .catalog-title {
+        font-size: 20px !important; /* меньше, чем 30px */
+    }
+}
+</style>
+
 <div class="py-5 px-3 text-center" style="background-color: #01142f; color: #FFFFDD;">
-<h1 class="h2 text-uppercase mb-2" style="font-weight: 450;font-size:30px;">Каталог RAFY WALLS</h1>
+    <h1 class="h2 text-uppercase mb-2 catalog-title" style="font-weight: 450;font-size:30px;">
+        Каталог RAFY WALLS
+    </h1>
 
     <p class="fs-5 mb-2">Стены — важнейший элемент атмосферы</p>
     <p class="fs-6 mb-0" style="max-width: 700px; margin: 0 auto;">
@@ -16,6 +27,7 @@
         в которых каждая текстура и оттенок создают настроение. Найдите то, что близко именно вам!
     </p>
 </div>
+
 
 
 

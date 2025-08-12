@@ -2,12 +2,21 @@
 <html lang="ru">
 
 <head>
+    @php
+    // Делаем материал более читабельным для описания
+    $materialText = $product->material;
+    // Можно добавить простые замены для самых частых случаев
+    $materialText = str_ireplace('Винил на флизелине', 'виниловые обои на флизелиновой основе', $materialText);
+    $materialText = str_ireplace('бумага', 'бумажные обои', $materialText);
+    @endphp
+
     <meta charset="UTF-8">
-    <title>{{ $product->name }} — RAFY WALLS</title>
+    <title>{{ $product->name }} — стильные моющиеся {{ $materialText }} | RAFY WALLS</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="description" content="{{ $product->name }} — обои, которые работают на стиль. RAFY WALLS.">
+    <meta name="description" content="{{ $product->name }} — моющиеся {{ $materialText }} в Алматы. Современные коллекции с широким выбором оттенков и текстур. RAFY WALLS. Артикул: {{ $activeVariant->sku }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
 
 
 
@@ -312,105 +321,105 @@
         @endphp
 
 
-<div class="mt-5 pt-4 border-top" style="margin-bottom: 70px;">
-    <div class="row g-4">
+        <div class="mt-5 pt-4 border-top" style="margin-bottom: 70px;">
+            <div class="row g-4">
 
-        {{-- Описание --}}
-        <div class="col-md-8">
-            <h5 class="mb-3">Подробное описание</h5>
-            <p class="text-muted" style="white-space: pre-line;">{{ $product->detailed }}</p>
-        </div>
-
-        {{-- Компаньон --}}
-        @if($firstCompanion && $firstVariant)
-        <div class="col-md-4">
-            <div class="companion-wrapper">
-                {{-- Фото --}}
-                @if(isset(json_decode($firstVariant->images)[0]))
-                <img src="{{ asset('storage/' . json_decode($firstVariant->images)[0]) }}"
-                     alt="{{ $firstCompanion->name }}"
-                     class="companion-bg">
-                @else
-                <div class="companion-bg d-flex justify-content-center align-items-center text-muted">
-                    Фото нет
+                {{-- Описание --}}
+                <div class="col-md-8">
+                    <h5 class="mb-3">Подробное описание</h5>
+                    <p class="text-muted" style="white-space: pre-line;">{{ $product->detailed }}</p>
                 </div>
+
+                {{-- Компаньон --}}
+                @if($firstCompanion && $firstVariant)
+                <div class="col-md-4">
+                    <div class="companion-wrapper">
+                        {{-- Фото --}}
+                        @if(isset(json_decode($firstVariant->images)[0]))
+                        <img src="{{ asset('storage/' . json_decode($firstVariant->images)[0]) }}"
+                            alt="{{ $firstCompanion->name }}"
+                            class="companion-bg">
+                        @else
+                        <div class="companion-bg d-flex justify-content-center align-items-center text-muted">
+                            Фото нет
+                        </div>
+                        @endif
+
+                        {{-- Малый блок с инфо --}}
+                        <div class="companion-info">
+                            @if($companionDisplaySku)
+                            <div class="sku">{{ $companionDisplaySku }}</div>
+                            @endif
+                            <h5 class="companion-title">{{ $firstCompanion->name }}</h5>
+                            <a href="{{ route('product.show', $firstCompanion->id) }}" class="btn btn-dark btn-sm px-3 rounded-pill">
+                                Подробнее
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <style>
+                    .companion-wrapper {
+                        position: relative;
+                        border-radius: 12px;
+                        overflow: hidden;
+                        height: 380px;
+                        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+                    }
+
+                    .companion-bg {
+                        position: absolute;
+                        inset: 0;
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        filter: brightness(0.85);
+                        transition: transform 0.4s ease;
+                    }
+
+                    .companion-wrapper:hover .companion-bg {
+                        transform: scale(1.03);
+                    }
+
+                    .companion-info {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: rgba(255, 255, 255, 0.88);
+                        padding: 14px 16px;
+                        border-radius: 10px;
+                        width: 130px;
+                        text-align: center;
+                        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+                        backdrop-filter: blur(6px);
+                    }
+
+                    .companion-title {
+                        font-size: 1rem;
+                        font-weight: 600;
+                        color: #111;
+                        font-family: 'Inter', sans-serif;
+                        letter-spacing: -0.2px;
+                        margin-bottom: 8px;
+                    }
+
+                    .sku {
+                        font-size: 0.80rem;
+                        color: #666;
+                        margin-bottom: 6px;
+                        font-family: 'Inter', sans-serif;
+                    }
+
+                    .btn {
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                    }
+                </style>
                 @endif
 
-                {{-- Малый блок с инфо --}}
-                <div class="companion-info">
-                    @if($companionDisplaySku)
-                    <div class="sku">{{ $companionDisplaySku }}</div>
-                    @endif
-                    <h5 class="companion-title">{{ $firstCompanion->name }}</h5>
-                    <a href="{{ route('product.show', $firstCompanion->id) }}" class="btn btn-dark btn-sm px-3 rounded-pill">
-                        Подробнее
-                    </a>
-                </div>
             </div>
         </div>
-
-        <style>
-            .companion-wrapper {
-                position: relative;
-                border-radius: 12px;
-                overflow: hidden;
-                height: 380px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-            }
-
-            .companion-bg {
-                position: absolute;
-                inset: 0;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                filter: brightness(0.85);
-                transition: transform 0.4s ease;
-            }
-
-            .companion-wrapper:hover .companion-bg {
-                transform: scale(1.03);
-            }
-
-            .companion-info {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: rgba(255, 255, 255, 0.88);
-                padding: 14px 16px;
-                border-radius: 10px;
-                width: 130px;
-                text-align: center;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-                backdrop-filter: blur(6px);
-            }
-
-            .companion-title {
-                font-size: 1rem;
-                font-weight: 600;
-                color: #111;
-                font-family: 'Inter', sans-serif;
-                letter-spacing: -0.2px;
-                margin-bottom: 8px;
-            }
-
-            .sku {
-                font-size: 0.80rem;
-                color: #666;
-                margin-bottom: 6px;
-                font-family: 'Inter', sans-serif;
-            }
-
-            .btn {
-                font-size: 0.8rem;
-                font-weight: 500;
-            }
-        </style>
-        @endif
-
-    </div>
-</div>
 
 
 

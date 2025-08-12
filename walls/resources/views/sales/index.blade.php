@@ -15,6 +15,13 @@
         font-size: 1.4rem;
     }
 
+    /* Отключаем приближение при фокусе на iOS */
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+
     .form-label {
         font-size: 0.8rem;
     }

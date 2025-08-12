@@ -115,6 +115,7 @@ class AdminController extends Controller
         // Пагинация по Variant
         $variants = Variant::with(['product.categories', 'product.rooms'])
             ->when($sku, fn($q) => $q->where('sku', 'like', "%$sku%"))
+            ->orderByDesc('created_at') // или updated_at, если новизна по обновлению
             ->paginate(12);
 
         $categories = Category::all();
@@ -436,7 +437,11 @@ class AdminController extends Controller
             'variants.*.color' => 'required|string',
             'variants.*.sku' => 'required|string|distinct|unique:variants,sku',
             'variants.*.images.*' => 'nullable|image',
+        ], [
+            'variants.*.sku.unique' => 'Уже есть такой артикул',
+            'variants.*.sku.distinct' => 'Артикулы должны быть разными',
         ]);
+
 
         DB::beginTransaction();
 

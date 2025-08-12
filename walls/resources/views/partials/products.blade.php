@@ -5,7 +5,8 @@
             id="search"
             value="{{ request('search') }}"
             placeholder="Введите название или артикул..."
-            class="form-control">
+            class="form-control"
+            style="font-size: 16px;">
         <button type="button" id="clearSearch">&times;</button>
     </div>
 

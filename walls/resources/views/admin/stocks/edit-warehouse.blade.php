@@ -35,6 +35,12 @@
     .btn-outline-dark {
         border-radius: 0;
     }
+
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
 </style>
 
 <div class="container-fluid py-4" style="padding-left: 50px; padding-right: 50px;">
@@ -173,7 +179,11 @@
             $.post("{{ route('admin.batches.update') }}", {
                 _token: "{{ csrf_token() }}",
                 batch_id: batchId,
-                    warehouse_id: {{ $warehouse->id }},
+                warehouse_id: {
+                    {
+                        $warehouse - > id
+                    }
+                },
                 quantity: quantity
             }).done(() => {
                 if ($input.next('.update-success').length === 0) {
