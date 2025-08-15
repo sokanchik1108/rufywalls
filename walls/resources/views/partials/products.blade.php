@@ -23,19 +23,35 @@
     @forelse ($variants as $item)
     @php
     static $variantIndex = 0; // общий счётчик
+    static $groupVariantCache = []; // кэш выбранных вариантов по группам
 
     if (isset($item->product)) {
-    // Если это конкретный вариант (например при поиске)
+    // Это конкретный вариант (например при поиске)
     $product = $item->product;
     $variant = $item;
     } else {
-    // Если это продукт — выбираем вариант с учётом повторов по 2 карточки
     $product = $item;
+
+    // === Определяем группу через компаньонов ===
+    $companions = $product->companions->pluck('id')->toArray() ?? [];
+    $groupIds = array_merge([$product->id], $companions);
+    sort($groupIds);
+    $groupKey = implode('-', $groupIds);
+
+    // Если группа ещё не выбрана — назначаем вариант
+    if (!isset($groupVariantCache[$groupKey])) {
     if ($product->variants->isNotEmpty()) {
-    $variant = $product->variants[floor($variantIndex / 2) % $product->variants->count()];
+    $groupVariantCache[$groupKey] = $product->variants[
+    $variantIndex % $product->variants->count()
+    ];
     } else {
-    $variant = null;
+    $groupVariantCache[$groupKey] = null;
     }
+
+    $variantIndex++; // счётчик двигаем только один раз на группу
+    }
+
+    $variant = $groupVariantCache[$groupKey];
     }
 
     // ================= Картинки =================
