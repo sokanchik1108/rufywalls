@@ -131,120 +131,132 @@ class AdminController extends Controller
     }
 
 
-    public function update(Request $request, $id)
-    {
-        $product = Product::findOrFail($id);
+public function update(Request $request, $id)
+{
+    $product = Product::findOrFail($id);
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'country' => 'required|string',
-            'sticking' => 'required|string',
-            'material' => 'required|string',
-            'purchase_price' => 'required',
-            'sale_price' => 'required|numeric',
-            'brand' => 'required|string',
-            'category_ids' => 'required|array',
-            'category_ids.*' => 'exists:categories,id',
-            'room_ids' => 'required|array',
-            'room_ids.*' => 'exists:rooms,id',
-            'description' => 'required|string',
-            'detailed' => 'required|string',
-            'companion_variant_ids' => 'nullable|array',
-            'companion_variant_ids.*' => 'exists:variants,id',
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'country' => 'required|string',
+        'sticking' => 'required|string',
+        'material' => 'required|string',
+        'purchase_price' => 'required',
+        'sale_price' => 'required|numeric',
+        'discount_price' => 'nullable|numeric', // скидочная цена
+        'brand' => 'required|string',
+        'status' => 'nullable|in:новинка,распродажа,хит продаж', // статус
+        'category_ids' => 'required|array',
+        'category_ids.*' => 'exists:categories,id',
+        'room_ids' => 'required|array',
+        'room_ids.*' => 'exists:rooms,id',
+        'description' => 'required|string',
+        'detailed' => 'required|string',
+        'companion_variant_ids' => 'nullable|array',
+        'companion_variant_ids.*' => 'exists:variants,id',
+    ]);
+
+    // Если распродажа — скидочная цена обязательна
+    if ($validated['status'] === 'распродажа' && empty($validated['discount_price'])) {
+        return redirect()->back()
+            ->withErrors(['discount_price' => 'Для распродажи нужно указать скидочную цену'])
+            ->withInput();
+    }
+
+    DB::beginTransaction();
+
+    try {
+        // Обновление товара
+        $product->update([
+            'name' => $validated['name'],
+            'country' => $validated['country'],
+            'sticking' => $validated['sticking'],
+            'material' => $validated['material'],
+            'purchase_price' => $validated['purchase_price'],
+            'sale_price' => $validated['sale_price'],
+            'discount_price' => $validated['discount_price'] ?? null,
+            'status' => $validated['status'] ?? null,
+            'brand' => $validated['brand'],
+            'description' => $validated['description'],
+            'detailed' => $validated['detailed'],
         ]);
 
-        DB::beginTransaction();
+        $product->rooms()->sync($validated['room_ids']);
+        $product->categories()->sync($validated['category_ids']);
 
-        try {
-            // Обновление товара
-            $product->update([
-                'name' => $validated['name'],
-                'country' => $validated['country'],
-                'sticking' => $validated['sticking'],
-                'material' => $validated['material'],
-                'purchase_price' => $validated['purchase_price'],
-                'sale_price' => $validated['sale_price'],
-                'brand' => $validated['brand'],
-                'description' => $validated['description'],
-                'detailed' => $validated['detailed'],
-            ]);
+        // Компаньоны
+        if (!empty($validated['companion_variant_ids'])) {
+            $companionProductIds = Variant::whereIn('id', $validated['companion_variant_ids'])
+                ->pluck('product_id')
+                ->unique()
+                ->toArray();
 
-            $product->rooms()->sync($validated['room_ids']);
-            $product->categories()->sync($validated['category_ids']);
+            $companionProductIds = array_diff($companionProductIds, [$product->id]);
 
-            // Компаньоны
-            if (!empty($validated['companion_variant_ids'])) {
-                $companionProductIds = Variant::whereIn('id', $validated['companion_variant_ids'])
-                    ->pluck('product_id')
-                    ->unique()
-                    ->toArray();
+            $product->companions()->sync($companionProductIds);
 
-                $companionProductIds = array_diff($companionProductIds, [$product->id]);
-
-                $product->companions()->sync($companionProductIds);
-
-                foreach ($companionProductIds as $companionId) {
-                    $companion = Product::find($companionId);
-                    if ($companion) {
-                        $companion->companions()->syncWithoutDetaching([$product->id]);
-                    }
-                }
-
-                // Удаляем устаревшие обратные связи
-                $oldCompanions = Product::whereHas('companions', function ($q) use ($product) {
-                    $q->where('companion_id', $product->id);
-                })->get();
-
-                foreach ($oldCompanions as $oldCompanion) {
-                    if (!in_array($oldCompanion->id, $companionProductIds)) {
-                        $oldCompanion->companions()->detach($product->id);
-                    }
-                }
-            } else {
-                foreach ($product->companions as $companion) {
-                    $companion->companions()->detach($product->id);
-                }
-                $product->companions()->detach();
-            }
-
-            // Изображения товара
-            if ($request->hasFile('images')) {
-                $imagePaths = [];
-                foreach ($request->file('images') as $image) {
-                    $imagePaths[] = $image->store('product_images', 'public');
-                }
-                $product->images = json_encode($imagePaths);
-                $product->save();
-            }
-
-            // Обновление вариантов (без партий)
-            if ($request->has('variants')) {
-                foreach ($request->input('variants') as $variantId => $variantData) {
-                    $variant = $product->variants()->find($variantId);
-                    if (!$variant) continue;
-
-                    $variant->sku = $variantData['sku'] ?? $variant->sku;
-                    $variant->color = $variantData['color'] ?? $variant->color;
-
-                    if ($request->hasFile("variants.$variantId.images")) {
-                        $paths = [];
-                        foreach ($request->file("variants.$variantId.images") as $img) {
-                            $paths[] = $img->store('variant_images', 'public');
-                        }
-                        $variant->images = json_encode($paths);
-                    }
-
-                    $variant->save();
+            foreach ($companionProductIds as $companionId) {
+                $companion = Product::find($companionId);
+                if ($companion) {
+                    $companion->companions()->syncWithoutDetaching([$product->id]);
                 }
             }
 
-            DB::commit();
-            return redirect()->back()->with('success', 'Товар успешно обновлён');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->back()->withErrors(['error' => 'Ошибка при обновлении: ' . $e->getMessage()]);
+            // Удаляем устаревшие обратные связи
+            $oldCompanions = Product::whereHas('companions', function ($q) use ($product) {
+                $q->where('companion_id', $product->id);
+            })->get();
+
+            foreach ($oldCompanions as $oldCompanion) {
+                if (!in_array($oldCompanion->id, $companionProductIds)) {
+                    $oldCompanion->companions()->detach($product->id);
+                }
+            }
+        } else {
+            foreach ($product->companions as $companion) {
+                $companion->companions()->detach($product->id);
+            }
+            $product->companions()->detach();
         }
+
+        // Изображения товара
+        if ($request->hasFile('images')) {
+            $imagePaths = [];
+            foreach ($request->file('images') as $image) {
+                $imagePaths[] = $image->store('product_images', 'public');
+            }
+            $product->images = json_encode($imagePaths);
+            $product->save();
+        }
+
+        // Обновление вариантов (без партий)
+        if ($request->has('variants')) {
+            foreach ($request->input('variants') as $variantId => $variantData) {
+                $variant = $product->variants()->find($variantId);
+                if (!$variant) continue;
+
+                $variant->sku = $variantData['sku'] ?? $variant->sku;
+                $variant->color = $variantData['color'] ?? $variant->color;
+
+                if ($request->hasFile("variants.$variantId.images")) {
+                    $paths = [];
+                    foreach ($request->file("variants.$variantId.images") as $img) {
+                        $paths[] = $img->store('variant_images', 'public');
+                    }
+                    $variant->images = json_encode($paths);
+                }
+
+                $variant->save();
+            }
+        }
+
+        DB::commit();
+        return redirect()->back()->with('success', 'Товар успешно обновлён');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->back()->withErrors(['error' => 'Ошибка при обновлении: ' . $e->getMessage()]);
     }
+}
+
 
 
 

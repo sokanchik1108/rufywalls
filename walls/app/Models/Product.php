@@ -12,7 +12,7 @@ class Product extends Model
     protected $casts = [
         'is_hidden' => 'boolean',
     ];
-    
+
 
 
     protected $fillable = [
@@ -26,6 +26,8 @@ class Product extends Model
         'description',
         'detailed',
         'is_hidden',
+        'discount_price',   // цена со скидкой
+        'status',
         // Убери room_id из fillable — связи через many-to-many!
     ];
 

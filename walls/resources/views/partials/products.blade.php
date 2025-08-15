@@ -99,11 +99,34 @@
                 @if ($color)
                 ({{ $color }})
                 @endif
+
+                @if (!empty($product->status))
+                <span class="product-status ">
+                    {{ $product->status }}
+                </span>
+                @endif
             </h4>
             <div class="product-desc-price">
                 <p>{{ $product->description }}</p>
+
+                @if ($product->discount_price && $product->discount_price > $product->sale_price)
+                <!-- Старая цена -->
+                <div>
+                    <span class="text-muted" style="text-decoration: line-through;">
+                        {{ number_format($product->discount_price, 0, '.', ' ') }} ₸
+                    </span>
+                    <!-- Основная цена -->
+                    <span class="text-danger fw-bold ms-2">
+                        {{ number_format($product->sale_price, 0, '.', ' ') }} ₸
+                    </span>
+                </div>
+                @else
+                <!-- Если нет скидочной цены, показываем просто sale_price -->
                 <span>{{ number_format($product->sale_price, 0, '.', ' ') }} ₸</span>
+                @endif
             </div>
+
+
             <div class="btn-wrapper">
                 <a href="{{ route('product.show', $product->id) }}" class="btn btn-dark">Подробнее</a>
             </div>
@@ -119,6 +142,18 @@
 </div>
 
 <style>
+    .product-status {
+        display: inline-block;
+        background-color: red;
+        /* тёмно-синий */
+        color: #fff;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+
+
     /* ========== Общие стили для Top Bar ========== */
     .top-bar {
         display: flex;

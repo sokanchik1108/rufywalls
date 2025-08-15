@@ -32,17 +32,33 @@
                             <label class="form-label">Изображения</label>
                             <input type="file" name="variants[{{ $variant->id }}][images][]" class="form-control" multiple>
                             @if (!empty($images))
-                                <div class="mt-2">
-                                    @foreach($images as $img)
-                                        <img src="{{ asset('storage/' . $img) }}" width="80" class="me-2 mb-2 preview" loading="lazy">
-                                    @endforeach
-                                </div>
+                            <div class="mt-2">
+                                @foreach($images as $img)
+                                <img src="{{ asset('storage/' . $img) }}" width="80" class="me-2 mb-2 preview" loading="lazy">
+                                @endforeach
+                            </div>
                             @endif
                         </div>
 
                         <hr>
 
                         <h5 class="text-primary">Редактирование товара</h5>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Статус</label>
+                            <select name="status" class="form-select">
+                                <option value="">Без статуса</option>
+                                <option value="новинка" {{ $product->status === 'новинка' ? 'selected' : '' }}>Новинка</option>
+                                <option value="распродажа" {{ $product->status === 'распродажа' ? 'selected' : '' }}>Распродажа</option>
+                                <option value="хит продаж" {{ $product->status === 'хит продаж' ? 'selected' : '' }}>Хит продаж</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Старая цена</label>
+                            <input type="number" step="0.01" name="discount_price" class="form-control"
+                                value="{{ $product->discount_price }}">
+                        </div>
 
                         <div class="col-md-6">
                             <label class="form-label">Название</label>
@@ -83,10 +99,10 @@
                             <label class="form-label">Категории</label>
                             <select name="category_ids[]" class="form-select" multiple required>
                                 @foreach($categories as $category)
-                                    <option value="{{ $category->id }}"
-                                        {{ $product->categories->contains($category->id) ? 'selected' : '' }}>
-                                        {{ $category->category_name }}
-                                    </option>
+                                <option value="{{ $category->id }}"
+                                    {{ $product->categories->contains($category->id) ? 'selected' : '' }}>
+                                    {{ $category->category_name }}
+                                </option>
                                 @endforeach
                             </select>
                         </div>
@@ -95,9 +111,9 @@
                             <label class="form-label">Комнаты</label>
                             <select name="room_ids[]" class="form-select" multiple>
                                 @foreach($rooms as $room)
-                                    <option value="{{ $room->id }}" {{ $product->rooms->contains($room->id) ? 'selected' : '' }}>
-                                        {{ $room->room_name }}
-                                    </option>
+                                <option value="{{ $room->id }}" {{ $product->rooms->contains($room->id) ? 'selected' : '' }}>
+                                    {{ $room->room_name }}
+                                </option>
                                 @endforeach
                             </select>
                         </div>
@@ -122,18 +138,18 @@
                     <label class="form-label">Компаньоны (другие товары)</label>
                     <select name="companion_variant_ids[]" class="form-select" multiple>
                         @foreach($allProducts as $other)
-                            @if($other->id !== $product->id)
-                                @php
-                                    $skus = $other->variants->pluck('sku')->filter()->implode(', ');
-                                    $firstVariantId = $other->variants->first()?->id;
-                                    $selected = $product->companions->contains($other->id);
-                                @endphp
-                                @if($firstVariantId)
-                                    <option value="{{ $firstVariantId }}" {{ $selected ? 'selected' : '' }}>
-                                        {{ $skus }} ({{ $other->name }})
-                                    </option>
-                                @endif
-                            @endif
+                        @if($other->id !== $product->id)
+                        @php
+                        $skus = $other->variants->pluck('sku')->filter()->implode(', ');
+                        $firstVariantId = $other->variants->first()?->id;
+                        $selected = $product->companions->contains($other->id);
+                        @endphp
+                        @if($firstVariantId)
+                        <option value="{{ $firstVariantId }}" {{ $selected ? 'selected' : '' }}>
+                            {{ $skus }} ({{ $other->name }})
+                        </option>
+                        @endif
+                        @endif
                         @endforeach
                     </select>
                 </div>

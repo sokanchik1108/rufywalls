@@ -7,8 +7,41 @@
 
         <a href="{{ route('catalog') }}" style="color:black;text-decoration:none;"><strong>Все товары</strong></a>
 
-        <form id="filter-form" method="GET" action="{{ route('catalog') }}" style="margin-top: 15px;">
+        <form id="filter-form" method="GET" action="{{ route('catalog') }}" style="margin-top: 10px;">
             <input type="hidden" name="room_id" id="room_id" value="{{ request('room_id') }}">
+
+
+            <div class="filter-section" style="margin: 10px 0;">
+                <label class="text-checkbox">
+                    <input type="checkbox" name="on_sale" value="1" {{ request('on_sale') == '1' ? 'checked' : '' }}>
+                    <span>Только со скидкой</span>
+                </label>
+            </div>
+
+            <style>
+                .text-checkbox {
+                    cursor: pointer;
+                    font-weight: 700;
+                }
+
+                /* Скрываем сам чекбокс */
+                .text-checkbox input {
+                    display: none;
+                }
+
+                .text-checkbox span {
+                    color: #d32f2f;
+                    /* насыщенный красный по умолчанию */
+                    transition: color 0.3s;
+                }
+
+                /* Когда выбран, меняем цвет текста */
+                .text-checkbox input:checked+span {
+                    color: #b0b0b0;
+                    /* светло-серый */
+                }
+            </style>
+
 
             <!-- Категории -->
             <div class="mb-3">
@@ -23,6 +56,31 @@
                 </select>
             </div>
 
+            <div class="filter-section">
+                <label>Статус</label>
+
+                <label class="checkbox-item">
+                    <input type="checkbox" name="status[]" value="новинка"
+                        {{ is_array(request('status')) && in_array('новинка', request('status')) ? 'checked' : '' }}>
+                    Новинка
+                </label>
+
+                <label class="checkbox-item">
+                    <input type="checkbox" name="status[]" value="хит продаж"
+                        {{ is_array(request('status')) && in_array('хит продаж', request('status')) ? 'checked' : '' }}>
+                    Хит продаж
+                </label>
+
+                <label class="checkbox-item">
+                    <input type="checkbox" name="status[]" value="распродажа"
+                        {{ is_array(request('status')) && in_array('распродажа', request('status')) ? 'checked' : '' }}>
+                    Распродажа
+                </label>
+            </div>
+
+
+
+
 
             <!-- Комнаты -->
             <ul class="filter-links mb-3">
@@ -36,6 +94,10 @@
                 @endforeach
             </ul>
 
+            <!-- Статусы товаров -->
+
+
+
             <!-- Цена -->
             <div class="filter-section">
                 <label>Цена от</label>
@@ -44,13 +106,7 @@
                 <input type="number" name="price_max" value="{{ request('price_max') }}">
             </div>
 
-            <!-- Наличие -->
-            <div class="filter-section">
-                <label class="checkbox-item">
-                    <input type="checkbox" name="in_stock" value="1" @if(request('in_stock')=='1' ) checked @endif>
-                    Только в наличии
-                </label>
-            </div>
+
 
             <!-- Бренды -->
             <div class="filter-section">
