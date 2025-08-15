@@ -22,54 +22,74 @@
 <div class="product-grid">
     @forelse ($variants as $item)
     @php
-    static $variantIndex = 0; // общий счётчик для всех карточек на странице
+    static $variantIndex = 0; // общий счётчик
 
     if (isset($item->product)) {
-    // Если это конкретный вариант
+    // Если это конкретный вариант (например при поиске)
     $product = $item->product;
-    $images = json_decode($item->images ?? '[]', true) ?: [];
-    $color = $item->color ?? null;
+    $variant = $item;
     } else {
-    // Если это продукт — выбираем вариант по очереди
+    // Если это продукт — выбираем вариант с учётом повторов по 2 карточки
     $product = $item;
-    $color = null;
-    $images = [];
-
     if ($product->variants->isNotEmpty()) {
-    // Определяем вариант по текущему индексу
-    $variant = $product->variants[$variantIndex % $product->variants->count()];
-    $color = $variant->color ?? null;
-    $images = json_decode($variant->images ?? '[]', true) ?: [];
+    $variant = $product->variants[floor($variantIndex / 2) % $product->variants->count()];
+    } else {
+    $variant = null;
     }
     }
 
-    // Увеличиваем счётчик, чтобы следующий товар взял следующий вариант
-    $variantIndex++;
+    // ================= Картинки =================
+    $allImages = [];
+    $variantImages = $variant ? json_decode($variant->images ?? '[]', true) : [];
+
+    // 1) последняя картинка текущего варианта
+    if (!empty($variantImages)) {
+    $allImages[] = end($variantImages);
+    }
+
+    // 2) первые картинки всех вариантов
+    if ($product->variants->isNotEmpty()) {
+    foreach ($product->variants as $v) {
+    $imgs = json_decode($v->images ?? '[]', true) ?: [];
+    if (!empty($imgs)) {
+    $allImages[] = $imgs[0];
+    }
+    }
+    }
+
+    $color = $variant->color ?? null;
+
+    $variantIndex++; // увеличиваем счётчик
     @endphp
 
 
+
+
+
+
+
     <div class="product-card">
-        @if (!empty($images))
+        @if (!empty($allImages))
         <div id="carousel{{ $item->id ?? $product->id }}" class="carousel slide mb-3">
             <div class="carousel-inner">
-                @foreach ($images as $index => $image)
+                @foreach ($allImages as $index => $image)
                 <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
                     <div class="position-relative" style="width: 100%; height: auto;">
                         <div class="loading-overlay"
                             style="
-                                            position: absolute;
-                                            top: 0;
-                                            left: 0;
-                                            width: 100%;
-                                            height: 100%;
-                                            background: rgba(255, 255, 255, 0.7);
-                                            display: flex;
-                                            align-items: center;
-                                            justify-content: center;
-                                            z-index: 10;
-                                            font-size: 14px;
-                                            color: #555;
-                                        ">
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(255, 255, 255, 0.7);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 10;
+                        font-size: 14px;
+                        color: #555;
+                    ">
                             Загружаем...
                         </div>
                         <img
@@ -82,16 +102,19 @@
                 @endforeach
             </div>
 
-            @if (count($images) > 1)
-            <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="prev">
+            @if (count($allImages) > 1)
+            <button class="carousel-control-prev" type="button"
+                data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon"></span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="next">
+            <button class="carousel-control-next" type="button"
+                data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="next">
                 <span class="carousel-control-next-icon"></span>
             </button>
             @endif
         </div>
         @endif
+
 
         <div class="product-info">
             <h4 class="product-title">
