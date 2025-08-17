@@ -171,7 +171,8 @@
             $('#search-form .input-group').append(resetBtn);
         }
 
-        $('input[name^="batch["]').on('change', function() {
+        // ДЕЛЕГИРОВАНИЕ: обработчик обновления количества
+        $(document).on('change', 'input[name^="batch["]', function() {
             const $input = $(this);
             const batchId = $input.attr('name').match(/\d+/)[0];
             const quantity = $input.val();
@@ -179,11 +180,7 @@
             $.post("{{ route('admin.batches.update') }}", {
                 _token: "{{ csrf_token() }}",
                 batch_id: batchId,
-                warehouse_id: {
-                    {
-                        $warehouse - > id
-                    }
-                },
+                warehouse_id: {{ $warehouse->id }},
                 quantity: quantity
             }).done(() => {
                 if ($input.next('.update-success').length === 0) {
@@ -273,4 +270,5 @@
         });
     }
 </script>
+
 @endsection
