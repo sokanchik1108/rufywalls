@@ -8,25 +8,141 @@
 @endsection
 
 @section('content')
-<style>
-@media (max-width: 576px) {
-    .catalog-title {
-        font-size: 20px !important; /* меньше, чем 30px */
-    }
-}
-</style>
+<section class="catalog-banner" style="position: relative; width: 100%; overflow: hidden;">
 
-<div class="py-5 px-3 text-center" style="background-color: #01142f; color: #FFFFDD;">
-    <h1 class="h2 text-uppercase mb-2 catalog-title" style="font-weight: 450;font-size:30px;">
-        Каталог RAFY WALLS
-    </h1>
+    <!-- Изображения -->
+    <div class="catalog-images">
+        <div class="catalog-image">
+            <img src="{{ asset('images/баннер8.webp') }}" alt="Каталог RAFY WALLS">
+        </div>
+        <div class="catalog-image hide-on-mobile">
+            <img src="{{ asset('images/баннер12.webp') }}" alt="Каталог RAFY WALLS">
+        </div>
+        <div class="catalog-image hide-on-mobile">
+            <img src="{{ asset('images/баннер4.webp') }}" alt="Каталог RAFY WALLS">
+        </div>
+    </div>
 
-    <p class="fs-5 mb-2">Стены — важнейший элемент атмосферы</p>
-    <p class="fs-6 mb-0" style="max-width: 700px; margin: 0 auto;">
-        Мы верим, что стены должны вдохновлять. Наш каталог объединяет коллекции,
-        в которых каждая текстура и оттенок создают настроение. Найдите то, что близко именно вам!
-    </p>
-</div>
+    <!-- Затемняющий слой -->
+    <div class="catalog-overlay"></div>
+
+    <!-- Текст -->
+    <div class="catalog-text">
+        <h1 class="h2 text-uppercase mb-3">Каталог RAFY WALLS</h1>
+        <p class="fs-5 mb-2">Стены — важнейший элемент атмосферы</p>
+        <p class="fs-6 mb-0">
+            Мы верим, что стены должны вдохновлять. Наш каталог объединяет коллекции,
+            в которых каждая текстура и оттенок создают настроение. Найдите то, что близко именно вам!
+        </p>
+    </div>
+
+    <!-- Стили -->
+    <style>
+        .catalog-images {
+            display: flex;
+            width: 100%;
+            height: 40vh; /* уменьшил высоту */
+            min-height: 220px;
+            max-height: 420px;
+        }
+
+        .catalog-image {
+            flex: 1 1 33.333%;
+        }
+
+        .catalog-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .catalog-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+        }
+
+        .catalog-text {
+            position: absolute;
+            top: 45%; /* поднял чуть выше */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            padding: 20px;
+            max-width: 750px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .catalog-text h1 {
+            font-size: 2.1rem;
+            font-weight: bold;
+        }
+
+        .catalog-text p {
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+
+        /* Планшеты */
+        @media (max-width: 991px) {
+            .catalog-text h1 {
+                font-size: 1.8rem;
+            }
+            .catalog-text p {
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Телефоны */
+        @media (max-width: 768px) {
+            .catalog-images {
+                flex-direction: column;
+                height: auto;
+            }
+            .catalog-image {
+                flex: none;
+                height: 260px; /* тоже меньше сделал */
+            }
+            .hide-on-mobile {
+                display: none !important;
+            }
+            .catalog-text {
+                padding: 15px;
+                top: 45%; /* сохраняем поднятие */
+                left: 50%;
+                transform: translate(-50%, -50%);
+                max-width: 90%;
+                text-align: center;
+            }
+            .catalog-text h1 {
+                font-size: 1.5rem;
+            }
+            .catalog-text p {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Очень маленькие экраны */
+        @media (max-width: 480px) {
+            .catalog-image {
+                height: 300px;
+            }
+            .catalog-text h1 {
+                font-size: 1.3rem;
+            }
+            .catalog-text p {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</section>
+
+
+
 
 
 
