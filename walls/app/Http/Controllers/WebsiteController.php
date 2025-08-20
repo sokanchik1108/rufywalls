@@ -161,10 +161,10 @@ class WebsiteController extends Controller
                             ELSE 3
                         END
                     ")
-                        ->orderBy('products.created_at', 'desc');
+                        ->orderBy('products.created_at', 'asc');
             }
 
-            $variants = $variants->paginate(12)->withQueryString();
+            $variants = $variants->paginate(15)->withQueryString();
 
             if ($request->ajax()) {
                 return view('partials.products', compact('variants'))->render();
@@ -236,10 +236,10 @@ class WebsiteController extends Controller
                     WHEN brand = 'Артекс' THEN 2
                     ELSE 3
                 END
-            ")->orderBy('created_at', 'desc');
+            ")->orderBy('created_at', 'asc');
         }
 
-        $products = $products->paginate(12)->withQueryString();
+        $products = $products->paginate(15)->withQueryString();
 
         if ($request->ajax()) {
             return view('partials.products', ['variants' => $products])->render();
@@ -278,28 +278,65 @@ class WebsiteController extends Controller
         if ($activeVariant) {
             $variantStock = $activeVariant->batches->flatMap(function ($batch) {
                 return $batch->warehouses;
-            })->sum('pivot.quantity'); // <- тут используем quantity
+            })->sum('pivot.quantity');
         }
 
-        return view('product-page', compact('product', 'variants', 'activeVariant', 'variantStock'));
+        // Найдём первого компаньона, если он есть
+        $firstCompanion = $product->companions->first();
+        $firstVariant = $firstCompanion?->variants->first(); // первый вариант компаньона
+
+        return view('product-page', compact(
+            'product',
+            'variants',
+            'activeVariant',
+            'variantStock',
+            'firstCompanion',
+            'firstVariant'
+        ));
     }
 
 
 
 
-    public function variantData($id)
-    {
-        $variant = Variant::with('batches')->findOrFail($id);
-        $stock = $variant->batches->sum('stock');
+public function variantData($id)
+{
+    $variant = Variant::with(['batches', 'companions.product', 'companionOf.product'])->findOrFail($id);
+    $stock = $variant->batches->sum('stock');
 
-        return response()->json([
-            'id' => $variant->id,
-            'sku' => $variant->sku,
-            'stock' => $stock,
-            'color' => $variant->color,
-            'images' => json_decode($variant->images),
-        ]);
+    // Все компаньоны (двусторонние связи)
+    $companions = $variant->companions->merge($variant->companionOf)->unique('id');
+
+    $companionSkus = $companions->map(fn($comp) => $comp->sku ?: '')->filter()->values()->all();
+
+    $firstCompanion = $companions->first();
+
+    $companionData = null;
+    if ($firstCompanion && $firstCompanion->product) {
+        $companionImages = json_decode($firstCompanion->images, true);
+
+        $companionData = [
+            'id' => $firstCompanion->product->id,          // ID продукта компаньона
+            'sku' => $firstCompanion->sku,
+            'title' => $firstCompanion->product->title ?? '',
+            'image' => $companionImages[0] ?? null,
+        ];
     }
+
+    return response()->json([
+        'id' => $variant->id,
+        'sku' => $variant->sku,
+        'stock' => $stock,
+        'color' => $variant->color,
+        'images' => json_decode($variant->images),
+        'companions' => $companionSkus,
+        'companion' => $companionData,
+    ]);
+}
+
+
+
+
+
 
     // ---------------- КОРЗИНА ----------------
 

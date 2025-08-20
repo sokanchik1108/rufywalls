@@ -199,7 +199,6 @@
     <div id="variant-list-container" class="row g-4 justify-content-center">
         @include('admin.partials.variant-cards', [
             'variants' => $variants,
-            'allProducts' => $allProducts,
             'categories' => $categories,
             'rooms' => $rooms
         ])

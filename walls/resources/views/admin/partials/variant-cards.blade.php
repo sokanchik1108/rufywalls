@@ -18,7 +18,7 @@ $images = json_decode($variant->images ?? '[]', true);
             <p class="mb-1"><strong>Категории:</strong>
                 {{ $product->categories->pluck('category_name')->implode(', ') ?: '—' }}
             </p>
-
+            <p class="mb-1"><strong>Статус:</strong> {{ $product->status }}</p>
             <p class="mb-1"><strong>Бренд:</strong> {{ $product->brand }}</p>
             <p class="mb-1"><strong>Страна:</strong> {{ $product->country }}</p>
             <p class="mb-1"><strong>Материал:</strong> {{ $product->material }}</p>
@@ -33,19 +33,24 @@ $images = json_decode($variant->images ?? '[]', true);
                 @endforeach
             </p>
 
-            @if($product->companions->isNotEmpty())
+            @if($variant->companions->isNotEmpty())
             <div class="mt-2">
                 <p class="mb-1"><strong>Компаньоны:</strong></p>
                 <ul class="small ps-3">
-                    @foreach($product->companions as $companion)
-                    <li>{{ $companion->name }} —
-                        @php $compSkus = $companion->variants->pluck('sku')->filter()->implode(', ') @endphp
-                        {{ $compSkus }}
+                    @foreach($variant->companions as $companion)
+                    <li>
+                        {{ $companion->product->name }}
+                        — {{ $companion->sku }}
+                        @if($companion->color)
+                        ({{ $companion->color }})
+                        @endif
                     </li>
                     @endforeach
                 </ul>
             </div>
             @endif
+
+
 
             <p class="mb-3"><strong>Описание:</strong><br>{{ $product->description }}</p>
 
@@ -105,7 +110,6 @@ $images = json_decode($variant->images ?? '[]', true);
 'images' => $images,
 'categories' => $categories,
 'rooms' => $rooms,
-'allProducts' => $allProducts
 ])
 @endforeach
 

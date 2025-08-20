@@ -135,24 +135,25 @@
                 <h5 class="text-primary mt-3" style="margin-left: 20px;">Привязка компаньонов</h5>
 
                 <div class="col-md-12 mt-2" style="margin-left: 20px; max-width:95%;">
-                    <label class="form-label">Компаньоны (другие товары)</label>
-                    <select name="companion_variant_ids[]" class="form-select" multiple>
-                        @foreach($allProducts as $other)
-                        @if($other->id !== $product->id)
+                    <label class="form-label">Компаньоны (другие варианты)</label>
+                    <select name="variants[{{ $variant->id }}][companion_variant_ids][]" class="form-select" multiple>
+                        @foreach($allVariants as $otherVariant)
+                        @if($otherVariant->id !== $variant->id)
                         @php
-                        $skus = $other->variants->pluck('sku')->filter()->implode(', ');
-                        $firstVariantId = $other->variants->first()?->id;
-                        $selected = $product->companions->contains($other->id);
+                        $selected = $variant->companions->contains('id', $otherVariant->id);
                         @endphp
-                        @if($firstVariantId)
-                        <option value="{{ $firstVariantId }}" {{ $selected ? 'selected' : '' }}>
-                            {{ $skus }} ({{ $other->name }})
+                        <option value="{{ $otherVariant->id }}" {{ $selected ? 'selected' : '' }}>
+                            {{ $otherVariant->sku ?? 'Без артикула' }}
+                            ({{ $otherVariant->product->name }})
                         </option>
-                        @endif
                         @endif
                         @endforeach
                     </select>
                 </div>
+
+
+
+
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Отмена</button>

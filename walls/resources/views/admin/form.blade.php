@@ -140,30 +140,37 @@
                     <div class="col-12"><label>Описание</label><textarea name="description" class="form-control" rows="2" required></textarea></div>
                     <div class="col-12"><label>Подробнее</label><textarea name="detailed" class="form-control" rows="3" required></textarea></div>
 
-                    <div class="col-12">
-                        <label>Компаньоны (другие товары)</label>
-                        <select name="companions[]" class="form-select" multiple>
-                            @foreach($allProducts as $other)
-                            @php
-                                $skus = $other->variants->pluck('sku')->filter()->implode(', ');
-                            @endphp
-                            <option value="{{ $other->id }}">
-                                {{ $skus ?: '(без артикулов)' }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
                 </div>
 
                 <!-- Варианты -->
                 <div class="form-section-title">Оттенки</div>
                 <div id="variants-container">
                     <div class="variant-group">
-                        <div class="mb-2"><label>Артикул</label><input type="text" name="variants[0][sku]" class="form-control" required></div>
-                        <div class="mb-2"><label>Цвет</label><input type="text" name="variants[0][color]" class="form-control" required></div>
-                        <div class="mb-2"><label>Изображения</label><input type="file" name="variants[0][images][]" class="form-control" multiple required></div>
+                        <div class="mb-2"><label>Артикул</label>
+                            <input type="text" name="variants[0][sku]" class="form-control" required>
+                        </div>
+
+                        <div class="mb-2"><label>Цвет</label>
+                            <input type="text" name="variants[0][color]" class="form-control" required>
+                        </div>
+
+                        <div class="mb-2"><label>Изображения</label>
+                            <input type="file" name="variants[0][images][]" class="form-control" multiple required>
+                        </div>
+
+                        <div class="mb-2"><label>Компаньоны</label>
+                            <select name="variants[0][companions][]" class="form-select" multiple>
+                                @foreach($allVariants as $variant)
+                                <option value="{{ $variant->id }}">
+                                    {{ $variant->sku ?? '(без артикула)' }} — {{ $variant->product->name ?? '' }}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
+
                         <button type="button" class="remove-variant">&times;</button>
                     </div>
+
                 </div>
 
                 <!-- Кнопка добавить вариант -->
@@ -183,12 +190,28 @@
     document.getElementById('add-variant').addEventListener('click', () => {
         const container = document.getElementById('variants-container');
         const variantHtml = `
-            <div class="variant-group">
-                <div class="mb-2"><label>Артикул</label><input type="text" name="variants[${variantIndex}][sku]" class="form-control" required></div>
-                <div class="mb-2"><label>Цвет</label><input type="text" name="variants[${variantIndex}][color]" class="form-control" required></div>
-                <div class="mb-2"><label>Изображения</label><input type="file" name="variants[${variantIndex}][images][]" class="form-control" multiple required></div>
-                <button type="button" class="remove-variant">&times;</button>
-            </div>`;
+    <div class="variant-group">
+        <div class="mb-2"><label>Артикул</label>
+            <input type="text" name="variants[${variantIndex}][sku]" class="form-control" required>
+        </div>
+        <div class="mb-2"><label>Цвет</label>
+            <input type="text" name="variants[${variantIndex}][color]" class="form-control" required>
+        </div>
+        <div class="mb-2"><label>Изображения</label>
+            <input type="file" name="variants[${variantIndex}][images][]" class="form-control" multiple required>
+        </div>
+        <div class="mb-2"><label>Компаньоны</label>
+            <select name="variants[${variantIndex}][companions][]" class="form-select" multiple>
+                @foreach($allVariants as $variant)
+                <option value="{{ $variant->id }}">
+                    {{ $variant->sku ?? '(без артикула)' }} — {{ $variant->product->name ?? '' }}
+                </option>
+                @endforeach
+            </select>
+        </div>
+        <button type="button" class="remove-variant">&times;</button>
+    </div>`;
+
         container.insertAdjacentHTML('beforeend', variantHtml);
         variantIndex++;
     });

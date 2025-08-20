@@ -254,30 +254,30 @@
                     </div>
 
                     @php
-                    $companions = $product->companions->merge($product->companionOf)->unique('id');
-                    $firstCompanion = $companions->first();
-                    $firstVariant = $firstCompanion ? $firstCompanion->variants->first() : null;
-                    $companionDisplay = null;
-
-                    if ($firstVariant && $firstVariant->sku) {
-                    $sku = $firstVariant->sku;
-
-                    // Если есть 5 цифр перед дефисом — показываем только их
-                    if (preg_match('/^(\d{5})-/', $sku, $matches)) {
-                    $companionDisplay = $matches[1];
-                    } else {
-                    // Иначе показываем весь артикул как есть
-                    $companionDisplay = $sku;
-                    }
-                    }
+                    $variant = $variant ?? ($activeVariant ?? $product->variants->first());
                     @endphp
 
-                    <div class="col-4 col-sm-6 mb-3">
-                        <div class="text-muted small">Компаньон</div>
-                        <div class="text-dark small" id="variant-color">
-                            {{ $companionDisplay ?? '' }}
-                        </div>
+                    @if($variant)
+                    @php
+                    // Собираем компаньонов двусторонне и готовим список SKU
+                    $companions = $variant->companions->merge($variant->companionOf)->unique('id');
+
+                    $companionSkus = $companions->map(function ($comp) {
+                    return $comp->sku ?: '';
+                    })->filter()->values()->all();
+                    @endphp
+
+                    @if(!empty($companionSkus))
+                    <div class="col-4 col-sm-6 mb-3" id="companions-block">
+                        <div class="text-muted small">Компаньоны:</div>
+                        <div class="text-dark small">{{ implode(', ', $companionSkus) }}</div>
                     </div>
+                    @endif
+                    @endif
+
+
+
+
 
                 </div>
                 <div class="mb-3" style="margin-top: 68px;">
@@ -302,24 +302,6 @@
             </div>
         </div>
 
-        @php
-        $companions = $product->companions->merge($product->companionOf)->unique('id');
-        $firstCompanion = $companions->first();
-        $firstVariant = $firstCompanion ? $firstCompanion->variants->first() : null;
-        $companionDisplaySku = null;
-
-        if ($firstVariant && $firstVariant->sku) {
-        $sku = $firstVariant->sku;
-
-        // Если SKU начинается с 5 цифр перед дефисом, например: 11275-01
-        if (preg_match('/^(\d{5})-/', $sku, $matches)) {
-        $companionDisplaySku = $matches[1]; // Только первые 5 цифр
-        } else {
-        $companionDisplaySku = $sku; // Показываем весь SKU как есть
-        }
-        }
-        @endphp
-
 
         <div class="mt-5 pt-4 border-top" style="margin-bottom: 70px;">
             <div class="row g-4">
@@ -330,33 +312,20 @@
                     <p class="text-muted" style="white-space: pre-line;">{{ $product->detailed }}</p>
                 </div>
 
-                {{-- Компаньон --}}
-                @if($firstCompanion && $firstVariant)
-                <div class="col-md-4">
+                {{-- Компаньон (динамически обновляется через JS) --}}
+                <div class="col-md-4" id="first-companion-block" style="display: none;">
                     <div class="companion-wrapper">
-                        {{-- Фото --}}
-                        @if(isset(json_decode($firstVariant->images)[0]))
-                        <img src="{{ asset('storage/' . json_decode($firstVariant->images)[0]) }}"
-                            alt="{{ $firstCompanion->name }}"
-                            class="companion-bg">
-                        @else
-                        <div class="companion-bg d-flex justify-content-center align-items-center text-muted">
-                            Фото нет
-                        </div>
-                        @endif
-
-                        {{-- Малый блок с инфо --}}
+                        <img id="companion-image" src="" alt="Изображение компаньона" class="companion-bg">
                         <div class="companion-info">
-                            @if($companionDisplaySku)
-                            <div class="sku">{{ $companionDisplaySku }}</div>
-                            @endif
-                            <h5 class="companion-title">{{ $firstCompanion->name }}</h5>
-                            <a href="{{ route('product.show', $firstCompanion->id) }}" class="btn btn-dark btn-sm px-3 rounded-pill">
+                            <div class="sku" id="companion-sku"></div>
+                            <h5 class="companion-title" id="companion-title"></h5>
+                            <a href="#" id="companion-link" class="btn btn-dark btn-sm px-3 rounded-pill">
                                 Подробнее
                             </a>
                         </div>
                     </div>
                 </div>
+
 
                 <style>
                     .companion-wrapper {
@@ -416,20 +385,11 @@
                         font-weight: 500;
                     }
                 </style>
-                @endif
 
             </div>
         </div>
-
-
-
-
-
-
-
-
-
     </div>
+
 
     <script>
         const quantityInput = document.getElementById('quantity');
@@ -467,79 +427,107 @@
             showZoomImage();
         }
 
-        // 🆕 Добавляем обработку кликов по миниатюрам оттенков
+        function loadVariantById(variantId) {
+            fetch(`/variant/${variantId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('variant-sku').textContent = data.sku;
+                    document.getElementById('variant-color').textContent = data.color;
+
+                    const carouselInner = document.getElementById('variant-images');
+                    carouselInner.innerHTML = '';
+                    zoomImages = [];
+
+                    data.images.forEach((img, index) => {
+                        const fullImgSrc = `/storage/${img}`;
+                        zoomImages.push(fullImgSrc);
+
+                        const div = document.createElement('div');
+                        div.className = 'carousel-item' + (index === 0 ? ' active' : '');
+                        div.innerHTML = `<img src="${fullImgSrc}" class="d-block w-100" alt="Изображение ${index + 1}" style="cursor: zoom-in;">`;
+                        div.querySelector('img').addEventListener('click', () => openZoom(fullImgSrc));
+                        carouselInner.appendChild(div);
+                    });
+
+                    const thumbnailContainer = document.querySelector('.thumbnail-container');
+                    thumbnailContainer.innerHTML = '';
+                    data.images.forEach((img, index) => {
+                        const thumb = document.createElement('img');
+                        thumb.src = `/storage/${img}`;
+                        thumb.alt = `Миниатюра ${index + 1}`;
+                        thumb.className = index === 0 ? 'active' : '';
+                        thumb.setAttribute('data-bs-target', '#mainCarousel');
+                        thumb.setAttribute('data-bs-slide-to', index);
+
+                        thumb.addEventListener('click', () => {
+                            document.querySelectorAll('.thumbnail-container img').forEach(i => i.classList.remove('active'));
+                            thumb.classList.add('active');
+                        });
+
+                        thumbnailContainer.appendChild(thumb);
+                    });
+
+                    const banner = document.getElementById('variant-banner');
+                    if (banner && data.images.length > 0) {
+                        const lastImage = data.images[data.images.length - 1];
+                        banner.src = `/storage/${lastImage}`;
+                    }
+
+                    const companionsContainer = document.getElementById('companions-block');
+                    if (companionsContainer) {
+                        if (data.companions && data.companions.length > 0) {
+                            companionsContainer.innerHTML = `
+                            <div class="text-muted small">Компаньоны:</div>
+                            <div class="text-dark small">${data.companions.join(', ')}</div>
+                        `;
+                        } else {
+                            companionsContainer.innerHTML = '';
+                        }
+                    }
+
+                    // Первый компаньон
+                    const companionBlock = document.getElementById('first-companion-block');
+                    const companionImage = document.getElementById('companion-image');
+                    const companionSku = document.getElementById('companion-sku');
+                    const companionTitle = document.getElementById('companion-title'); // если есть
+                    const companionLink = document.getElementById('companion-link');
+
+                    if (data.companion && data.companion.sku && data.companion.image && data.companion.id) {
+                        companionImage.src = `/storage/${data.companion.image}`;
+                        companionSku.textContent = data.companion.sku;
+                        if (companionTitle) companionTitle.textContent = data.companion.title || '';
+                        companionLink.href = `/product/${data.companion.id}`;
+                        companionBlock.style.display = 'block';
+                    } else {
+                        companionBlock.style.display = 'none';
+                    }
+
+                });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.variant-thumbnail').forEach(img => {
                 img.addEventListener('click', () => {
                     const variantId = img.getAttribute('data-variant-id');
 
-                    // Обновляем стили активной миниатюры
                     document.querySelectorAll('.variant-thumbnail').forEach(i => {
                         i.classList.remove('border', 'border-2', 'border-dark');
                     });
-
                     img.classList.add('border', 'border-dark', 'border-2');
 
-
-                    // Обновляем hidden input
                     variantInput.value = variantId;
-
-                    // Загружаем данные по варианту
-                    fetch(`/variant/${variantId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            document.getElementById('variant-sku').textContent = data.sku;
-                            document.getElementById('variant-color').textContent = data.color;
-
-                            // Обновляем карусель
-                            const carouselInner = document.getElementById('variant-images');
-                            carouselInner.innerHTML = '';
-                            zoomImages = [];
-
-                            data.images.forEach((img, index) => {
-                                const fullImgSrc = `/storage/${img}`;
-                                zoomImages.push(fullImgSrc);
-
-                                const div = document.createElement('div');
-                                div.className = 'carousel-item' + (index === 0 ? ' active' : '');
-                                div.innerHTML = `<img src="${fullImgSrc}" class="d-block w-100" alt="Изображение ${index + 1}" style="cursor: zoom-in;">`;
-                                div.querySelector('img').addEventListener('click', () => openZoom(fullImgSrc));
-                                carouselInner.appendChild(div);
-                            });
-
-                            // Обновляем миниатюры под каруселью
-                            const thumbnailContainer = document.querySelector('.thumbnail-container');
-                            thumbnailContainer.innerHTML = '';
-                            data.images.forEach((img, index) => {
-                                const thumb = document.createElement('img');
-                                thumb.src = `/storage/${img}`;
-                                thumb.alt = `Миниатюра ${index + 1}`;
-                                thumb.className = index === 0 ? 'active' : '';
-                                thumb.setAttribute('data-bs-target', '#mainCarousel');
-                                thumb.setAttribute('data-bs-slide-to', index);
-
-                                thumb.addEventListener('click', () => {
-                                    document.querySelectorAll('.thumbnail-container img').forEach(i => i.classList.remove('active'));
-                                    thumb.classList.add('active');
-                                });
-
-                                thumbnailContainer.appendChild(thumb);
-                            });
-
-                            // Обновляем баннер снизу
-                            const banner = document.getElementById('variant-banner');
-                            if (banner && data.images.length > 0) {
-                                const lastImage = data.images[data.images.length - 1];
-                                banner.src = `/storage/${lastImage}`;
-                            }
-                        });
+                    loadVariantById(variantId);
                 });
             });
 
-            // Инициализируем zoom-изображения
-            zoomImages = Array.from(document.querySelectorAll('#variant-images img')).map(img => img.src);
+            // ⬇️ Загружаем вариант при открытии страницы
+            const initialVariantId = variantInput.value;
+            if (initialVariantId) {
+                loadVariantById(initialVariantId);
+            }
 
-            document.querySelectorAll('#variant-images img').forEach((img, index) => {
+            zoomImages = Array.from(document.querySelectorAll('#variant-images img')).map(img => img.src);
+            document.querySelectorAll('#variant-images img').forEach((img) => {
                 img.style.cursor = 'zoom-in';
                 img.addEventListener('click', () => openZoom(img.src));
             });
@@ -556,15 +544,11 @@
 
             let value = parseInt(quantityInput.value) || 1;
             const min = parseInt(quantityInput.min) || 1;
-            // const max = parseInt(quantityInput.max) || 999;  // убрали max
-
             value += delta;
             if (value < min) value = min;
-            // не ограничиваем сверху
 
             quantityInput.value = value;
         }
-
 
         document.getElementById('add-to-cart-form').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -620,12 +604,14 @@
         });
 
         const carousel = document.getElementById('mainCarousel');
-        carousel.addEventListener('slid.bs.carousel', (event) => {
-            const index = event.to;
-            const thumbnails = document.querySelectorAll('.thumbnail-container img');
-            thumbnails.forEach(img => img.classList.remove('active'));
-            if (thumbnails[index]) thumbnails[index].classList.add('active');
-        });
+        if (carousel) {
+            carousel.addEventListener('slid.bs.carousel', (event) => {
+                const index = event.to;
+                const thumbnails = document.querySelectorAll('.thumbnail-container img');
+                thumbnails.forEach(img => img.classList.remove('active'));
+                if (thumbnails[index]) thumbnails[index].classList.add('active');
+            });
+        }
 
         document.addEventListener('keydown', (e) => {
             const zoomModal = document.getElementById('zoomModal');
@@ -636,6 +622,8 @@
             if (e.key === 'Escape') closeZoom();
         });
     </script>
+
+
 
     <!-- Модальное окно для увеличения изображения -->
     <div id="zoomModal"
