@@ -147,22 +147,17 @@
                 <label>Раппорт (стыковка)</label>
 
                 <label class="checkbox-item">
-                    <input type="radio" name="sticking" value="yes" id="sticking-yes" data-value="yes"
+                    <input type="checkbox" name="sticking" value="yes" id="sticking-yes" data-value="yes"
                         {{ request('sticking') === 'yes' ? 'checked' : '' }}>
                     Есть
                 </label>
 
                 <label class="checkbox-item">
-                    <input type="radio" name="sticking" value="no" id="sticking-no" data-value="no"
+                    <input type="checkbox" name="sticking" value="no" id="sticking-no" data-value="no"
                         {{ request('sticking') === 'no' ? 'checked' : '' }}>
                     Нет
                 </label>
             </div>
-
-
-
-
-
 
             <div class="filter-section">
                 <a href="{{ route('catalog') }}" class="filters-reset-btn">Сбросить фильтры</a>
