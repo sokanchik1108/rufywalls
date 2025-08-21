@@ -7,96 +7,107 @@
 
 <style>
     body {
+        background: #fdfdfd;
         font-size: 0.9rem;
-        background: #f9f9f9;
+        color: #222;
     }
 
     h1 {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
     }
 
-    /* Отключаем приближение при фокусе на iOS */
-    input,
-    select,
-    textarea {
-        font-size: 16px !important;
+    h5 {
+        font-size: 0.95rem;
+        font-weight: 500;
     }
 
     .form-label {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
+        color: #666;
     }
 
     .form-control,
     .form-select {
         font-size: 0.85rem;
-        padding: 0.4rem 0.6rem;
+        padding: 0.35rem 0.55rem;
+        border-radius: 4px;
+        border-color: #ddd;
     }
 
     .btn {
         font-size: 0.85rem;
-        padding: 0.35rem 0.9rem;
+        border-radius: 4px;
     }
 
-    th,
-    td {
-        font-size: 0.85rem;
-        vertical-align: middle;
+    .btn-primary {
+        background: #000;
+        border: none;
+    }
+
+    .btn-outline-secondary {
+        border-color: #ccc;
+        color: #333;
     }
 
     .btn-cross {
-        padding: 0.2rem 0.5rem;
-        font-size: 1rem;
+        padding: 0.1rem 0.45rem;
+        font-size: 0.9rem;
         line-height: 1;
     }
 
-    .card {
-        border: none;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.03);
+    .table {
+        border-color: #e9ecef;
+    }
+
+    .table th {
+        font-weight: 500;
+        background: #fafafa;
+        color: #555;
     }
 
     .table-sm td,
     .table-sm th {
-        padding: 0.45rem;
+        padding: 0.4rem;
     }
 
-    ul {
-        padding-left: 1rem;
+    .alert {
+        font-size: 0.8rem;
+        border-radius: 4px;
+        padding: 0.4rem 0.8rem;
     }
 
     @media (max-width: 576px) {
         h1 {
-            font-size: 1.2rem;
-        }
-
-        .table-responsive {
-            font-size: 0.82rem;
+            font-size: 1rem;
         }
 
         .form-control,
         .form-select {
-            font-size: 0.82rem;
+            font-size: 0.8rem;
+        }
+
+        .table-responsive {
+            font-size: 0.8rem;
         }
     }
 </style>
-</head>
 
 <div class="container">
 
     @php
-    // Убедимся, что переменная существует
     $currentWarehouseId = $selectedWarehouseId ?? null;
     $currentDate = \Carbon\Carbon::parse($selectedDate ?? now());
     $prevDate = $currentDate->copy()->subDay()->format('Y-m-d');
     $nextDate = $currentDate->copy()->addDay()->format('Y-m-d');
     @endphp
 
-    <h1 class="mb-3">
-        Учёт продаж
+    <h1>
+        Изменение остатков
         @if ($currentWarehouseId)
-        @php
-        $currentWarehouse = $warehouses->firstWhere('id', $currentWarehouseId);
-        @endphp
-        <span class="text-muted fs-6">({{ $currentWarehouse->name ?? 'Неизвестный склад' }})</span>
+        @php $currentWarehouse = $warehouses->firstWhere('id', $currentWarehouseId); @endphp
+        <span class="text-muted fw-normal">({{ $currentWarehouse->name ?? 'Неизвестный склад' }})</span>
         @endif
     </h1>
 
@@ -108,22 +119,27 @@
     </div>
     @endif
 
-
-    @if(session('success'))
-    <div class="alert alert-success py-2 px-3 small">{{ session('success') }}</div>
-    @endif
-    @if(session('error'))
-    <div class="alert alert-danger py-2 px-3 small">{{ session('error') }}</div>
-    @endif
-
+    {{-- Навигация по датам --}}
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
-        {{-- Передаем date и warehouse_id в навигации --}}
-        <a href="?date={{ $prevDate }}&warehouse_id={{ $currentWarehouseId }}" class="btn btn-outline-secondary btn-sm mb-2">&laquo; {{ $prevDate }}</a>
+        <a href="?date={{ $prevDate }}&warehouse_id={{ $currentWarehouseId }}" class="btn btn-outline-secondary btn-sm mb-2">
+            &laquo; {{ $prevDate }}
+        </a>
+
         <h5 class="mb-2">{{ $currentDate->format('d.m.Y') }}</h5>
-        <a href="?date={{ $nextDate }}&warehouse_id={{ $currentWarehouseId }}" class="btn btn-outline-secondary btn-sm mb-2">{{ $nextDate }} &raquo;</a>
+
+        <a href="?date={{ $nextDate }}&warehouse_id={{ $currentWarehouseId }}" class="btn btn-outline-secondary btn-sm mb-2">
+            {{ $nextDate }} &raquo;
+        </a>
     </div>
 
-    {{-- Форма добавления продажи --}}
+    @if(session('success'))
+    <div class="alert alert-success small">{{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+    <div class="alert alert-danger small">{{ session('error') }}</div>
+    @endif
+
+    {{-- Форма --}}
     <form method="POST" action="{{ route('admin.sales.store') }}" class="mb-4">
         @csrf
         <input type="hidden" name="warehouse_id" value="{{ $currentWarehouseId }}">
@@ -131,136 +147,62 @@
             <div class="col-6 col-sm-4 col-md-2">
                 <input name="sale_date" type="date" class="form-control" value="{{ $currentDate->format('Y-m-d') }}" required>
             </div>
-
-            {{-- Склад фиксирован, поэтому скрытый input --}}
-            {{-- <select name="warehouse_id" id="warehouseSelect" class="form-select" required> ... </select> --}}
-
             <div class="col-6 col-sm-4 col-md-2">
                 <input name="sku" id="skuInput" type="text" class="form-control" placeholder="Артикул" required autocomplete="off">
             </div>
-
             <div class="col-6 col-sm-4 col-md-2">
                 <select name="batch_id" id="batchSelect" class="form-select" required>
                     <option value="">Партия</option>
                 </select>
             </div>
-
             <div class="col-6 col-sm-4 col-md-2">
                 <input name="quantity" type="number" class="form-control" placeholder="Кол-во" required>
             </div>
-
-
-            <div class="col-6 col-sm-4 col-md-2">
-                <input name="price" type="number" step="0.01" class="form-control" placeholder="Цена" required>
-            </div>
-
-
-            <div class="col-6 col-sm-4 col-md-2">
-                <select name="payment_method" class="form-select" required>
-                    <option value="нал">Нал</option>
-                    <option value="перевод">Перевод</option>
-                    <option value="qr">QR</option>
-                    <option value="halyk">Halyk</option>
-                </select>
-            </div>
-
             <div class="col-12 col-sm-4 col-md-2">
-                <button class="btn btn-primary w-100">Добавить</button>
+                <button class="btn btn-primary w-100">Сохранить</button>
             </div>
         </div>
     </form>
 
     @php
-    // Фильтрация продаж по выбранной дате и складу
     $sales = $salesByDate[$currentDate->format('Y-m-d')] ?? collect();
-
     if ($currentWarehouseId) {
     $sales = $sales->filter(fn($sale) => $sale->warehouse_id == $currentWarehouseId);
     }
     @endphp
 
-    <div class="card">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-sm table-bordered mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Артикул</th>
-                            <th class="text-end">Цена</th>
-                            <th class="text-end">Кол-во</th>
-                            <th class="text-end">Сумма</th>
-                            <th>Оплата</th>
-                            <th class="text-center">✕</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($sales as $sale)
-                        <tr @if($sale->quantity < 0) class="table-danger" @endif>
-                                <td>{{ $sale->sku }} ( Партия {{ $sale->batch->batch_code ?? '—' }}
-                                    )</td>
-                                <td class="text-end">{{ number_format($sale->price, 2) }}</td>
-                                <td class="text-end">{{ $sale->quantity }}</td>
-                                <td class="text-end">{{ number_format($sale->total, 2) }}</td>
-                                <td>{{ ucfirst($sale->payment_method) }}</td>
-                                <td class="text-center">
-                                    <form method="POST" action="{{ route('admin.sales.destroy', $sale->id) }}" onsubmit="return confirm('Удалить запись?')" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-sm btn-outline-danger btn-cross" title="Удалить">×</button>
-                                    </form>
-                                </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="6" class="text-center">Продаж нет</td>
-                        </tr>
-                        @endforelse
-
-                        @if($sales->isNotEmpty())
-                        <tr class="table-secondary fw-bold">
-                            <td colspan="3">Итого</td>
-                            <td class="text-end">{{ number_format($sales->sum('total'), 2) }}</td>
-                            <td colspan="2"></td>
-                        </tr>
-
-                        <tr class="table-light">
-                            <td colspan="6">
-                                <strong>Продажи по способу оплаты:</strong>
-                                <ul class="mb-0">
-                                    @foreach(['нал','перевод','qr','halyk'] as $method)
-                                    @php
-                                    $positive = $sales->where('payment_method', $method)->where('quantity', '>', 0)->sum('total');
-                                    @endphp
-                                    <li>{{ ucfirst($method) }}: {{ number_format($positive, 2) }}</li>
-                                    @endforeach
-                                </ul>
-                            </td>
-                        </tr>
-
-                        <tr class="table-warning">
-                            <td colspan="6">
-                                <strong>Возвраты:</strong>
-                                <ul class="mb-0">
-                                    @foreach(['нал','перевод','qr','halyk'] as $method)
-                                    @php
-                                    $negative = $sales->where('payment_method', $method)->where('quantity', '<', 0)->sum('total');
-                                        @endphp
-                                        @if($negative)
-                                        <li>{{ ucfirst($method) }}: <span class="text-danger">−{{ number_format(abs($negative), 2) }}</span></li>
-                                        @endif
-                                        @endforeach
-                                </ul>
-                            </td>
-                        </tr>
-                        @endif
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <div class="table-responsive">
+        <table class="table table-sm table-bordered">
+            <thead>
+                <tr>
+                    <th>Артикул</th>
+                    <th class="text-end">Кол-во</th>
+                    <th class="text-center">✕</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($sales as $sale)
+                <tr @if($sale->quantity < 0) class="table-danger" @endif>
+                        <td>{{ $sale->sku }} (Партия {{ $sale->batch->batch_code ?? '—' }})</td>
+                        <td class="text-end">{{ $sale->quantity }}</td>
+                        <td class="text-center">
+                            <form method="POST" action="{{ route('admin.sales.destroy', $sale->id) }}" onsubmit="return confirm('Удалить запись?')" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-sm btn-outline-danger btn-cross" title="Удалить">×</button>
+                            </form>
+                        </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="3" class="text-center text-muted">Записей нет</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
 </div>
 
-{{-- Скрипты --}}
 <script>
     const currentWarehouseId = @json($currentWarehouseId);
 
@@ -282,10 +224,8 @@
                     success: function(data) {
                         const $select = $('#batchSelect');
                         $select.empty().append(`<option value="">Партия</option>`);
-
                         data.forEach(batch => {
                             if (!batch.warehouses || !Array.isArray(batch.warehouses)) return;
-
                             const warehouse = batch.warehouses.find(w => w.id == warehouseId);
                             if (warehouse && warehouse.pivot && warehouse.pivot.quantity !== undefined) {
                                 const qty = warehouse.pivot.quantity;

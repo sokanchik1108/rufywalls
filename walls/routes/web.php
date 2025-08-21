@@ -65,7 +65,7 @@ Route::get('/make-me-admin', [\App\Http\Controllers\AdminController::class, 'mak
 
 Route::get('/admin/batches/by-sku/{sku}', [SaleController::class, 'bySku'])->middleware('auth');
 
-Route::get('/admin/sales/warehouses', [SaleController::class, 'selectWarehouse'])->name('admin.sales.select_warehouse');
+Route::get('/admin/sales/warehouses', [SaleController::class, 'selectWarehouse'])->middleware('auth')->name('admin.sales.select_warehouse');
 
 
 Route::get('/admin/warehouses/{warehouse}/stocks', [WarehouseController::class, 'editWarehouse'])->middleware('auth')->name('admin.stocks.edit_warehouse');
@@ -119,13 +119,12 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::post('/sales', [SaleController::class, 'store'])->name('sales.store');
     Route::delete('/sales/{sale}', [SaleController::class, 'destroy'])->name('sales.destroy');
     Route::patch('/products/{product}/toggle-hidden', [AdminController::class, 'toggleHidden'])
-    ->name('products.toggle-hidden');
+        ->name('products.toggle-hidden');
     Route::get('/hidden-form', function () {
         return view('admin.hidden_product_form');
     })->name('hidden.form');
     Route::post('/hidden-store', [AdminController::class, 'storeHidden'])->name('hidden.store');
     Route::get('/products/create/select', [AdminController::class, 'selectCreateForm'])->name('products.selectCreateForm');
-
 });
 
 Auth::routes();

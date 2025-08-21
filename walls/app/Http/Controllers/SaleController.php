@@ -62,8 +62,6 @@ class SaleController extends Controller
             'batch_id' => 'required|exists:batches,id',
             'warehouse_id' => 'required|exists:warehouses,id',
             'quantity' => 'required|integer|not_in:0',
-            'price' => 'required|numeric|min:0',
-            'payment_method' => 'required|string',
             'sale_date' => 'required|date',
         ]);
 
@@ -71,10 +69,7 @@ class SaleController extends Controller
         $batchId = $request->batch_id;
         $sku = $request->sku;
         $quantity = (int) $request->quantity;
-        $price = (float) $request->price;
-        $total = $price * $quantity;
         $saleDate = $request->sale_date;
-        $paymentMethod = $request->payment_method;
 
         $variant = Variant::where('sku', $sku)->firstOrFail();
         $batch = Batch::findOrFail($batchId);
@@ -92,7 +87,7 @@ class SaleController extends Controller
         $currentQty = $pivot->pivot->quantity;
 
         if ($quantity > 0) {
-            // Продажа
+            // Списание (уменьшение количества)
             if ($currentQty < $quantity) {
                 return back()->with('error', 'Недостаточно товара на складе.');
             }
@@ -101,29 +96,30 @@ class SaleController extends Controller
                 'quantity' => $currentQty - $quantity
             ]);
         } else {
-            // Возврат
+            // Добавление (возврат на склад)
             $batch->warehouses()->updateExistingPivot($warehouseId, [
                 'quantity' => $currentQty + abs($quantity)
             ]);
         }
 
+        // Запишем факт изменения (без цены и оплаты)
         Sale::create([
             'sku' => $sku,
-            'batch_id' => $batchId, // ✅ добавлено
-            'price' => $price,
+            'batch_id' => $batchId,
             'quantity' => $quantity,
-            'total' => $total,
+            'total' => $quantity, // можно хранить как "факт изменения"
             'sale_date' => $saleDate,
-            'payment_method' => $paymentMethod,
             'warehouse_id' => $warehouseId,
+            'price' => 0, // заглушка
+            'payment_method' => '-', // заглушка
         ]);
-
 
         return redirect()->route('admin.sales.index', [
             'date' => $saleDate,
             'warehouse_id' => $warehouseId,
-        ])->with('success', $quantity > 0 ? 'Продажа успешно сохранена' : 'Возврат успешно сохранён');
+        ])->with('success', 'Количество успешно изменено');
     }
+
 
 
     public function selectWarehouse()
