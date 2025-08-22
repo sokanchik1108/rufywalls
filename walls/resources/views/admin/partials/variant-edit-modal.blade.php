@@ -44,6 +44,18 @@
 
                         <h5 class="text-primary">Редактирование товара</h5>
 
+                        <hr class="mt-4">
+
+                        @php $wrapperId = 'new-variants-wrapper-' . $variant->id; @endphp
+
+                        <div id="{{ $wrapperId }}"></div>
+
+                        <button type="button"
+                            class="btn btn-sm btn-outline-primary mt-2 add-variant-btn"
+                            data-wrapper-id="{{ $wrapperId }}">
+                            + Добавить оттенок
+                        </button>
+
                         <div class="col-md-6">
                             <label class="form-label">Статус</label>
                             <select name="status" class="form-select">

@@ -143,9 +143,6 @@ class AdminController extends Controller
         return view('admin.database', compact('variants', 'categories', 'rooms', 'allVariants'));
     }
 
-
-
-
     public function update(Request $request, $id)
     {
         $product = Product::with('variants')->findOrFail($id);
@@ -167,18 +164,23 @@ class AdminController extends Controller
             'description' => 'required|string',
             'detailed' => 'required|string',
 
-            // 🔹 Варианты
+            // Существующие варианты
             'variants' => 'nullable|array',
             'variants.*.sku' => 'nullable|string|max:255',
             'variants.*.color' => 'nullable|string|max:255',
             'variants.*.companion_variant_ids' => 'nullable|array',
             'variants.*.companion_variant_ids.*' => 'exists:variants,id',
+
+            // Новые варианты
+            'new_variants' => 'nullable|array',
+            'new_variants.*.sku' => 'nullable|string|max:255',
+            'new_variants.*.color' => 'nullable|string|max:255',
         ]);
 
         DB::beginTransaction();
 
         try {
-            // Обновляем продукт
+            // 🔹 Обновляем сам товар
             $product->update([
                 'name' => $validated['name'],
                 'country' => $validated['country'],
@@ -196,18 +198,18 @@ class AdminController extends Controller
             $product->rooms()->sync($validated['room_ids']);
             $product->categories()->sync($validated['category_ids']);
 
-            // 🔹 Обновляем варианты + компаньонов
+            // 🔹 Обновляем существующие варианты
             if (!empty($validated['variants'])) {
                 foreach ($validated['variants'] as $variantId => $variantData) {
                     $variant = $product->variants()->find($variantId);
                     if (!$variant) continue;
 
                     $variant->update([
-                        'sku' => $variantData['sku'] ?? $variant->sku,
+                        'sku'   => $variantData['sku'] ?? $variant->sku,
                         'color' => $variantData['color'] ?? $variant->color,
                     ]);
 
-                    // Изображения варианта
+                    // === Обновляем картинки ===
                     if ($request->hasFile("variants.$variantId.images")) {
                         $paths = [];
                         foreach ($request->file("variants.$variantId.images") as $img) {
@@ -217,14 +219,12 @@ class AdminController extends Controller
                         $variant->save();
                     }
 
-                    // === Компаньоны варианта ===
+                    // === Компаньоны ===
                     $companionIds = $variantData['companion_variant_ids'] ?? [];
                     $companionIds = array_filter($companionIds, fn($id) => $id != $variant->id);
 
-                    // 1. Обновляем прямые связи
                     $variant->companions()->sync($companionIds);
 
-                    // 2. Обновляем обратные связи (симметрия)
                     foreach ($companionIds as $companionId) {
                         $companion = Variant::find($companionId);
                         if ($companion) {
@@ -232,7 +232,6 @@ class AdminController extends Controller
                         }
                     }
 
-                    // 3. Удаляем старые обратные связи, которых больше нет
                     $oldCompanions = Variant::whereHas('companions', function ($q) use ($variant) {
                         $q->where('companion_variant_id', $variant->id);
                     })->get();
@@ -245,7 +244,20 @@ class AdminController extends Controller
                 }
             }
 
-            // 🔹 Обновляем изображения товара
+            // 🔹 Добавляем новые оттенки (варианты)
+            if (!empty($validated['new_variants'])) {
+                foreach ($validated['new_variants'] as $newVariantData) {
+                    if (!empty($newVariantData['sku']) || !empty($newVariantData['color'])) {
+                        $variant = $product->variants()->create([
+                            'sku'   => $newVariantData['sku'] ?? null,
+                            'color' => $newVariantData['color'] ?? null,
+                            'images' => json_encode([]), // новые оттенки без картинок
+                        ]);
+                    }
+                }
+            }
+
+            // 🔹 Обновляем изображения самого товара
             if ($request->hasFile('images')) {
                 $imagePaths = [];
                 foreach ($request->file('images') as $image) {
@@ -262,6 +274,10 @@ class AdminController extends Controller
             return redirect()->back()->withErrors(['error' => 'Ошибка при обновлении: ' . $e->getMessage()]);
         }
     }
+
+
+
+
 
 
 
