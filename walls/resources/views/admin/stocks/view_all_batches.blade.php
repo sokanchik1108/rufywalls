@@ -231,8 +231,8 @@
     @endforeach
 
     <!-- Пагинация -->
-    <div class="mt-4">
-        {{ $variants->links() }}
+    <div class="mt-4 d-flex justify-content-center">
+        {{ $variants->links('vendor.pagination.custom') }}
     </div>
 
 </div>
