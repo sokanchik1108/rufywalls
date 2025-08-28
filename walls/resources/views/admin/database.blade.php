@@ -198,26 +198,28 @@
 
     <div id="variant-list-container" class="row g-4 justify-content-center">
         @include('admin.partials.variant-cards', [
-            'variants' => $variants,
-            'categories' => $categories,
-            'rooms' => $rooms
+        'variants' => $variants,
+        'categories' => $categories,
+        'rooms' => $rooms
         ])
     </div>
 </div>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         const $input = $('#searchSku');
         const $clearBtn = $('#clearSearch');
         const $container = $('#variant-list-container');
 
         // SKU autocomplete
         $input.autocomplete({
-            source: function (request, response) {
+            source: function(request, response) {
                 $.ajax({
                     url: "{{ route('admin.variants.autocomplete') }}",
-                    data: { term: request.term },
-                    success: function (data) {
+                    data: {
+                        term: request.term
+                    },
+                    success: function(data) {
                         response(data);
                     }
                 });
@@ -227,7 +229,7 @@
         });
 
         // Поиск по Enter
-        $input.on('keydown', function (e) {
+        $input.on('keydown', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 fetchVariants(1);
@@ -235,19 +237,19 @@
         });
 
         // Очистка поиска
-        $clearBtn.on('click', function () {
+        $clearBtn.on('click', function() {
             $input.val('').focus();
             $(this).hide();
             fetchVariants(1);
         });
 
         // Показ/скрытие кнопки очистки
-        $input.on('input', function () {
+        $input.on('input', function() {
             $clearBtn.toggle($(this).val().length > 0);
         });
 
         // Пагинация
-        $(document).on('click', '.pagination a', function (e) {
+        $(document).on('click', '.pagination a', function(e) {
             e.preventDefault();
             const page = $(this).attr('href').split('page=')[1];
             fetchVariants(page);
@@ -264,11 +266,11 @@
                     page: page,
                     sku: sku
                 },
-                success: function (data) {
+                success: function(data) {
                     $container.html(data.html);
                     history.pushState(null, '', '?sku=' + encodeURIComponent(sku) + '&page=' + page);
                 },
-                error: function () {
+                error: function() {
                     alert('Ошибка при загрузке данных');
                 }
             });
@@ -282,39 +284,39 @@
             fetchVariants(urlParams.get('page') || 1);
         }
 
-        // Динамическое добавление оттенков
+        /// Динамическое добавление оттенков
         let variantIndex = 0;
 
         // При клике на кнопку "Добавить оттенок"
-        $(document).on('click', '.add-variant-btn', function () {
-            variantIndex++;
-
+        $(document).on('click', '.add-variant-btn', function() {
             const wrapperId = $(this).data('wrapper-id');
             const $wrapper = $('#' + wrapperId);
 
             const block = $(`
-                <div class="row g-3 border p-3 mb-3 rounded">
-                    <div class="col-md-5">
-                        <label class="form-label">Артикул</label>
-                        <input type="text" name="new_variants[new${variantIndex}][sku]" class="form-control" placeholder="Введите артикул">
-                    </div>
-                    <div class="col-md-5">
-                        <label class="form-label">Оттенок</label>
-                        <input type="text" name="new_variants[new${variantIndex}][color]" class="form-control" placeholder="Введите цвет">
-                    </div>
-                    <div class="col-md-2 d-flex align-items-end mb-2">
-                        <button type="button" class="btn btn-sm btn-danger remove-variant-btn">Удалить</button>
-                    </div>
-                </div>
-            `);
+        <div class="row g-3 border p-3 mb-3 rounded">
+            <div class="col-md-5">
+                <label class="form-label">Артикул</label>
+                <input type="text" name="new_variants[${variantIndex}][sku]" class="form-control" placeholder="Введите артикул">
+            </div>
+            <div class="col-md-5">
+                <label class="form-label">Оттенок</label>
+                <input type="text" name="new_variants[${variantIndex}][color]" class="form-control" placeholder="Введите цвет">
+            </div>
+            <div class="col-md-2 d-flex align-items-end mb-2">
+                <button type="button" class="btn btn-sm btn-danger remove-variant-btn">Удалить</button>
+            </div>
+        </div>
+    `);
 
             $wrapper.append(block);
+            variantIndex++; // увеличиваем индекс ТОЛЬКО после добавления
         });
 
         // Удаление блока варианта
-        $(document).on('click', '.remove-variant-btn', function () {
+        $(document).on('click', '.remove-variant-btn', function() {
             $(this).closest('.row').remove();
         });
+
     });
 </script>
 

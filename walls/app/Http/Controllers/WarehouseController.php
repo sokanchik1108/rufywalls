@@ -116,6 +116,14 @@ class WarehouseController extends Controller
             return $variant;
         });
 
+        // ✅ Если поиска нет — убираем только варианты без партий
+        if (!$request->filled('sku')) {
+            $variants = $variants->filter(function ($variant) {
+                return $variant->batches->isNotEmpty(); // есть хотя бы одна партия
+            })->values();
+        }
+
+
         // Сортировка по количеству
         if ($request->filled('sort')) {
             $direction = strtolower($request->sort) === 'asc' ? 'asc' : 'desc';
@@ -140,6 +148,8 @@ class WarehouseController extends Controller
             'warehouses' => $warehouses,
         ]);
     }
+
+
 
 
 

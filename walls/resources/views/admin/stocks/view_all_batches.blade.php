@@ -7,193 +7,235 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 
-<div class="container-fluid py-3" style="padding-left: 50px; padding-right: 50px;">
-
-
-    <h5 class="text-center mb-3">Остатки товаров по складам</h5>
-
-
-    <form method="GET" action="{{ route('admin.stocks.view_all') }}" class="row g-2" style="margin-bottom: 80px;">
-        <div class="col-12 col-md-6 d-flex gap-2">
-            <input type="text" name="sku" id="sku-autocomplete" placeholder="Поиск по артикулу..." class="form-control form-control-sm" value="{{ request('sku') }}">
-            <button type="submit" class="btn btn-sm btn-primary">Найти</button>
-            @if(request('sku') || request('sort'))
-            <a href="{{ route('admin.stocks.view_all') }}" class="btn btn-sm btn-outline-secondary">Сбросить</a>
-            @endif
-        </div>
-        <div class="col-12 col-md-6 d-flex justify-content-md-end align-items-center">
-            <label for="sort" class="me-2 mb-0 small">Сортировка:</label>
-            <select name="sort" id="sort" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
-                <option value="">По умолчанию</option>
-                <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>По возрастанию</option>
-                <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>По убыванию</option>
-            </select>
-        </div>
-    </form>
-
-    @if($variants->isEmpty())
-    <div class="alert alert-warning text-center small">Ничего не найдено.</div>
-    @else
-    <div class="row g-3">
-        @foreach($variants as $variant)
-        @php
-        $product = $variant->product;
-
-        $colorClasses = [
-        'color-warehouse-1', 'color-warehouse-2', 'color-warehouse-3',
-        'color-warehouse-4', 'color-warehouse-5', 'color-warehouse-6',
-        'color-warehouse-7', 'color-warehouse-8'
-        ];
-
-        $warehouseColorMap = [];
-        foreach ($warehouses as $index => $warehouse) {
-        $warehouseColorMap[$warehouse->id] = $colorClasses[$index % count($colorClasses)];
-        }
-
-        $warehousesByBatch = [];
-        foreach ($variant->batches as $batch) {
-        foreach ($warehouses as $warehouse) {
-        $matched = $batch->warehouses->firstWhere('id', $warehouse->id);
-        $quantity = $matched ? $matched->pivot->quantity : 0;
-        $warehousesByBatch[$batch->id][$warehouse->id] = [
-        'name' => $warehouse->name,
-        'quantity' => $quantity,
-        'color_class' => $warehouseColorMap[$warehouse->id],
-        ];
-        }
-        }
-
-        $stockByWarehouse = [];
-        foreach ($warehouses as $warehouse) {
-        $stockByWarehouse[$warehouse->id] = [
-        'name' => $warehouse->name,
-        'quantity' => $variant->stock_per_warehouse[$warehouse->id]['quantity'] ?? 0,
-        'color_class' => $warehouseColorMap[$warehouse->id],
-        ];
-        }
-        @endphp
-
-        <div class="col-12 col-md-4 col-lg-3">
-            <div class="card border h-100 shadow-sm">
-                <div class="card-body p-2 small">
-                    <div class="fw-bold mb-1">
-                        {{ $product->name }}
-                        <div class="text-muted">Артикул: <strong style="font-size: 1.0rem;">{{ $variant->sku }}</strong></div>
-                    </div>
-
-                    <div class="mb-2" style="font-size: 1.0rem;"><strong>Общий остаток:</strong> {{ $variant->stock_balance }} шт.</div>
-
-                    <div class="mb-2">
-                        <div class="fw-semibold" style="font-size: 1.0rem;">По складам:</div>
-                        <div class="d-flex flex-wrap gap-1 mt-1">
-                            @foreach($stockByWarehouse as $wh)
-                            <span class="badge {{ $wh['color_class'] }} fw-semibold" style="font-size: 0.90rem;">
-                                {{ $wh['name'] }}: {{ $wh['quantity'] }}
-                            </span>
-                            @endforeach
-                        </div>
-                    </div>
-
-
-
-                    <div>
-                        <div class="fw-semibold mb-1" style="font-size: 0.9rem;">Партии:</div>
-                        @foreach($variant->batches as $batch)
-                        <div class="border rounded px-2 py-1 mb-1">
-                            <div class="mb-1">
-                                <strong style="font-size: 0.85rem;">Партия:</strong>
-                                <span style="font-size: 0.85rem;">{{ $batch->batch_code }}</span>
-                            </div>
-                            <div class="d-flex flex-wrap gap-1">
-                                @foreach($warehousesByBatch[$batch->id] as $wh)
-                                @if($wh['quantity'] > 0)
-                                <span class="badge {{ $wh['color_class'] }} fw-semibold" style="font-size: 0.85rem;">
-                                    {{ $wh['name'] }}: {{ $wh['quantity'] }}
-                                </span>
-                                @endif
-                                @endforeach
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-
-
-                </div>
-            </div>
-        </div>
-        @endforeach
-    </div>
-
-    <div class="mt-4 d-flex justify-content-center">
-        {{ $variants->links('vendor.pagination.custom') }}
-    </div>
-    @endif
-</div>
-
 <style>
-    .color-warehouse-1 {
-        background-color: #2C2C2C;
-        color: #fff;
+    body {
+        background: #f9f9f9;
+        font-size: 0.9rem;
+        color: #222;
     }
 
-    .color-warehouse-2 {
-        background-color: #3E4C59;
-        color: #fff;
+    .card {
+        border: none;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        margin-bottom: 1rem;
     }
 
-    .color-warehouse-3 {
-        background-color: green;
-        color: #fff;
+    .card-header {
+        background: transparent;
+        border-bottom: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        padding: 0.75rem 1rem;
     }
 
-    .color-warehouse-4 {
-        background-color: red;
-        color: #fff;
+    .search-bar {
+        background: #fff;
+        border-radius: 0.75rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
 
-    .color-warehouse-5 {
-        background-color: purple;
-        color: #fff;
+    .form-control,
+    .form-select {
+        font-size: 0.85rem;
     }
 
-    .color-warehouse-6 {
-        background-color: #1F2937;
-        color: #fff;
+    table {
+        font-size: 0.85rem;
     }
 
-    .color-warehouse-7 {
-        background-color: #52525B;
-        color: #fff;
-    }
-
-    .color-warehouse-8 {
-        background-color: #1E1E1E;
-        color: #fff;
-    }
-
-    .badge {
-        font-size: 11px;
-        padding: 4px 7px;
+    th {
+        color: #666;
         font-weight: 500;
-        border-radius: 4px;
-        display: inline-block;
     }
 
-    .card-title {
-        font-size: 15px;
+    td {
+        font-weight: 500;
     }
 
-    @media (max-width: 576px) {
-        .card-body {
-            padding: 0.75rem 0.5rem;
+    .accordion-button {
+        font-size: 0.85rem;
+        padding: 0.6rem 1rem;
+    }
+
+    .total {
+        font-size: 0.9rem;
+        font-weight: 700;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .card-header {
+            flex-direction: column;
+            align-items: flex-start !important;
+            gap: 0.5rem;
         }
 
-        .badge {
-            font-size: 10px;
-            padding: 3px 6px;
+        .search-bar form {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .search-bar .col-12 {
+            width: 100%;
+        }
+
+        table {
+            font-size: 0.8rem;
+        }
+
+        .accordion-button {
+            font-size: 0.8rem;
+        }
+
+        .btn,
+        .form-select,
+        .form-control {
+            width: 100%;
         }
     }
 </style>
+
+<div class="container py-3">
+
+    <div class="search-bar">
+        <form method="GET" action="{{ route('admin.stocks.view_all') }}" class="row g-2 align-items-center">
+            <div class="col-md-6 d-flex flex-wrap gap-2">
+                <input type="text" name="sku" id="sku-autocomplete"
+                    class="form-control form-control-md flex-grow-1"
+                    placeholder="Поиск по артикулу..." value="{{ request('sku') }}">
+                <button type="submit" class="btn btn-dark">Найти</button>
+                @if(request('sku') || request('sort'))
+                <a href="{{ route('admin.stocks.view_all') }}" class="btn btn-outline-secondary">Сбросить</a>
+                @endif
+            </div>
+
+            <div class="col-md-6 d-flex justify-content-md-end align-items-center gap-2 mt-2 mt-md-0">
+                <label for="sort" class="text-muted small mb-0">Сортировка:</label>
+                <select name="sort" id="sort" class="form-select form-select-md w-auto"
+                    onchange="this.form.submit()">
+                    <option value="">По умолчанию</option>
+                    <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>По возрастанию</option>
+                    <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>По убыванию</option>
+                </select>
+            </div>
+        </form>
+    </div>
+
+    @php
+    $colors = ['#0d6efd', '#198754', '#dc3545', '#fd7e14', '#20c997', '#6f42c1'];
+    @endphp
+
+    @foreach ($variants as $variant)
+    @php
+    $totalStock = $variant->batches->sum(fn($batch) => $batch->warehouses->sum('pivot.quantity'));
+    @endphp
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                {{ $variant->sku }} — {{ $variant->product->name }}
+                @if($totalStock < 5)
+                    <span class="badge bg-danger ms-2">Мало товара</span>
+                    @endif
+            </div>
+            <div class="total">Всего: {{ $totalStock }}</div>
+        </div>
+        <div class="card-body pt-0">
+            <h6 class="fw-bold mt-2 mb-1">По складам</h6>
+            <table class="table table-sm table-borderless">
+                <tbody>
+                    @foreach ($warehouses as $i => $warehouse)
+                    @php
+                    $stock = 0;
+                    foreach ($variant->batches as $batch) {
+                    $stock += $batch->warehouses->where('id', $warehouse->id)->sum('pivot.quantity');
+                    }
+                    @endphp
+                    <tr>
+                        <td style="color: {{ $colors[$i % count($colors)] }};">
+                            {{ $warehouse->name }}
+                            @if($stock < 5)
+                                <span class="badge bg-warning text-dark ms-1">Мало на складе</span>
+                                @endif
+                        </td>
+                        <td class="text-end">{{ $stock }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+            <!-- Accordion for batches -->
+            <div class="accordion mt-2" id="accordion{{ $variant->id }}">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="heading{{ $variant->id }}">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapse{{ $variant->id }}">
+                            <span>Партии товара</span>
+                            @php
+                            $hasLowStockBatch = $variant->batches->some(fn($batch) => $batch->warehouses->sum('pivot.quantity') < 5);
+                                @endphp
+                                @if($hasLowStockBatch)
+                                <span class="badge bg-danger ms-2">Есть партии с малым остатком</span>
+                                @endif
+                        </button>
+                    </h2>
+                    <div id="collapse{{ $variant->id }}" class="accordion-collapse collapse">
+                        <div class="accordion-body p-0">
+                            <table class="table table-sm mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Партия</th>
+                                        <th>Склады</th>
+                                        <th class="text-end">Итого</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($variant->batches as $batch)
+                                    @php
+                                    $batchTotal = $batch->warehouses->sum('pivot.quantity');
+                                    @endphp
+                                    <tr>
+                                        <td>
+                                            {{ $batch->batch_code }}
+                                            @if($batchTotal < 5)
+                                                <span class="badge bg-info text-dark ms-1">Малый остаток</span>
+                                                @endif
+                                        </td>
+                                        <td>
+                                            @foreach ($batch->warehouses as $j => $warehouse)
+                                            <div style="font-size: 0.8rem;">
+                                                <span style="color: {{ $colors[$j % count($colors)] }};">
+                                                    {{ $warehouse->name }}
+                                                </span>:
+                                                <strong>{{ $warehouse->pivot->quantity }}</strong>
+                                                @if($warehouse->pivot->quantity < 5)
+                                                    <span class="badge bg-warning text-dark ms-1">Мало</span>
+                                                    @endif
+                                            </div>
+                                            @endforeach
+                                        </td>
+                                        <td class="text-end fw-bold">{{ $batchTotal }}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    @endforeach
+
+    <!-- Пагинация -->
+    <div class="mt-4">
+        {{ $variants->links() }}
+    </div>
+
+</div>
 
 <script>
     $(function() {

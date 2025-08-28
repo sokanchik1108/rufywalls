@@ -4,7 +4,7 @@
 
 
 @section('meta')
-<meta name="description" content="Купить обои в Алматы и по Казахстану — RAFy WALLS. Большой выбор дизайнов, доставка по стране. Обновите интерьер стильно и легко." />
+<meta name="description" content="Купить обои в Алматы и по Казахстану — RAFY WALLS. Большой выбор дизайнов, доставка по стране. Обновите интерьер стильно и легко." />
 @endsection
 
 @section('content')
