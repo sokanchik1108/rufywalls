@@ -19,7 +19,8 @@
     <!-- Текст -->
     <div class="banner-text">
         <div class="promo-text">
-            Скидка 5% при онлайн-заказе! <br> Закажите через сайт и получите <strong style="color: #FFFFDD;">5% скидки</strong>. Подтверждение в — WhatsApp.
+            Скидка 5% при онлайн-заказе! <br>
+            Закажите через сайт и получите <strong style="color: #FFFFDD;">5% скидки</strong>. Подтверждение в — WhatsApp.
         </div>
         <h2>ПРЕВРАТИ СТЕНЫ В ИСКУССТВО</h2>
         <p>
@@ -32,12 +33,13 @@
 
     <!-- Стили -->
     <style>
+        /* Уменьшаем высоту баннера */
         .banner-images {
             display: flex;
             width: 100%;
-            height: 60vh;
-            min-height: 300px;
-            max-height: 530px;
+            height: 45vh; /* было 60vh */
+            min-height: 200px; /* было 300px */
+            max-height: 400px; /* было 530px */
         }
 
         .banner-image {
@@ -48,6 +50,10 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        .hide-on-mobile {
+            display: block;
         }
 
         .banner-overlay {
@@ -65,96 +71,44 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: white;
-            padding: 20px;
-            max-width: 800px;
+            padding: 10px; /* было 20px */
+            max-width: 700px; /* было 800px */
             width: 90%;
             text-align: center;
         }
 
-        .promo-text {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 25px;
-        }
-
         .banner-text h2 {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 15px;
+            font-size: 1.8rem; /* было крупнее */
+            margin-bottom: 0.5rem;
         }
 
         .banner-text p {
-            font-size: 1.2rem;
-            line-height: 1.5;
-            margin-bottom: 10px;
+            font-size: 1rem;
+            line-height: 1.4;
+            margin-bottom: 0.4rem;
         }
 
-        /* Планшеты */
-        @media (max-width: 991px) {
-            .banner-text h2 {
-                font-size: 2rem;
-            }
-
-            .banner-text p {
-                font-size: 1rem;
-            }
-
-            .promo-text {
-                font-size: 1rem;
-            }
+        .promo-text {
+            font-size: 1rem;
+            margin-bottom: 1rem;
         }
 
-        /* Телефоны */
-        @media (max-width: 768px) {
-            .banner-images {
-                flex-direction: column;
-                height: auto;
-            }
-
-            .banner-image {
-                flex: none;
-                height: 350px;
-            }
-
+        /* Мобильные: показывать только одно изображение */
+        @media (max-width: 767px) {
             .hide-on-mobile {
-                display: none !important;
+                display: none;
             }
 
-            .banner-text {
-                padding: 15px;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                max-width: 90%;
-                text-align: center; /* центрируем весь текст */
-            }
-
-            .banner-text h2 {
-                font-size: 1.6rem;
-            }
-
-            .banner-text p {
-                font-size: 0.95rem;
-            }
-
-            .promo-text {
-                font-size: 0.95rem;
-                margin-bottom: 20px;
-            }
-        }
-
-        /* Очень маленькие экраны */
-        @media (max-width: 480px) {
-            .banner-image {
-                height: 400px;
+            .banner-images {
+                height: 30vh;
+                min-height: 180px;
             }
 
             .banner-text h2 {
                 font-size: 1.4rem;
             }
 
-            .banner-text p,
-            .promo-text {
+            .banner-text p, .promo-text {
                 font-size: 0.9rem;
             }
         }

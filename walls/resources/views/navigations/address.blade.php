@@ -13,16 +13,23 @@
     <div class="card shadow-lg border-0 rounded-4" style="max-width: 600px; width: 100%;">
         <div class="card-body p-4">
             <div class="text-center mb-4">
-                <h1 class="h3 fw-bold text-dark">Наш адрес</h1>
-                <p class="text-muted">Вы всегда можете посетить нас по этому адресу</p>
+                <h1 class="h3 fw-bold text-dark">Наши адреса</h1>
+                <p class="text-muted">Вы всегда можете посетить нас по этому адресам</p>
             </div>
 
             <div class="mb-4">
-                <h5 class="fw-semibold">Адрес:</h5>
+                <h5 class="fw-semibold">Адреса:</h5>
                 <p class="text-secondary mb-0">
                     <a href="https://2gis.kz/almaty/firm/70000001102986031?m=76.884534%2C43.272083%2F16" class="text-decoration-none text-primary" target="_blank">
-                        Рыскулова Розыбакиева, рынок Сауран, новое здание №109,
+                        Рыскулова Розыбакиева, рынок Сауран, новое здание №109,<br>
                         Казахстан, Алматы
+                    </a>
+                </p>
+
+                <p class="text-secondary mb-0 mt-2">
+                    <a href="https://2gis.kz/almaty/branches/70000001102986030/firm/70000001103994284/76.884749%2C43.272347" class="text-decoration-none text-primary" target="_blank">
+                    Рыскулова Розыбакиева, рынок Сауран, новое здание №105,<br>
+                    Казахстан, Алматы
                     </a>
                 </p>
             </div>

@@ -1,84 +1,121 @@
-<section class="pickup-section py-5 bg-white" id="delivery">
-    <div class="container px-3 px-md-4" style="max-width: 1000px; margin-top: 60px; margin-bottom: 60px;">
-        <h2 class="pickup-title mb-3 text-start">Самовывоз и доставка</h2>
+<section class="pickup-section py-5" id="delivery">
+    <div class="container px-3 px-md-4" style="max-width: 900px;">
+        <h2 class="pickup-title mb-5">Самовывоз или доставка</h2>
 
-        <div class="pickup-text">
-            <p>Мы предлагаем два удобных способа получения заказа. Вы можете самостоятельно забрать товар в нашем магазине или воспользоваться услугой доставки. Мы занимаемся доставкой, но важно учесть — все расходы на неё оплачиваются клиентом напрямую. Это позволяет сохранить честные цены на продукцию и гибко выбирать способ получения в зависимости от ваших потребностей.</p>
-
-            <p>Если вам удобнее приехать лично, будем рады видеть вас в нашем магазине. Это отличная возможность не только сразу получить заказ, но и ознакомиться с ассортиментом, оценить качество обоев вживую и при желании получить консультацию от наших специалистов.</p>
-
-            <p><strong>Ждём вас по адресу:</strong> Рыскулова Розыбакиева, рынок Сауран, новое здание №109, Казахстан, Алматы</p>
-
-            <p><strong>График работы:</strong> вт–вс, с 8:00 до 17:00</p>
-
-            <p>Если у вас возникнут вопросы — с радостью ответим!</p>
+        <div class="pickup-intro mb-5">
+            <p>Вы можете выбрать один из двух удобных способов получения заказа:</p>
         </div>
+
+        <div class="pickup-grid">
+            <!-- Самовывоз -->
+            <div class="pickup-card">
+                <h3 style="color: #01142f;">Самовывоз</h3>
+
+                <p class="pickup-subtext">Вы можете забрать заказ лично в одном из наших пунктов — сразу и без ожидания.</p>
+
+                <!-- Первый адрес -->
+                <div class="pickup-info">
+                    <p><strong>Адрес:</strong> Рыскулова Розыбакиева, рынок Сауран, новое здание №109, Казахстан, Алматы</p>
+                </div>
+
+                <!-- Второй адрес -->
+                <div class="pickup-info">
+                    <p><strong>Адрес:</strong> Рыскулова Розыбакиева, рынок Сауран, новое здание №105, Казахстан, Алматы</p>
+                </div>
+                <p class="mt-3"><strong>График работы:</strong><br>Вт–вс, с 8:00 до 17:00</p>
+            </div>
+
+
+            <!-- Доставка -->
+            <div class="pickup-card">
+                <h3 style="color: #01142f;">Доставка</h3>
+                <p class="pickup-subtext">Мы организуем доставку заказа до вашей двери.</p>
+                <div class="pickup-info">
+                    <p>Оплата доставки производится напрямую курьеру.
+                        Это позволяет сохранять честные цены и гибкость в выборе способа получения.</p>
+                </div>
+            </div>
+        </div>
+
+        <p class="pickup-help mt-5 text-muted text-center">Если остались вопросы — мы с радостью ответим.</p>
     </div>
 </section>
 
 <style>
-.pickup-section {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
-}
+    .pickup-section {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #222;
+        background-color: #fff;
+    }
 
-.pickup-title {
-    font-size: 2rem;
-    font-weight: 700;
-    text-align: left;
-    line-height: 1.3;
-    margin-bottom: 1.2rem;
-}
-
-.pickup-text p {
-    font-size: 1rem;
-    line-height: 1.6;
-    text-align: justify;
-    margin-bottom: 0.9rem;
-}
-
-/* Планшеты */
-@media (min-width: 768px) {
     .pickup-title {
         font-size: 2.2rem;
+        font-weight: 600;
+        text-align: center;
+        letter-spacing: -0.5px;
     }
 
-    .pickup-text p {
-        font-size: 1.15rem;
-        text-align: left;
-    }
-}
-
-/* Десктоп */
-@media (min-width: 992px) {
-    .pickup-title {
-        font-size: 2.4rem;
+    .pickup-intro p {
+        font-size: 1.1rem;
+        text-align: center;
+        color: #444;
     }
 
-    .pickup-text p {
-        font-size: 1.2rem;
+    .pickup-grid {
+        display: grid;
+        gap: 2rem;
+        grid-template-columns: 1fr;
+        margin-top: 3rem;
     }
-}
 
-/* Мобильные устройства */
-@media (max-width: 576px) {
-    .pickup-title {
-        font-size: 1.4rem;
-        line-height: 1.2;
+    .pickup-card {
+        background: #fafafa;
+        border: 1px solid #eee;
+        border-radius: 14px;
+        padding: 2rem;
+        text-align: center;
+        transition: box-shadow 0.3s ease, transform 0.2s ease;
+    }
+
+    .pickup-card:hover {
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+        transform: translateY(-2px);
+    }
+
+    .pickup-card h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #555;
         margin-bottom: 0.8rem;
     }
 
-    .pickup-text p {
-        font-size: 0.88rem;
-        line-height: 1.5;
-        margin-bottom: 0.7rem;
+    .pickup-subtext {
+        font-size: 1rem;
+        color: #666;
+        margin-bottom: 1.2rem;
     }
 
-    .container {
-        padding-left: 1rem;
-        padding-right: 1rem;
-        margin-top: 40px !important;
-        margin-bottom: 40px !important;
+    .pickup-info p {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #333;
+        margin-bottom: 0.8rem;
     }
-}
+
+    .pickup-help {
+        font-size: 0.95rem;
+        color: #777;
+    }
+
+    /* Планшеты и выше */
+    @media (min-width: 768px) {
+        .pickup-title {
+            font-size: 2.4rem;
+        }
+
+        .pickup-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
 </style>

@@ -46,45 +46,44 @@
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         color: #333;
         background-color: #fdfdfd;
-        /* Светлый фон */
-        border-radius: 12px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03);
+        border-radius: 10.8px;
+        /* 90% от 12px */
+        box-shadow: 0 7.2px 18px rgba(0, 0, 0, 0.03);
+        padding-top: 4.5rem;
+        /* чуть меньше, чем py-5 */
+        padding-bottom: 4.5rem;
     }
 
     /* Заголовок */
     .section-title {
         font-weight: 700;
-        font-size: 2rem;
+        font-size: 1.8rem;
+        /* 90% от 2rem */
         line-height: 1.3;
         text-align: left;
     }
 
     /* Текст */
     .section-text p {
-        font-size: 1.05rem;
-        line-height: 1.75;
+        font-size: 0.95rem;
+        /* 90% от 1.05rem */
+        line-height: 1.65;
         font-weight: 400;
-        margin-bottom: 1rem;
+        margin-bottom: 0.9rem;
         text-align: justify;
         letter-spacing: 0.2px;
     }
 
-    /* Подзаголовок Call to Action */
-    .cta-subtext {
-        font-size: 1rem;
-        color: #666;
-    }
-
-    /* Кнопка прежнего цвета */
+    /* Кнопка */
     .btn-custom {
         background-color: #01142f;
-        /* Оригинальный цвет */
         color: white;
         border: none;
-        padding: 13px 34px;
-        font-size: 1rem;
+        padding: 11.7px 30.6px;
+        /* 90% от 13px 34px */
+        font-size: 0.9rem;
         font-weight: 600;
-        border-radius: 30px;
+        border-radius: 27px;
         transition: all 0.3s ease;
         text-decoration: none;
         display: inline-block;
@@ -93,84 +92,84 @@
     .btn-custom:hover {
         color: white;
         text-decoration: none;
-        box-shadow: 0 6px 18px rgba(0, 86, 179, 0.4);
+        box-shadow: 0 5.4px 16.2px rgba(0, 86, 179, 0.4);
         transform: translateY(-2px);
         background-color: #02214b;
     }
 
     .btn-custom:active {
         transform: scale(0.97);
-        box-shadow: 0 4px 12px rgba(0, 86, 179, 0.3);
+        box-shadow: 0 3.6px 10.8px rgba(0, 86, 179, 0.3);
     }
 
     /* Иконки */
     .icon {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        /* 90% от 40px */
+        height: 36px;
         flex-shrink: 0;
     }
 
+    /* Преимущества */
     .feature-item h5 {
-        margin-bottom: 0.3rem;
-        font-size: 1.1rem;
+        margin-bottom: 0.27rem;
+        font-size: 0.99rem;
         font-weight: 600;
     }
 
     .feature-item p {
         margin: 0;
-        font-size: 0.95rem;
+        font-size: 0.86rem;
         color: #555;
     }
 
-    /* Планшеты */
+    /* Медиа-запросы */
     @media (min-width: 768px) {
         .section-title {
-            font-size: 2.2rem;
+            font-size: 1.98rem;
         }
 
         .section-text p {
-            font-size: 1.15rem;
+            font-size: 1.03rem;
         }
 
         .btn-custom {
-            padding: 15px 42px;
+            padding: 13.5px 37.8px;
         }
     }
 
-    /* Десктоп */
     @media (min-width: 992px) {
         .section-title {
-            font-size: 2.4rem;
+            font-size: 2.16rem;
         }
 
         .btn-custom {
-            padding: 16px 48px;
-            font-size: 1.05rem;
+            padding: 14.4px 43.2px;
+            font-size: 0.95rem;
         }
     }
 
-    /* Мобильные */
     @media (max-width: 576px) {
         .section-title {
-            font-size: 1.5rem;
-            margin-bottom: 0.8rem;
+            font-size: 1.35rem;
+            margin-bottom: 0.72rem;
         }
 
         .section-text p {
-            font-size: 0.9rem;
-            line-height: 1.5;
-            margin-bottom: 0.7rem;
+            font-size: 0.81rem;
+            line-height: 1.4;
+            margin-bottom: 0.63rem;
         }
 
         .btn-custom {
-            padding: 11px 24px;
-            font-size: 0.95rem;
-            border-radius: 24px;
+            padding: 9.9px 21.6px;
+            font-size: 0.86rem;
+            border-radius: 21.6px;
         }
 
         .container {
-            padding-left: 1rem;
-            padding-right: 1rem;
+            padding-left: 0.9rem;
+            padding-right: 0.9rem;
         }
 
         .feature-item {
@@ -179,7 +178,7 @@
         }
 
         .icon {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.45rem;
         }
     }
 </style>

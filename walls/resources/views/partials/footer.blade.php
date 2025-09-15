@@ -26,7 +26,8 @@
             <div class="col-md-4 mb-3">
                 <h6 class="text-uppercase fw-bold mb-2">Контакты</h6>
                 <p class="mb-1">+7 707 712 1255</p>
-                <p class="mb-1">Алматы, рынок Сауран, здание №109</p>
+                <p class="mb-1">Рыскулова Розыбакиева, рынок Сауран, новое здание №109, Казахстан, Алматы</p>
+                <p class="mb-1 mt-1">Рыскулова Розыбакиева, рынок Сауран, новое здание №105, Казахстан, Алматы</p>
 
                 <!-- Соцсети -->
                 <div class="social-icons mt-3 d-flex justify-content-center justify-content-md-start gap-2">
