@@ -110,7 +110,8 @@
   }
 
 .scroll-top-btn {
-    position: fixed;       /* фиксированная привязка к viewport */
+    display: none;  /* изначально скрыта */
+    position: fixed;
     bottom: 30px;
     right: 30px;
     background-color: #01142f;
@@ -123,16 +124,16 @@
     cursor: pointer;
     z-index: 1000;
 
-    display: flex;
+    display: flex; /* оставь flex только при показе через JS */
     align-items: center;
     justify-content: center;
 
     transition: background 0.3s ease, transform 0.3s ease;
 
-    /* Чтобы избежать смещения на мобильных */
     margin: 0;
     padding: 0;
 }
+
 
 @media (max-width: 576px) {
     .scroll-top-btn {
@@ -150,17 +151,25 @@
 </style>
 
 <script>
-window.addEventListener('scroll', function () {
-    const btn = document.getElementById('scrollToTop');
+const btn = document.getElementById('scrollToTop');
+
+function toggleScrollBtn() {
     if (window.scrollY > 300) {
-        btn.style.display = 'flex';  // flex, чтобы центрирование не ломалось
+        btn.style.display = 'flex';
     } else {
         btn.style.display = 'none';
     }
-});
+}
 
-document.getElementById('scrollToTop').addEventListener('click', function () {
+// проверка сразу при загрузке страницы
+toggleScrollBtn();
+
+// и на скролле
+window.addEventListener('scroll', toggleScrollBtn);
+
+btn.addEventListener('click', function () {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 });
+
 
 </script>
