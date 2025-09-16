@@ -57,36 +57,31 @@
   .footer {
     background-color: #d1cfcf; /* Более темный и серый фон */
     color: #333;
-    font-size: 1rem; /* Увеличили с 0.95rem до 1rem */
+    font-size: 0.95rem;
     position: relative;
   }
 
   .container {
     margin: 0 auto;
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 15px; /* Уменьшение отступов слева */
+    padding-right: 15px; /* Уменьшение отступов справа */
   }
 
   .footer-logo {
-    font-size: 1.85rem; /* Слегка увеличили с 1.7rem */
+    font-size: 1.7rem;
     font-weight: 700;
     color: #111;
   }
 
   .footer-description {
-    max-width: 80%;
-    margin-top: 12px; /* чуть больше отступ сверху */
-  }
-
-  .footer-description p {
-    font-size: 1rem; /* Увеличили с 0.95rem */
-    line-height: 1.6;
+    max-width: 80%; /* Убираем ограничение ширины */
+    margin-top: 10px;
   }
 
   .footer-heading {
     font-weight: 600;
-    margin-bottom: 14px; /* чуть больше отступа */
-    font-size: 1.1rem; /* Увеличили с 1rem */
+    margin-bottom: 12px;
+    font-size: 1rem;
     color: #222;
   }
 
@@ -94,8 +89,7 @@
     color: black;
     text-decoration: none;
     display: block;
-    margin-bottom: 8px; /* чуть больше */
-    font-size: 1rem; /* увеличили размер ссылок */
+    margin-bottom: 6px;
     transition: color 0.3s ease;
   }
 
@@ -108,58 +102,65 @@
     filter: grayscale(100%) brightness(0.6);
     transition: 0.3s ease;
     cursor: pointer;
-    width: 28px; /* чуть больше иконки */
-    height: 28px;
   }
 
   .social-icons img:hover {
     filter: none;
-    transform: scale(1.15);
+    transform: scale(1.1);
   }
 
-  /* Кнопка наверх */
-  .scroll-top-btn {
-    position: fixed;
+.scroll-top-btn {
+    position: fixed;       /* фиксированная привязка к viewport */
     bottom: 30px;
     right: 30px;
     background-color: #01142f;
     color: #fff;
     border: none;
     border-radius: 50%;
-    width: 44px; /* немного увеличили */
-    height: 44px;
-    font-size: 22px; /* немного увеличили */
-    line-height: 44px;
-    text-align: center;
+    width: 42px;
+    height: 42px;
+    font-size: 20px;
     cursor: pointer;
     z-index: 1000;
-    display: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     transition: background 0.3s ease, transform 0.3s ease;
-  }
 
-  .scroll-top-btn:hover {
+    /* Чтобы избежать смещения на мобильных */
+    margin: 0;
+    padding: 0;
+}
+
+@media (max-width: 576px) {
+    .scroll-top-btn {
+        right: 15px;  /* ближе к краю экрана на мобилках */
+        bottom: 20px;
+    }
+}
+
+
+.scroll-top-btn:hover {
     background-color: #02214b;
-    transform: scale(1.15);
-  }
+    transform: scale(1.1);
+}
 
-  .text-center.small.text-muted {
-    font-size: 0.95rem; /* немного больше для копирайта */
-  }
 </style>
 
 <script>
-  // Показывать кнопку при прокрутке
-  window.addEventListener('scroll', function () {
+window.addEventListener('scroll', function () {
     const btn = document.getElementById('scrollToTop');
     if (window.scrollY > 300) {
-      btn.style.display = 'block';
+        btn.style.display = 'flex';  // flex, чтобы центрирование не ломалось
     } else {
-      btn.style.display = 'none';
+        btn.style.display = 'none';
     }
-  });
+});
 
-  // Прокрутка наверх
-  document.getElementById('scrollToTop').addEventListener('click', function () {
+document.getElementById('scrollToTop').addEventListener('click', function () {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
+});
+
 </script>
