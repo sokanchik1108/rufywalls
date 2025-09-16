@@ -89,15 +89,15 @@ class WebsiteController extends Controller
             if ($request->filled('in_stock')) {
                 $variants->whereHas('batches', fn($q) => $q->where('stock', '>', 0));
             }
-            if ($request->filled('sticking')) {
-                $variants->whereHas('product', function ($q) use ($request) {
-                    if ($request->sticking === 'yes') {
-                        $q->whereRaw("LOWER(sticking) != 'Нет'");
-                    } elseif ($request->sticking === 'no') {
-                        $q->whereRaw("LOWER(sticking) = 'Нет'");
-                    }
-                });
-            }
+if ($request->filled('sticking')) {
+    $variants->whereHas('product', function ($q) use ($request) {
+        if ($request->sticking === 'yes') {
+            $q->whereRaw("sticking != 'Нет'");
+        } elseif ($request->sticking === 'no') {
+            $q->whereRaw("sticking = 'Нет'");
+        }
+    });
+}
             if ($request->filled('price_min')) {
                 $variants->whereHas('product', fn($q) => $q->where('sale_price', '>=', $request->price_min));
             }
