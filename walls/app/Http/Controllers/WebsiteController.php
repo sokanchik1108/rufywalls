@@ -89,15 +89,15 @@ class WebsiteController extends Controller
             if ($request->filled('in_stock')) {
                 $variants->whereHas('batches', fn($q) => $q->where('stock', '>', 0));
             }
-if ($request->filled('sticking')) {
-    $variants->whereHas('product', function ($q) use ($request) {
-        if ($request->sticking === 'yes') {
-            $q->whereRaw("sticking != 'Нет'");
-        } elseif ($request->sticking === 'no') {
-            $q->whereRaw("sticking = 'Нет'");
-        }
-    });
-}
+            if ($request->filled('sticking')) {
+                $variants->whereHas('product', function ($q) use ($request) {
+                    if ($request->sticking === 'yes') {
+                        $q->whereRaw("sticking != 'Нет'");
+                    } elseif ($request->sticking === 'no') {
+                        $q->whereRaw("sticking = 'Нет'");
+                    }
+                });
+            }
             if ($request->filled('price_min')) {
                 $variants->whereHas('product', fn($q) => $q->where('sale_price', '>=', $request->price_min));
             }
@@ -193,9 +193,9 @@ if ($request->filled('sticking')) {
         }
         if ($request->filled('sticking')) {
             if ($request->sticking === 'yes') {
-                $products->whereRaw("LOWER(sticking) != 'нет'");
+                $products->whereRaw("sticking != 'Нет'");
             } elseif ($request->sticking === 'no') {
-                $products->whereRaw("LOWER(sticking) = 'нет'");
+                $products->whereRaw("sticking = 'Нет'");
             }
         }
         if ($request->filled('price_min')) {
@@ -298,40 +298,40 @@ if ($request->filled('sticking')) {
 
 
 
-public function variantData($id)
-{
-    $variant = Variant::with(['batches', 'companions.product', 'companionOf.product'])->findOrFail($id);
-    $stock = $variant->batches->sum('stock');
+    public function variantData($id)
+    {
+        $variant = Variant::with(['batches', 'companions.product', 'companionOf.product'])->findOrFail($id);
+        $stock = $variant->batches->sum('stock');
 
-    // Все компаньоны (двусторонние связи)
-    $companions = $variant->companions->merge($variant->companionOf)->unique('id');
+        // Все компаньоны (двусторонние связи)
+        $companions = $variant->companions->merge($variant->companionOf)->unique('id');
 
-    $companionSkus = $companions->map(fn($comp) => $comp->sku ?: '')->filter()->values()->all();
+        $companionSkus = $companions->map(fn($comp) => $comp->sku ?: '')->filter()->values()->all();
 
-    $firstCompanion = $companions->first();
+        $firstCompanion = $companions->first();
 
-    $companionData = null;
-    if ($firstCompanion && $firstCompanion->product) {
-        $companionImages = json_decode($firstCompanion->images, true);
+        $companionData = null;
+        if ($firstCompanion && $firstCompanion->product) {
+            $companionImages = json_decode($firstCompanion->images, true);
 
-        $companionData = [
-            'id' => $firstCompanion->product->id,          // ID продукта компаньона
-            'sku' => $firstCompanion->sku,
-            'title' => $firstCompanion->product->title ?? '',
-            'image' => $companionImages[0] ?? null,
-        ];
+            $companionData = [
+                'id' => $firstCompanion->product->id,          // ID продукта компаньона
+                'sku' => $firstCompanion->sku,
+                'title' => $firstCompanion->product->title ?? '',
+                'image' => $companionImages[0] ?? null,
+            ];
+        }
+
+        return response()->json([
+            'id' => $variant->id,
+            'sku' => $variant->sku,
+            'stock' => $stock,
+            'color' => $variant->color,
+            'images' => json_decode($variant->images),
+            'companions' => $companionSkus,
+            'companion' => $companionData,
+        ]);
     }
-
-    return response()->json([
-        'id' => $variant->id,
-        'sku' => $variant->sku,
-        'stock' => $stock,
-        'color' => $variant->color,
-        'images' => json_decode($variant->images),
-        'companions' => $companionSkus,
-        'companion' => $companionData,
-    ]);
-}
 
 
 
