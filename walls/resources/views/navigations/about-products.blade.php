@@ -6,7 +6,6 @@
 <meta name="description" content="В RAFY WALLS вы найдете качественные моющиеся виниловые обои на флизелиновой основе в Алматы. Богатый выбор оттенков, фактур и коллекций от лучших брендов. Мы поможем создать интерьер, который вдохновляет каждый день.">
 @endsection
 
-
 @section('content')
 <div class="container pt-5 mt-5 px-3 px-md-4 d-flex justify-content-center align-items-start min-vh-100" style="margin-bottom: 100px;">
     <div class="card shadow-lg border-0 rounded-4 w-100" style="max-width: 800px;">
@@ -25,6 +24,10 @@
 
             <p class="text-secondary fs-6 mb-3">
                 Мы предлагаем широкий ассортимент продукции <strong>из России, Узбекистана, Китая и Беларуси</strong>, проверенной временем и доверием наших клиентов. В коллекции — как <strong>лаконичная классика</strong>, так и <strong>современные дизайнерские решения</strong>: от нейтральных пастельных оттенков до ярких акцентных узоров.
+            </p>
+
+            <p class="text-secondary fs-6 mb-3">
+                Все обои <strong>изготовлены из экологически чистых и премиальных материалов</strong>, безопасных для вашей семьи и окружающей среды, и имеют <strong>сертификат качества</strong>, подтверждающий их надежность и соответствие стандартам.
             </p>
 
             <p class="text-secondary fs-6 mb-3">

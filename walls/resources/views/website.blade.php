@@ -14,6 +14,8 @@
 
 @include('sections.cards')
 
+@include('sections.about-us')
+
 @include('sections.delivery')
 
 @include('sections.contacts')

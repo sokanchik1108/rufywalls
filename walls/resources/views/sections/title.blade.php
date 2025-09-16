@@ -37,9 +37,12 @@
         .banner-images {
             display: flex;
             width: 100%;
-            height: 45vh; /* было 60vh */
-            min-height: 200px; /* было 300px */
-            max-height: 400px; /* было 530px */
+            height: 45vh;
+            /* было 60vh */
+            min-height: 200px;
+            /* было 300px */
+            max-height: 400px;
+            /* было 530px */
         }
 
         .banner-image {
@@ -71,14 +74,17 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: white;
-            padding: 10px; /* было 20px */
-            max-width: 700px; /* было 800px */
+            padding: 10px;
+            /* было 20px */
+            max-width: 700px;
+            /* было 800px */
             width: 90%;
             text-align: center;
         }
 
         .banner-text h2 {
-            font-size: 1.8rem; /* было крупнее */
+            font-size: 1.8rem;
+            /* было крупнее */
             margin-bottom: 0.5rem;
         }
 
@@ -93,23 +99,54 @@
             margin-bottom: 1rem;
         }
 
-        /* Мобильные: показывать только одно изображение */
-        @media (max-width: 767px) {
+
+
+        /* Планшеты (средние экраны) */
+        @media (max-width: 991px) {
+            .banner-text {
+                max-width: 600px;
+                padding: 8px;
+            }
+
+            .banner-text h2 {
+                font-size: 1.8rem;
+            }
+
+            .banner-text p {
+                font-size: 1rem;
+            }
+        }
+
+        /* Мобильные телефоны */
+        @media (max-width: 576px) {
             .hide-on-mobile {
                 display: none;
             }
 
             .banner-images {
-                height: 30vh;
-                min-height: 180px;
+                height: 40vh;
+                max-height: 300px;
+            }
+
+            .banner-text {
+                padding: 7px;
+                max-width: 90%;
             }
 
             .banner-text h2 {
-                font-size: 1.4rem;
+                font-size: 1.2rem;
+                font-weight: bold;
+                margin-bottom: 15px;
             }
 
-            .banner-text p, .promo-text {
-                font-size: 0.9rem;
+            .banner-text p {
+                font-size: 0.8rem;
+                line-height: 1.3;
+            }
+
+            .promo-text {
+                font-size: 0.8rem;
+                padding: 4px 7px;
             }
         }
     </style>
