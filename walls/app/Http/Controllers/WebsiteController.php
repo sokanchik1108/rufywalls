@@ -92,9 +92,9 @@ class WebsiteController extends Controller
             if ($request->filled('sticking')) {
                 $variants->whereHas('product', function ($q) use ($request) {
                     if ($request->sticking === 'yes') {
-                        $q->whereRaw("LOWER(sticking) != 'нет'");
+                        $q->whereRaw("LOWER(sticking) != 'Нет'");
                     } elseif ($request->sticking === 'no') {
-                        $q->whereRaw("LOWER(sticking) = 'нет'");
+                        $q->whereRaw("LOWER(sticking) = 'Нет'");
                     }
                 });
             }
