@@ -23,7 +23,7 @@
     @forelse ($variants as $item)
     @php
     /**
-    * Единый блок логики для карточки
+    * Логика выбора варианта для карточки
     */
 
     static $groupColorMap = [];
@@ -38,6 +38,21 @@
     if ($isVariant) {
         $shownVariant = $item;
     } else {
+        // варианты с >= 7 картинками
+        $variantsWith7 = $productVariants->filter(function ($v) {
+            $imgs = json_decode($v->images ?? '[]', true) ?? [];
+            return count($imgs) >= 7;
+        });
+
+        if ($variantsWith7->isNotEmpty() && $variantsWith7->count() < $productVariants->count()) {
+            // есть смешанные: берём только среди с 7 картинками
+            $productVariantsForLogic = $variantsWith7;
+        } else {
+            // иначе обычная логика
+            $productVariantsForLogic = $productVariants;
+        }
+
+        // --- логика по цвету ---
         $groupVariantIds = collect();
         foreach ($productVariants as $v) {
             $groupVariantIds->push($v->id);
@@ -51,13 +66,13 @@
         $groupKey = $groupVariantIds->join('-');
 
         if (!isset($groupColorMap[$groupKey])) {
-            $colors = $productVariants->map(fn($v) => strtolower(trim((string) $v->color)))
+            $colors = $productVariantsForLogic->map(fn($v) => strtolower(trim((string) $v->color)))
                 ->filter()
                 ->unique()
                 ->values();
 
             if ($colors->isEmpty()) {
-                $fallback = strtolower(trim((string) optional($productVariants->first())->color));
+                $fallback = strtolower(trim((string) optional($productVariantsForLogic->first())->color));
                 $colors = collect($fallback ? [$fallback] : []);
             }
 
@@ -69,10 +84,10 @@
         }
 
         $targetColor = $groupColorMap[$groupKey];
-        $shownVariant = $productVariants->first(fn($v) =>
+        $shownVariant = $productVariantsForLogic->first(fn($v) =>
             $targetColor !== null &&
             strtolower(trim((string) $v->color)) === $targetColor
-        ) ?? $productVariants->first();
+        ) ?? $productVariantsForLogic->first();
     }
 
     $color = $shownVariant->color ?? null;
