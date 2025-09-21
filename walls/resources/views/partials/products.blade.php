@@ -23,115 +23,88 @@
     @forelse ($variants as $item)
     @php
     /**
-    * Единый блок логики для карточки:
-    * - если $item — Variant: показываем его как активный
-    * - если $item — Product: показываем один "показной" вариант, выбранный детерминированно по цвету группы
+    * Единый блок логики для карточки
     */
 
-    // Статические мапы на время рендера списка (сохраняются между итерациями цикла)
     static $groupColorMap = [];
     static $usedGroupColors = [];
     static $groupIndex = 0;
 
-    // Определяем тип пришедшей модели
-    $isVariant = isset($item->product); // для Variant доступна связь product
+    $isVariant = isset($item->product);
     $product = $isVariant ? $item->product : $item;
-
-    // Подтягиваем коллекцию вариантов товара (если нет — пустая коллекция)
     $productVariants = $product->variants ?? collect();
 
-    // --- Выбираем "показной" вариант ---
+    // --- Выбираем показной вариант ---
     if ($isVariant) {
-    // Когда отображаем варианты (поиск/цвет) — берём активный вариант
-    $shownVariant = $item;
+        $shownVariant = $item;
     } else {
-    // Когда отображаем товары — выберем "показной" вариант по логике групп/компаньонов
+        $groupVariantIds = collect();
+        foreach ($productVariants as $v) {
+            $groupVariantIds->push($v->id);
+            $companions = method_exists($v, 'companions') ? ($v->companions ?? collect()) : collect();
+            $companionOf = method_exists($v, 'companionOf') ? ($v->companionOf ?? collect()) : collect();
+            $groupVariantIds = $groupVariantIds
+                ->merge($companions->pluck('id'))
+                ->merge($companionOf->pluck('id'));
+        }
+        $groupVariantIds = $groupVariantIds->unique()->sort()->values();
+        $groupKey = $groupVariantIds->join('-');
 
-    // 1) Собираем все ID вариантов, включая двусторонних компаньонов
-    $groupVariantIds = collect();
-    foreach ($productVariants as $v) {
-    $groupVariantIds->push($v->id);
+        if (!isset($groupColorMap[$groupKey])) {
+            $colors = $productVariants->map(fn($v) => strtolower(trim((string) $v->color)))
+                ->filter()
+                ->unique()
+                ->values();
 
-    $companions = method_exists($v, 'companions') ? ($v->companions ?? collect()) : collect();
-    $companionOf = method_exists($v, 'companionOf') ? ($v->companionOf ?? collect()) : collect();
+            if ($colors->isEmpty()) {
+                $fallback = strtolower(trim((string) optional($productVariants->first())->color));
+                $colors = collect($fallback ? [$fallback] : []);
+            }
 
-    $groupVariantIds = $groupVariantIds
-    ->merge($companions->pluck('id'))
-    ->merge($companionOf->pluck('id'));
-    }
-    $groupVariantIds = $groupVariantIds->unique()->sort()->values();
-    $groupKey = $groupVariantIds->join('-');
+            $countColors = max(1, $colors->count());
+            $colorIndex = $groupIndex % $countColors;
+            $groupColorMap[$groupKey] = $colors[$colorIndex] ?? null;
+            $usedGroupColors[] = $groupColorMap[$groupKey];
+            $groupIndex++;
+        }
 
-    // 2) Если для группы ещё не выбран базовый "целевой" цвет — выберем
-    if (!isset($groupColorMap[$groupKey])) {
-    // Список цветов всех вариантов товара (нижний регистр, без пустых)
-    $colors = $productVariants->map(function ($v) {
-    return strtolower(trim((string) $v->color));
-    })
-    ->filter()
-    ->unique()
-    ->values();
-
-    // Если цветов не нашли, подстрахуемся — возьмём цвет первого варианта (или null)
-    if ($colors->isEmpty()) {
-    $fallback = strtolower(trim((string) optional($productVariants->first())->color));
-    $colors = collect($fallback ? [$fallback] : []);
-    }
-
-    $countColors = max(1, $colors->count());
-    $colorIndex = $groupIndex % $countColors;
-
-    $groupColorMap[$groupKey] = $colors[$colorIndex] ?? null;
-    $usedGroupColors[] = $groupColorMap[$groupKey];
-    $groupIndex++;
+        $targetColor = $groupColorMap[$groupKey];
+        $shownVariant = $productVariants->first(fn($v) =>
+            $targetColor !== null &&
+            strtolower(trim((string) $v->color)) === $targetColor
+        ) ?? $productVariants->first();
     }
 
-    $targetColor = $groupColorMap[$groupKey];
-
-    // 3) Ищем вариант с выбранным целевым цветом; если нет — первый из списка
-    $shownVariant = $productVariants->first(function ($v) use ($targetColor) {
-    return $targetColor !== null
-    && strtolower(trim((string) $v->color)) === $targetColor;
-    }) ?? $productVariants->first();
-    }
-
-    // Цвет показного варианта для заголовка
     $color = $shownVariant->color ?? null;
 
     // --- Картинки для карусели ---
-    // Текущие (у показного) — возьмём последнюю и первую
     $currentImages = json_decode($shownVariant->images ?? '[]', true) ?? [];
     $images = [];
 
     if (!empty($currentImages)) {
-    // последняя
-    $images[] = end($currentImages);
-    // первая
-    $images[] = $currentImages[0];
+        $count = count($currentImages);
+        if ($count >= 7) {
+            $images[] = $currentImages[6]; // 7-я
+            $images[] = $currentImages[0]; // первая
+        } else {
+            $images[] = $currentImages[0]; // только первая
+        }
     }
 
-    // Добавим по одной (первой) картинке от остальных вариантов
     foreach ($productVariants as $otherVariant) {
-    if ($shownVariant && $otherVariant->id === $shownVariant->id) {
-    continue;
-    }
-    $otherImages = json_decode($otherVariant->images ?? '[]', true) ?? [];
-    if (!empty($otherImages)) {
-    $images[] = $otherImages[0];
-    }
+        if ($shownVariant && $otherVariant->id === $shownVariant->id) continue;
+        $otherImages = json_decode($otherVariant->images ?? '[]', true) ?? [];
+        if (!empty($otherImages)) {
+            $images[] = $otherImages[0];
+        }
     }
 
-    // Уберём пустые и дубликаты путей
     $images = collect($images)
-    ->filter(fn($p) => filled($p))
-    ->unique()
-    ->values()
-    ->all();
+        ->filter(fn($p) => filled($p))
+        ->unique()
+        ->values()
+        ->all();
     @endphp
-
-
-
-
 
     <div class="product-card">
         @if (!empty($images))
@@ -183,22 +156,18 @@
                 <p>{{ $product->description }}</p>
 
                 @if ($product->discount_price && $product->discount_price > $product->sale_price)
-                <!-- Старая цена -->
                 <div>
                     <span class="text-muted" style="text-decoration: line-through;">
                         {{ number_format($product->discount_price, 0, '.', ' ') }} ₸
                     </span>
-                    <!-- Основная цена -->
                     <span class="text-danger fw-bold ms-2">
                         {{ number_format($product->sale_price, 0, '.', ' ') }} ₸
                     </span>
                 </div>
                 @else
-                <!-- Если нет скидочной цены, показываем просто sale_price -->
                 <span>{{ number_format($product->sale_price, 0, '.', ' ') }} ₸</span>
                 @endif
             </div>
-
 
             <div class="btn-wrapper">
                 <a href="{{ route('product.show', $product->id) }}" class="btn btn-dark">Подробнее</a>
@@ -213,6 +182,7 @@
 <div class="pagination-wrapper">
     {{ $variants->links('vendor.pagination.custom') }}
 </div>
+
 
 
 
