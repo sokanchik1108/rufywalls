@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     @php
-        // Делаем материал более читабельным для описания
-        $materialText = $product->material;
-        // Можно добавить простые замены для самых частых случаев
-        $materialText = str_ireplace('Винил на флизелине', 'виниловые обои на флизелиновой основе', $materialText);
-        $materialText = str_ireplace('бумага', 'бумажные обои', $materialText);
+    // Делаем материал более читабельным для описания
+    $materialText = $product->material;
+    // Можно добавить простые замены для самых частых случаев
+    $materialText = str_ireplace('Винил на флизелине', 'виниловые обои на флизелиновой основе', $materialText);
+    $materialText = str_ireplace('бумага', 'бумажные обои', $materialText);
     @endphp
 
     <meta charset="UTF-8">
@@ -31,7 +32,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     <style>
-        html, body {
+        html,
+        body {
             max-width: 100%;
             overflow-x: hidden;
         }
@@ -108,6 +110,7 @@
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             100% {
                 opacity: 1;
                 transform: translateY(0);
@@ -393,19 +396,39 @@
     </div>
 
 
+    @php
+    $variantsData = $variants->map(function($v) {
+    $companion = $v->companionOf->first();
+    return [
+    'id' => $v->id,
+    'images' => json_decode($v->images) ?? [],
+    'sku' => $v->sku,
+    'color' => $v->color,
+    'companions' => $v->companions->pluck('sku')->toArray(),
+    'companion' => $companion ? [
+    'id' => $companion->id,
+    'sku' => $companion->sku,
+    'title' => $companion->name,
+    'image' => json_decode($companion->images)[0] ?? ''
+    ] : null
+    ];
+    })->toArray();
+    @endphp
+
     <script>
         const quantityInput = document.getElementById('quantity');
         const variantInput = document.getElementById('variant-id-input');
         let zoomImages = [];
         let currentZoomIndex = 0;
 
+        // Передаем PHP-массив в JS
+        const variantsData = @json($variantsData);
+
         function openZoom(src) {
             const zoomModal = document.getElementById('zoomModal');
             const zoomImage = document.getElementById('zoomImage');
-
             currentZoomIndex = zoomImages.indexOf(src);
             if (currentZoomIndex === -1) currentZoomIndex = 0;
-
             zoomImage.src = zoomImages[currentZoomIndex];
             zoomModal.classList.remove('d-none');
         }
@@ -429,6 +452,12 @@
             showZoomImage();
         }
 
+        function findVariantWithSeventhImage(excludeId = null) {
+            return variantsData.find(v =>
+                Array.isArray(v.images) && v.images.length >= 7 && v.id !== excludeId
+            );
+        }
+
         function loadVariantById(variantId) {
             fetch(`/variant/${variantId}`)
                 .then(response => response.json())
@@ -440,41 +469,63 @@
                     carouselInner.innerHTML = '';
                     zoomImages = [];
 
-                    data.images.forEach((img, index) => {
-                        const fullImgSrc = `/storage/${img}`;
-                        zoomImages.push(fullImgSrc);
+                    if (Array.isArray(data.images)) {
+                        data.images.forEach((img, index) => {
+                            const fullImgSrc = `/storage/${img}`;
+                            zoomImages.push(fullImgSrc);
 
-                        const div = document.createElement('div');
-                        div.className = 'carousel-item' + (index === 0 ? ' active' : '');
-                        div.innerHTML = `<img src="${fullImgSrc}" class="d-block w-100" alt="Изображение ${index + 1}" style="cursor: zoom-in;">`;
-                        div.querySelector('img').addEventListener('click', () => openZoom(fullImgSrc));
-                        carouselInner.appendChild(div);
-                    });
-
-                    const thumbnailContainer = document.querySelector('.thumbnail-container');
-                    thumbnailContainer.innerHTML = '';
-                    data.images.forEach((img, index) => {
-                        const thumb = document.createElement('img');
-                        thumb.src = `/storage/${img}`;
-                        thumb.alt = `Миниатюра ${index + 1}`;
-                        thumb.className = index === 0 ? 'active' : '';
-                        thumb.setAttribute('data-bs-target', '#mainCarousel');
-                        thumb.setAttribute('data-bs-slide-to', index);
-
-                        thumb.addEventListener('click', () => {
-                            document.querySelectorAll('.thumbnail-container img').forEach(i => i.classList.remove('active'));
-                            thumb.classList.add('active');
+                            const div = document.createElement('div');
+                            div.className = 'carousel-item' + (index === 0 ? ' active' : '');
+                            div.innerHTML = `<img src="${fullImgSrc}" class="d-block w-100" alt="Изображение ${index + 1}" style="cursor: zoom-in;">`;
+                            div.querySelector('img').addEventListener('click', () => openZoom(fullImgSrc));
+                            carouselInner.appendChild(div);
                         });
-
-                        thumbnailContainer.appendChild(thumb);
-                    });
-
-                    const banner = document.getElementById('variant-banner');
-                    if (banner && data.images.length > 0) {
-                        const lastImage = data.images[data.images.length - 1];
-                        banner.src = `/storage/${lastImage}`;
                     }
 
+                    // Миниатюры
+                    const thumbnailContainer = document.querySelector('.thumbnail-container');
+                    if (thumbnailContainer) {
+                        thumbnailContainer.innerHTML = '';
+                        if (Array.isArray(data.images)) {
+                            data.images.forEach((img, index) => {
+                                const thumb = document.createElement('img');
+                                thumb.src = `/storage/${img}`;
+                                thumb.alt = `Миниатюра ${index + 1}`;
+                                thumb.className = index === 0 ? 'active' : '';
+                                thumb.setAttribute('data-bs-target', '#mainCarousel');
+                                thumb.setAttribute('data-bs-slide-to', index);
+                                thumb.addEventListener('click', () => {
+                                    document.querySelectorAll('.thumbnail-container img')
+                                        .forEach(i => i.classList.remove('active'));
+                                    thumb.classList.add('active');
+                                });
+                                thumbnailContainer.appendChild(thumb);
+                            });
+                        }
+                    }
+
+                    // Баннер (только 7-е изображение)
+                    const bannerWrapper = document.getElementById('variant-banner-wrapper');
+                    const banner = document.getElementById('variant-banner');
+                    let bannerImageSrc = null;
+
+                    if (Array.isArray(data.images) && data.images.length >= 7) {
+                        bannerImageSrc = `/storage/${data.images[6]}`;
+                    } else {
+                        const other = findVariantWithSeventhImage(data.id);
+                        if (other) bannerImageSrc = `/storage/${other.images[6]}`;
+                    }
+
+                    if (banner && bannerWrapper) {
+                        if (bannerImageSrc) {
+                            banner.src = bannerImageSrc;
+                            bannerWrapper.style.display = '';
+                        } else {
+                            bannerWrapper.style.display = 'none';
+                        }
+                    }
+
+                    // Компаньоны
                     const companionsContainer = document.getElementById('companions-block');
                     if (companionsContainer) {
                         if (data.companions && data.companions.length > 0) {
@@ -491,7 +542,7 @@
                     const companionBlock = document.getElementById('first-companion-block');
                     const companionImage = document.getElementById('companion-image');
                     const companionSku = document.getElementById('companion-sku');
-                    const companionTitle = document.getElementById('companion-title'); // если есть
+                    const companionTitle = document.getElementById('companion-title');
                     const companionLink = document.getElementById('companion-link');
 
                     if (data.companion && data.companion.sku && data.companion.image && data.companion.id) {
@@ -503,7 +554,6 @@
                     } else {
                         companionBlock.style.display = 'none';
                     }
-
                 });
         }
 
@@ -511,10 +561,8 @@
             document.querySelectorAll('.variant-thumbnail').forEach(img => {
                 img.addEventListener('click', () => {
                     const variantId = img.getAttribute('data-variant-id');
-
-                    document.querySelectorAll('.variant-thumbnail').forEach(i => {
-                        i.classList.remove('border', 'border-2', 'border-dark');
-                    });
+                    document.querySelectorAll('.variant-thumbnail')
+                        .forEach(i => i.classList.remove('border', 'border-2', 'border-dark'));
                     img.classList.add('border', 'border-dark', 'border-2');
 
                     variantInput.value = variantId;
@@ -522,108 +570,103 @@
                 });
             });
 
-            // ⬇️ Загружаем вариант при открытии страницы
+            // Загрузка варианта при открытии страницы
             const initialVariantId = variantInput.value;
-            if (initialVariantId) {
-                loadVariantById(initialVariantId);
-            }
+            if (initialVariantId) loadVariantById(initialVariantId);
 
             zoomImages = Array.from(document.querySelectorAll('#variant-images img')).map(img => img.src);
-            document.querySelectorAll('#variant-images img').forEach((img) => {
+            document.querySelectorAll('#variant-images img').forEach(img => {
                 img.style.cursor = 'zoom-in';
                 img.addEventListener('click', () => openZoom(img.src));
             });
 
-            const banner = document.getElementById('variant-banner');
-            if (banner && zoomImages.length > 0) {
-                banner.src = zoomImages[zoomImages.length - 1];
+            // Клавиши зума
+            document.addEventListener('keydown', (e) => {
+                const zoomModal = document.getElementById('zoomModal');
+                if (!zoomModal || zoomModal.classList.contains('d-none')) return;
+                if (e.key === 'ArrowLeft') prevZoomImage();
+                if (e.key === 'ArrowRight') nextZoomImage();
+                if (e.key === 'Escape') closeZoom();
+            });
+
+            // Добавление в корзину
+            const form = document.getElementById('add-to-cart-form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const variantId = variantInput.value;
+                    const quantity = quantityInput.value;
+                    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                    fetch('/cart/add', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': token,
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({
+                                variant_id: variantId,
+                                quantity
+                            })
+                        })
+                        .then(async response => {
+                            const data = await response.json();
+                            const messageBox = document.getElementById('cart-message');
+                            const innerBox = document.getElementById('cart-message-inner');
+                            const textBox = document.getElementById('cart-message-text');
+
+                            if (!response.ok) throw new Error(data.message || 'Ошибка запроса');
+
+                            innerBox.classList.remove('bg-danger');
+                            innerBox.classList.add('bg-dark');
+                            textBox.textContent = data.message || 'Товар добавлен в корзину';
+                            messageBox.classList.remove('d-none');
+                            setTimeout(() => messageBox.classList.add('d-none'), 3000);
+
+                            if (document.querySelector('#cart-count')) {
+                                document.querySelector('#cart-count').textContent = data.cart_count;
+                            }
+                            localStorage.setItem('cartUpdated', Date.now());
+                        })
+                        .catch(() => {
+                            const messageBox = document.getElementById('cart-message');
+                            const innerBox = document.getElementById('cart-message-inner');
+                            const textBox = document.getElementById('cart-message-text');
+
+                            innerBox.classList.remove('bg-dark');
+                            innerBox.classList.add('bg-danger');
+                            textBox.textContent = 'Не удалось добавить товар. Попробуйте позже.';
+                            messageBox.classList.remove('d-none');
+                            setTimeout(() => messageBox.classList.add('d-none'), 3000);
+                        });
+                });
+            }
+
+            // Навигация миниатюр при смене слайда
+            const carousel = document.getElementById('mainCarousel');
+            if (carousel) {
+                carousel.addEventListener('slid.bs.carousel', (event) => {
+                    const index = event.to;
+                    const thumbnails = document.querySelectorAll('.thumbnail-container img');
+                    thumbnails.forEach(img => img.classList.remove('active'));
+                    if (thumbnails[index]) thumbnails[index].classList.add('active');
+                });
             }
         });
 
         function changeQuantity(delta) {
-            const quantityInput = document.getElementById('quantity');
-            if (!quantityInput) return;
-
-            let value = parseInt(quantityInput.value) || 1;
-            const min = parseInt(quantityInput.min) || 1;
+            const input = document.getElementById('quantity');
+            if (!input) return;
+            let value = parseInt(input.value) || 1;
+            const min = parseInt(input.min) || 1;
             value += delta;
             if (value < min) value = min;
-
-            quantityInput.value = value;
+            input.value = value;
         }
-
-        document.getElementById('add-to-cart-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const variantId = variantInput.value;
-            const quantity = quantityInput.value;
-            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-            fetch('/cart/add', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': token,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify({
-                        variant_id: variantId,
-                        quantity
-                    })
-                })
-                .then(async response => {
-                    const data = await response.json();
-                    const messageBox = document.getElementById('cart-message');
-                    const innerBox = document.getElementById('cart-message-inner');
-                    const textBox = document.getElementById('cart-message-text');
-
-                    if (!response.ok) throw new Error(data.message || 'Ошибка запроса');
-
-                    innerBox.classList.remove('bg-danger');
-                    innerBox.classList.add('bg-dark');
-                    textBox.textContent = data.message || 'Товар добавлен в корзину';
-                    messageBox.classList.remove('d-none');
-                    setTimeout(() => messageBox.classList.add('d-none'), 3000);
-
-                    if (document.querySelector('#cart-count')) {
-                        document.querySelector('#cart-count').textContent = data.cart_count;
-                    }
-
-                    localStorage.setItem('cartUpdated', Date.now());
-                })
-                .catch(() => {
-                    const messageBox = document.getElementById('cart-message');
-                    const innerBox = document.getElementById('cart-message-inner');
-                    const textBox = document.getElementById('cart-message-text');
-
-                    innerBox.classList.remove('bg-dark');
-                    innerBox.classList.add('bg-danger');
-                    textBox.textContent = 'Не удалось добавить товар. Попробуйте позже.';
-                    messageBox.classList.remove('d-none');
-                    setTimeout(() => messageBox.classList.add('d-none'), 3000);
-                });
-        });
-
-        const carousel = document.getElementById('mainCarousel');
-        if (carousel) {
-            carousel.addEventListener('slid.bs.carousel', (event) => {
-                const index = event.to;
-                const thumbnails = document.querySelectorAll('.thumbnail-container img');
-                thumbnails.forEach(img => img.classList.remove('active'));
-                if (thumbnails[index]) thumbnails[index].classList.add('active');
-            });
-        }
-
-        document.addEventListener('keydown', (e) => {
-            const zoomModal = document.getElementById('zoomModal');
-            if (zoomModal.classList.contains('d-none')) return;
-
-            if (e.key === 'ArrowLeft') prevZoomImage();
-            if (e.key === 'ArrowRight') nextZoomImage();
-            if (e.key === 'Escape') closeZoom();
-        });
     </script>
+
 
 
 
