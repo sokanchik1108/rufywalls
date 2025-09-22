@@ -13,20 +13,26 @@ class WebsiteController extends Controller
 {
     public function website()
     {
-        $products = Product::with('categories', 'rooms')->take(3)->get();
         $categories = Category::all();
         $rooms = Room::all();
 
-        $variants = Variant::selectRaw('MIN(id) as id, product_id')
-            ->groupBy('product_id')
+        // Берём 3 случайных продукта-новинки с вариантами
+        $products = Product::with('variants.batches')
+            ->where('status', 'новинка')
+            ->whereHas('variants') // только продукты с вариантами
+            ->inRandomOrder()
             ->take(3)
-            ->get()
-            ->map(fn($v) => Variant::with(['product', 'batches'])->find($v->id));
+            ->get();
 
-
+        // Для каждого продукта выбираем случайный вариант
+        $variants = $products->map(function ($product) {
+            return $product->variants->random();
+        });
 
         return view('website', compact('products', 'categories', 'rooms', 'variants'));
     }
+
+
 
     public function howToOrder()
     {

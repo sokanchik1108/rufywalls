@@ -1,218 +1,215 @@
-<section class="rafy-walls-section py-5 bg-light">
-    <div class="container my-5">
-        <h2 class="text-center mb-4 rafy-title">Обои от RAFY WALLS</h2>
-        <p class="text-center rafy-subtitle">Премиум материалы и уникальный дизайн для создания уютного и модного пространства в вашем доме.</p>
-        <div class="row g-4"> @foreach ($variants as $variant) @php $product = $variant->product; $images = json_decode($variant->images, true); @endphp <div class="col-md-4">
-                <div class="rafy-card-lux"> <!-- Фото с эффектами -->
-                    <div class="rafy-image-wrapper"> <img src="{{ asset('storage/' . $images[0]) }}" alt="{{ $product->name }}" class="rafy-card-img"> <!-- Красивый оверлей -->
-                        <div class="rafy-overlay">
-                            <div class="rafy-overlay-content">
-                                <h5 class="rafy-overlay-title">{{ $product->name ?? 'Название товара' }}</h5>
-                                <p class="rafy-overlay-price">{{ number_format($product->sale_price, 0, ',', ' ') }} ₸</p> <a href="{{ route('product.show', $product->id) }}" class="btn rafy-btn-glass">Подробнее</a>
-                            </div>
+<!-- Подключаем Playfair Display и Poppins -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+
+<section class="rafy-walls-section py-5 mb-5 bg-light">
+    <div class="container text-center" style="margin-bottom: 70px;">
+        <!-- Новый дизайн заголовка -->
+        <div class="rafy-header">
+            <h2 class="rafy-main-title">Новинки RAFY WALLS</h2>
+            <div class="rafy-title-line"></div>
+            <p class="rafy-subtitle">Эксклюзивные коллекции с премиальными материалами и современным дизайном</p>
+        </div>
+
+        <div class="row g-4">
+            @foreach ($variants as $variant)
+            @php
+            $product = $variant->product;
+            $images = json_decode($variant->images, true);
+            @endphp
+            <div class="col-12 col-sm-6 col-md-4">
+                <a href="{{ route('product.show', $product->id) }}" class="rafy-card-link">
+                    <div class="rafy-card-square">
+                        <div class="rafy-status">{{ $product->status }}</div>
+                        <div class="rafy-img-wrapper">
+                            <img src="{{ asset('storage/' . $images[0]) }}" alt="{{ $product->name }}" class="rafy-card-img">
                         </div>
+                        <div class="rafy-hover-text">
+                            <p class="rafy-articul">{{ $variant->sku ?? '---' }}</p>
+                            <div class="rafy-divider"></div>
+                            <h5 class="rafy-name">{{ $product->name ?? 'Название товара' }}</h5>
+                        </div>
+                        <div class="rafy-overlay"></div>
                     </div>
-                </div>
-            </div> @endforeach </div>
+                </a>
+            </div>
+            @endforeach
+        </div>
     </div>
 </section>
 
 <style>
+    /* Секция */
+    .rafy-walls-section {
+        margin-bottom: 4rem;
+        /* чуть больше отступ снизу */
+    }
+
     /* Заголовок */
-    .rafy-title {
-        font-size: 2.8rem;
-        /* было 3.5rem */
-        font-weight: 600;
-        color: #1a1a1a;
-        text-align: center;
-        letter-spacing: 0.5px;
-        margin-bottom: 16px;
-        position: relative;
-        font-family: 'Georgia', serif;
+    .rafy-header {
+        display: inline-block;
+        margin-bottom: 2rem;
     }
 
-    .rafy-title::after {
-        content: "";
-        display: block;
-        width: 64px;
-        /* было 80px */
-        height: 1.6px;
-        background-color: #01142f;
-        margin: 12.8px auto 0 auto;
-        border-radius: 2px;
+    .rafy-main-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2rem;
+        letter-spacing: 4px;
+        font-weight: 700;
+        color: black;
+        margin: 0 0 20px 0;
     }
 
-    /* Подзаголовок */
     .rafy-subtitle {
-        font-size: 1rem;
-        /* было 1.2rem */
-        font-weight: 300;
+        font-size: 1.1rem;
         color: #555;
-        text-align: center;
-        max-width: 544px;
-        /* было 680px */
-        margin: 0 auto 48px auto;
-        font-family: 'Helvetica Neue', sans-serif;
-        line-height: 1.6;
-        padding: 0 8px;
+        letter-spacing: 0.3px;
+        line-height: 1.4;
+        margin: 0;
+        font-weight: 550;
     }
 
-    /* Карточка */
-    .rafy-card-lux {
+    /* Карточки */
+    .rafy-card-square {
         position: relative;
-        border-radius: 17.6px;
-        /* было 22px */
         overflow: hidden;
-        box-shadow: 0 9.6px 28px rgba(0, 0, 0, 0.15);
-        transition: transform .4s ease, box-shadow .4s ease;
+        background: #fff;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+        transition: transform .3s ease, box-shadow .3s ease;
+        cursor: pointer;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+    }
+
+    .rafy-card-square:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+    }
+
+    .rafy-img-wrapper {
+        overflow: hidden;
         height: 100%;
-        display: flex;
-        flex-direction: column;
     }
 
-    .rafy-card-lux:hover {
-        transform: translateY(-9.6px);
-        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
-    }
-
-    /* Фото */
     .rafy-card-img {
         width: 100%;
-        height: 400px;
-        /* было 400px */
+        height: 100%;
         object-fit: cover;
-        transition: transform 0.6s ease;
-        display: block;
+        transition: transform .4s ease;
     }
 
-    /* Оверлей */
+    .rafy-card-square:hover .rafy-card-img {
+        transform: scale(1.02);
+    }
+
+    .rafy-status {
+        position: absolute;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #01142f;
+        color: #fff;
+        font-size: 0.8rem;
+        font-weight: 300;
+        padding: 4px 10px;
+        border-radius: 0px;
+        z-index: 3;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    .rafy-hover-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.9);
+        text-align: center;
+        color: #fff;
+        opacity: 0;
+        transition: opacity .4s ease, transform .4s ease;
+        z-index: 2;
+    }
+
+    .rafy-card-square:hover .rafy-hover-text {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    .rafy-articul {
+        font-size: 1.5rem;
+        font-weight: 500;
+        margin-bottom: 8px;
+        letter-spacing: 0.6px;
+        font-family: 'Playfair Display', serif;
+    }
+
+    .rafy-divider {
+        width: 150px;
+        height: 1px;
+        background: #01142f;
+        margin: 8px auto;
+    }
+
+    .rafy-name {
+        font-size: 1rem;
+        font-weight: 500;
+        margin: 0;
+        font-family: 'Playfair Display', serif;
+        letter-spacing: 5px;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+        transition: color .3s ease;
+    }
+
     .rafy-overlay {
         position: absolute;
-        inset: 0;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 40%, rgba(0, 0, 0, 0) 100%);
-        display: flex;
-        align-items: flex-end;
-        justify-content: center;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 90%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
         opacity: 0;
-        transition: opacity .5s ease;
-        padding: 20px;
-        /* было 25px */
-        border-radius: 17.6px;
+        transition: opacity .4s ease;
+        z-index: 1;
     }
 
-    .rafy-card-lux:hover .rafy-overlay {
+    .rafy-card-square:hover .rafy-overlay {
         opacity: 1;
     }
 
-    .rafy-overlay-content {
-        text-align: center;
-        color: #fff;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 12.8px;
-        /* было 16px */
-        padding: 16px 20px;
-        width: 100%;
-        max-width: 85%;
-    }
-
-    .rafy-overlay-title {
-        font-size: 1rem;
-        /* было 1.25rem */
-        font-weight: 700;
-        margin-bottom: 8px;
-    }
-
-    .rafy-overlay-price {
-        font-size: 1rem;
-        /* было 1.2rem */
-        font-weight: 600;
-        margin-bottom: 12px;
-    }
-
-    /* Кнопка */
-    .rafy-btn-glass {
-        padding: 8px 24px;
-        /* было 10px 30px */
-        border-radius: 24px;
-        font-size: 0.76rem;
-        /* было 0.95rem */
-        font-weight: 600;
-        color: #fff;
-        background-color: #01142f;
-        border: 1px solid #01142f;
-        transition: background-color 0.3s ease, color 0.3s ease;
-        display: inline-block;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    .rafy-btn-glass:hover {
-        background-color: #02204a;
-        color: #f0f0f0;
-        border-color: #02214b;
-    }
-
-    /* ------------------- Адаптивность ------------------- */
-    /* Мобильные (до 576px) */
+    /* Адаптивность для маленьких экранов */
     @media (max-width: 575.98px) {
-        .rafy-title {
-            font-size: 1.6rem;
-            /* было 2rem */
+
+        /* Заголовок меньше */
+        .rafy-main-title {
+            font-size: 1.5rem;
+            letter-spacing: 2px;
         }
 
         .rafy-subtitle {
-            font-size: 0.9rem;
-            max-width: 90%;
-            margin-bottom: 32px;
+            font-size: 0.95rem;
+        }
+
+        /* Карточки чуть уже и выше */
+        .col-12 {
+            padding-left: 0.25rem;
+            padding-right: 0.25rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .rafy-card-square {
+            aspect-ratio: auto;
+            height: 300px;
+            /* выше, чем на больших экранах */
+        }
+
+        .rafy-img-wrapper {
+            height: 100%;
         }
 
         .rafy-card-img {
-            height: 370px;
-            /* было 250px */
-        }
-
-        .rafy-btn-glass {
-            padding: 6px 16px;
-            font-size: 0.76rem;
+            height: 100%;
+            object-fit: cover;
         }
     }
-
-    /* Планшеты (576px - 991.98px) */
-    @media (min-width: 576px) and (max-width: 991.98px) {
-        .rafy-title {
-            font-size: 2rem;
-        }
-
-        .rafy-subtitle {
-            font-size: 1rem;
-            max-width: 80%;
-            margin-bottom: 40px;
-        }
-
-        .rafy-card-img {
-            height: 350px;
-            /* было 320px */
-        }
-
-        .rafy-btn-glass {
-            padding: 7px 20px;
-            font-size: 0.8rem;
-        }
-    }
-
-    /* Десктоп (от 992px) */
-    @media (min-width: 992px) {
-        .row.g-4>div {
-            flex: 0 0 33.3333%;
-            max-width: 33.3333%;
-        }
-    }
-
-/* Скрываем все карточки, кроме первой, только в секции RAFY WALLS на мобильных */
-@media (max-width: 575.98px) {
-    .rafy-walls-section .row.g-4 > div:nth-child(n+2) {
-        display: none;
-    }
-}
 
 </style>
