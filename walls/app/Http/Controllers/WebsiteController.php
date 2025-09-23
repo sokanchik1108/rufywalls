@@ -21,7 +21,7 @@ class WebsiteController extends Controller
             ->where('status', 'новинка')
             ->whereHas('variants') // только продукты с вариантами
             ->inRandomOrder()
-            ->take(3)
+            ->take(6)
             ->get();
 
         // Для каждого продукта выбираем случайный вариант

@@ -287,7 +287,7 @@
                 </div>
                 <div class="mb-3" style="margin-top: 68px;">
                     <div class="text-dark mb-1" style="font-size: 20px;">Все оттенки</div>
-                    <div class="d-flex flex-wrap gap-4" id="variant-thumbnails">
+                    <div class="d-flex flex-wrap gap-3" id="variant-thumbnails">
                         @foreach ($variants as $variant)
                         <div style="text-align: center; cursor: pointer;">
                             <img

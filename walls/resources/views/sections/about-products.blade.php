@@ -65,10 +65,10 @@
 
     /* Текст */
     .section-text p {
-        font-size: 0.95rem;
+        font-size: 1rem;
         /* 90% от 1.05rem */
         line-height: 1.65;
-        font-weight: 400;
+        font-weight: 500;
         margin-bottom: 0.9rem;
         text-align: justify;
         letter-spacing: 0.2px;
@@ -156,9 +156,10 @@
         }
 
         .section-text p {
-            font-size: 0.81rem;
+            font-size: 0.85rem;
             line-height: 1.4;
             margin-bottom: 0.63rem;
+            font-weight: 450;
         }
 
         .btn-custom {

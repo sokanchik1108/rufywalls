@@ -24,16 +24,18 @@
                     <h5>Наши адреса</h5>
                     <p class="mb-1">
                         <a href="https://2gis.kz/almaty/firm/70000001102986031?m=76.884534%2C43.272083%2F16" target="_blank">
-                            Рыскулова Розыбакиева, рынок Сауран, новое здание №109, Алматы, Казахстан
+                            Рыскулова Розыбакиева, рынок Сауран, новое здание <span class="boutique-number">№109</span>, Алматы, Казахстан
                         </a>
                     </p>
+                    <hr class="contact-divider">
                     <p class="mb-0">
                         <a href="https://2gis.kz/almaty/branches/70000001102986030/firm/70000001103994284/76.884749%2C43.272347" target="_blank">
-                            Рыскулова Розыбакиева, рынок Сауран, новое здание №105, Алматы, Казахстан
+                            Рыскулова Розыбакиева, рынок Сауран, новое здание <span class="boutique-number">№105</span>, Алматы, Казахстан
                         </a>
                     </p>
                 </div>
             </div>
+
 
             <!-- Соцсети -->
             <div class="col-md-4">
@@ -68,6 +70,20 @@
 </section>
 
 <style>
+    .boutique-number {
+        font-weight: 600;
+        /* можно сделать чуть жирнее */
+    }
+
+    .contact-divider {
+        border: none;
+        height: 1px;
+        background-color: #01142f;
+        /* цвет линии */
+        margin: 8px 0;
+        /* расстояние сверху и снизу */
+    }
+
     .contact-section {
         font-family: 'Inter', sans-serif;
         color: black;

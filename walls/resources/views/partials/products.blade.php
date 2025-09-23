@@ -413,7 +413,7 @@
     }
 
     /* ========== Адаптивность ========== */
-    @media (max-width: 992px) {
+    @media (max-width: 1024px) {
         .product-grid {
             grid-template-columns: repeat(2, 1fr);
         }

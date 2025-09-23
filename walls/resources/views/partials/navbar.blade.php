@@ -7,19 +7,25 @@
     <title>Минималистичная шапка</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <style>
         header {
             background-color: #fff;
             box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
             padding: 0.5rem 1rem;
+            max-width: 100%;
+            overflow-x: hidden;
         }
 
         .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: #222;
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            font-size: 1.7rem;
+            color: #01142f;
             letter-spacing: 1px;
             user-select: none;
+            line-height: 1;
+            display: inline-block;
         }
 
         .catalog-btn {
@@ -41,6 +47,13 @@
             text-decoration: none;
         }
 
+        .catalog-btn-sm {
+            padding: 0.32rem 1.3rem;
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 40px;
+        }
+
         .nav-link {
             color: #444;
             font-weight: 500;
@@ -59,7 +72,6 @@
             position: relative;
             font-size: 1.4rem;
             color: #222;
-            margin-left: 1rem;
         }
 
         .cart-icon:hover {
@@ -77,121 +89,163 @@
             border-radius: 50%;
         }
 
-        @media (max-width: 991.98px) {
-            .navbar-collapse {
-                background-color: #fff;
-                padding: 0;
-                border-top: none;
-                box-shadow: none;
-                transition: padding 0.3s ease;
+        .custom-toggler .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(1,20,47,1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+        }
+
+        .navbar-toggler:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        .custom-offcanvas {
+            transition: transform 0.4s ease-in-out;
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .custom-offcanvas .nav-link {
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f1f1f1;
+            color: #222;
+            transition: color 0.3s ease;
+        }
+
+        .custom-offcanvas .nav-link:hover {
+            color: #007bff;
+        }
+
+        .custom-offcanvas .offcanvas-title {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .custom-offcanvas .cart-icon {
+            font-size: 1.5rem;
+            color: #01142f;
+            transition: color 0.3s ease;
+        }
+
+        .custom-offcanvas .cart-icon:hover {
+            color: #007bff;
+        }
+
+        @media (max-width: 991px) {
+            header .container-fluid {
+                padding-left: 0.1rem;
+                padding-right: 0.1rem;
             }
 
-            .catalog-btn {
-                width: 100%;
-                text-align: center;
-                margin-top: 10px;
-                margin-left: 10px;
-            }
-
-            .navbar-nav {
-                gap: 0.5rem;
-                margin-bottom: 0.5rem;
-            }
-
-            .cart-icon {
-                margin-top: 10px;
-                margin-left: 10px;
+            .navbar-toggler {
+                margin-right: -15px;
+                margin-left: -8px;
             }
         }
-        
+
+        /* Планшеты: iPad, iPad Pro, iPad Air */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .d-lg-none.d-flex.align-items-center.ms-auto.gap-2 .catalog-btn-sm {
+                font-size: 1rem;
+                /* чуть меньше текста */
+                padding: 0.4rem 1.2rem;
+                /* меньше отступов */
+                border-radius: 40px;
+            }
+
+            .d-lg-none.d-flex.align-items-center.ms-auto.gap-2 .navbar-toggler {
+                padding: 0.4rem 0.5rem;
+            }
+        }
     </style>
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
-                <!-- Логотип -->
-                <a class="navbar-brand" href="/" style="color: #01142f;">RAFY WALLS</a>
+                <a class="navbar-brand" href="/">RAFY WALLS</a>
 
-                <!-- Бургер-кнопка -->
-                <button class="navbar-toggler" type="button" aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить навигацию" id="customToggler">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                <div class="d-lg-none d-flex align-items-center ms-auto gap-2">
+                    <a href="{{ route('catalog') }}" class="catalog-btn catalog-btn-sm">Каталог</a>
+                    <button class="navbar-toggler border-0 custom-toggler" type="button" data-bs-toggle="offcanvas"
+                        data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
 
-
-                <!-- Меню и кнопка -->
-                <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="collapse navbar-collapse d-none d-lg-flex">
                     <ul class="navbar-nav mx-auto d-flex align-items-lg-center gap-3">
                         <li class="nav-item"><a class="nav-link" href="/address">Адрес</a></li>
                         <li class="nav-item"><a class="nav-link" href="/address">Контакты</a></li>
                         <li class="nav-item"><a class="nav-link" href="/delivery">Доставка</a></li>
                         <li class="nav-item"><a class="nav-link" href="/about-products">О нашей продукции</a></li>
-                        <li class="nav-item"><a class="nav-link" href=" {{ route('how-to-order') }} ">Как оформить заказ</a></li>
-                        <li class="nav-item"><a class="nav-link" href=" {{ route('calculator') }} ">Калькулятор обоев</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('how-to-order') }}">Как оформить заказ</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('calculator') }}">Калькулятор обоев</a></li>
                     </ul>
+                </div>
 
-                    <!-- Блок корзины и каталога -->
-                    <div class="d-flex align-items-center mt-2 mt-lg-0 gap-3">
-                        <!-- Иконка корзины -->
-                        <a href="{{ route('cart') }}" class="cart-icon position-relative">
-                            <i class="bi bi-bag"></i>
-                            <span class="cart-count">{{ $cartCount }}</span>
-                        </a>
-
-                        <!-- Кнопка Каталога -->
-                        <a href="{{ route('catalog') }}" class="catalog-btn">Каталог</a>
-                    </div>
+                <div class="d-none d-lg-flex align-items-center gap-3">
+                    <a href="{{ route('cart') }}" class="cart-icon position-relative">
+                        <i class="bi bi-bag"></i>
+                        <span class="cart-count">{{ $cartCount }}</span>
+                    </a>
+                    <a href="{{ route('catalog') }}" class="catalog-btn">Каталог</a>
                 </div>
             </div>
         </nav>
     </header>
 
+    <div class="offcanvas offcanvas-start custom-offcanvas" tabindex="-1" id="offcanvasMenu"
+        data-bs-backdrop="false" data-bs-scroll="false" style="width: 90%;">
+        <div class="offcanvas-header border-bottom">
+            <a class="navbar-brand m-0 w-100" href="/" style="font-size: 1.7rem; color: #01142f; font-weight: 600;">
+                RAFY WALLS
+            </a>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <ul class="navbar-nav flex-grow-1">
+                <li class="nav-item"><a class="nav-link" href="/address">Адрес</a></li>
+                <li class="nav-item"><a class="nav-link" href="/address">Контакты</a></li>
+                <li class="nav-item"><a class="nav-link" href="/delivery">Доставка</a></li>
+                <li class="nav-item"><a class="nav-link" href="/about-products">О нашей продукции</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('how-to-order') }}">Как оформить заказ</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('calculator') }}">Калькулятор обоев</a></li>
+            </ul>
+            <div class="border-top pt-3 mt-3">
+                <a href="{{ route('cart') }}" class="cart-icon position-relative">
+                    <i class="bi bi-bag"></i>
+                    <span class="cart-count">{{ $cartCount }}</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
     <script>
+        document.addEventListener("click", function(event) {
+            const offcanvasEl = document.getElementById("offcanvasMenu");
+            const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvasEl);
+            if (!offcanvasInstance) return;
+            const isClickInside = offcanvasEl.contains(event.target);
+            const isToggle = event.target.closest("[data-bs-toggle='offcanvas']");
+            if (!isClickInside && !isToggle) offcanvasInstance.hide();
+        });
+
         function updateCartCount() {
             fetch('/cart/count')
                 .then(response => response.json())
                 .then(data => {
-                    const countElement = document.querySelector('.cart-count');
-                    if (countElement) {
-                        countElement.textContent = data.count;
-                    }
-                })
-                .catch(console.error);
+                    document.querySelectorAll('.cart-count').forEach(el => el.textContent = data.count);
+                }).catch(console.error);
         }
-
         window.addEventListener('storage', (e) => {
-            if (e.key === 'cartUpdated') {
-                updateCartCount();
-            }
+            if (e.key === 'cartUpdated') updateCartCount();
         });
-
-
-        // Автообновление при загрузке
         document.addEventListener('DOMContentLoaded', updateCartCount);
     </script>
 
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggler = document.getElementById('customToggler');
-            const navbarCollapse = document.getElementById('navbarNav');
-            const bsCollapse = new bootstrap.Collapse(navbarCollapse, {
-                toggle: false
-            });
-
-            toggler.addEventListener('click', () => {
-                if (navbarCollapse.classList.contains('show')) {
-                    bsCollapse.hide();
-                } else {
-                    bsCollapse.show();
-                }
-            });
-        });
-    </script>
-
-
 </body>
 
 </html>

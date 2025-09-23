@@ -1,27 +1,30 @@
 <!-- Подключаем Playfair Display и Poppins -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
 
-<section class="rafy-walls-section py-5 mb-5 bg-light">
-    <div class="container text-center" style="margin-bottom: 70px;">
-        <!-- Новый дизайн заголовка -->
+<section class="rafy-walls-section py-4 bg-light">
+    <div class="container px-2 px-md-0 mb-4"> <!-- убрали text-center -->
+        <!-- Заголовок -->
         <div class="rafy-header">
             <h2 class="rafy-main-title">Новинки RAFY WALLS</h2>
             <div class="rafy-title-line"></div>
-            <p class="rafy-subtitle">Эксклюзивные коллекции с премиальными материалами и современным дизайном</p>
+            <p class="rafy-subtitle text-center">Следите за последними трендами интерьера с новинками сезона — стильные, качественные и эксклюзивные коллекции для вдохновения</p>
         </div>
 
-        <div class="row g-4">
+        <!-- Карточки -->
+        <div class="row g-2 g-md-4">
             @foreach ($variants as $variant)
             @php
             $product = $variant->product;
             $images = json_decode($variant->images, true);
+            $imageIndex = isset($images[6]) ? 6 : 0;
+            $imagePath = !empty($images) && isset($images[$imageIndex]) ? asset('storage/' . $images[$imageIndex]) : asset('images/no-image.jpg');
             @endphp
-            <div class="col-12 col-sm-6 col-md-4">
+            <div class="col-6 col-md-4">
                 <a href="{{ route('product.show', $product->id) }}" class="rafy-card-link">
                     <div class="rafy-card-square">
                         <div class="rafy-status">{{ $product->status }}</div>
                         <div class="rafy-img-wrapper">
-                            <img src="{{ asset('storage/' . $images[0]) }}" alt="{{ $product->name }}" class="rafy-card-img">
+                            <img src="{{ $imagePath }}" alt="{{ $product->name }}" class="rafy-card-img">
                         </div>
                         <div class="rafy-hover-text">
                             <p class="rafy-articul">{{ $variant->sku ?? '---' }}</p>
@@ -34,38 +37,72 @@
             </div>
             @endforeach
         </div>
+
+        <!-- После блока с карточками -->
+        <div class="text-center mt-4">
+            <a href="{{ route('catalog') }}" class="rafy-all-btn">Все новинки</a>
+        </div>
+
     </div>
 </section>
 
 <style>
-    /* Секция */
-    .rafy-walls-section {
-        margin-bottom: 4rem;
-        /* чуть больше отступ снизу */
+    .rafy-all-btn {
+        background-color: #01142f;
+        color: white;
+        border: none;
+        padding: 14px 38px;
+        /* чуть больше, чем было 11.7px 30.6px */
+        font-size: 1rem;
+        /* увеличили с 0.9rem */
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 15px;
     }
 
-    /* Заголовок */
+
+    .rafy-all-btn:hover {
+        color: white;
+        text-decoration: none;
+        box-shadow: 0 5.4px 16.2px rgba(0, 86, 179, 0.4);
+        transform: translateY(-2px);
+        background-color: #02214b;
+    }
+
     .rafy-header {
-        display: inline-block;
+        display: block;
+        /* заголовок слева */
         margin-bottom: 2rem;
     }
 
+    /* Заголовок */
     .rafy-main-title {
         font-family: 'Playfair Display', serif;
-        font-size: 2rem;
-        letter-spacing: 4px;
-        font-weight: 700;
+        font-size: 1.9rem;
+        /* Базовый размер */
+        letter-spacing: 2px;
+        font-weight: 600;
         color: black;
         margin: 0 0 20px 0;
+        text-align: left;
+        /* Заголовок слева */
     }
 
+    /* Подзаголовок */
     .rafy-subtitle {
         font-size: 1.1rem;
-        color: #555;
         letter-spacing: 0.3px;
         line-height: 1.4;
-        margin: 0;
+        margin: 0 auto;
+        /* центрируем блок */
         font-weight: 550;
+        text-align: center;
+        max-width: 700px;
+        /* ограничение ширины */
+        word-wrap: break-word;
+        /* перенос длинных слов */
     }
 
     /* Карточки */
@@ -78,6 +115,14 @@
         cursor: pointer;
         width: 100%;
         aspect-ratio: 1 / 1;
+        /* сохраняем квадрат */
+    }
+
+    .rafy-img-wrapper,
+    .rafy-overlay,
+    .rafy-hover-text {
+        position: absolute;
+        inset: 0;
     }
 
     .rafy-card-square:hover {
@@ -87,7 +132,6 @@
 
     .rafy-img-wrapper {
         overflow: hidden;
-        height: 100%;
     }
 
     .rafy-card-img {
@@ -98,7 +142,7 @@
     }
 
     .rafy-card-square:hover .rafy-card-img {
-        transform: scale(1.02);
+        transform: scale(1.01);
     }
 
     .rafy-status {
@@ -106,65 +150,59 @@
         top: 12px;
         left: 50%;
         transform: translateX(-50%);
-        background: #01142f;
+        background: red;
         color: #fff;
         font-size: 0.8rem;
         font-weight: 300;
         padding: 4px 10px;
-        border-radius: 0px;
         z-index: 3;
         letter-spacing: 0.5px;
         text-transform: uppercase;
     }
 
     .rafy-hover-text {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) scale(0.9);
-        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         color: #fff;
         opacity: 0;
         transition: opacity .4s ease, transform .4s ease;
+        transform: scale(0.9);
         z-index: 2;
+        text-align: center;
     }
 
     .rafy-card-square:hover .rafy-hover-text {
         opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
+        transform: scale(1);
     }
 
     .rafy-articul {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         font-weight: 500;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
         letter-spacing: 0.6px;
         font-family: 'Playfair Display', serif;
     }
 
     .rafy-divider {
-        width: 150px;
+        width: 120px;
         height: 1px;
         background: #01142f;
-        margin: 8px auto;
+        margin: 6px auto;
     }
 
     .rafy-name {
-        font-size: 1rem;
+        font-size: 0.95rem;
         font-weight: 500;
         margin: 0;
         font-family: 'Playfair Display', serif;
-        letter-spacing: 5px;
+        letter-spacing: 3px;
         text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-        transition: color .3s ease;
     }
 
     .rafy-overlay {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 90%;
         background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
         opacity: 0;
         transition: opacity .4s ease;
@@ -175,10 +213,22 @@
         opacity: 1;
     }
 
-    /* Адаптивность для маленьких экранов */
-    @media (max-width: 575.98px) {
+    /* Адаптивность */
 
-        /* Заголовок меньше */
+    /* На планшетах */
+    @media (max-width: 991.98px) {
+        .rafy-main-title {
+            font-size: 1.8rem;
+            letter-spacing: 3px;
+        }
+
+        .rafy-subtitle {
+            font-size: 1rem;
+            max-width: 500px;
+        }
+    }
+
+    @media (max-width: 575.98px) {
         .rafy-main-title {
             font-size: 1.5rem;
             letter-spacing: 2px;
@@ -188,28 +238,28 @@
             font-size: 0.95rem;
         }
 
-        /* Карточки чуть уже и выше */
-        .col-12 {
-            padding-left: 0.25rem;
-            padding-right: 0.25rem;
-            display: flex;
-            justify-content: center;
+        .rafy-articul {
+            font-size: 1rem;
         }
 
-        .rafy-card-square {
-            aspect-ratio: auto;
-            height: 300px;
-            /* выше, чем на больших экранах */
+        .rafy-name {
+            font-size: 0.85rem;
+            letter-spacing: 2px;
         }
 
-        .rafy-img-wrapper {
-            height: 100%;
+        .rafy-status {
+            font-size: 0.7rem;
+            font-weight: 400;
+            /* уменьшили с 0.8rem */
+            padding: 3px 5px;
+            /* уменьшили с 4px 10px */
         }
 
-        .rafy-card-img {
-            height: 100%;
-            object-fit: cover;
+        .rafy-all-btn {
+            font-size: 0.9rem;
+            /* уменьшили с 1rem */
+            padding: 12px 32px;
+            /* уменьшили с 16px 42px */
         }
     }
-
 </style>

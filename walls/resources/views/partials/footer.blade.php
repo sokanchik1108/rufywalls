@@ -55,7 +55,8 @@
 
 <style>
   .footer {
-    background-color: #d1cfcf; /* Более темный и серый фон */
+    background-color: #e8e8e8;
+    /* слегка темнее светло-серого */
     color: #333;
     font-size: 0.95rem;
     position: relative;
@@ -63,18 +64,23 @@
 
   .container {
     margin: 0 auto;
-    padding-left: 15px; /* Уменьшение отступов слева */
-    padding-right: 15px; /* Уменьшение отступов справа */
+    padding-left: 15px;
+    /* Уменьшение отступов слева */
+    padding-right: 15px;
+    /* Уменьшение отступов справа */
   }
 
   .footer-logo {
-    font-size: 1.7rem;
-    font-weight: 700;
-    color: #111;
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: 1.9rem;
+    color: #01142f;
+    letter-spacing: 2px;
   }
 
   .footer-description {
-    max-width: 80%; /* Убираем ограничение ширины */
+    max-width: 80%;
+    /* Убираем ограничение ширины */
     margin-top: 10px;
   }
 
@@ -109,8 +115,9 @@
     transform: scale(1.1);
   }
 
-.scroll-top-btn {
-    display: none;  /* изначально скрыта */
+  .scroll-top-btn {
+    display: none;
+    /* изначально скрыта */
     position: fixed;
     bottom: 30px;
     right: 30px;
@@ -124,7 +131,8 @@
     cursor: pointer;
     z-index: 1000;
 
-    display: flex; /* оставь flex только при показе через JS */
+    display: flex;
+    /* оставь flex только при показе через JS */
     align-items: center;
     justify-content: center;
 
@@ -132,44 +140,45 @@
 
     margin: 0;
     padding: 0;
-}
+  }
 
 
-@media (max-width: 576px) {
+  @media (max-width: 576px) {
     .scroll-top-btn {
-        right: 15px;  /* ближе к краю экрана на мобилках */
-        bottom: 20px;
+      right: 15px;
+      /* ближе к краю экрана на мобилках */
+      bottom: 20px;
     }
-}
+  }
 
 
-.scroll-top-btn:hover {
+  .scroll-top-btn:hover {
     background-color: #02214b;
     transform: scale(1.1);
-}
-
+  }
 </style>
 
 <script>
-const btn = document.getElementById('scrollToTop');
+  const btn = document.getElementById('scrollToTop');
 
-function toggleScrollBtn() {
+  function toggleScrollBtn() {
     if (window.scrollY > 300) {
-        btn.style.display = 'flex';
+      btn.style.display = 'flex';
     } else {
-        btn.style.display = 'none';
+      btn.style.display = 'none';
     }
-}
+  }
 
-// проверка сразу при загрузке страницы
-toggleScrollBtn();
+  // проверка сразу при загрузке страницы
+  toggleScrollBtn();
 
-// и на скролле
-window.addEventListener('scroll', toggleScrollBtn);
+  // и на скролле
+  window.addEventListener('scroll', toggleScrollBtn);
 
-btn.addEventListener('click', function () {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-});
-
-
+  btn.addEventListener('click', function() {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
 </script>

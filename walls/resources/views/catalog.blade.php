@@ -28,7 +28,9 @@
 
     <!-- Текст -->
     <div class="catalog-text">
-        <h1 class="h2 text-uppercase mb-3">Каталог RAFY WALLS</h1>
+        <h1 class="h2 mb-3">
+            Каталог <span class="company-name">RAFY WALLS</span>
+        </h1>
         <p class="fs-5 mb-2">Стены — важнейший элемент атмосферы</p>
         <p class="fs-6 mb-0">
             Мы верим, что стены должны вдохновлять. Наш каталог объединяет коллекции,
@@ -38,10 +40,17 @@
 
     <!-- Стили -->
     <style>
+        .company-name {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            font-size: 1.9rem;
+            letter-spacing: 2px;
+        }
+
         .catalog-images {
             display: flex;
             width: 100%;
-            height: 40vh; /* уменьшил высоту */
+            height: 40vh;
             min-height: 220px;
             max-height: 420px;
         }
@@ -67,7 +76,7 @@
 
         .catalog-text {
             position: absolute;
-            top: 45%; /* поднял чуть выше */
+            top: 45%;
             left: 50%;
             transform: translate(-50%, -50%);
             color: white;
@@ -78,8 +87,8 @@
         }
 
         .catalog-text h1 {
-            font-size: 2.1rem;
-            font-weight: bold;
+            font-size: 1.9rem;
+            font-weight: 500;
         }
 
         .catalog-text p {
@@ -88,57 +97,108 @@
         }
 
         /* Планшеты */
-        @media (max-width: 991px) {
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .catalog-images {
+                flex-direction: row;
+                height: 500px;
+                /* высота под контент или можно задать фиксированную */
+            }
+
+            .catalog-image {
+                flex: 1 1 100%;
+                /* первый блок занимает всю ширину */
+                display: none;
+                /* по умолчанию скрываем все */
+            }
+
+            /* Показываем только первый блок */
+            .catalog-image:first-child {
+                display: block;
+                width: 100%;
+                height: 100%;
+                /* можно изменить высоту */
+            }
+
+            .catalog-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
             .catalog-text h1 {
                 font-size: 1.8rem;
             }
+
             .catalog-text p {
                 font-size: 0.95rem;
             }
+
+            .company-name {
+                font-size: 1.7rem;
+            }
         }
+
 
         /* Телефоны */
         @media (max-width: 768px) {
+            .catalog-banner {
+                display: none;
+                /* Скрываем всю секцию на малых экранах */
+            }
+
             .catalog-images {
                 flex-direction: column;
                 height: auto;
             }
+
             .catalog-image {
                 flex: none;
-                height: 260px; /* тоже меньше сделал */
+                height: 250px;
             }
-            .hide-on-mobile {
-                display: none !important;
-            }
+
             .catalog-text {
-                padding: 15px;
-                top: 45%; /* сохраняем поднятие */
+                padding: 8px;
+                top: 45%;
                 left: 50%;
                 transform: translate(-50%, -50%);
                 max-width: 90%;
                 text-align: center;
             }
+
             .catalog-text h1 {
-                font-size: 1.5rem;
+                font-size: 1rem;
             }
+
             .catalog-text p {
-                font-size: 0.9rem;
+                font-size: 0.75rem;
+            }
+
+            .company-name {
+                font-size: 1rem;
             }
         }
 
         /* Очень маленькие экраны */
         @media (max-width: 480px) {
             .catalog-image {
-                height: 300px;
+                height: 240px;
             }
+
             .catalog-text h1 {
-                font-size: 1.3rem;
+                font-size: 0.9rem;
             }
+
             .catalog-text p {
-                font-size: 0.85rem;
+                font-size: 0.7rem;
+            }
+
+            .company-name {
+                font-size: 0.9rem;
             }
         }
     </style>
+
+
 </section>
 
 

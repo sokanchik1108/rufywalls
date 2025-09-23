@@ -165,3 +165,88 @@
         </form>
     </div>
 </div>
+
+<style>
+    /* Планшеты + iPad Pro + iPad Air */
+    @media (min-width: 768px) and (max-width: 1024px) {
+        .filters-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        /* Кнопка фильтров видна на планшетах */
+        .toggle-filters {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.5rem;
+            /* увеличили */
+            padding: 12px 24px;
+            /* увеличили */
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        /* Блок фильтров скрыт по умолчанию */
+        #filters {
+            width: 100%;
+            display: none;
+            margin-bottom: 15px;
+        }
+
+        /* Показываем блок по классу visible */
+        #filters.visible {
+            display: block;
+        }
+
+        /* Заголовок фильтров */
+        #filters h3 {
+            font-size: 1.5rem;
+            /* увеличили */
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        /* Текст всех лейблов, ссылок, спанов */
+        #filters label,
+        #filters a,
+        #filters span {
+            font-size: 1.3rem;
+            /* увеличили */
+        }
+
+        /* Поля ввода чисел */
+        input[type="number"] {
+            width: 100%;
+            font-size: 1.1rem;
+            /* чуть больше для удобства */
+            padding: 6px 8px;
+        }
+
+        /* Селекты */
+        select.form-select {
+            width: 100%;
+            font-size: 1.25rem;
+            /* отдельно увеличили */
+            padding: 8px 12px;
+            /* отдельно увеличили */
+        }
+
+        .filter-section,
+        .filter-links,
+        .mb-3 {
+            margin-bottom: 12px;
+            /* чуть больше отступы */
+        }
+    }
+
+
+    /* Телефоны */
+    @media (max-width: 767px) {
+        .toggle-filters {
+            margin-bottom: -3px;
+        }
+    }
+</style>
