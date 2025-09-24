@@ -304,40 +304,44 @@ class WebsiteController extends Controller
 
 
 
-    public function variantData($id)
-    {
-        $variant = Variant::with(['batches', 'companions.product', 'companionOf.product'])->findOrFail($id);
-        $stock = $variant->batches->sum('stock');
+public function variantData($id)
+{
+    $variant = Variant::with(['batches', 'companions.product', 'companionOf.product'])->findOrFail($id);
+    $stock = $variant->batches->sum('stock');
 
-        // Все компаньоны (двусторонние связи)
-        $companions = $variant->companions->merge($variant->companionOf)->unique('id');
+    // Все компаньоны (двусторонние связи)
+    $companions = $variant->companions->merge($variant->companionOf)->unique('id');
 
-        $companionSkus = $companions->map(fn($comp) => $comp->sku ?: '')->filter()->values()->all();
+    $companionSkus = $companions->map(fn($comp) => $comp->sku ?: '')->filter()->values()->all();
 
-        $firstCompanion = $companions->first();
+    $firstCompanion = $companions->first();
 
-        $companionData = null;
-        if ($firstCompanion && $firstCompanion->product) {
-            $companionImages = json_decode($firstCompanion->images, true);
+    $companionData = null;
+    if ($firstCompanion && $firstCompanion->product) {
+        $companionImages = json_decode($firstCompanion->images, true);
 
-            $companionData = [
-                'id' => $firstCompanion->product->id,          // ID продукта компаньона
-                'sku' => $firstCompanion->sku,
-                'title' => $firstCompanion->product->title ?? '',
-                'image' => $companionImages[0] ?? null,
-            ];
-        }
-
-        return response()->json([
-            'id' => $variant->id,
-            'sku' => $variant->sku,
-            'stock' => $stock,
-            'color' => $variant->color,
-            'images' => json_decode($variant->images),
-            'companions' => $companionSkus,
-            'companion' => $companionData,
-        ]);
+        $companionData = [
+            'id' => $firstCompanion->product->id,          
+            'sku' => $firstCompanion->sku,
+            'title' => $firstCompanion->product->title 
+                        ?? $firstCompanion->product->name 
+                        ?? $firstCompanion->name 
+                        ?? '',   // название компаньона
+            'image' => $companionImages[0] ?? null,
+        ];
     }
+
+    return response()->json([
+        'id' => $variant->id,
+        'sku' => $variant->sku,
+        'stock' => $stock,
+        'color' => $variant->color,
+        'images' => json_decode($variant->images),
+        'companions' => $companionSkus,
+        'companion' => $companionData,
+    ]);
+}
+
 
 
 

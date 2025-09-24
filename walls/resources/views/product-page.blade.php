@@ -296,7 +296,7 @@
                                 data-variant-id="{{ $variant->id }}"
                                 class="variant-thumbnail {{ $variant->id === $activeVariant->id ? 'border border-dark border-2' : '' }}"
 
-                                style="width: 120px; height: 135px; object-fit: cover; border-radius: 0;">
+                                style="width: 109px; height: 135px; object-fit: cover; border-radius: 0;">
                             <div style="font-size: 14px; margin-top: 6px; color: #333;">
                                 <div>{{ $variant->sku }}</div>
                             </div>
@@ -317,80 +317,115 @@
                     <p class="text-muted" style="white-space: pre-line;">{{ $product->detailed }}</p>
                 </div>
 
-                {{-- Компаньон (динамически обновляется через JS) --}}
-                <div class="col-md-4" id="first-companion-block" style="display: none;">
-                    <div class="companion-wrapper">
-                        <img id="companion-image" src="" alt="Изображение компаньона" class="companion-bg">
-                        <div class="companion-info">
-                            <div class="sku" id="companion-sku"></div>
-                            <h5 class="companion-title" id="companion-title"></h5>
-                            <a href="#" id="companion-link" class="btn btn-dark btn-sm px-3 rounded-pill">
-                                Подробнее
+                {{-- Компаньон --}}
+                <div class="col-md-3">
+                    <h5 class="mb-3 text-start">Компаньон</h5> <!-- заголовок по левому краю -->
+                    <div id="first-companion-block" style="display: none;">
+                        <div class="companion-wrapper">
+                            <a href="#" id="companion-link" class="image-container">
+                                <img id="companion-image" src="" alt="Изображение компаньона" class="companion-bg">
+                                <div class="companion-overlay">
+                                    <div class="companion-text">
+                                        <div id="companion-sku">Артикул</div>
+                                        <div class="divider"></div>
+                                        <div id="companion-title">Название</div>
+                                    </div>
+                                </div>
                             </a>
                         </div>
                     </div>
                 </div>
 
-
                 <style>
                     .companion-wrapper {
+                        width: 100%;
+                    }
+
+                    .image-container {
                         position: relative;
-                        border-radius: 12px;
+                        width: 100%;
+                        aspect-ratio: 1 / 1;
+                        display: block;
                         overflow: hidden;
-                        height: 380px;
-                        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+                        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+                        transition: transform 0.3s ease, box-shadow 0.3s ease;
+                        text-decoration: none;
+                        /* убираем подчеркивание */
+                        color: inherit;
+                    }
+
+                    .image-container:hover {
+                        transform: translateY(-4px);
+                        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
                     }
 
                     .companion-bg {
-                        position: absolute;
-                        inset: 0;
                         width: 100%;
                         height: 100%;
                         object-fit: cover;
-                        filter: brightness(0.85);
+                        display: block;
                         transition: transform 0.4s ease;
                     }
 
-                    .companion-wrapper:hover .companion-bg {
-                        transform: scale(1.03);
+                    .image-container:hover .companion-bg {
+                        transform: scale(1.01);
                     }
 
-                    .companion-info {
+                    /* Затемнение снизу */
+                    .companion-overlay {
                         position: absolute;
-                        top: 50%;
-                        left: 50%;
-                        transform: translate(-50%, -50%);
-                        background: rgba(255, 255, 255, 0.88);
-                        padding: 14px 16px;
-                        border-radius: 10px;
-                        width: 130px;
+                        bottom: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
                         text-align: center;
-                        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-                        backdrop-filter: blur(6px);
+                        color: #fff;
+                        opacity: 0;
+                        transition: opacity 0.4s ease;
                     }
 
-                    .companion-title {
-                        font-size: 1rem;
-                        font-weight: 600;
-                        color: #111;
-                        font-family: 'Inter', sans-serif;
-                        letter-spacing: -0.2px;
-                        margin-bottom: 8px;
+                    .image-container:hover .companion-overlay {
+                        opacity: 1;
                     }
 
-                    .sku {
-                        font-size: 0.80rem;
-                        color: #666;
-                        margin-bottom: 6px;
-                        font-family: 'Inter', sans-serif;
+                    .companion-text {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        flex: 1;
+                        color: #fff;
                     }
 
-                    .btn {
-                        font-size: 0.8rem;
+                    .companion-text #companion-sku {
+                        font-size: 1.2rem;
                         font-weight: 500;
+                        margin-bottom: 6px;
+                        letter-spacing: 0.6px;
+                        font-family: 'Playfair Display', serif;
+                    }
+
+                    .companion-text #companion-title {
+                        font-size: 0.95rem;
+                        font-weight: 500;
+                        margin: 0;
+                        font-family: 'Playfair Display', serif;
+                        letter-spacing: 3px;
+                        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+                    }
+
+                    .companion-text .divider {
+                        width: 120px;
+                        height: 1px;
+                        background: #01142f;
+                        margin: 6px auto;
                     }
                 </style>
-
             </div>
         </div>
     </div>
@@ -526,33 +561,34 @@
                     }
 
                     // Компаньоны
+                    // Блок всех компаньонов (список)
                     const companionsContainer = document.getElementById('companions-block');
                     if (companionsContainer) {
                         if (data.companions && data.companions.length > 0) {
                             companionsContainer.innerHTML = `
-                            <div class="text-muted small">Компаньоны:</div>
-                            <div class="text-dark small">${data.companions.join(', ')}</div>
-                        `;
+            <div class="text-muted small">Компаньоны:</div>
+            <div class="text-dark small">${data.companions.join(', ')}</div>
+        `;
                         } else {
                             companionsContainer.innerHTML = '';
                         }
                     }
 
-                    // Первый компаньон
+                    // Первый компаньон (квадратная карточка)
                     const companionBlock = document.getElementById('first-companion-block');
                     const companionImage = document.getElementById('companion-image');
                     const companionSku = document.getElementById('companion-sku');
                     const companionTitle = document.getElementById('companion-title');
                     const companionLink = document.getElementById('companion-link');
 
-                    if (data.companion && data.companion.sku && data.companion.image && data.companion.id) {
-                        companionImage.src = `/storage/${data.companion.image}`;
-                        companionSku.textContent = data.companion.sku;
+                    if (data.companion && data.companion.sku && data.companion.id) {
+                        if (companionImage) companionImage.src = data.companion.image ? `/storage/${data.companion.image}` : '/images/no-image.jpg';
+                        if (companionSku) companionSku.textContent = data.companion.sku;
                         if (companionTitle) companionTitle.textContent = data.companion.title || '';
-                        companionLink.href = `/product/${data.companion.id}`;
-                        companionBlock.style.display = 'block';
+                        if (companionLink) companionLink.href = `/product/${data.companion.id}`;
+                        if (companionBlock) companionBlock.style.display = 'block';
                     } else {
-                        companionBlock.style.display = 'none';
+                        if (companionBlock) companionBlock.style.display = 'none';
                     }
                 });
         }
