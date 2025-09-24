@@ -318,7 +318,7 @@
                 </div>
 
                 {{-- Компаньон --}}
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <h5 class="mb-3 text-start">Компаньон</h5> <!-- заголовок по левому краю -->
                     <div id="first-companion-block" style="display: none;">
                         <div class="companion-wrapper">
