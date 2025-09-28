@@ -30,11 +30,13 @@
 
     .form-control,
     .form-select {
-        font-size: 0.85rem;
+        font-size: 16px !important;
+        /* фикс против зума на мобилках */
         padding: 0.35rem 0.55rem;
         border-radius: 4px;
         border-color: #ddd;
     }
+
 
     .btn {
         font-size: 0.85rem;

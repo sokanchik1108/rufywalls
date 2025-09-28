@@ -65,7 +65,6 @@
         font-weight: 700;
     }
 
-    /* Responsive adjustments */
     @media (max-width: 768px) {
         .card-header {
             flex-direction: column;
@@ -125,7 +124,13 @@
     </div>
 
     @php
-    $colors = ['#0d6efd', '#198754', '#dc3545', '#fd7e14', '#20c997', '#6f42c1'];
+    // Палитра цветов
+    $colors = ['#0d6efd', '#198754', '#dc3545', '#fd7e14', '#6f42c1', '#ffc107', ];
+
+    // Функция: получить цвет по ID склада
+    function getWarehouseColor($id, $colors) {
+        return $colors[$id % count($colors)];
+    }
     @endphp
 
     @foreach ($variants as $variant)
@@ -146,7 +151,7 @@
             <h6 class="fw-bold mt-2 mb-1">По складам</h6>
             <table class="table table-sm table-borderless">
                 <tbody>
-                    @foreach ($warehouses as $i => $warehouse)
+                    @foreach ($warehouses as $warehouse)
                     @php
                         $stock = 0;
                         foreach ($variant->batches as $batch) {
@@ -157,7 +162,7 @@
                         )->isNotEmpty();
                     @endphp
                     <tr>
-                        <td style="color: {{ $colors[$i % count($colors)] }};">
+                        <td style="color: {{ getWarehouseColor($warehouse->id, $colors) }};">
                             {{ $warehouse->name }}
                             @if($hasBatches && $stock > 0 && $stock <= 5)
                                 <span class="badge bg-warning text-dark ms-1">Мало на складе</span>
@@ -169,7 +174,6 @@
                 </tbody>
             </table>
 
-            <!-- Accordion for batches -->
             <div class="accordion mt-2" id="accordion{{ $variant->id }}">
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="heading{{ $variant->id }}">
@@ -210,9 +214,9 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @foreach ($batch->warehouses as $j => $warehouse)
+                                            @foreach ($batch->warehouses as $warehouse)
                                             <div style="font-size: 0.8rem;">
-                                                <span style="color: {{ $colors[$j % count($colors)] }};">
+                                                <span style="color: {{ getWarehouseColor($warehouse->id, $colors) }};">
                                                     {{ $warehouse->name }}
                                                 </span>:
                                                 <strong>{{ $warehouse->pivot->quantity }}</strong>
@@ -236,7 +240,6 @@
     </div>
     @endforeach
 
-    <!-- Пагинация -->
     <div class="mt-4 d-flex justify-content-center">
         {{ $variants->links('vendor.pagination.custom') }}
     </div>

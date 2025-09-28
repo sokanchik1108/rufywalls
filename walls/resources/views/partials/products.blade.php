@@ -22,10 +22,6 @@
 <div class="product-grid">
     @forelse ($variants as $item)
     @php
-    /**
-    * Логика выбора варианта для карточки
-    */
-
     static $groupColorMap = [];
     static $usedGroupColors = [];
     static $groupIndex = 0;
@@ -34,165 +30,152 @@
     $product = $isVariant ? $item->product : $item;
     $productVariants = $product->variants ?? collect();
 
-    // --- Выбираем показной вариант ---
     if ($isVariant) {
-        $shownVariant = $item;
+    $shownVariant = $item;
     } else {
-        // варианты с >= 7 картинками
-        $variantsWith7 = $productVariants->filter(function ($v) {
-            $imgs = json_decode($v->images ?? '[]', true) ?? [];
-            return count($imgs) >= 7;
-        });
+    $variantsWith7 = $productVariants->filter(function ($v) {
+    $imgs = json_decode($v->images ?? '[]', true) ?? [];
+    return count($imgs) >= 7;
+    });
 
-        if ($variantsWith7->isNotEmpty() && $variantsWith7->count() < $productVariants->count()) {
-            // есть смешанные: берём только среди с 7 картинками
-            $productVariantsForLogic = $variantsWith7;
-        } else {
-            // иначе обычная логика
-            $productVariantsForLogic = $productVariants;
-        }
+    $productVariantsForLogic = $variantsWith7->isNotEmpty() && $variantsWith7->count() < $productVariants->count()
+        ? $variantsWith7
+        : $productVariants;
 
-        // --- логика по цвету ---
         $groupVariantIds = collect();
         foreach ($productVariants as $v) {
-            $groupVariantIds->push($v->id);
-            $companions = method_exists($v, 'companions') ? ($v->companions ?? collect()) : collect();
-            $companionOf = method_exists($v, 'companionOf') ? ($v->companionOf ?? collect()) : collect();
-            $groupVariantIds = $groupVariantIds
-                ->merge($companions->pluck('id'))
-                ->merge($companionOf->pluck('id'));
+        $groupVariantIds->push($v->id);
+        $companions = method_exists($v, 'companions') ? ($v->companions ?? collect()) : collect();
+        $companionOf = method_exists($v, 'companionOf') ? ($v->companionOf ?? collect()) : collect();
+        $groupVariantIds = $groupVariantIds
+        ->merge($companions->pluck('id'))
+        ->merge($companionOf->pluck('id'));
         }
         $groupVariantIds = $groupVariantIds->unique()->sort()->values();
         $groupKey = $groupVariantIds->join('-');
 
         if (!isset($groupColorMap[$groupKey])) {
-            $colors = $productVariantsForLogic->map(fn($v) => strtolower(trim((string) $v->color)))
-                ->filter()
-                ->unique()
-                ->values();
+        $colors = $productVariantsForLogic->map(fn($v) => strtolower(trim((string) $v->color)))
+        ->filter()
+        ->unique()
+        ->values();
 
-            if ($colors->isEmpty()) {
-                $fallback = strtolower(trim((string) optional($productVariantsForLogic->first())->color));
-                $colors = collect($fallback ? [$fallback] : []);
-            }
+        if ($colors->isEmpty()) {
+        $fallback = strtolower(trim((string) optional($productVariantsForLogic->first())->color));
+        $colors = collect($fallback ? [$fallback] : []);
+        }
 
-            $countColors = max(1, $colors->count());
-            $colorIndex = $groupIndex % $countColors;
-            $groupColorMap[$groupKey] = $colors[$colorIndex] ?? null;
-            $usedGroupColors[] = $groupColorMap[$groupKey];
-            $groupIndex++;
+        $countColors = max(1, $colors->count());
+        $colorIndex = $groupIndex % $countColors;
+        $groupColorMap[$groupKey] = $colors[$colorIndex] ?? null;
+        $usedGroupColors[] = $groupColorMap[$groupKey];
+        $groupIndex++;
         }
 
         $targetColor = $groupColorMap[$groupKey];
         $shownVariant = $productVariantsForLogic->first(fn($v) =>
-            $targetColor !== null &&
-            strtolower(trim((string) $v->color)) === $targetColor
+        $targetColor !== null &&
+        strtolower(trim((string) $v->color)) === $targetColor
         ) ?? $productVariantsForLogic->first();
-    }
+        }
 
-    $color = $shownVariant->color ?? null;
+        $color = $shownVariant->color ?? null;
 
-    // --- Картинки для карусели ---
-    $currentImages = json_decode($shownVariant->images ?? '[]', true) ?? [];
-    $images = [];
+        $currentImages = json_decode($shownVariant->images ?? '[]', true) ?? [];
+        $images = [];
 
-    if (!empty($currentImages)) {
+        if (!empty($currentImages)) {
         $count = count($currentImages);
         if ($count >= 7) {
-            $images[] = $currentImages[6]; // 7-я
-            $images[] = $currentImages[0]; // первая
+        $images[] = $currentImages[6];
+        $images[] = $currentImages[0];
         } else {
-            $images[] = $currentImages[0]; // только первая
+        $images[] = $currentImages[0];
         }
-    }
+        }
 
-    foreach ($productVariants as $otherVariant) {
+        foreach ($productVariants as $otherVariant) {
         if ($shownVariant && $otherVariant->id === $shownVariant->id) continue;
         $otherImages = json_decode($otherVariant->images ?? '[]', true) ?? [];
         if (!empty($otherImages)) {
-            $images[] = $otherImages[0];
+        $images[] = $otherImages[0];
         }
-    }
+        }
 
-    $images = collect($images)
+        $images = collect($images)
         ->filter(fn($p) => filled($p))
         ->unique()
         ->values()
         ->all();
-    @endphp
+        @endphp
 
-    <div class="product-card">
-        @if (!empty($images))
-        <div id="carousel{{ $item->id ?? $product->id }}" class="carousel slide mb-3">
-            <div class="carousel-inner">
-                @foreach ($images as $index => $image)
-                <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                    <div class="position-relative" style="width: 100%; height: auto;">
-                        <div class="loading-overlay"
-                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-                           background: rgba(255, 255, 255, 0.7); display: flex; align-items: center;
-                           justify-content: center; z-index: 10; font-size: 14px; color: #555;">
-                            Загружаем...
+        <div class="product-card">
+            @if (!empty($images))
+            <div id="carousel{{ $item->id ?? $product->id }}" class="carousel slide mb-3">
+                <div class="carousel-inner">
+                    @foreach ($images as $index => $image)
+                    <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                        <div class="position-relative" style="width: 100%; height: auto;">
+                            <img src="{{ asset('storage/' . $image) }}"
+                                class="d-block w-100"
+                                alt="Фото товара {{ $product->name ?? '' }}"
+                                width="100%">
                         </div>
-                        <img data-src="{{ asset('storage/' . $image) }}"
-                            class="d-block w-100 lazy-img"
-                            alt="Фото товара {{ $product->name ?? '' }}"
-                            width="100%">
                     </div>
+                    @endforeach
                 </div>
-                @endforeach
-            </div>
 
-            @if (count($images) > 1)
-            <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
-            </button>
+                @if (count($images) > 1)
+                <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
+                @endif
+            </div>
             @endif
-        </div>
-        @endif
 
-        <div class="product-info">
-            <h4 class="product-title">
-                {{ $product->name }}
-                @if ($color)
-                ({{ $color }})
-                @endif
+            <div class="product-info">
+                <h4 class="product-title">
+                    {{ $product->name }}
+                    @if ($color)
+                    ({{ $color }})
+                    @endif
 
-                @if (!empty($product->status))
-                <span class="product-status ">
-                    {{ $product->status }}
-                </span>
-                @endif
-            </h4>
-            <div class="product-desc-price">
-                <p>{{ $product->description }}</p>
-
-                @if ($product->discount_price && $product->discount_price > $product->sale_price)
-                <div>
-                    <span class="text-muted" style="text-decoration: line-through;">
-                        {{ number_format($product->discount_price, 0, '.', ' ') }} ₸
+                    @if (!empty($product->status))
+                    <span class="product-status">
+                        {{ $product->status }}
                     </span>
-                    <span class="text-danger fw-bold ms-2">
-                        {{ number_format($product->sale_price, 0, '.', ' ') }} ₸
-                    </span>
+                    @endif
+                </h4>
+                <div class="product-desc-price">
+                    <p>{{ $product->description }}</p>
+
+                    @if ($product->discount_price && $product->discount_price > $product->sale_price)
+                    <div>
+                        <span class="text-muted" style="text-decoration: line-through;">
+                            {{ number_format($product->discount_price, 0, '.', ' ') }} ₸
+                        </span>
+                        <span class="text-danger fw-bold ms-2">
+                            {{ number_format($product->sale_price, 0, '.', ' ') }} ₸
+                        </span>
+                    </div>
+                    @else
+                    <span>{{ number_format($product->sale_price, 0, '.', ' ') }} ₸</span>
+                    @endif
                 </div>
-                @else
-                <span>{{ number_format($product->sale_price, 0, '.', ' ') }} ₸</span>
-                @endif
-            </div>
 
-            <div class="btn-wrapper">
-                <a href="{{ route('product.show', $product->id) }}" class="btn btn-dark">Подробнее</a>
+                <div class="btn-wrapper">
+                    <a href="{{ route('product.show', $product->id) }}" class="btn btn-dark">Подробнее</a>
+                </div>
             </div>
         </div>
-    </div>
-    @empty
-    <p>Товары не найдены.</p>
-    @endforelse
+        @empty
+        <p>Товары не найдены.</p>
+        @endforelse
 </div>
+
 
 <div class="pagination-wrapper">
     {{ $variants->links('vendor.pagination.custom') }}

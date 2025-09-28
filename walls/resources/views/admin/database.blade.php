@@ -165,6 +165,13 @@
         background-color: #f3f4f6;
     }
 
+    .form-select,
+    .form-select:focus {
+        font-size: 16px !important;
+        transform: none !important;
+        -webkit-transform: none !important;
+    }
+
     @keyframes fadeIn {
         from {
             opacity: 0;
@@ -225,7 +232,17 @@
                 });
             },
             minLength: 1,
-            delay: 100
+            delay: 100,
+            select: function(event, ui) {
+                // Подставляем выбранный артикул в input
+                $input.val(ui.item.value);
+
+                // Запускаем поиск
+                fetchVariants(1);
+
+                // Чтобы autocomplete не затирал input
+                return false;
+            }
         });
 
         // Поиск по Enter
