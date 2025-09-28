@@ -61,6 +61,9 @@ Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
 
 Route::post('/checkout', [OrderController::class, 'submit'])->name('checkout.submit');
 
+Route::get('/product/{id}/images', [WebsiteController::class, 'images'])->name('product.images');
+
+
 Route::get('/make-me-admin', [\App\Http\Controllers\AdminController::class, 'makeMeAdmin'])->middleware('auth')->name('make-me-admin');
 
 Route::get('/admin/batches/by-sku/{sku}', [SaleController::class, 'bySku'])->middleware('auth');
@@ -93,6 +96,8 @@ Route::get('/admin/warehouses/overview', [WarehouseController::class, 'stockWare
 Route::get('/admin/variants/autocomplete', [AdminController::class, 'autocomplete'])->name('admin.variants.autocomplete');
 
 Route::get('/catalog-autocomplete', [WebsiteController::class, 'catalogAutocomplete'])->name('catalog.autocomplete');
+
+
 
 
 

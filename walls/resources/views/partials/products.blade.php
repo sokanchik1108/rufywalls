@@ -94,6 +94,7 @@
         }
         }
 
+
         foreach ($productVariants as $otherVariant) {
         if ($shownVariant && $otherVariant->id === $shownVariant->id) continue;
         $otherImages = json_decode($otherVariant->images ?? '[]', true) ?? [];
@@ -116,12 +117,14 @@
                     @foreach ($images as $index => $image)
                     <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
                         <div class="position-relative" style="width: 100%; height: auto;">
-                            <img src="{{ asset('storage/' . $image) }}"
-                                class="d-block w-100"
-                                alt="Фото товара {{ $product->name ?? '' }}"
-                                width="100%">
+                            <img
+                                src="{{ $index == 0 ? asset('storage/' . $image) : asset('images/placeholder.webp') }}"
+                                data-src="{{ asset('storage/' . $image) }}"
+                                class="d-block w-100 lazy-slide"
+                                alt="Фото товара {{ $product->name ?? '' }}">
                         </div>
                     </div>
+
                     @endforeach
                 </div>
 
@@ -420,3 +423,38 @@
         }
     }
 </style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const carousels = document.querySelectorAll(".carousel");
+
+    carousels.forEach(carousel => {
+        carousel.addEventListener("slide.bs.carousel", function(event) {
+            // Текущий, следующий и предыдущий слайды
+            const currentSlide = event.relatedTarget;
+            const nextSlide = currentSlide.nextElementSibling;
+            const prevSlide = currentSlide.previousElementSibling;
+
+            [currentSlide, nextSlide, prevSlide].forEach(slide => {
+                if (!slide) return;
+                const img = slide.querySelector("img.lazy-slide");
+                if (img && img.dataset.src && img.src !== img.dataset.src) {
+                    img.src = img.dataset.src;
+                }
+            });
+        });
+
+        // При инициализации тоже прогрузим первый и второй слайды
+        const first = carousel.querySelector(".carousel-item.active");
+        const second = first?.nextElementSibling;
+        [first, second].forEach(slide => {
+            if (!slide) return;
+            const img = slide.querySelector("img.lazy-slide");
+            if (img && img.dataset.src && img.src !== img.dataset.src) {
+                img.src = img.dataset.src;
+            }
+        });
+    });
+});
+
+</script>

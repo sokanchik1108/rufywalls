@@ -304,43 +304,43 @@ class WebsiteController extends Controller
 
 
 
-public function variantData($id)
-{
-    $variant = Variant::with(['batches', 'companions.product', 'companionOf.product'])->findOrFail($id);
-    $stock = $variant->batches->sum('stock');
+    public function variantData($id)
+    {
+        $variant = Variant::with(['batches', 'companions.product', 'companionOf.product'])->findOrFail($id);
+        $stock = $variant->batches->sum('stock');
 
-    // Все компаньоны (двусторонние связи)
-    $companions = $variant->companions->merge($variant->companionOf)->unique('id');
+        // Все компаньоны (двусторонние связи)
+        $companions = $variant->companions->merge($variant->companionOf)->unique('id');
 
-    $companionSkus = $companions->map(fn($comp) => $comp->sku ?: '')->filter()->values()->all();
+        $companionSkus = $companions->map(fn($comp) => $comp->sku ?: '')->filter()->values()->all();
 
-    $firstCompanion = $companions->first();
+        $firstCompanion = $companions->first();
 
-    $companionData = null;
-    if ($firstCompanion && $firstCompanion->product) {
-        $companionImages = json_decode($firstCompanion->images, true);
+        $companionData = null;
+        if ($firstCompanion && $firstCompanion->product) {
+            $companionImages = json_decode($firstCompanion->images, true);
 
-        $companionData = [
-            'id' => $firstCompanion->product->id,          
-            'sku' => $firstCompanion->sku,
-            'title' => $firstCompanion->product->title 
-                        ?? $firstCompanion->product->name 
-                        ?? $firstCompanion->name 
-                        ?? '',   // название компаньона
-            'image' => $companionImages[0] ?? null,
-        ];
+            $companionData = [
+                'id' => $firstCompanion->product->id,
+                'sku' => $firstCompanion->sku,
+                'title' => $firstCompanion->product->title
+                    ?? $firstCompanion->product->name
+                    ?? $firstCompanion->name
+                    ?? '',   // название компаньона
+                'image' => $companionImages[0] ?? null,
+            ];
+        }
+
+        return response()->json([
+            'id' => $variant->id,
+            'sku' => $variant->sku,
+            'stock' => $stock,
+            'color' => $variant->color,
+            'images' => json_decode($variant->images),
+            'companions' => $companionSkus,
+            'companion' => $companionData,
+        ]);
     }
-
-    return response()->json([
-        'id' => $variant->id,
-        'sku' => $variant->sku,
-        'stock' => $stock,
-        'color' => $variant->color,
-        'images' => json_decode($variant->images),
-        'companions' => $companionSkus,
-        'companion' => $companionData,
-    ]);
-}
 
 
 
@@ -531,5 +531,38 @@ public function variantData($id)
         });
 
         return response()->json($results);
+    }
+
+    public function images($id)
+    {
+        $product = Product::with('variants')->findOrFail($id);
+
+        $images = [];
+
+        // Картинки продукта
+        if (!empty($product->images)) {
+            $decoded = is_string($product->images) ? json_decode($product->images, true) : $product->images;
+            if (is_array($decoded)) {
+                $images = array_merge($images, $decoded);
+            }
+        }
+
+        // Картинки вариантов
+        foreach ($product->variants as $variant) {
+            if (!empty($variant->images)) {
+                $decoded = is_string($variant->images) ? json_decode($variant->images, true) : $variant->images;
+                if (is_array($decoded)) {
+                    $images = array_merge($images, $decoded);
+                }
+            }
+        }
+
+        $images = array_map(function ($img) {
+            return asset('storage/' . ltrim($img, '/'));
+        }, array_unique($images));
+
+        return response()->json([
+            'images' => array_values($images)
+        ]);
     }
 }
