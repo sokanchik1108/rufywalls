@@ -170,7 +170,7 @@ class WebsiteController extends Controller
                         ->orderBy('products.created_at', 'asc');
             }
 
-            $variants = $variants->paginate(15)->withQueryString();
+            $variants = $variants->paginate(12)->withQueryString();
 
             if ($request->ajax()) {
                 return view('partials.products', compact('variants'))->render();
@@ -245,7 +245,7 @@ class WebsiteController extends Controller
             ")->orderBy('created_at', 'asc');
         }
 
-        $products = $products->paginate(15)->withQueryString();
+        $products = $products->paginate(12)->withQueryString();
 
         if ($request->ajax()) {
             return view('partials.products', ['variants' => $products])->render();
