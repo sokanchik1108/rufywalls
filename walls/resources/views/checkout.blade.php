@@ -6,6 +6,20 @@
 <div class="container py-5">
     <h1 class="mb-4">Оформление заказа</h1>
 
+    {{-- Предупреждение о подтверждении в WhatsApp --}}
+    <div class="alert alert-warning rounded-3 shadow-sm mb-4">
+        <strong>Важно!</strong> После оформления заказа <u>не забудьте подтвердить его</u>, написав нам в
+        <a href="https://wa.me/77077121255?text=Здравствуйте,%20я%20хочу%20подтвердить%20заказ" class="text-success fw-semibold" target="_blank">
+            WhatsApp
+        </a>.
+        Без подтверждения заказ не будет обработан. <br>
+        <span class="d-flex align-items-center mt-2" style="font-size: 0.95rem; font-weight: 500;">
+            <i class="bi bi-info-circle me-2" style="font-size: 1rem;"></i>
+            Оплата производится во время подтверждения заказа в WhatsApp
+        </span>
+    </div>
+
+
     <form action="{{ route('checkout.submit') }}" method="POST">
         @csrf
 
@@ -32,37 +46,57 @@
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center gap-3">
                     @if ($item['image'])
-                    <img src="{{ asset('storage/' . $item['image']) }}" width="80" height="80" style="object-fit: cover;">
+                    <a href="{{ route('product.show', $item['product']->id) }}">
+                        <img src="{{ asset('storage/' . $item['image']) }}"
+                            width="80" height="80"
+                            style="object-fit: cover; cursor: pointer;">
+                    </a>
                     @else
-                    <div class="bg-secondary text-white d-flex justify-content-center align-items-center" style="width: 80px; height: 80px;">
+                    <a href="{{ route('product.show', $item['product']->id) }}"
+                        class="bg-secondary text-white d-flex justify-content-center align-items-center"
+                        style="width: 80px; height: 80px; text-decoration: none; border-radius: 6px; cursor: pointer;">
                         Нет фото
-                    </div>
+                    </a>
                     @endif
                     <div>
-                        <div>{{ $item['product']->name }}</div>
+                        <a href="{{ route('product.show', $item['product']->id) }}"
+                            class="text-decoration-none text-dark fw-semibold">
+                            {{ $item['product']->name }}
+                        </a>
+                        <br>
                         <small class="text-muted">{{ $item['variant']->sku }} — {{ $item['quantity'] }} шт.</small>
                     </div>
                 </div>
+
                 <div class="fw-semibold">
+                    @if($item['price'] == 0)
+                    <span class="d-flex align-items-center text-muted" style="font-size: 0.9rem; font-weight: 500;">
+                        <i class="bi bi-info-circle me-1" style="font-size: 1rem; color: #6c757d;"></i>
+                        Уточните цену в WhatsApp
+                    </span>
+                    @else
                     {{ number_format($item['total'], 0, ',', ' ') }} ₸
+                    @endif
                 </div>
             </li>
             @endforeach
+
+            {{-- Итог --}}
             <li class="list-group-item fw-bold d-flex justify-content-between">
                 Итого:
+                @if(collect($cartItems)->contains(fn($i) => $i['price'] == 0))
+                <span class="text-muted" style="font-size: 0.95rem;">
+                    Уточните цену в WhatsApp
+                </span>
+                @else
                 <span>{{ number_format($total, 0, ',', ' ') }} ₸</span>
+                @endif
             </li>
         </ul>
 
-        {{-- Предупреждение о подтверждении в WhatsApp --}}
-        {{-- Предупреждение о подтверждении в WhatsApp --}}
-        <div class="alert alert-warning rounded-3 shadow-sm mb-4">
-            <strong>Важно!</strong> После оформления заказа <u>не забудьте подтвердить его</u>, написав нам в
-            <a href="https://wa.me/77077121255?text=Здравствуйте,%20я%20хочу%20подтвердить%20заказ" class="text-success fw-semibold" target="_blank">
-                WhatsApp
-            </a>.
-            Без подтверждения заказ не будет обработан.
-        </div>
+
+
+
 
 
         <button type="submit"

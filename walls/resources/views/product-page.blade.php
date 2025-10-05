@@ -210,7 +210,19 @@
             <!-- Информация -->
             <div class="col-lg-6">
                 <h1 class="h4 fw-bold">{{ $product->name }}</h1>
-                <p class="h5 fw-bold text-dark">{{ number_format($product->sale_price, 2) }} ₸</p>
+                @if ($product->sale_price == 0)
+                <span class="d-flex align-items-center"
+                    style="font-size: 0.9rem; font-weight: 600; color: #6c757d;">
+                    <i class="bi bi-info-circle me-2"
+                        style="font-size: 1rem; color: #6c757d;"></i>
+                    Информацию о цене можно узнать в WhatsApp
+                </span>
+                @else
+                <p style="font-size: 1.25rem; font-weight: 700; color: #333; margin: 0; line-height: 1.2;">
+                    {{ number_format($product->sale_price, 2) }} ₸
+                </p>
+                @endif
+
 
                 <form id="add-to-cart-form" class="d-flex flex-wrap gap-2 mt-3">
                     @csrf

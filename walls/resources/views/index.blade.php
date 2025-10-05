@@ -80,16 +80,35 @@
                     <td>
                         <div class="d-flex align-items-center">
                             @if($item['image'])
-                            <img src="{{ asset('storage/' . $item['image']) }}" alt="{{ $item['product']->name }}" class="me-3 rounded-2" style="height: 80px; width: 80px; object-fit: cover;">
+                            <a href="{{ route('product.show', $item['product']->id) }}">
+                                <img src="{{ asset('storage/' . $item['image']) }}"
+                                    alt="{{ $item['product']->name }}"
+                                    class="me-3"
+                                    style="height: 80px; width: 80px; object-fit: cover; cursor: pointer;">
+                            </a>
                             @endif
                             <div>
-                                <div class="fw-semibold">{{ $item['product']->name }}</div>
+                                <a href="{{ route('product.show', $item['product']->id) }}"
+                                    class="fw-semibold text-decoration-none text-dark">
+                                    {{ $item['product']->name }}
+                                </a>
                                 <div class="text-muted small">Артикул: {{ $item['variant']->sku }}</div>
                                 <div class="text-muted small">Оттенок: {{ $item['variant']->color }}</div>
                             </div>
                         </div>
+
                     </td>
-                    <td class="text-muted">{{ number_format($item['price'], 2) }} ₸</td>
+                    <td class="text-muted">
+                        @if($item['price'] == 0)
+                        <span class="d-flex align-items-center" style="font-size: 0.9rem; font-weight: 500; color: #6c757d;">
+                            <i class="bi bi-info-circle me-2" style="font-size: 1rem; color: #6c757d;"></i>
+                            Уточните цену в WhatsApp
+                        </span>
+                        @else
+                        {{ number_format($item['price'], 2) }} ₸
+                        @endif
+                    </td>
+
                     <td>
                         <input type="number"
                             name="quantity"
@@ -99,20 +118,35 @@
                             class="form-control form-control-sm quantity-input"
                             style="width: 70px;">
                     </td>
-                    <td class="text-muted item-total">{{ number_format($item['total'], 2) }} ₸</td>
+                    <td class="text-muted item-total">
+                        @if($item['price'] == 0)
+                        <span style="font-size: 0.9rem; font-weight: 500; color: #6c757d;">—</span>
+                        @else
+                        {{ number_format($item['total'], 2) }} ₸
+                        @endif
+                    </td>
+
                     <td>
                         <form action="{{ route('cart.remove', $item['variant_id']) }}" method="POST">
                             @csrf
-                            <button class="btn btn-sm btn-light border-0 text-danger" title="Удалить">
-                                ✕
-                            </button>
+                            <button class="btn btn-sm btn-light border-0 text-danger" title="Удалить">✕</button>
                         </form>
                     </td>
                 </tr>
                 @endforeach
+
+                {{-- Итог --}}
                 <tr class="bg-light">
                     <td colspan="3" class="text-end fw-semibold">Итого:</td>
-                    <td colspan="2" class="fw-bold cart-total">{{ number_format($total, 2) }} ₸</td>
+                    <td colspan="2" class="fw-bold cart-total">
+                        @if(collect($cartItems)->contains(fn($i) => $i['price'] == 0))
+                        <span class="text-muted" style="font-size: 0.95rem;">
+                            Уточните цену в WhatsApp
+                        </span>
+                        @else
+                        {{ number_format($total, 2) }} ₸
+                        @endif
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -131,8 +165,25 @@
                         <div class="fw-semibold mb-1">{{ $item['product']->name }}</div>
                         <div class="text-muted small mb-1">Артикул: {{ $item['variant']->sku }}</div>
                         <div class="text-muted small mb-1">Оттенок: {{ $item['variant']->color }}</div>
-                        <div class="text-muted small mb-1">Цена: {{ number_format($item['price'], 2) }} ₸</div>
-                        <div class="text-muted small">Сумма: <span class="item-total">{{ number_format($item['total'], 2) }} ₸</span></div>
+                        <div class="text-muted small mb-1">
+                            Цена:
+                            @if($item['price'] == 0)
+                            <span class="d-flex align-items-center" style="font-size: 0.85rem; font-weight: 500; color: #6c757d;">
+                                <i class="bi bi-info-circle me-1" style="font-size: 0.9rem; color: #6c757d;"></i>
+                                Уточните цену в WhatsApp
+                            </span>
+                            @else
+                            {{ number_format($item['price'], 2) }} ₸
+                            @endif
+                        </div>
+                        <div class="text-muted small">
+                            Сумма:
+                            @if($item['price'] == 0)
+                            <span style="font-size: 0.85rem; font-weight: 500; color: #6c757d;">—</span>
+                            @else
+                            <span class="item-total">{{ number_format($item['total'], 2) }} ₸</span>
+                            @endif
+                        </div>
                     </div>
                 </div>
                 <div class="d-flex align-items-center mt-3 gap-2">
@@ -146,16 +197,23 @@
 
                     <form action="{{ route('cart.remove', $item['variant_id']) }}" method="POST" class="ms-auto">
                         @csrf
-                        <button class="btn btn-sm btn-outline-danger w-100">
-                            Удалить
-                        </button>
+                        <button class="btn btn-sm btn-outline-danger w-100">Удалить</button>
                     </form>
                 </div>
             </div>
         </div>
         @endforeach
+
+        {{-- Итог для мобилы --}}
         <div class="text-end fw-semibold fs-5 mt-3">
-            Итого: <span class="cart-total">{{ number_format($total, 2) }} ₸</span>
+            Итого:
+            @if(collect($cartItems)->contains(fn($i) => $i['price'] == 0))
+            <span class="text-muted" style="font-size: 0.95rem;">
+                Уточните цену в WhatsApp
+            </span>
+            @else
+            <span class="cart-total">{{ number_format($total, 2) }} ₸</span>
+            @endif
         </div>
     </div>
 
@@ -247,8 +305,6 @@
                 const variantId = input.dataset.variantId;
                 const quantity = parseInt(input.value);
 
-                // Убрана проверка по max
-
                 fetch(`/cart/update/${variantId}`, {
                         method: 'POST',
                         headers: {
@@ -267,10 +323,23 @@
                             const itemTotalEl = container.querySelector('.item-total');
                             const cartTotalEls = document.querySelectorAll('.cart-total');
 
+                            // Обновляем сумму по позиции
                             if (itemTotalEl) {
-                                itemTotalEl.textContent = formatNumber(data.itemTotal) + ' ₸';
+                                if (data.itemPrice == 0) {
+                                    itemTotalEl.textContent = '—';
+                                } else {
+                                    itemTotalEl.textContent = formatNumber(data.itemTotal) + ' ₸';
+                                }
                             }
-                            cartTotalEls.forEach(el => el.textContent = formatNumber(data.cartTotal) + ' ₸');
+
+                            // Обновляем общий итог
+                            cartTotalEls.forEach(el => {
+                                if (data.hasZeroPrices) {
+                                    el.innerHTML = '<span class="text-muted" style="font-size: 0.95rem;">Уточните цену в WhatsApp</span>';
+                                } else {
+                                    el.textContent = formatNumber(data.cartTotal) + ' ₸';
+                                }
+                            });
 
                             showToast('Количество обновлено', 'success');
                         } else {
@@ -285,6 +354,4 @@
         });
     });
 </script>
-
-
 @endsection

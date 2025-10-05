@@ -445,34 +445,49 @@ class WebsiteController extends Controller
             return response()->json(['error' => 'Товар не найден в корзине'], 404);
         }
 
-        $variant = Variant::with('product', 'batches')->findOrFail($variantId);
+        $variant = Variant::with('product')->findOrFail($variantId);
 
-
-
+        // обновляем количество
         $cart[$variantId]['quantity'] = $quantity;
-
         Cookie::queue($this->saveCartData($cart));
 
-        $itemTotal = $variant->product->sale_price * $quantity;
+        // цена товара
+        $itemPrice = $variant->product->sale_price ?? 0;
 
+        // сумма по позиции
+        $itemTotal = $itemPrice > 0 ? $itemPrice * $quantity : 0;
+
+        // пересчитываем корзину
         $variantIds = array_keys($cart);
         $variants = Variant::with('product')->findMany($variantIds)->keyBy('id');
 
         $cartTotal = 0;
+        $hasZeroPrices = false;
+
         foreach ($cart as $id => $item) {
             $v = $variants->get((int) $id);
+
             if ($v && $v->product) {
-                $cartTotal += $v->product->sale_price * $item['quantity'];
+                $price = $v->product->sale_price ?? 0;
+
+                if ($price == 0) {
+                    $hasZeroPrices = true;
+                }
+
+                $cartTotal += $price * $item['quantity'];
             }
         }
 
         return response()->json([
             'success' => true,
             'quantity' => $quantity,
+            'itemPrice' => $itemPrice,   // ← для проверки в JS
             'itemTotal' => $itemTotal,
             'cartTotal' => $cartTotal,
+            'hasZeroPrices' => $hasZeroPrices, // ← флаг для итога
         ]);
     }
+
 
 
 

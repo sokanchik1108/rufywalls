@@ -155,7 +155,12 @@
                 <div class="product-desc-price">
                     <p>{{ $product->description }}</p>
 
-                    @if ($product->discount_price && $product->discount_price > $product->sale_price)
+                    @if ($product->sale_price == 0)
+                    <span class="d-flex align-items-center" style="font-size: 0.9rem; color: #6c757d; font-weight:500">
+                        <i class="bi bi-info-circle me-2" style="font-size: 1rem; color: #6c757d;"></i>
+                        Информацию о цене можно узнать в WhatsApp
+                    </span>
+                    @elseif ($product->discount_price && $product->discount_price > $product->sale_price)
                     <div>
                         <span class="text-muted" style="text-decoration: line-through;">
                             {{ number_format($product->discount_price, 0, '.', ' ') }} ₸
@@ -168,6 +173,8 @@
                     <span>{{ number_format($product->sale_price, 0, '.', ' ') }} ₸</span>
                     @endif
                 </div>
+
+
 
                 <div class="btn-wrapper">
                     <a href="{{ route('product.show', $product->id) }}" class="btn btn-dark">Подробнее</a>
@@ -425,17 +432,29 @@
 </style>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const carousels = document.querySelectorAll(".carousel");
+    document.addEventListener("DOMContentLoaded", function() {
+        const carousels = document.querySelectorAll(".carousel");
 
-    carousels.forEach(carousel => {
-        carousel.addEventListener("slide.bs.carousel", function(event) {
-            // Текущий, следующий и предыдущий слайды
-            const currentSlide = event.relatedTarget;
-            const nextSlide = currentSlide.nextElementSibling;
-            const prevSlide = currentSlide.previousElementSibling;
+        carousels.forEach(carousel => {
+            carousel.addEventListener("slide.bs.carousel", function(event) {
+                // Текущий, следующий и предыдущий слайды
+                const currentSlide = event.relatedTarget;
+                const nextSlide = currentSlide.nextElementSibling;
+                const prevSlide = currentSlide.previousElementSibling;
 
-            [currentSlide, nextSlide, prevSlide].forEach(slide => {
+                [currentSlide, nextSlide, prevSlide].forEach(slide => {
+                    if (!slide) return;
+                    const img = slide.querySelector("img.lazy-slide");
+                    if (img && img.dataset.src && img.src !== img.dataset.src) {
+                        img.src = img.dataset.src;
+                    }
+                });
+            });
+
+            // При инициализации тоже прогрузим первый и второй слайды
+            const first = carousel.querySelector(".carousel-item.active");
+            const second = first?.nextElementSibling;
+            [first, second].forEach(slide => {
                 if (!slide) return;
                 const img = slide.querySelector("img.lazy-slide");
                 if (img && img.dataset.src && img.src !== img.dataset.src) {
@@ -443,18 +462,5 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             });
         });
-
-        // При инициализации тоже прогрузим первый и второй слайды
-        const first = carousel.querySelector(".carousel-item.active");
-        const second = first?.nextElementSibling;
-        [first, second].forEach(slide => {
-            if (!slide) return;
-            const img = slide.querySelector("img.lazy-slide");
-            if (img && img.dataset.src && img.src !== img.dataset.src) {
-                img.src = img.dataset.src;
-            }
-        });
     });
-});
-
 </script>
