@@ -222,28 +222,53 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener("click", function(event) {
-            const offcanvasEl = document.getElementById("offcanvasMenu");
-            const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvasEl);
-            if (!offcanvasInstance) return;
-            const isClickInside = offcanvasEl.contains(event.target);
-            const isToggle = event.target.closest("[data-bs-toggle='offcanvas']");
-            if (!isClickInside && !isToggle) offcanvasInstance.hide();
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const offcanvasEl = document.getElementById("offcanvasMenu");
+
+        // Следим за закрытием Offcanvas и явно удаляем overflow, если оно осталось
+        offcanvasEl.addEventListener('hidden.bs.offcanvas', function () {
+            document.body.style.overflow = '';
         });
 
+        // Закрытие Offcanvas при клике вне его области
+        document.addEventListener("click", function (event) {
+            const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvasEl);
+            if (!offcanvasInstance) return;
+
+            const isClickInside = offcanvasEl.contains(event.target);
+            const isToggle = event.target.closest("[data-bs-toggle='offcanvas']");
+
+            // Если клик вне Offcanvas и не по кнопке открытия — закрыть
+            if (!isClickInside && !isToggle) {
+                offcanvasInstance.hide();
+
+                // Подстраховка: убираем overflow после анимации
+                setTimeout(() => {
+                    document.body.style.overflow = '';
+                }, 400); // Время в мс, соответствующее длительности анимации Bootstrap
+            }
+        });
+
+        // Обновление количества товаров в корзине
         function updateCartCount() {
             fetch('/cart/count')
                 .then(response => response.json())
                 .then(data => {
                     document.querySelectorAll('.cart-count').forEach(el => el.textContent = data.count);
-                }).catch(console.error);
+                })
+                .catch(console.error);
         }
+
+        // Обновление корзины при изменении localStorage
         window.addEventListener('storage', (e) => {
             if (e.key === 'cartUpdated') updateCartCount();
         });
-        document.addEventListener('DOMContentLoaded', updateCartCount);
-    </script>
+
+        updateCartCount(); // начальное обновление при загрузке
+    });
+</script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

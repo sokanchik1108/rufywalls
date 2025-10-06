@@ -167,7 +167,7 @@
 
     <!-- Уведомление -->
     <div id="cart-message"
-        class="position-fixed start-50 translate-middle-x z-3 w-100 text-center d-none"
+        class="position-fixed start-50 translate-middle-x z-3 w-50 text-center d-none"
         style="top: 30px;">
         <div id="cart-message-inner" class="d-inline-flex align-items-center gap-2 px-4 py-3 rounded shadow text-white bg-dark animate-fade-in-down small">
             <i class="bi bi-check-circle-fill"></i>

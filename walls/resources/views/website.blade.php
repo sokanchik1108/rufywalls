@@ -16,6 +16,8 @@
 
 @include('sections.about-us')
 
+@include('sections.categories')
+
 @include('partials.footer')
 
 

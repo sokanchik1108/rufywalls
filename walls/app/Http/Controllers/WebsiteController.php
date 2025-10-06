@@ -16,21 +16,44 @@ class WebsiteController extends Controller
         $categories = Category::all();
         $rooms = Room::all();
 
-        // Берём 3 случайных продукта-новинки с вариантами
+        // Случайные новинки
         $products = Product::with('variants.batches')
             ->where('status', 'новинка')
-            ->whereHas('variants') // только продукты с вариантами
+            ->whereHas('variants')
             ->inRandomOrder()
             ->take(6)
             ->get();
 
-        // Для каждого продукта выбираем случайный вариант
         $variants = $products->map(function ($product) {
             return $product->variants->random();
         });
 
-        return view('website', compact('products', 'categories', 'rooms', 'variants'));
+        // Варианты по категориям: один вариант на все категории
+        $allVariants = Variant::with('product.categories')->get();
+        $usedVariantIds = [];
+        $categoryVariants = [];
+
+        foreach ($categories as $category) {
+            $variant = $allVariants->first(function ($v) use ($category, $usedVariantIds) {
+                $images = json_decode($v->images, true) ?? [];
+                return $v->product
+                    && $v->product->categories->contains('id', $category->id)
+                    && !in_array($v->id, $usedVariantIds)
+                    && count($images) >= 7; // проверка на 7 или больше изображений
+            });
+
+            if (!$variant) continue;
+
+            $images = json_decode($variant->images, true) ?? [];
+            $variant->image7 = $images[6]; // именно 7-е изображение
+
+            $categoryVariants[$category->id] = $variant;
+            $usedVariantIds[] = $variant->id; // отмечаем вариант как использованный
+        }
+
+        return view('website', compact('products', 'categories', 'rooms', 'variants', 'categoryVariants'));
     }
+
 
 
 
