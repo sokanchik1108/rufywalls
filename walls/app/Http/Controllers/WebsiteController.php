@@ -11,48 +11,50 @@ use Illuminate\Support\Facades\Cookie;
 
 class WebsiteController extends Controller
 {
-    public function website()
-    {
-        $categories = Category::all();
-        $rooms = Room::all();
+public function website()
+{
+    $categories = Category::all();
+    $rooms = Room::all();
 
-        // Случайные новинки
-        $products = Product::with('variants.batches')
-            ->where('status', 'новинка')
-            ->whereHas('variants')
-            ->inRandomOrder()
-            ->take(6)
-            ->get();
+    // Случайные новинки
+    $products = Product::with('variants.batches')
+        ->where('status', 'новинка')
+        ->whereHas('variants')
+        ->inRandomOrder()
+        ->take(8)
+        ->get();
 
-        $variants = $products->map(function ($product) {
-            return $product->variants->random();
+    $variants = $products->map(function ($product) {
+        return $product->variants->random();
+    });
+
+    // Варианты по категориям: только по одному уникальному продукту на категорию
+    $allVariants = Variant::with('product.categories')->get();
+    $usedProductIds = []; // ключевое изменение: теперь исключаем не варианты, а продукты
+    $categoryVariants = [];
+
+    foreach ($categories as $category) {
+        $variant = $allVariants->first(function ($v) use ($category, $usedProductIds) {
+            $images = json_decode($v->images, true) ?? [];
+
+            return $v->product
+                && $v->product->categories->contains('id', $category->id)
+                && !in_array($v->product_id, $usedProductIds) // исключаем продукты, не варианты
+                && count($images) >= 7;
         });
 
-        // Варианты по категориям: один вариант на все категории
-        $allVariants = Variant::with('product.categories')->get();
-        $usedVariantIds = [];
-        $categoryVariants = [];
+        if (!$variant) continue;
 
-        foreach ($categories as $category) {
-            $variant = $allVariants->first(function ($v) use ($category, $usedVariantIds) {
-                $images = json_decode($v->images, true) ?? [];
-                return $v->product
-                    && $v->product->categories->contains('id', $category->id)
-                    && !in_array($v->id, $usedVariantIds)
-                    && count($images) >= 7; // проверка на 7 или больше изображений
-            });
+        $images = json_decode($variant->images, true) ?? [];
+        $variant->image7 = $images[6];
 
-            if (!$variant) continue;
-
-            $images = json_decode($variant->images, true) ?? [];
-            $variant->image7 = $images[6]; // именно 7-е изображение
-
-            $categoryVariants[$category->id] = $variant;
-            $usedVariantIds[] = $variant->id; // отмечаем вариант как использованный
-        }
-
-        return view('website', compact('products', 'categories', 'rooms', 'variants', 'categoryVariants'));
+        $categoryVariants[$category->id] = $variant;
+        $usedProductIds[] = $variant->product_id; // теперь помечаем продукт
     }
+
+    return view('website', compact('products', 'categories', 'rooms', 'variants', 'categoryVariants'));
+}
+
 
 
 
