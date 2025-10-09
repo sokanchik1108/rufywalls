@@ -1,147 +1,148 @@
-<section class="category-line-section py-5 bg-light">
-    <div class="container">
-        <div class="text-center mb-4">
-            <h2 class="category-line-title">Популярные категории</h2>
-            <p class="category-line-subtitle">Найдите оформление, которое подходит вашему интерьеру</p>
-        </div>
+<section class="category-line-section position-relative">
+    <img src="{{ asset('images/баннер13.webp') }}" alt="Фон" class="category-bg-image">
 
-        <div class="row g-2 justify-content-center">
+    <!-- Заголовок сверху -->
+    <div class="category-header text-center mt-5">
+        <h2 class="category-line-title">Популярные категории</h2>
+        <p class="category-line-subtitle">Выберите стиль для вашего пространства</p>
+    </div>
+
+    <!-- Категории немного выше центра -->
+    <div class="category-center d-flex justify-content-center align-items-center flex-column">
+        <div class="category-list text-center mt-n5">
             @foreach($categories as $category)
-            @php
-            $variant = $categoryVariants[$category->id] ?? null;
-            if(!$variant || !$variant->image7) continue;
-            $imagePath = asset('storage/' . $variant->image7);
-            @endphp
-
-            <div class="col-6 col-sm-6 col-lg-3">
-
-                <a href="{{ route('catalog', ['category_id' => $category->id]) }}"
-                    class="category-line-item d-flex align-items-center">
-                    <img src="{{ $imagePath }}" alt="{{ $category->category_name }}"
-                        class="category-line-image me-3" loading="lazy">
-                    <span class="category-line-name">{{ $category->category_name }}</span>
+                <a href="{{ route('catalog', ['category_id' => $category->id]) }}" class="category-link">
+                    {{ $category->category_name }}
                 </a>
-            </div>
             @endforeach
         </div>
     </div>
 </section>
 
 <style>
-    .category-line-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 2.3rem;
-        /* было 1.9rem */
-        font-weight: 600;
-        color: #111;
-        margin-bottom: 1rem;
-        /* чуть больше отступ */
-    }
+.category-bg-image {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: brightness(0.65) grayscale(25%);
+    z-index: 0;
+}
 
-    .category-line-subtitle {
-        font-size: 1.1rem;
-        /* было 0.95rem */
-        color: #666;
-        margin-bottom: 2.5rem;
-        /* немного больше пространства */
-    }
+.category-line-section {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    overflow: hidden;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
 
+.category-header {
+    z-index: 2;
+}
 
-    .category-line-item:hover {
-        transform: translateX(4px);
-        background: rgba(0, 0, 0, 0.03);
-    }
+.category-line-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-top: 230px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
 
+.category-line-subtitle {
+    font-size: 1.2rem;
+    color: #333;
+    opacity: 0.9;
+    margin-top: 25px;
+}
 
-    .category-line-item:hover .category-line-image {
-        transform: scale(1.05);
+.category-center {
+    flex: 1;
+    display: flex;
+    align-items: flex-end; /* Смещаем блок выше центра */
+    justify-content: center;
+    padding-bottom: 40vh; /* Контролирует высоту блока категорий */
+    z-index: 2;
+}
+
+.category-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2.4rem;
+    max-width: 900px;
+}
+
+.category-link {
+    position: relative;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #111;
+    text-decoration: none;
+    text-transform: capitalize;
+    padding: 0.4rem 0;
+    transition: color 0.3s ease;
+}
+
+.category-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0%;
+    height: 2px;
+    background: linear-gradient(90deg, #000, #666);
+    transition: width 0.4s ease;
+}
+
+.category-link:hover {
+    color: #000;
+}
+
+.category-link:hover::after {
+    width: 100%;
+}
+
+/* Анимация появления */
+.category-link {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s forwards;
+}
+.category-link:nth-child(odd) { animation-delay: 0.1s; }
+.category-link:nth-child(even) { animation-delay: 0.2s; }
+
+@keyframes fadeInUp {
+    to {
         opacity: 1;
+        transform: translateY(0);
     }
+}
 
-    .category-line-item {
-        display: flex;
-        align-items: center;
-        text-decoration: none;
-        color: inherit;
-        padding: 0.6rem 0.5rem;
-        transition: transform 0.3s ease, background 0.3s ease;
+/* Адаптив */
+@media (max-width: 767.98px) {
+    .category-line-title {
+        font-size: 1.9rem;
     }
-
-    .category-line-image {
-        width: 100px;
-        height: 100px;
-        object-fit: cover;
-        opacity: 0.93;
-        transition: transform 0.35s ease, opacity 0.35s ease;
+    .category-line-subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 2rem;
     }
-
-    .category-line-name {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.1rem;
-        font-weight: 500;
-        color: #222;
-        margin-top: 0.5rem;
+    .category-list {
+        gap: 1.2rem 1.6rem;
     }
-
-    @media (max-width: 767.98px) {
-
-        .category-line-title {
-            font-size: 1.5rem;
-        }
-
-        .category-line-subtitle {
-            font-size: 0.9rem;
-        }
-
-
-        .category-line-item {
-            flex-direction: column;
-            justify-content: center;
-            text-align: center;
-            padding: 0;
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            overflow: hidden;
-        }
-
-        .category-line-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            flex-grow: 1;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-        }
-
-        .category-line-item:hover .category-line-image {
-            transform: scale(1.04);
-            opacity: 1;
-        }
-
-        .category-line-name {
-            bottom: 6px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            font-size: 0.9rem;
-            color: black;
-            padding: 3px 0;
-            margin: 0;
-        }
-
-        .category-line-section .row {
-            margin-left: -3px;
-            margin-right: -3px;
-        }
-
-        .category-line-section .col-sm-6 {
-            padding-left: 3px;
-            padding-right: 3px;
-            margin-bottom: 6px;
-            position: relative;
-        }
-
-        .category-line-section .col-6:nth-child(n+5) {
-            display: none !important;
-        }
+    .category-link {
+        font-size: 1rem;
     }
+    .category-center {
+        padding-bottom: 10vh;
+    }
+}
 </style>
+

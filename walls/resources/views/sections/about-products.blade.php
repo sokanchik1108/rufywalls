@@ -7,11 +7,11 @@
 
 <section class="info-section py-5" id="product-info">
     <div class="container px-3 px-md-4" style="max-width: 1000px;">
-        <h2 class="section-title mb-4 text-start" data-aos="fade-up">
+        <h2 class="section-title mb-4 text-start">
             Обои, которые создают уют и легко справляются с повседневностью
         </h2>
 
-        <div class="section-text" data-aos="fade-up" data-aos-delay="100">
+        <div class="section-text">
             <p>
                 В нашем магазине вы найдёте только качественные <strong>моющиеся обои</strong> — практичное решение для тех, кто ценит комфорт, эстетику и долговечность.
             </p>
@@ -33,7 +33,7 @@
             <p><strong>Приходите в наш магазин — увидите всё своими глазами и найдёте именно то, что подойдёт вашему интерьеру.</strong></p>
         </div>
 
-        <!-- Кнопка -->
+        <!-- Кнопка с анимацией -->
         <div class="mt-5 text-start" data-aos="fade-up" data-aos-delay="300">
             <a href="{{ route('catalog') }}" class="btn-primary btn-custom">Каталог</a>
         </div>
@@ -64,7 +64,6 @@
         margin-bottom: 1rem;
     }
 
-
     /* Текст */
     .section-text p {
         font-size: 1rem;
@@ -81,7 +80,6 @@
         hyphens: auto;
         /* перенос слов при необходимости */
     }
-
 
     /* Кнопка */
     .btn-custom {
