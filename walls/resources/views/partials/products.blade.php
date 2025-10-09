@@ -115,18 +115,19 @@
             <div id="carousel{{ $item->id ?? $product->id }}" class="carousel slide mb-3">
                 <div class="carousel-inner">
                     @foreach ($images as $index => $image)
+                    @if($image) {{-- проверяем, что есть изображение --}}
                     <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
                         <div class="position-relative" style="width: 100%; height: auto;">
                             <img
-                                src="{{ $index == 0 ? asset('storage/' . $image) : asset('images/placeholder.webp') }}"
-                                data-src="{{ asset('storage/' . $image) }}"
+                                src="{{ asset('storage/' . $image) }}"
                                 class="d-block w-100 lazy-slide"
                                 alt="Фото товара {{ $product->name ?? '' }}">
                         </div>
                     </div>
-
+                    @endif
                     @endforeach
                 </div>
+
 
                 @if (count($images) > 1)
                 <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="prev">
