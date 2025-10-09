@@ -38,7 +38,6 @@
         </p>
     </div>
 </section>
-
 <div class="catalog-container">
 
     @include('partials.filters')
