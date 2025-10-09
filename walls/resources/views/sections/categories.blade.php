@@ -128,20 +128,21 @@
 /* Адаптив */
 @media (max-width: 767.98px) {
     .category-line-title {
-        font-size: 1.9rem;
+        font-size: 1.4rem;
+        margin-top: 90px;
     }
     .category-line-subtitle {
-        font-size: 0.9rem;
-        margin-bottom: 2rem;
+        font-size: 1rem;
+        margin-bottom: 10px;
     }
     .category-list {
-        gap: 1.2rem 1.6rem;
+        gap: 1.2rem;
     }
     .category-link {
         font-size: 1rem;
     }
     .category-center {
-        padding-bottom: 10vh;
+        padding-bottom: 32vh;
     }
 }
 </style>
