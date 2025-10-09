@@ -24,7 +24,7 @@
                     <div class="rafy-card-square">
                         <div class="rafy-status">{{ $product->status }}</div>
                         <div class="rafy-img-wrapper">
-                            <img src="{{ $imagePath }}" alt="{{ $product->name }}" class="rafy-card-img">
+                            <img src="{{ $imagePath }}" alt="{{ $product->name }}" class="rafy-card-img" loading="lazy">
                         </div>
                         <div class="rafy-hover-text">
                             <p class="rafy-articul">{{ $variant->sku ?? '---' }}</p>
