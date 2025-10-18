@@ -4,6 +4,11 @@
 
 @section('meta')
 <meta name="description" content="Ваша корзина RAFY WALLS — шаг до стильного интерьера. Проверьте товары и оформите заказ легко и быстро.">
+<meta name="robots" content="noindex, follow">
+<meta property="og:title" content="Корзина | RAFY WALLS">
+<meta property="og:description" content="Проверьте выбранные обои перед оформлением заказа в RAFY WALLS.">
+<meta property="og:image" content="{{ asset('images/лого1.png') }}">
+<meta property="og:type" content="website">
 @endsection
 
 
@@ -38,7 +43,10 @@
 
 
 
-    <h1 class="mb-4 fw-semibold text-body-emphasis">Корзина</h1>
+    <h1 class="mb-4 fw-semibold text-body-emphasis">
+        Корзина <span class="visually-hidden">RAFY WALLS — оформление заказа на обои в Алматы</span>
+    </h1>
+
 
     @if($cartItems->isEmpty())
     <div class="text-center text-muted fs-5 mb-4">

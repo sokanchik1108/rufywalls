@@ -4,6 +4,7 @@
 
 @section('meta')
 <meta name="description" content="В RAFY WALLS вы найдете качественные моющиеся виниловые обои на флизелиновой основе в Алматы. Богатый выбор оттенков, фактур и коллекций от лучших брендов. Мы поможем создать интерьер, который вдохновляет каждый день.">
+<link rel="canonical" href="{{ url()->current() }}">
 @endsection
 
 @section('content')

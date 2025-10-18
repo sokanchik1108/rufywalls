@@ -3,35 +3,82 @@
 
 <head>
     @php
-    // Делаем материал более читабельным для описания
+    // 🔹 Подготовка данных для SEO
     $materialText = $product->material;
-    // Можно добавить простые замены для самых частых случаев
     $materialText = str_ireplace('Винил на флизелине', 'виниловые обои на флизелиновой основе', $materialText);
     $materialText = str_ireplace('бумага', 'бумажные обои', $materialText);
+    $productName = $product->name;
+    $sku = $activeVariant->sku ?? '';
+    $pageUrl = url()->current();
     @endphp
 
     <meta charset="UTF-8">
-    <title>{{ $product->name }} — стильные моющиеся {{ $materialText }} | RAFY WALLS</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="description" content="{{ $product->name }} — моющиеся {{ $materialText }} в Алматы. Современные коллекции с широким выбором оттенков и текстур. RAFY WALLS. Артикул: {{ $activeVariant->sku }}">
 
-    {{-- ✅ Favicon --}}
+    {{-- 🔹 Title (ключевые слова + бренд + регион) --}}
+    <title>{{ $productName }} — стильные {{ $materialText }} в Алматы | RAFY WALLS</title>
+
+    {{-- 🔹 Description (до 160 символов, для сниппета Google) --}}
+    <meta name="description" content="Купить {{ $productName }} — {{ $materialText }} в Алматы. Новые коллекции RAFY WALLS: современные моющиеся и флизелиновые обои. Артикул {{ $sku }}.">
+
+    {{-- 🔹 Keywords (не влияют сильно, но можно оставить для полноты) --}}
+    <meta name="keywords" content="{{ $productName }}, {{ $materialText }}, обои Алматы, купить обои Алматы, RAFY WALLS, моющиеся обои, флизелиновые, виниловые">
+
+    {{-- 🔹 Canonical URL (во избежание дублей страниц) --}}
+    <link rel="canonical" href="{{ $pageUrl }}">
+
+    {{-- 🔹 Open Graph (для соцсетей и мессенджеров) --}}
+    <meta property="og:title" content="{{ $productName }} — стильные {{ $materialText }} | RAFY WALLS">
+    <meta property="og:description" content="Купить {{ $productName }} — {{ $materialText }} в Алматы. Артикул {{ $sku }}. RAFY WALLS.">
+    <meta property="og:image" content="{{ asset($activeVariant->image ?? 'images/default.jpg') }}">
+    <meta property="og:url" content="{{ $pageUrl }}">
+    <meta property="og:type" content="product">
+    <meta property="og:site_name" content="RAFY WALLS">
+
+    {{-- 🔹 Schema.org разметка (улучшает сниппет Google) --}}
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org/",
+            "@type": "Product",
+            "name": "{{ $productName }}",
+            "image": "{{ asset($activeVariant->image ?? 'images/default.jpg') }}",
+            "description": "{{ $productName }} — {{ $materialText }}. Артикул {{ $sku }}.",
+            "sku": "{{ $sku }}",
+            "brand": {
+                "@type": "Brand",
+                "name": "RAFY WALLS"
+            },
+            "offers": {
+                "@type": "Offer",
+                "url": "{{ $pageUrl }}",
+                "priceCurrency": "KZT",
+                "availability": "https://schema.org/InStock"
+            }
+        }
+    </script>
+
+    {{-- 🔹 Favicon --}}
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/лого1.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/лого1.png') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/лого1.png') }}">
-    <link rel="shortcut icon" href="{{ asset('images/лого1.png') }}" type="image/x-icon">
-
+    <link rel="apple-touch-icon" href="{{ asset('images/лого1.png') }}">
     <meta name="theme-color" content="#ffffff">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="{{ asset('images/лого1.png') }}">
 
-    <!-- Bootstrap -->
+    {{-- Bootstrap --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     <style>
+        html,
+        body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            background-color: #ffffff;
+        }
+
         html,
         body {
             max-width: 100%;
@@ -146,10 +193,23 @@
             padding: 2px 6px;
             border-radius: 50%;
         }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
     </style>
 </head>
 
 <body class="text-dark">
+
 
     <a href="{{ route('cart') }}" class="text-decoration-none position-fixed top-0 end-0 p-4 z-3">
         <div class="cart-icon">
@@ -209,7 +269,11 @@
 
             <!-- Информация -->
             <div class="col-lg-6">
-                <h1 class="h4 fw-bold">{{ $product->name }}</h1>
+                <h1 class="h4 fw-bold">
+                    {{ $product->name }}
+                    <span class="visually-hidden"> — {{ $product->material }} купить в Алматы | RAFY WALLS</span>
+                </h1>
+
                 @if ($product->sale_price == 0)
                 <span class="d-flex align-items-center"
                     style="font-size: 0.9rem; font-weight: 600; color: #6c757d;">

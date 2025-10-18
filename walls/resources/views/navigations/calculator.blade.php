@@ -1,16 +1,23 @@
 @extends('layouts.main')
 
-@section('title', 'Калькулятор обоев - RAFY WALLS')
+@section('title', 'Калькулятор обоев — рассчитайте рулоны для вашей комнаты | RAFY WALLS')
 
 @section('meta')
-<meta name="description" content="Рассчитайте, сколько рулонов обоев нужно для вашей комнаты с помощью удобного калькулятора RAFY WALLS." />
+<meta name="description" content="Удобный калькулятор обоев от RAFY WALLS поможет точно рассчитать, сколько рулонов обоев нужно для вашей комнаты. Учитываются размеры стен, окон и дверей.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="{{ url()->current() }}">
 @endsection
-
 
 @section('content')
 <div class="container pt-5 mt-5 mb-5 d-flex justify-content-center align-items-start min-vh-100">
     <div class="card shadow-lg border-0 rounded-4 w-100" style="max-width: 900px; background-color: #fff;">
         <div class="card-body p-5">
+
+            {{-- Главный SEO-заголовок --}}
+            <h1 class="h3 fw-bold text-dark text-center mb-4">Калькулятор обоев — рассчитайте нужное количество рулонов</h1>
+            <p class="text-center text-muted small mb-5">
+                Введите размеры комнаты, окон и дверей, чтобы точно узнать, сколько рулонов обоев понадобится.
+            </p>
 
             {{-- Результат всегда сверху --}}
             <div id="result" class="mb-5">

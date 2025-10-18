@@ -1,25 +1,40 @@
 @extends('layouts.main')
 
-@section('title', 'Оформление заказа - RAFY WALLS')
+@section('title', 'Оформление заказа — RAFY WALLS | Обои в Алматы')
+
+@section('meta')
+<meta name="description" content="Оформите заказ на обои RAFY WALLS. Проверьте товары и подтвердите покупку в WhatsApp. Уют, качество и стиль — выбирайте RAFY WALLS.">
+<meta name="robots" content="noindex, follow">
+<meta property="og:title" content="Оформление заказа — RAFY WALLS">
+<meta property="og:description" content="Проверьте выбранные товары и подтвердите заказ в WhatsApp. RAFY WALLS — современные обои в Алматы.">
+<meta property="og:type" content="website">
+@endsection
+
 
 @section('content')
 <div class="container py-5">
-    <h1 class="mb-4">Оформление заказа</h1>
 
-    {{-- Предупреждение о подтверждении в WhatsApp --}}
+    {{-- SEO-заголовок --}}
+    <h1 class="mb-4 fw-semibold text-body-emphasis">
+        Оформление заказа <span class="visually-hidden">на обои RAFY WALLS в Алматы</span>
+    </h1>
+
+    {{-- 🔹 Предупреждение о подтверждении --}}
     <div class="alert alert-warning rounded-3 shadow-sm mb-4">
-        <strong>Важно!</strong> После оформления заказа <u>не забудьте подтвердить его</u>, написав нам в
-        <a href="https://wa.me/77077121255?text=Здравствуйте,%20я%20хочу%20подтвердить%20заказ" class="text-success fw-semibold" target="_blank">
+        <strong>Важно!</strong> После оформления заказа <u>подтвердите его</u>, написав нам в
+        <a href="https://wa.me/77077121255?text=Здравствуйте,%20я%20хочу%20подтвердить%20заказ"
+            class="text-success fw-semibold" target="_blank">
             WhatsApp
         </a>.
-        Без подтверждения заказ не будет обработан. <br>
+        Без подтверждения заказ не будет обработан.
+        <br>
         <span class="d-flex align-items-center mt-2" style="font-size: 0.95rem; font-weight: 500;">
             <i class="bi bi-info-circle me-2" style="font-size: 1rem;"></i>
-            Оплата производится во время подтверждения заказа в WhatsApp
+            Оплата производится во время подтверждения заказа в WhatsApp.
         </span>
     </div>
 
-
+    {{-- 🔹 Форма оформления заказа --}}
     <form action="{{ route('checkout.submit') }}" method="POST">
         @csrf
 
@@ -85,51 +100,38 @@
             <li class="list-group-item fw-bold d-flex justify-content-between">
                 Итого:
                 @if(collect($cartItems)->contains(fn($i) => $i['price'] == 0))
-                <span class="text-muted" style="font-size: 0.95rem;">
-                    Уточните цену в WhatsApp
-                </span>
+                <span class="text-muted" style="font-size: 0.95rem;">Уточните цену в WhatsApp</span>
                 @else
                 <span>{{ number_format($total, 0, ',', ' ') }} ₸</span>
                 @endif
             </li>
         </ul>
 
-
-
-
-
-
-        <button type="submit"
-            class="custom-order-btn">
-            🛒 Оформить заказ
-        </button>
-
-        <style>
-            .custom-order-btn {
-                background-color: #01142f;
-                color: #fff;
-                padding: 0.75rem 1.5rem;
-                font-size: 1.1rem;
-                font-weight: 600;
-                border: none;
-                border-radius: 50px;
-                box-shadow: 0 4px 12px rgba(1, 20, 47, 0.3);
-                transition: background-color 0.3s ease, transform 0.2s ease;
-            }
-
-            .custom-order-btn:hover {
-                background-color: #02214b;
-                transform: translateY(-2px);
-            }
-
-            .custom-order-btn:active {
-                transform: translateY(0);
-                box-shadow: 0 2px 6px rgba(1, 20, 47, 0.4);
-            }
-        </style>
-
-
-
+        <button type="submit" class="custom-order-btn">🛒 Оформить заказ</button>
     </form>
+
+    <style>
+        .custom-order-btn {
+            background-color: #01142f;
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 4px 12px rgba(1, 20, 47, 0.3);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .custom-order-btn:hover {
+            background-color: #02214b;
+            transform: translateY(-2px);
+        }
+
+        .custom-order-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(1, 20, 47, 0.4);
+        }
+    </style>
 </div>
 @endsection

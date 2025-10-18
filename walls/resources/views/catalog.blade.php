@@ -1,36 +1,45 @@
 @extends('layouts.main')
 
-@section('title', 'RAFY WALLS — купить обои в Алматы и по Казахстану')
+{{-- 🔹 Title --}}
+@section('title', 'Каталог обоев в Алматы и Казахстане — RAFY WALLS | Купить современные обои')
 
-
+{{-- 🔹 Meta --}}
 @section('meta')
-<meta name="description" content="Купить обои в Алматы и по Казахстану — RAFY WALLS. Большой выбор дизайнов, доставка по стране. Обновите интерьер стильно и легко." />
+<meta name="description" content="Каталог обоев RAFY WALLS — Алматы и Казахстан. Современные коллекции: флизелиновые, виниловые, моющиеся обои. Доставка по всему Казахстану." />
+<meta name="keywords" content="каталог обоев Алматы, купить обои Казахстан, RAFY WALLS каталог, RAFYWALLS каталог, rafywalls каталог, rafy walls каталог, флизелиновые обои, виниловые обои, моющиеся обои, современные обои Алматы">
+<link rel="canonical" href="{{ url('/catalog') }}">
 @endsection
 
 @section('content')
+
+<!-- 🔹 Скрытый H1 для SEO -->
+<h1 style="position:absolute; left:-9999px; top:-9999px;">
+    Каталог обоев RAFY WALLS — купить обои в Алматы и по Казахстану
+</h1>
+
 <section class="catalog-banner" style="position: relative; width: 100%; overflow: hidden;">
 
-    <!-- Изображения -->
+    <!-- Изображения с улучшенными alt -->
     <div class="catalog-images">
         <div class="catalog-image">
-            <img src="{{ asset('images/баннер8.webp') }}" alt="Каталог RAFY WALLS">
+            <img src="{{ asset('images/баннер8.webp') }}" alt="Современные обои в Алматы — каталог RAFY WALLS">
         </div>
         <div class="catalog-image hide-on-mobile">
-            <img src="{{ asset('images/баннер12.webp') }}" alt="Каталог RAFY WALLS">
+            <img src="{{ asset('images/баннер12.webp') }}" alt="Флизелиновые и виниловые обои RAFY WALLS">
         </div>
         <div class="catalog-image hide-on-mobile">
-            <img src="{{ asset('images/баннер4.webp') }}" alt="Каталог RAFY WALLS">
+            <img src="{{ asset('images/баннер4.webp') }}" alt="Моющиеся обои для интерьера RAFY WALLS Алматы">
         </div>
     </div>
 
-    <!-- Затемняющий слой -->
+    <!-- Затемнение -->
     <div class="catalog-overlay"></div>
 
     <!-- Текст -->
     <div class="catalog-text">
-        <h1 class="h2 mb-3">
+        <h2 class="h2 mb-3">
             Каталог <span class="company-name">RAFY WALLS</span>
-        </h1>
+        </h2>
         <p class="fs-5 mb-2">Стены — важнейший элемент атмосферы</p>
         <p class="fs-6 mb-0">
             Мы верим, что стены должны вдохновлять. Наш каталог объединяет коллекции,
@@ -38,11 +47,9 @@
         </p>
     </div>
 </section>
+
 <div class="catalog-container">
-
     @include('partials.filters')
-
-    <!-- Каталог -->
     <div class="product-list" id="product-container">
         @include('partials.products')
     </div>
@@ -50,6 +57,25 @@
 
 @include('partials.footer')
 
+{{-- 🔹 Structured Data (Schema.org) --}}
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Store",
+        "name": "RAFY WALLS",
+        "image": "{{ asset('images/баннер8.webp') }}",
+        "description": "Магазин обоев RAFY WALLS в Алматы — каталог флизелиновых, виниловых и моющихся обоев.",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "проспект Турара Рыскулова, 103/2, бутики 105 и 109",
+            "addressLocality": "Алматы",
+            "addressCountry": "KZ"
+        },
+        "url": "{{ url('/catalog') }}",
+        "priceRange": "₸₸",
+        "telephone": "+7 700 000 0000"
+    }
+</script>
 
 @section('styles')
 <link rel="stylesheet" href="{{ asset('css/catalog.min.css') }}?v=1.0.0">
@@ -58,9 +84,6 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-
-
-
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -229,5 +252,6 @@
         }
     });
 </script>
+
 
 @endsection

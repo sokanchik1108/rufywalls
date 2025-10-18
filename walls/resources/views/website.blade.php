@@ -1,24 +1,46 @@
 @extends('layouts.main')
 
-@section('title', 'Купить обои в Алматы — качественные моющиеся современные коллекции | RAFY WALLS')
+{{-- 🔹 Title (ключевые слова + бренд + регион) --}}
+@section('title', 'Обои в Алматы — купить современные моющиеся обои | RAFY WALLS магазин обоев')
 
+{{-- 🔹 Meta Description (точно под сниппет Google) --}}
 @section('meta')
-<meta name="description" content="Магазин обоев в Алматы — качественные моющиеся флизелиновые обои и современные коллекции с широким выбором. Артекс, Maxdecor, Dilmax, российские, китайские, узбекские.">
+<meta name="description" content="Купить обои в Алматы в магазине RAFY WALLS. Современные флизелиновые, виниловые и моющиеся обои. Новые коллекции Artex, Maxdecor, Dilmax и других брендов.">
+<meta name="keywords" content="обои Алматы, купить обои Алматы, магазин обоев Алматы, моющиеся обои Алматы, флизелиновые обои Алматы, виниловые обои Алматы, RAFY WALLS, современные обои, Artex, Maxdecor, Dilmax,">
+<link rel="canonical" href="{{ url('/') }}">
 @endsection
 
 @section('content')
 
-@include('sections.title')
+    {{-- 🔹 Скрытый H1 для SEO (доступен поисковикам, но не виден пользователям) --}}
+    <h1 class="visually-hidden">
+        Купить обои в Алматы — RAFY WALLS магазин современных моющихся обоев
+    </h1>
 
-@include('sections.about-products')
+    {{-- 🔹 Основной контент сайта --}}
+    @include('sections.title')
+    @include('sections.about-products')
+    @include('sections.cards')
+    @include('sections.about-us')
+    @include('sections.categories')
 
-@include('sections.cards')
-
-@include('sections.about-us')
-
-@include('sections.categories')
-
-@include('partials.footer')
-
+    @include('partials.footer')
 
 @endsection
+
+{{-- 🔹 CSS для скрытия H1, но сохранения его доступности поисковикам --}}
+@push('styles')
+<style>
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+</style>
+@endpush
