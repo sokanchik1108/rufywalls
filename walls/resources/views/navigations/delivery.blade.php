@@ -2,8 +2,10 @@
 
 @section('title', 'Доставка - RAFY WALLS')
 
+@section('meta_description', 'Узнайте о способах доставки заказов RAFY WALLS: самовывоз, курьерская доставка, сроки и условия.')
+
 @section('meta')
-<meta name="description" content="Узнайте о способах доставки заказов RAFY WALLS: самовывоз, курьерская доставка, сроки и условия." />
+<meta name="description" content="@yield('meta_description')" />
 @endsection
 
 

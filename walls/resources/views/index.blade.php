@@ -1,15 +1,18 @@
 @extends('layouts.main')
 
+{{-- 🔹 Title --}}
 @section('title', 'Корзина - RAFY WALLS')
 
+{{-- 🔹 Meta Description (для SEO, Open Graph и Twitter) --}}
+@section('meta_description', 'Ваша корзина RAFY WALLS — шаг до стильного интерьера. Проверьте товары и оформите заказ легко и быстро.')
+
+{{-- 🔹 Дополнительные мета-теги --}}
 @section('meta')
-<meta name="description" content="Ваша корзина RAFY WALLS — шаг до стильного интерьера. Проверьте товары и оформите заказ легко и быстро.">
+<meta name="description" content="@yield('meta_description')" />
 <meta name="robots" content="noindex, follow">
-<meta property="og:title" content="Корзина | RAFY WALLS">
-<meta property="og:description" content="Проверьте выбранные обои перед оформлением заказа в RAFY WALLS.">
-<meta property="og:image" content="{{ asset('images/лого1.png') }}">
-<meta property="og:type" content="website">
+<link rel="canonical" href="{{ url('/cart') }}">
 @endsection
+
 
 
 @section('content')

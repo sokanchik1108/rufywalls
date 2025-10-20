@@ -1,10 +1,17 @@
 @extends('layouts.main')
 
-@section('title', 'Как оформить заказ - RAFY WALLS')
+{{-- 🔹 Title --}}
+@section('title', 'Как оформить заказ — RAFY WALLS')
 
+{{-- 🔹 Meta Description (для SEO + Open Graph + Twitter) --}}
+@section('meta_description', 'Как оформить заказ на сайте RAFY WALLS — простая инструкция по покупке обоев.')
+
+{{-- 🔹 Дополнительные мета-теги --}}
 @section('meta')
-<meta name="description" content="Как оформить заказ на сайте RAFY WALLS — простая инструкция по покупке обоев.">
+<meta name="description" content="@yield('meta_description')" />
+<link rel="canonical" href="{{ url('/how-to-order') }}">
 @endsection
+
 
 
 @section('content')

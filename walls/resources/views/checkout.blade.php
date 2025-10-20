@@ -1,13 +1,16 @@
 @extends('layouts.main')
 
+{{-- 🔹 Title --}}
 @section('title', 'Оформление заказа — RAFY WALLS | Обои в Алматы')
 
+{{-- 🔹 Meta Description (используется для SEO, Open Graph и Twitter) --}}
+@section('meta_description', 'Оформите заказ на обои RAFY WALLS. Проверьте товары и подтвердите покупку в WhatsApp. Уют, качество и стиль — выбирайте RAFY WALLS.')
+
+{{-- 🔹 Дополнительные мета-теги --}}
 @section('meta')
-<meta name="description" content="Оформите заказ на обои RAFY WALLS. Проверьте товары и подтвердите покупку в WhatsApp. Уют, качество и стиль — выбирайте RAFY WALLS.">
+<meta name="description" content="@yield('meta_description')" />
 <meta name="robots" content="noindex, follow">
-<meta property="og:title" content="Оформление заказа — RAFY WALLS">
-<meta property="og:description" content="Проверьте выбранные товары и подтвердите заказ в WhatsApp. RAFY WALLS — современные обои в Алматы.">
-<meta property="og:type" content="website">
+<link rel="canonical" href="{{ url('/checkout') }}">
 @endsection
 
 

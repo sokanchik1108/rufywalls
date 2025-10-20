@@ -30,7 +30,7 @@
 
     {{-- 🔹 Open Graph (для соцсетей и мессенджеров) --}}
     <meta property="og:title" content="{{ $productName }} — стильные {{ $materialText }} | RAFY WALLS">
-    <meta property="og:description" content="Купить {{ $productName }} — {{ $materialText }} в Алматы. Артикул {{ $sku }}. RAFY WALLS.">
+    <meta property="og:description" content="Купить {{ $productName }} — {{ $materialText }} в Алматы. RAFY WALLS.">
     <meta property="og:image" content="{{ asset($activeVariant->image ?? 'images/default.jpg') }}">
     <meta property="og:url" content="{{ $pageUrl }}">
     <meta property="og:type" content="product">
