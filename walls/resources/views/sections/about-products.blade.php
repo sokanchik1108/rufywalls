@@ -1,13 +1,7 @@
-<!-- AOS Library (для анимаций) -->
-<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-<script>
-    AOS.init();
-</script>
-
-<section class="info-section py-5" id="product-info">
-    <div class="container px-3 px-md-4" style="max-width: 1000px;">
-        <h2 class="section-title mb-4 text-start">
+<section class="info-section" id="product-info" style="background-image: url('{{ asset('images/главстрбаннер2.jpg') }}');">
+    <div class="text-content" data-aos="fade-left">
+        <!-- Заголовок секции -->
+        <h2 class="section-title">
             Обои, которые создают уют и легко справляются с повседневностью
         </h2>
 
@@ -30,163 +24,183 @@
                 Это идеальный выбор для кухни, прихожей, детской или любой другой комнаты, где важна практичность без потери красоты.
             </p>
 
-            <p><strong>Приходите в наш магазин — увидите всё своими глазами и найдёте именно то, что подойдёт вашему интерьеру.</strong></p>
+            <p>
+                <strong class="mobile-white">
+                    Приходите в наш магазин — увидите всё своими глазами и найдёте именно то, что подойдёт вашему интерьеру.
+                </strong>
+            </p>
         </div>
 
-        <!-- Кнопка с анимацией -->
-        <div class="mt-5 text-start" data-aos="fade-up" data-aos-delay="300">
-            <a href="{{ route('catalog') }}" class="btn-primary btn-custom">Каталог</a>
+        <div class="mt-4">
+            <a href="{{ route('catalog') }}" class="btn-custom slide-in-right">Перейти в каталог &rarr;</a>
         </div>
     </div>
 </section>
 
 <style>
-    /* Общий стиль блока */
     .info-section {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: #333;
-        background-color: #fdfdfd;
-        border-radius: 10.8px;
-        /* 90% от 12px */
-        box-shadow: 0 7.2px 18px rgba(0, 0, 0, 0.03);
-        padding-top: 4.5rem;
-        /* чуть меньше, чем py-5 */
-        padding-bottom: 4.5rem;
+        position: relative;
+        /* путь к картинке */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 100vh;
+        display: flex;
+        align-items: flex-start;
+        /* текст чуть выше */
+        justify-content: flex-end;
+        /* текст справа */
+        padding: 5% 5% 0 5%;
     }
 
-    /* Заголовок */
+    .text-content {
+        max-width: 880px;
+        /* ширина текста */
+        color: #000;
+        /* черный текст */
+        text-align: left;
+    }
+
     .section-title {
+        font-size: 2.2rem;
         font-weight: 700;
-        font-size: 1.8rem;
-        line-height: 1.3;
-        text-align: left;
-        /* заголовок по левому краю */
-        margin-bottom: 1rem;
+        margin-bottom: 1.2rem;
     }
 
-    /* Текст */
     .section-text p {
-        font-size: 1rem;
-        line-height: 1.65;
-        font-weight: 500;
-        margin-bottom: 0.9rem;
-        text-align: left;
-        /* выравнивание по левой стороне */
-        letter-spacing: 0.2px;
-        /* чтобы текст выглядел ровнее */
-        word-break: normal;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        hyphens: auto;
-        /* перенос слов при необходимости */
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
     }
 
-    /* Кнопка */
+    /* Кнопка с плавным появлением справа */
     .btn-custom {
         background-color: #01142f;
-        color: white;
-        border: none;
-        padding: 11.7px 30.6px;
-        /* 90% от 13px 34px */
-        font-size: 0.9rem;
+        color: #fff;
+        padding: 14px 36px;
+        font-size: 1rem;
         font-weight: 600;
-        border-radius: 27px;
-        transition: all 0.3s ease;
+        border-radius: 30px;
         text-decoration: none;
         display: inline-block;
+        transition: all 0.3s ease;
     }
 
     .btn-custom:hover {
-        color: white;
-        text-decoration: none;
-        box-shadow: 0 5.4px 16.2px rgba(0, 86, 179, 0.4);
-        transform: translateY(-2px);
         background-color: #02214b;
+        transform: translateY(-2px);
     }
 
-    .btn-custom:active {
-        transform: scale(0.97);
-        box-shadow: 0 3.6px 10.8px rgba(0, 86, 179, 0.3);
+    .slide-in-right {
+        transform: translateX(100%);
+        opacity: 0;
+        animation: slideInRight 1.2s forwards;
+        animation-delay: 0.5s;
+        animation-timing-function: ease-out;
     }
 
-    /* Иконки */
-    .icon {
-        width: 36px;
-        /* 90% от 40px */
-        height: 36px;
-        flex-shrink: 0;
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
     }
 
-    /* Преимущества */
-    .feature-item h5 {
-        margin-bottom: 0.27rem;
-        font-size: 0.99rem;
-        font-weight: 600;
-    }
+    /* Планшет */
+    @media (max-width: 992px) {
+        .section-text p {
+            font-size: 1rem;
+        }
 
-    .feature-item p {
-        margin: 0;
-        font-size: 0.86rem;
-        color: #555;
-    }
-
-    /* Медиа-запросы */
-    @media (min-width: 768px) {
         .section-title {
-            font-size: 1.98rem;
+            font-size: 2rem;
+        }
+
+        .btn-custom {
+            padding: 12px 30px;
+            font-size: 0.95rem;
+        }
+
+        .info-section {
+            padding: 5% 6% 0 5%;
+        }
+    }
+
+    /* Мобильные устройства */
+    @media (max-width: 768px) {
+        .info-section {
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: auto;
+            padding: 2rem 5%;
+        }
+
+        .mobile-white {
+            color: #ffffff;
+        }
+
+        .text-content {
+            max-width: 90%;
+        }
+
+        /* Кнопка появляется снизу */
+        .slide-in-right {
+            transform: translateY(50px);
+            animation: slideInUp 1.2s forwards;
+            animation-timing-function: ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
         }
 
         .section-text p {
-            font-size: 1.03rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
         }
 
         .btn-custom {
-            padding: 13.5px 37.8px;
-        }
-    }
-
-    @media (min-width: 992px) {
-        .section-title {
-            font-size: 2.16rem;
-        }
-
-        .btn-custom {
-            padding: 14.4px 43.2px;
+            padding: 12px 28px;
             font-size: 0.95rem;
         }
     }
 
-    @media (max-width: 576px) {
+    /* Очень маленькие экраны */
+    @media (max-width: 480px) {
         .section-title {
-            font-size: 1.35rem;
-            margin-bottom: 0.72rem;
+            font-size: 1.5rem;
         }
 
         .section-text p {
             font-size: 0.85rem;
-            line-height: 1.4;
-            margin-bottom: 0.63rem;
-            font-weight: 450;
+            line-height: 1.5;
+            margin-bottom: 1.2rem;
         }
 
         .btn-custom {
-            padding: 9.9px 21.6px;
-            font-size: 0.86rem;
-            border-radius: 21.6px;
-        }
-
-        .container {
-            padding-left: 0.9rem;
-            padding-right: 0.9rem;
-        }
-
-        .feature-item {
-            flex-direction: column;
-            text-align: left;
-        }
-
-        .icon {
-            margin-bottom: 0.45rem;
+            padding: 10px 24px;
+            font-size: 0.85rem;
         }
     }
 </style>

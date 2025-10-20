@@ -1,7 +1,7 @@
 <!-- Подключаем Playfair Display и Poppins -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
 
-<section class="rafy-walls-section py-3 bg-light">
+<section class="rafy-walls-section py-3 ">
     <div class="container px-2 px-md-0 mb-3">
         <!-- Заголовок -->
         <div class="rafy-header">
@@ -72,6 +72,7 @@
     .rafy-header {
         display: block;
         margin-bottom: 1.5rem;
+        margin-top: 2rem;
     }
 
     .rafy-main-title {

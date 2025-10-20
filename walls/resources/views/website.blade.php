@@ -21,7 +21,7 @@
     </h1>
 
     {{-- 🔹 Основной контент сайта --}}
-    @include('sections.title')
+    
     @include('sections.about-products')
     @include('sections.cards')
     @include('sections.about-us')

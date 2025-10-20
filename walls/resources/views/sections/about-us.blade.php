@@ -1,10 +1,10 @@
-<section class="about-section py-5" id="about-us" style="padding-top:10rem; padding-bottom:10rem;">
+<section class="about-section py-5" id="about-us" style="padding-top:10rem; padding-bottom:10rem;background-color:#e8e8e8;">
     <div class="container px-3 px-md-4" style="max-width: 1000px; margin-top:1rem; margin-bottom:1rem;">
         <h2 class="section-title mb-4 text-start" style="font-weight: 700; font-size: 1.8rem;">
             О компании <span class="company-name">RAFY WALLS</span>
         </h2>
 
-        <div class="section-text" style="font-weight: 500; font-size: 1rem; line-height: 1.6;">
+        <div class="section-text" style="font-size: 1.1rem; line-height: 1.6;">
             <p>
                 <strong>RAFY WALLS — это компания с самым широким выбором премиальных обоев для интерьера в Казахстане.</strong>
                 Мы создаём пространство, в котором красиво, уютно и удобно, помогая каждому клиенту найти идеальный вариант для своего дома или офиса.

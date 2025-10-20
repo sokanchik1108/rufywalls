@@ -51,6 +51,8 @@
     </div>
 </section>
 
+@include('sections.title')
+
 <div class="catalog-container">
     @include('partials.filters')
     <div class="product-list" id="product-container">
