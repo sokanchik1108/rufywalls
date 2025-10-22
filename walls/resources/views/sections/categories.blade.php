@@ -1,5 +1,5 @@
 <section class="category-line-section position-relative">
-    <img src="{{ asset('images/баннер13.webp') }}" alt="Фон" class="category-bg-image">
+    <img src="{{ asset('images/главстрбаннер2.jpg') }}" alt="Фон" class="category-bg-image">
 
     <!-- Заголовок сверху -->
     <div class="category-header text-center mt-5">
@@ -27,7 +27,6 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        filter: brightness(0.65) grayscale(25%);
         z-index: 0;
     }
 
@@ -139,12 +138,13 @@
     @media (max-width: 767.98px) {
         .category-line-title {
             font-size: 1.4rem;
-            margin-top: 90px;
+            margin-top: 150px;
         }
 
         .category-line-subtitle {
             font-size: 1rem;
-            margin-bottom: 10px;
+            margin-bottom: -100px;
+            margin-top: 45px;
         }
 
         .category-list {

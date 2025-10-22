@@ -1,6 +1,5 @@
-<section class="info-section" id="product-info" style="background-image: url('{{ asset('images/главстрбаннер2.jpg') }}');">
-    <div class="text-content" data-aos="fade-left">
-        <!-- Заголовок секции -->
+<section class="info-section" id="product-info">
+    <div class="text-content" data-aos="fade-right">
         <h2 class="section-title">
             Обои, которые создают уют и легко справляются с повседневностью
         </h2>
@@ -40,24 +39,20 @@
 <style>
     .info-section {
         position: relative;
-        /* путь к картинке */
+        background-image: url('{{ asset('images/11316-01 7.webp') }}');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         height: 100vh;
         display: flex;
         align-items: flex-start;
-        /* текст чуть выше */
-        justify-content: flex-end;
-        /* текст справа */
-        padding: 5% 5% 0 5%;
+        justify-content: flex-start;
+        padding: 5% 5% 0 8%;
     }
 
     .text-content {
         max-width: 880px;
-        /* ширина текста */
         color: #000;
-        /* черный текст */
         text-align: left;
     }
 
@@ -73,7 +68,6 @@
         margin-bottom: 1.5rem;
     }
 
-    /* Кнопка с плавным появлением справа */
     .btn-custom {
         background-color: #01142f;
         color: #fff;
@@ -104,7 +98,6 @@
             transform: translateX(100%);
             opacity: 0;
         }
-
         to {
             transform: translateX(0);
             opacity: 1;
@@ -113,48 +106,49 @@
 
     /* Планшет */
     @media (max-width: 992px) {
-        .section-text p {
-            font-size: 1rem;
-        }
-
         .section-title {
             font-size: 2rem;
         }
-
+        .section-text p {
+            font-size: 1rem;
+        }
         .btn-custom {
             padding: 12px 30px;
-            font-size: 0.95rem;
-        }
-
-        .info-section {
-            padding: 5% 6% 0 5%;
         }
     }
 
     /* Мобильные устройства */
     @media (max-width: 768px) {
         .info-section {
+            background-image: url('{{ asset('images/11212-05 5.webp') }}');
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
             height: auto;
-            padding: 2rem 5%;
-        }
-
-        .mobile-white {
-            color: #ffffff;
+            padding: 3rem 6%;
         }
 
         .text-content {
-            max-width: 90%;
+            max-width: 95%;
         }
 
-        /* Кнопка появляется снизу */
+        .section-title {
+            font-size: 1.8rem;
+        }
+
+        .section-text p {
+            font-size: 1rem;
+        }
+
+        .btn-custom {
+            padding: 12px 28px;
+            font-size: 0.95rem;
+        }
+
         .slide-in-right {
             transform: translateY(50px);
             animation: slideInUp 1.2s forwards;
-            animation-timing-function: ease-out;
         }
 
         @keyframes slideInUp {
@@ -162,44 +156,18 @@
                 transform: translateY(50px);
                 opacity: 0;
             }
-
             to {
                 transform: translateY(0);
                 opacity: 1;
             }
         }
-
-        .section-title {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-        }
-
-        .section-text p {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-        }
-
-        .btn-custom {
-            padding: 12px 28px;
-            font-size: 0.95rem;
-        }
     }
 
-    /* Очень маленькие экраны */
     @media (max-width: 480px) {
         .section-title {
             font-size: 1.5rem;
         }
-
         .section-text p {
-            font-size: 0.85rem;
-            line-height: 1.5;
-            margin-bottom: 1.2rem;
-        }
-
-        .btn-custom {
-            padding: 10px 24px;
             font-size: 0.85rem;
         }
     }

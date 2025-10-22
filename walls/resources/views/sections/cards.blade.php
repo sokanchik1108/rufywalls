@@ -1,25 +1,28 @@
-<!-- Подключаем Playfair Display и Poppins -->
+<!-- Подключаем шрифты -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
 
-<section class="rafy-walls-section py-3 ">
+<section class="rafy-walls-section" style="background-color:#f9f6f2; padding-top:5rem;padding-bottom:5rem;">
     <div class="container px-2 px-md-0 mb-3">
         <!-- Заголовок -->
-        <div class="rafy-header">
-            <h2 class="rafy-main-title">Новинки RAFY WALLS</h2>
-            <div class="rafy-title-line"></div>
-            <p class="rafy-subtitle text-center">Следите за последними трендами интерьера с новинками сезона — стильные, качественные и эксклюзивные коллекции для вдохновения</p>
+        <div class="rafy-header text-center">
+            <h2 class="rafy-main-title">Новые коллекции RAFY WALLS</h2>
+            <p class="rafy-subtitle">
+                Следите за последними трендами интерьера с новинками сезона — стильные, качественные и эксклюзивные коллекции для вдохновения
+            </p>
         </div>
 
         <!-- Карточки -->
         <div class="row g-2 g-md-3">
             @foreach ($variants as $variant)
             @php
-                $product = $variant->product;
-                $images = json_decode($variant->images, true);
-                $imageIndex = isset($images[6]) ? 6 : 0;
-                $imagePath = !empty($images) && isset($images[$imageIndex]) ? asset('storage/' . $images[$imageIndex]) : asset('images/no-image.jpg');
+            $product = $variant->product;
+            $images = json_decode($variant->images, true);
+            $imageIndex = isset($images[6]) ? 6 : 0;
+            $imagePath = !empty($images) && isset($images[$imageIndex])
+            ? asset('storage/' . $images[$imageIndex])
+            : asset('images/no-image.jpg');
             @endphp
-            <div class="col-6 col-md-4 col-lg-3">
+            <div class="col-6 col-md-4 col-lg-4">
                 <a href="{{ route('product.show', $product->id) }}" class="rafy-card-link">
                     <div class="rafy-card-square">
                         <div class="rafy-status">{{ $product->status }}</div>
@@ -38,7 +41,7 @@
             @endforeach
         </div>
 
-        <!-- После блока с карточками -->
+        <!-- Кнопка -->
         <div class="text-center mt-3">
             <a href="{{ route('catalog') }}" class="rafy-all-btn">Все новинки</a>
         </div>
@@ -70,29 +73,28 @@
 
     /* Заголовок */
     .rafy-header {
-        display: block;
-        margin-bottom: 1.5rem;
-        margin-top: 2rem;
+        margin-bottom: 2rem;
     }
 
     .rafy-main-title {
         font-family: 'Playfair Display', serif;
-        font-size: 1.7rem;
-        letter-spacing: 1.8px;
+        font-size: 1.9rem;
+        letter-spacing: 1.5px;
         font-weight: 600;
         color: black;
-        margin: 0 0 15px 0;
-        text-align: left;
+        margin-bottom: 1.5rem;
+        text-align: center;
     }
 
     .rafy-subtitle {
         font-size: 1rem;
         letter-spacing: 0.2px;
-        line-height: 1.3;
+        line-height: 1.4;
         margin: 0 auto;
         font-weight: 500;
         text-align: center;
-        max-width: 650px;
+        max-width: 1300px;
+        color: #333;
     }
 
     /* Карточки */
@@ -202,12 +204,30 @@
         opacity: 1;
     }
 
+    /* Ограничение количества карточек */
+    @media (min-width: 992px) {
+
+        /* На десктопах — только 3 карточки */
+        .rafy-walls-section .row>div:nth-child(n+4) {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991.98px) {
+
+        /* На телефонах и планшетах — до 6 карточек */
+        .rafy-walls-section .row>div:nth-child(n+7) {
+            display: none;
+        }
+    }
+
     /* Адаптивность */
     @media (max-width: 991.98px) {
         .rafy-main-title {
             font-size: 1.6rem;
-            letter-spacing: 2.5px;
+            letter-spacing: 2px;
         }
+
         .rafy-subtitle {
             font-size: 0.95rem;
             max-width: 500px;
@@ -217,22 +237,27 @@
     @media (max-width: 575.98px) {
         .rafy-main-title {
             font-size: 1.4rem;
-            letter-spacing: 1.5px;
+            letter-spacing: 1.3px;
         }
+
         .rafy-subtitle {
             font-size: 0.9rem;
         }
+
         .rafy-articul {
             font-size: 0.8rem;
         }
+
         .rafy-name {
             font-size: 0.75rem;
             letter-spacing: 1px;
         }
+
         .rafy-status {
             font-size: 0.6rem;
             padding: 2px 4px;
         }
+
         .rafy-all-btn {
             font-size: 0.85rem;
             padding: 10px 28px;
