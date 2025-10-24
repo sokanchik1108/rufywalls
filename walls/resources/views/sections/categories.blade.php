@@ -1,15 +1,11 @@
 <section class="category-line-section position-relative">
     <img src="{{ asset('images/главстрбаннер2.jpg') }}" alt="Фон" class="category-bg-image">
 
-    <!-- Заголовок сверху -->
-    <div class="category-header text-center mt-5">
+    <div class="category-content text-center">
         <h2 class="category-line-title">Популярные категории</h2>
         <p class="category-line-subtitle">Выберите стиль для вашего пространства</p>
-    </div>
 
-    <!-- Категории немного выше центра -->
-    <div class="category-center d-flex justify-content-center align-items-center flex-column">
-        <div class="category-list text-center mt-n5">
+        <div class="category-list">
             @foreach($categories as $category)
             <a href="{{ route('catalog', ['category_id' => $category->id]) }}" class="category-link">
                 {{ $category->category_name }}
@@ -20,65 +16,71 @@
 </section>
 
 <style>
+    /* ====== ОСНОВНОЙ КОНТЕЙНЕР ====== */
+    .category-line-section {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background-color: #f8f8f8;
+    }
+
+    /* ====== ФОНОВОЕ ИЗОБРАЖЕНИЕ ====== */
     .category-bg-image {
         position: absolute;
-        top: 0;
-        left: 0;
+        inset: 0;
         width: 100%;
         height: 100%;
         object-fit: cover;
         z-index: 0;
     }
 
-    .category-line-section {
+    /* ====== КОНТЕНТ ====== */
+    .category-content {
         position: relative;
+        z-index: 2;
+        max-width: 950px;
         width: 100%;
-        min-height: 100vh;
-        overflow: hidden;
-        text-align: center;
+        padding: 0 1.5rem;
         display: flex;
         flex-direction: column;
-        justify-content: flex-start;
+        align-items: center;
+        justify-content: center;
     }
 
-    .category-header {
-        z-index: 2;
-    }
-
+    /* ====== ТЕКСТ ====== */
     .category-line-title {
         font-family: 'Playfair Display', serif;
-        font-size: 2.6rem;
+        font-size: 2.8rem;
         font-weight: 700;
-        color: #1a1a1a;
-        margin-top: 230px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        color: #1a1a1a;
+        margin: 0 0 1rem 0;
+        line-height: 1.2;
     }
 
     .category-line-subtitle {
-        font-size: 1.2rem;
+        font-family: 'Inter', sans-serif;
+        font-size: 1.25rem;
         color: #333;
         opacity: 0.9;
-        margin-top: 25px;
+        margin: 0 0 2.5rem 0;
+        line-height: 1.4;
     }
 
-    .category-center {
-        flex: 1;
-        display: flex;
-        align-items: flex-end;
-        /* Смещаем блок выше центра */
-        justify-content: center;
-        padding-bottom: 40vh;
-        /* Контролирует высоту блока категорий */
-        z-index: 2;
-    }
-
+    /* ====== СПИСОК КАТЕГОРИЙ ====== */
     .category-list {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        gap: 2.4rem;
-        max-width: 900px;
+        align-items: center;
+        gap: 2rem;
+        width: 100%;
     }
 
     .category-link {
@@ -91,6 +93,17 @@
         text-transform: capitalize;
         padding: 0.4rem 0;
         transition: color 0.3s ease;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.8s forwards;
+    }
+
+    .category-link:nth-child(odd) {
+        animation-delay: 0.1s;
+    }
+
+    .category-link:nth-child(even) {
+        animation-delay: 0.2s;
     }
 
     .category-link::after {
@@ -112,21 +125,7 @@
         width: 100%;
     }
 
-    /* Анимация появления */
-    .category-link {
-        opacity: 0;
-        transform: translateY(20px);
-        animation: fadeInUp 0.8s forwards;
-    }
-
-    .category-link:nth-child(odd) {
-        animation-delay: 0.1s;
-    }
-
-    .category-link:nth-child(even) {
-        animation-delay: 0.2s;
-    }
-
+    /* ====== АНИМАЦИЯ ====== */
     @keyframes fadeInUp {
         to {
             opacity: 1;
@@ -134,29 +133,54 @@
         }
     }
 
-    /* Адаптив */
+    /* ====== АДАПТИВ ====== */
+    @media (max-width: 1200px) {
+        .category-line-title {
+            font-size: 2.4rem;
+        }
+        .category-line-subtitle {
+            font-size: 1.15rem;
+        }
+    }
+
+    @media (max-width: 991.98px) {
+        .category-line-title {
+            font-size: 2rem;
+        }
+        .category-line-subtitle {
+            font-size: 1.05rem;
+            margin-bottom: 2rem;
+        }
+        .category-list {
+            gap: 1.5rem;
+        }
+    }
+
     @media (max-width: 767.98px) {
+        .category-content {
+            padding: 0 1rem;
+        }
+        .category-line-title {
+            font-size: 1.6rem;
+        }
+        .category-line-subtitle {
+            font-size: 0.95rem;
+            margin-bottom: 1.8rem;
+        }
+        .category-list {
+            gap: 1rem;
+        }
+        .category-link {
+            font-size: 0.95rem;
+        }
+    }
+
+    @media (max-width: 480px) {
         .category-line-title {
             font-size: 1.4rem;
-            margin-top: 150px;
         }
-
         .category-line-subtitle {
-            font-size: 1rem;
-            margin-bottom: -100px;
-            margin-top: 45px;
-        }
-
-        .category-list {
-            gap: 1.2rem;
-        }
-
-        .category-link {
-            font-size: 1rem;
-        }
-
-        .category-center {
-            padding-bottom: 32vh;
+            font-size: 0.9rem;
         }
     }
 </style>

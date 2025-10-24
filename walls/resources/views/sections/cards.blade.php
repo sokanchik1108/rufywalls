@@ -1,7 +1,7 @@
 <!-- Подключаем шрифты -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
 
-<section class="rafy-walls-section" style="background-color:#f9f6f2; padding-top:5rem;padding-bottom:5rem;">
+<section class="rafy-walls-section" style="background-color: #fff8f0; padding-top:5rem;padding-bottom:1rem; ">
     <div class="container px-2 px-md-0 mb-3">
         <!-- Заголовок -->
         <div class="rafy-header text-center">
@@ -60,7 +60,7 @@
         transition: all 0.3s ease;
         text-decoration: none;
         display: inline-block;
-        margin-top: 10px;
+        margin-top: 20px;
     }
 
     .rafy-all-btn:hover {

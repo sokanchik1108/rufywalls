@@ -10,12 +10,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <style>
         header {
-            background-color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+            /* поверх всего контента */
+            background-color: #fff8f0;
             box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
             padding: 0.5rem 1rem;
             max-width: 100%;
             overflow-x: hidden;
         }
+
 
         .navbar-brand {
             font-family: 'Playfair Display', serif;
@@ -222,52 +227,52 @@
         </div>
     </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const offcanvasEl = document.getElementById("offcanvasMenu");
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const offcanvasEl = document.getElementById("offcanvasMenu");
 
-        // Следим за закрытием Offcanvas и явно удаляем overflow, если оно осталось
-        offcanvasEl.addEventListener('hidden.bs.offcanvas', function () {
-            document.body.style.overflow = '';
-        });
+            // Следим за закрытием Offcanvas и явно удаляем overflow, если оно осталось
+            offcanvasEl.addEventListener('hidden.bs.offcanvas', function() {
+                document.body.style.overflow = '';
+            });
 
-        // Закрытие Offcanvas при клике вне его области
-        document.addEventListener("click", function (event) {
-            const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvasEl);
-            if (!offcanvasInstance) return;
+            // Закрытие Offcanvas при клике вне его области
+            document.addEventListener("click", function(event) {
+                const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvasEl);
+                if (!offcanvasInstance) return;
 
-            const isClickInside = offcanvasEl.contains(event.target);
-            const isToggle = event.target.closest("[data-bs-toggle='offcanvas']");
+                const isClickInside = offcanvasEl.contains(event.target);
+                const isToggle = event.target.closest("[data-bs-toggle='offcanvas']");
 
-            // Если клик вне Offcanvas и не по кнопке открытия — закрыть
-            if (!isClickInside && !isToggle) {
-                offcanvasInstance.hide();
+                // Если клик вне Offcanvas и не по кнопке открытия — закрыть
+                if (!isClickInside && !isToggle) {
+                    offcanvasInstance.hide();
 
-                // Подстраховка: убираем overflow после анимации
-                setTimeout(() => {
-                    document.body.style.overflow = '';
-                }, 400); // Время в мс, соответствующее длительности анимации Bootstrap
+                    // Подстраховка: убираем overflow после анимации
+                    setTimeout(() => {
+                        document.body.style.overflow = '';
+                    }, 400); // Время в мс, соответствующее длительности анимации Bootstrap
+                }
+            });
+
+            // Обновление количества товаров в корзине
+            function updateCartCount() {
+                fetch('/cart/count')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.querySelectorAll('.cart-count').forEach(el => el.textContent = data.count);
+                    })
+                    .catch(console.error);
             }
+
+            // Обновление корзины при изменении localStorage
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'cartUpdated') updateCartCount();
+            });
+
+            updateCartCount(); // начальное обновление при загрузке
         });
-
-        // Обновление количества товаров в корзине
-        function updateCartCount() {
-            fetch('/cart/count')
-                .then(response => response.json())
-                .then(data => {
-                    document.querySelectorAll('.cart-count').forEach(el => el.textContent = data.count);
-                })
-                .catch(console.error);
-        }
-
-        // Обновление корзины при изменении localStorage
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'cartUpdated') updateCartCount();
-        });
-
-        updateCartCount(); // начальное обновление при загрузке
-    });
-</script>
+    </script>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

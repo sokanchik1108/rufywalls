@@ -57,6 +57,7 @@
     }
 
     .section-title {
+        color:black !important; 
         font-size: 2.2rem;
         font-weight: 700;
         margin-bottom: 1.2rem;
