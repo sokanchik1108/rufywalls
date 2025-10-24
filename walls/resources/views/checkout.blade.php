@@ -11,6 +11,20 @@
 <meta name="description" content="@yield('meta_description')" />
 <meta name="robots" content="noindex, follow">
 <link rel="canonical" href="{{ url('/checkout') }}">
+
+{{-- 🔹 Open Graph --}}
+<meta property="og:title" content="@yield('title')" />
+<meta property="og:description" content="@yield('meta_description')" />
+<meta property="og:image" content="{{ asset('images/лого1.png') }}" />
+<meta property="og:url" content="{{ url('/checkout') }}" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="RAFY WALLS" />
+
+{{-- 🔹 Twitter Card --}}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="@yield('title')">
+<meta name="twitter:description" content="@yield('meta_description')">
+<meta name="twitter:image" content="{{ asset('images/лого1.png') }}">
 @endsection
 
 

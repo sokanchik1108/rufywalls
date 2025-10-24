@@ -1,17 +1,29 @@
 @extends('layouts.main')
 
 {{-- 🔹 Title --}}
-@section('title', 'Как оформить заказ — RAFY WALLS')
+@section('title', 'Как оформить заказ обоев — RAFY WALLS в Алматы и Казахстане')
 
-{{-- 🔹 Meta Description (для SEO + Open Graph + Twitter) --}}
-@section('meta_description', 'Как оформить заказ на сайте RAFY WALLS — простая инструкция по покупке обоев.')
+{{-- 🔹 Meta Description --}}
+@section('meta_description', 'Простая инструкция, как оформить заказ на сайте RAFY WALLS: выберите обои, добавьте в корзину, подтвердите через WhatsApp. Быстрая покупка в Алматы и по Казахстану.')
 
 {{-- 🔹 Дополнительные мета-теги --}}
 @section('meta')
 <meta name="description" content="@yield('meta_description')" />
+<meta name="robots" content="index, follow">
 <link rel="canonical" href="{{ url('/how-to-order') }}">
-@endsection
 
+{{-- 🔹 Open Graph для соцсетей --}}
+<meta property="og:title" content="@yield('title')">
+<meta property="og:description" content="@yield('meta_description')">
+<meta property="og:url" content="{{ url()->current() }}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RAFY WALLS">
+
+{{-- 🔹 Twitter Card --}}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="@yield('title')">
+<meta name="twitter:description" content="@yield('meta_description')">
+@endsection
 
 
 @section('content')

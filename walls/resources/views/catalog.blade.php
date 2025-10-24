@@ -1,16 +1,30 @@
 @extends('layouts.main')
 
 {{-- 🔹 Title --}}
-@section('title', 'Каталог обоев в Алматы и Казахстане — RAFY WALLS | Купить современные обои')
+@section('title', 'Каталог обоев RAFY WALLS — купить флизелиновые, виниловые и моющиеся обои в Алматы и Казахстане')
 
-{{-- 🔹 Meta Description (для SEO + Open Graph + Twitter) --}}
-@section('meta_description', 'Каталог обоев RAFY WALLS — Алматы и Казахстан. Современные коллекции: флизелиновые, виниловые, моющиеся обои.')
+{{-- 🔹 Meta Description --}}
+@section('meta_description', 'Каталог обоев RAFY WALLS в Алматы и по Казахстану. Современные коллекции: флизелиновые, виниловые, моющиеся обои. Выбирайте стильные обои для интерьера — доставка по Казахстану.')
 
 {{-- 🔹 Дополнительные мета-теги --}}
 @section('meta')
 <meta name="description" content="@yield('meta_description')" />
-<meta name="keywords" content="каталог обоев Алматы, купить обои Казахстан, RAFY WALLS каталог, RAFYWALLS каталог, rafywalls каталог, rafy walls каталог, флизелиновые обои, виниловые обои, моющиеся обои, современные обои Алматы">
+<meta name="keywords" content="каталог обоев, RAFY WALLS, флизелиновые обои, виниловые обои, моющиеся обои, купить обои Алматы, обои Казахстан">
 <link rel="canonical" href="{{ url('/catalog') }}">
+
+{{-- Open Graph --}}
+<meta property="og:title" content="Каталог обоев RAFY WALLS — стильные обои для вашего интерьера">
+<meta property="og:description" content="@yield('meta_description')">
+<meta property="og:image" content="{{ asset('images/баннер8.webp') }}">
+<meta property="og:url" content="{{ url('/catalog') }}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RAFY WALLS">
+
+{{-- Twitter Card --}}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Каталог обоев RAFY WALLS — стильные обои для интерьера">
+<meta name="twitter:description" content="@yield('meta_description')">
+<meta name="twitter:image" content="{{ asset('images/баннер8.webp') }}">
 @endsection
 
 @section('content')

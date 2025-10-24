@@ -11,7 +11,24 @@
 <meta name="description" content="@yield('meta_description')" />
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="{{ url('/calculator') }}">
+
+<meta property="og:title" content="Калькулятор обоев — рассчитайте рулоны для вашей комнаты | RAFY WALLS">
+<meta property="og:description" content="Удобный калькулятор обоев от RAFY WALLS поможет точно рассчитать, сколько рулонов обоев нужно для вашей комнаты.">
+<meta property="og:url" content="{{ url()->current() }}">
+<meta property="og:type" content="website">
+<meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
 @endsection
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Калькулятор обоев — RAFY WALLS",
+  "description": "Удобный калькулятор обоев от RAFY WALLS поможет точно рассчитать, сколько рулонов обоев нужно для вашей комнаты.",
+  "url": "{{ url()->current() }}"
+}
+</script>
+
 
 @section('content')
 <div class="container pt-5 mt-5 mb-5 d-flex justify-content-center align-items-start min-vh-100">

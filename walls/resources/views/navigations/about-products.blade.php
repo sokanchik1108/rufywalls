@@ -1,15 +1,24 @@
 @extends('layouts.main')
 
 {{-- 🔹 Title --}}
-@section('title', 'О продукции — стильные и качественные обои в Алматы | RAFY WALLS')
+@section('title', 'О продукции — купить стильные и качественные обои в Алматы | RAFY WALLS')
 
 {{-- 🔹 Meta Description (для SEO + Open Graph + Twitter) --}}
-@section('meta_description', 'В RAFY WALLS вы найдете качественные моющиеся виниловые обои на флизелиновой основе в Алматы. Богатый выбор оттенков, фактур и коллекций от лучших брендов. Мы поможем создать интерьер, который вдохновляет каждый день.')
+@section('meta_description', 'Качественные моющиеся виниловые обои на флизелиновой основе в Алматы — RAFY WALLS. Широкий выбор оттенков, фактур и коллекций от лучших брендов. Создайте стильный и уютный интерьер с нами.')
 
 {{-- 🔹 Дополнительные мета-теги --}}
 @section('meta')
 <meta name="description" content="@yield('meta_description')" />
 <link rel="canonical" href="{{ url('/about-products') }}">
+<meta property="og:title" content="@yield('title')">
+<meta property="og:description" content="@yield('meta_description')">
+<meta property="og:image" content="{{ asset('images/og-about-products.jpg') }}">
+<meta property="og:url" content="{{ url('/about-products') }}">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="@yield('title')">
+<meta name="twitter:description" content="@yield('meta_description')">
+<meta name="twitter:image" content="{{ asset('images/og-about-products.jpg') }}">
 @endsection
 
 @section('content')
@@ -74,7 +83,9 @@
             font-size: 0.95rem;
         }
 
-        .fs-6, p, .text-secondary {
+        .fs-6,
+        p,
+        .text-secondary {
             font-size: 0.85rem;
         }
 
@@ -96,7 +107,9 @@
             font-size: 0.9rem;
         }
 
-        .fs-6, p, .text-secondary {
+        .fs-6,
+        p,
+        .text-secondary {
             font-size: 0.8rem;
         }
     }

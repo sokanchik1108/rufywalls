@@ -1,27 +1,38 @@
 @extends('layouts.main')
 
-{{-- 🔹 Title (ключевые слова + бренд + регион) --}}
+{{-- 🔹 Title --}}
 @section('title', 'Обои в Алматы — купить современные моющиеся обои | RAFY WALLS магазин обоев')
 
-{{-- 🔹 Meta Description (для SEO, Open Graph и Twitter) --}}
+{{-- 🔹 Meta Description --}}
 @section('meta_description', 'Купить обои в Алматы в магазине RAFY WALLS. Современные флизелиновые, виниловые и моющиеся обои. Новые коллекции Artex, Maxdecor, Dilmax и других брендов.')
 
-{{-- 🔹 Дополнительные мета-теги --}}
+{{-- 🔹 Open Graph / Twitter / Canonical --}}
 @section('meta')
-<meta name="description" content="@yield('meta_description')" />
+<link rel="canonical" href="{{ url()->current() }}">
 <meta name="keywords" content="обои Алматы, купить обои Алматы, магазин обоев Алматы, моющиеся обои Алматы, флизелиновые обои Алматы, виниловые обои Алматы, RAFY WALLS, современные обои, Artex, Maxdecor, Dilmax">
-<link rel="canonical" href="{{ url('/') }}">
+
+{{-- Open Graph --}}
+<meta property="og:title" content="@yield('title')">
+<meta property="og:description" content="@yield('meta_description')">
+<meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
+<meta property="og:url" content="{{ url()->current() }}">
+<meta property="og:type" content="website">
+
+{{-- Twitter Card --}}
+<meta name="twitter:title" content="@yield('title')">
+<meta name="twitter:description" content="@yield('meta_description')">
+<meta name="twitter:image" content="{{ asset('images/og-image.jpg') }}">
+<meta name="twitter:card" content="summary_large_image">
 @endsection
 
 @section('content')
 
-    {{-- 🔹 Скрытый H1 для SEO (доступен поисковикам, но не виден пользователям) --}}
+    {{-- 🔹 Скрытый H1 для SEO --}}
     <h1 class="visually-hidden">
         Купить обои в Алматы — RAFY WALLS магазин современных моющихся обоев
     </h1>
 
-    {{-- 🔹 Основной контент сайта --}}
-    
+    {{-- 🔹 Основной контент --}}
     @include('sections.about-products')
     @include('sections.cards')
     @include('sections.about-us')
@@ -31,7 +42,6 @@
 
 @endsection
 
-{{-- 🔹 CSS для скрытия H1, но сохранения его доступности поисковикам --}}
 @push('styles')
 <style>
 .visually-hidden {
