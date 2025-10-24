@@ -93,7 +93,7 @@ Route::get('/admin/warehouse/{id}/batches', [WarehouseController::class, 'batchO
 
 Route::get('/admin/warehouses/overview', [WarehouseController::class, 'stockWarehousesPage'])->middleware('auth')->name('admin.warehouses.overview');
 
-Route::get('/admin/sales/history/{sku}', [SaleController::class, 'getHistory'])->middleware('auth')->name('admin.sales.history');
+Route::get('/admin/sales/history/{sku}', [SaleController::class, 'getHistory'])->middleware('auth')->name('sales.history');
 
 Route::get('/admin/variants/autocomplete', [AdminController::class, 'autocomplete'])->name('admin.variants.autocomplete');
 
@@ -132,6 +132,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     })->name('hidden.form');
     Route::post('/hidden-store', [AdminController::class, 'storeHidden'])->name('hidden.store');
     Route::get('/products/create/select', [AdminController::class, 'selectCreateForm'])->name('products.selectCreateForm');
+    Route::get('sales/returns', [SaleController::class, 'returns'])
+        ->name('sales.returns');
 });
 
 Auth::routes();

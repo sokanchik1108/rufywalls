@@ -113,6 +113,7 @@
                         <li class="nav-item"><a class="nav-link" href="{{ route('admin.sales.select_warehouse') }}">Продажи</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('admin.stocks.warehouses') }}">Добавить на склад</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('admin.warehouses.overview') }}">Остатки</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('admin.sales.returns') }}">Поиск в истории продаж</a></li>
                         @endif
                         @endauth
                     </ul>
@@ -169,6 +170,8 @@
                     <a class="nav-link" href="{{ route('admin.stocks.warehouses') }}">Добавить товар на склад</a>
                     <hr class="my-1">
                     <a class="nav-link" href="{{ route('admin.warehouses.overview') }}">Остатки товаров</a>
+                    <hr class="my-1">
+                    <a class="nav-link" href="{{ route('admin.sales.returns') }}">Поиск в истории продаж</a>
                     <hr class="my-1">
                     <a class="nav-link" href="{{ route('website') }}" style="color: blue;">ПЕРЕЙТИ НА САЙТ</a>
                     @endif

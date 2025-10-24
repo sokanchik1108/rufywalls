@@ -49,7 +49,6 @@
                                 <span class="me-2">👥</span> <span>Пользователи</span>
                             </a>
                         </div>
-                        
 
                         <div class="col-md-3">
                             <a href="{{ route('admin.sales.select_warehouse') }}" class="btn btn-outline-danger w-100 py-3 shadow-sm rounded-3 d-flex align-items-center justify-content-center">
@@ -70,8 +69,14 @@
                             </a>
                         </div>
 
-                    </div>
+                        {{-- 🕵️ Новая кнопка: История продаж --}}
+                        <div class="col-md-3">
+                            <a href="{{ route('admin.sales.returns') }}" class="btn btn-outline-warning w-100 py-3 shadow-sm rounded-3 d-flex align-items-center justify-content-center">
+                                <span class="me-2">🔍</span> <span>История продаж</span>
+                            </a>
+                        </div>
 
+                    </div>
                     @else
                     <div class="alert alert-warning mt-4">
                         У вас нет прав администратора.

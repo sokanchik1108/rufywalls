@@ -162,4 +162,9 @@ class SaleController extends Controller
 
         return response()->json($sales);
     }
+
+    public function returns()
+    {
+        return view('sales.returns');
+    }
 }

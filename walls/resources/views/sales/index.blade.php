@@ -113,34 +113,52 @@
         @endif
     </h1>
 
-    @if ($currentWarehouseId)
-    <div class="mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        @if ($currentWarehouseId)
         <a href="{{ route('admin.sales.select_warehouse') }}" class="btn btn-sm btn-outline-secondary">
             ← Вернуться к выбору склада
         </a>
+        @endif
+
+        <a href="{{ route('admin.sales.returns') }}" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="black" stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span>Поиск в истории продаж</span>
+        </a>
     </div>
-    @endif
+
 
     {{-- Фильтр по дате --}}
-    <form method="GET" class="mb-3 d-flex align-items-center gap-2 flex-wrap" id="dateFilterForm">
-        <input type="date" name="date" class="form-control w-auto" value="{{ request('date', $currentDate->format('Y-m-d')) }}">
-        <input type="hidden" name="warehouse_id" value="{{ $currentWarehouseId }}">
-    </form>
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+        <!-- Кнопка предыдущей даты -->
+        <a href="?date={{ $prevDate }}&warehouse_id={{ $currentWarehouseId }}"
+            class="btn btn-outline-secondary btn-sm mb-2">
+            &laquo; {{ $prevDate }}
+        </a>
+
+        <!-- Форма выбора даты -->
+        <form method="GET" class="d-flex align-items-center gap-2 mb-2" id="dateFilterForm">
+            <input type="date" name="date" class="form-control form-control-sm"
+                value="{{ request('date', $currentDate->format('Y-m-d')) }}"
+                style="min-width: 160px;">
+            <input type="hidden" name="warehouse_id" value="{{ $currentWarehouseId }}">
+        </form>
+
+        <!-- Кнопка следующей даты -->
+        <a href="?date={{ $nextDate }}&warehouse_id={{ $currentWarehouseId }}"
+            class="btn btn-outline-secondary btn-sm mb-2">
+            {{ $nextDate }} &raquo;
+        </a>
+    </div>
 
     <script>
-        const dateInput = document.querySelector('input[name="date"]');
-        const form = document.getElementById('dateFilterForm');
-        dateInput.addEventListener('change', () => {
-            form.submit();
+        // Автообновление при выборе даты
+        document.querySelector('#dateFilterForm input[type="date"]').addEventListener('change', function() {
+            document.getElementById('dateFilterForm').submit();
         });
     </script>
-
-    {{-- Навигация по дням --}}
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
-        <a href="?date={{ $prevDate }}&warehouse_id={{ $currentWarehouseId }}" class="btn btn-outline-secondary btn-sm mb-2">&laquo; {{ $prevDate }}</a>
-        <h5 class="mb-2">{{ $currentDate->format('d.m.Y') }}</h5>
-        <a href="?date={{ $nextDate }}&warehouse_id={{ $currentWarehouseId }}" class="btn btn-outline-secondary btn-sm mb-2">{{ $nextDate }} &raquo;</a>
-    </div>
 
     @if(session('success'))
     <div class="alert alert-success small">{{ session('success') }}</div>
@@ -155,10 +173,12 @@
         <input type="hidden" name="warehouse_id" value="{{ $currentWarehouseId }}">
         <div class="row g-2">
             <div class="col-6 col-sm-4 col-md-2">
-                <input name="sale_date" type="date" class="form-control" value="{{ $currentDate->format('Y-m-d') }}" required>
+                <input name="sale_date" type="date" class="form-control"
+                    value="{{ $currentDate->format('Y-m-d') }}" required>
             </div>
             <div class="col-6 col-sm-4 col-md-2">
-                <input name="sku" id="skuInput" type="text" class="form-control" placeholder="Артикул" required autocomplete="off">
+                <input name="sku" id="skuInput" type="text" class="form-control"
+                    placeholder="Артикул" required autocomplete="off">
             </div>
             <div class="col-6 col-sm-4 col-md-2">
                 <select name="batch_id" id="batchSelect" class="form-select" required>
@@ -166,7 +186,8 @@
                 </select>
             </div>
             <div class="col-6 col-sm-4 col-md-2">
-                <input name="quantity" type="number" class="form-control" placeholder="Кол-во" required>
+                <input name="quantity" type="number" class="form-control"
+                    placeholder="Кол-во" required>
             </div>
             <div class="col-12 col-sm-4 col-md-2">
                 <button class="btn btn-primary w-100">Сохранить</button>
@@ -197,7 +218,8 @@
                         <td>{{ $sale->sku }} (Партия {{ $sale->batch->batch_code ?? '—' }})</td>
                         <td class="text-end">{{ $sale->quantity }}</td>
                         <td class="text-center">
-                            <form method="POST" action="{{ route('admin.sales.destroy', $sale->id) }}" onsubmit="return confirm('Удалить запись?')" class="d-inline">
+                            <form method="POST" action="{{ route('admin.sales.destroy', $sale->id) }}"
+                                onsubmit="return confirm('Удалить запись?')" class="d-inline">
                                 @csrf
                                 @method('DELETE')
                                 <button class="btn btn-sm btn-outline-danger btn-cross" title="Удалить">×</button>
@@ -212,76 +234,6 @@
             </tbody>
         </table>
     </div>
-
-    <div class="mb-4 mt-5">
-        <h5>История продаж для возврата</h5>
-
-        <div class="row g-2">
-            <div class="col-12 col-sm-6 col-md-4 position-relative">
-                <input type="text" id="returnSkuInput" class="form-control pe-5 w-100"
-                    placeholder="Артикул для возврата" autocomplete="off">
-                <button type="button" id="clearReturnInput"
-                    class="clear-btn position-absolute top-50 end-0 translate-middle-y"
-                    style="display:none;">×</button>
-            </div>
-        </div>
-
-        <div class="table-responsive mt-2" id="returnHistoryTableContainer" style="display:none;">
-            <table class="table table-sm table-bordered">
-                <thead>
-                    <tr>
-                        <th>Дата</th>
-                        <th>Партия</th>
-                        <th class="text-end">Кол-во</th>
-                        <th>Склад</th>
-                    </tr>
-                </thead>
-                <tbody id="returnHistoryTableBody"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <style>
-        .clear-btn {
-            border: none;
-            background: transparent;
-            font-size: 1.4rem;
-            line-height: 1;
-            color: #888;
-            cursor: pointer;
-            padding: 0 0.75rem;
-            transition: color 0.2s ease;
-            z-index: 2;
-        }
-
-        .clear-btn:hover {
-            color: #333;
-        }
-
-        /* Мобильная адаптация */
-        @media (max-width: 576px) {
-            #returnSkuInput {
-                font-size: 1rem;
-                padding-right: 2.2rem;
-            }
-
-            .clear-btn {
-                font-size: 1.5rem;
-                padding: 0 1.2rem;
-                right: 0.25rem;
-            }
-
-            .table {
-                font-size: 0.9rem;
-            }
-
-            h5 {
-                font-size: 1rem;
-            }
-        }
-    </style>
-
-
 
 </div>
 
@@ -318,67 +270,6 @@
             }
         });
     });
-
-    // Автокомплит + крестик для возврата
-    $(function() {
-        const $input = $('#returnSkuInput');
-        const $clearBtn = $('#clearReturnInput');
-        const $tableContainer = $('#returnHistoryTableContainer');
-        const $tbody = $('#returnHistoryTableBody');
-
-        // автокомплит
-        $input.autocomplete({
-            source: '{{ route("admin.variants.autocomplete") }}',
-            minLength: 1,
-            select: function(event, ui) {
-                const sku = ui.item.value;
-                $.ajax({
-                    url: '/admin/sales/history/' + encodeURIComponent(sku),
-                    success: function(data) {
-                        $tbody.empty();
-
-                        if (data.length === 0) {
-                            $tbody.append('<tr><td colspan="4" class="text-center text-muted">Нет продаж</td></tr>');
-                        } else {
-                            data.forEach(sale => {
-                                $tbody.append(`
-                                    <tr>
-                                        <td>${sale.sale_date}</td>
-                                        <td>${sale.batch_code ?? '—'}</td>
-                                        <td class="text-end">${sale.quantity}</td>
-                                        <td>${sale.warehouse_name}</td>
-                                    </tr>
-                                `);
-                            });
-                        }
-
-                        $tableContainer.show();
-                    }
-                });
-            }
-        });
-
-        // показываем крестик при вводе
-        $input.on('input', function() {
-            const hasText = $(this).val().trim() !== '';
-            $clearBtn.toggle(hasText);
-            if (!hasText) {
-                $tableContainer.hide();
-                $tbody.empty();
-            }
-        });
-
-        // очистка при клике на крестик
-        $clearBtn.on('click', function() {
-            $input.val('').focus();
-            $clearBtn.hide();
-            $tableContainer.hide();
-            $tbody.empty();
-        });
-    });
 </script>
-
-
-
 
 @endsection
