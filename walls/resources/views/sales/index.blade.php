@@ -4,6 +4,8 @@
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 
 <style>
     body {
@@ -31,12 +33,10 @@
     .form-control,
     .form-select {
         font-size: 16px !important;
-        /* фикс против зума на мобилках */
         padding: 0.35rem 0.55rem;
         border-radius: 4px;
         border-color: #ddd;
     }
-
 
     .btn {
         font-size: 0.85rem;
@@ -121,17 +121,25 @@
     </div>
     @endif
 
-    {{-- Навигация по датам --}}
+    {{-- Фильтр по дате --}}
+    <form method="GET" class="mb-3 d-flex align-items-center gap-2 flex-wrap" id="dateFilterForm">
+        <input type="date" name="date" class="form-control w-auto" value="{{ request('date', $currentDate->format('Y-m-d')) }}">
+        <input type="hidden" name="warehouse_id" value="{{ $currentWarehouseId }}">
+    </form>
+
+    <script>
+        const dateInput = document.querySelector('input[name="date"]');
+        const form = document.getElementById('dateFilterForm');
+        dateInput.addEventListener('change', () => {
+            form.submit();
+        });
+    </script>
+
+    {{-- Навигация по дням --}}
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
-        <a href="?date={{ $prevDate }}&warehouse_id={{ $currentWarehouseId }}" class="btn btn-outline-secondary btn-sm mb-2">
-            &laquo; {{ $prevDate }}
-        </a>
-
+        <a href="?date={{ $prevDate }}&warehouse_id={{ $currentWarehouseId }}" class="btn btn-outline-secondary btn-sm mb-2">&laquo; {{ $prevDate }}</a>
         <h5 class="mb-2">{{ $currentDate->format('d.m.Y') }}</h5>
-
-        <a href="?date={{ $nextDate }}&warehouse_id={{ $currentWarehouseId }}" class="btn btn-outline-secondary btn-sm mb-2">
-            {{ $nextDate }} &raquo;
-        </a>
+        <a href="?date={{ $nextDate }}&warehouse_id={{ $currentWarehouseId }}" class="btn btn-outline-secondary btn-sm mb-2">{{ $nextDate }} &raquo;</a>
     </div>
 
     @if(session('success'))
@@ -141,7 +149,7 @@
     <div class="alert alert-danger small">{{ session('error') }}</div>
     @endif
 
-    {{-- Форма --}}
+    {{-- Форма добавления продажи --}}
     <form method="POST" action="{{ route('admin.sales.store') }}" class="mb-4">
         @csrf
         <input type="hidden" name="warehouse_id" value="{{ $currentWarehouseId }}">
@@ -173,6 +181,7 @@
     }
     @endphp
 
+    {{-- Таблица продаж --}}
     <div class="table-responsive">
         <table class="table table-sm table-bordered">
             <thead>
@@ -203,21 +212,91 @@
             </tbody>
         </table>
     </div>
+
+    <div class="mb-4 mt-5">
+        <h5>История продаж для возврата</h5>
+
+        <div class="row g-2">
+            <div class="col-12 col-sm-6 col-md-4 position-relative">
+                <input type="text" id="returnSkuInput" class="form-control pe-5 w-100"
+                    placeholder="Артикул для возврата" autocomplete="off">
+                <button type="button" id="clearReturnInput"
+                    class="clear-btn position-absolute top-50 end-0 translate-middle-y"
+                    style="display:none;">×</button>
+            </div>
+        </div>
+
+        <div class="table-responsive mt-2" id="returnHistoryTableContainer" style="display:none;">
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Партия</th>
+                        <th class="text-end">Кол-во</th>
+                        <th>Склад</th>
+                    </tr>
+                </thead>
+                <tbody id="returnHistoryTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <style>
+        .clear-btn {
+            border: none;
+            background: transparent;
+            font-size: 1.4rem;
+            line-height: 1;
+            color: #888;
+            cursor: pointer;
+            padding: 0 0.75rem;
+            transition: color 0.2s ease;
+            z-index: 2;
+        }
+
+        .clear-btn:hover {
+            color: #333;
+        }
+
+        /* Мобильная адаптация */
+        @media (max-width: 576px) {
+            #returnSkuInput {
+                font-size: 1rem;
+                padding-right: 2.2rem;
+            }
+
+            .clear-btn {
+                font-size: 1.5rem;
+                padding: 0 1.2rem;
+                right: 0.25rem;
+            }
+
+            .table {
+                font-size: 0.9rem;
+            }
+
+            h5 {
+                font-size: 1rem;
+            }
+        }
+    </style>
+
+
+
 </div>
 
 <script>
     const currentWarehouseId = @json($currentWarehouseId);
 
+    // Автокомплит для добавления продажи
     $(function() {
         $('#skuInput').autocomplete({
             source: '{{ route("admin.variants.autocomplete") }}',
             minLength: 1,
             select: function(event, ui) {
                 const sku = ui.item.value;
-                const warehouseId = currentWarehouseId;
-
-                if (!warehouseId) {
-                    alert('Склад не выбран. Обновите страницу или выберите склад.');
+                if (!currentWarehouseId) {
+                    alert('Склад не выбран.');
                     return;
                 }
 
@@ -228,7 +307,7 @@
                         $select.empty().append(`<option value="">Партия</option>`);
                         data.forEach(batch => {
                             if (!batch.warehouses || !Array.isArray(batch.warehouses)) return;
-                            const warehouse = batch.warehouses.find(w => w.id == warehouseId);
+                            const warehouse = batch.warehouses.find(w => w.id == currentWarehouseId);
                             if (warehouse && warehouse.pivot && warehouse.pivot.quantity !== undefined) {
                                 const qty = warehouse.pivot.quantity;
                                 $select.append(`<option value="${batch.id}">Партия ${batch.batch_code ?? '—'} (${qty} шт)</option>`);
@@ -239,8 +318,67 @@
             }
         });
     });
+
+    // Автокомплит + крестик для возврата
+    $(function() {
+        const $input = $('#returnSkuInput');
+        const $clearBtn = $('#clearReturnInput');
+        const $tableContainer = $('#returnHistoryTableContainer');
+        const $tbody = $('#returnHistoryTableBody');
+
+        // автокомплит
+        $input.autocomplete({
+            source: '{{ route("admin.variants.autocomplete") }}',
+            minLength: 1,
+            select: function(event, ui) {
+                const sku = ui.item.value;
+                $.ajax({
+                    url: '/admin/sales/history/' + encodeURIComponent(sku),
+                    success: function(data) {
+                        $tbody.empty();
+
+                        if (data.length === 0) {
+                            $tbody.append('<tr><td colspan="4" class="text-center text-muted">Нет продаж</td></tr>');
+                        } else {
+                            data.forEach(sale => {
+                                $tbody.append(`
+                                    <tr>
+                                        <td>${sale.sale_date}</td>
+                                        <td>${sale.batch_code ?? '—'}</td>
+                                        <td class="text-end">${sale.quantity}</td>
+                                        <td>${sale.warehouse_name}</td>
+                                    </tr>
+                                `);
+                            });
+                        }
+
+                        $tableContainer.show();
+                    }
+                });
+            }
+        });
+
+        // показываем крестик при вводе
+        $input.on('input', function() {
+            const hasText = $(this).val().trim() !== '';
+            $clearBtn.toggle(hasText);
+            if (!hasText) {
+                $tableContainer.hide();
+                $tbody.empty();
+            }
+        });
+
+        // очистка при клике на крестик
+        $clearBtn.on('click', function() {
+            $input.val('').focus();
+            $clearBtn.hide();
+            $tableContainer.hide();
+            $tbody.empty();
+        });
+    });
 </script>
 
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+
+
 @endsection

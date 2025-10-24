@@ -93,6 +93,8 @@ Route::get('/admin/warehouse/{id}/batches', [WarehouseController::class, 'batchO
 
 Route::get('/admin/warehouses/overview', [WarehouseController::class, 'stockWarehousesPage'])->middleware('auth')->name('admin.warehouses.overview');
 
+Route::get('/admin/sales/history/{sku}', [SaleController::class, 'getHistory'])->middleware('auth')->name('admin.sales.history');
+
 Route::get('/admin/variants/autocomplete', [AdminController::class, 'autocomplete'])->name('admin.variants.autocomplete');
 
 Route::get('/catalog-autocomplete', [WebsiteController::class, 'catalogAutocomplete'])->name('catalog.autocomplete');

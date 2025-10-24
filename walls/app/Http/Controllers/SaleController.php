@@ -145,4 +145,21 @@ class SaleController extends Controller
         $sale->delete();
         return back()->with('success', 'Продажа удалена');
     }
+
+    public function getHistory($sku)
+    {
+        $sales = \App\Models\Sale::with('batch', 'warehouse')
+            ->where('sku', $sku)
+            ->where('sale_date', '>=', now()->subDays(30)) // только последние 30 дней
+            ->orderBy('sale_date', 'desc')
+            ->get()
+            ->map(fn($sale) => [
+                'sale_date' => optional($sale->sale_date)->format('d.m.Y'),
+                'batch_code' => $sale->batch->batch_code ?? '—',
+                'quantity' => $sale->quantity,
+                'warehouse_name' => $sale->warehouse->name ?? '—',
+            ]);
+
+        return response()->json($sales);
+    }
 }

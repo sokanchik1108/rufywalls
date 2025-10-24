@@ -94,6 +94,12 @@
         .form-control {
             width: 100%;
         }
+
+        @media (max-width: 768px) {
+            #sku-autocomplete {
+                font-size: 16px;
+            }
+        }
     }
 </style>
 
@@ -129,7 +135,7 @@
 
     // Функция: получить цвет по ID склада
     function getWarehouseColor($id, $colors) {
-        return $colors[$id % count($colors)];
+    return $colors[$id % count($colors)];
     }
     @endphp
 
@@ -143,7 +149,7 @@
                 {{ $variant->sku }} — {{ $variant->product->name }}
                 @if($totalStock > 0 && $totalStock <= 5)
                     <span class="badge bg-danger ms-2">Мало товара</span>
-                @endif
+                    @endif
             </div>
             <div class="total">Всего: {{ $totalStock }}</div>
         </div>
@@ -153,20 +159,20 @@
                 <tbody>
                     @foreach ($warehouses as $warehouse)
                     @php
-                        $stock = 0;
-                        foreach ($variant->batches as $batch) {
-                            $stock += $batch->warehouses->where('id', $warehouse->id)->sum('pivot.quantity');
-                        }
-                        $hasBatches = $variant->batches->filter(fn($batch) =>
-                            $batch->warehouses->contains('id', $warehouse->id)
-                        )->isNotEmpty();
+                    $stock = 0;
+                    foreach ($variant->batches as $batch) {
+                    $stock += $batch->warehouses->where('id', $warehouse->id)->sum('pivot.quantity');
+                    }
+                    $hasBatches = $variant->batches->filter(fn($batch) =>
+                    $batch->warehouses->contains('id', $warehouse->id)
+                    )->isNotEmpty();
                     @endphp
                     <tr>
                         <td style="color: {{ getWarehouseColor($warehouse->id, $colors) }};">
                             {{ $warehouse->name }}
                             @if($hasBatches && $stock > 0 && $stock <= 5)
                                 <span class="badge bg-warning text-dark ms-1">Мало на складе</span>
-                            @endif
+                                @endif
                         </td>
                         <td class="text-end">{{ $stock }}</td>
                     </tr>
@@ -181,14 +187,14 @@
                             data-bs-target="#collapse{{ $variant->id }}">
                             <span>Партии товара</span>
                             @php
-                                $hasLowStockBatch = $variant->batches->some(fn($batch) =>
-                                    $batch->warehouses->sum('pivot.quantity') > 0 &&
-                                    $batch->warehouses->sum('pivot.quantity') <= 5
+                            $hasLowStockBatch = $variant->batches->some(fn($batch) =>
+                            $batch->warehouses->sum('pivot.quantity') > 0 &&
+                            $batch->warehouses->sum('pivot.quantity') <= 5
                                 );
-                            @endphp
-                            @if($hasLowStockBatch)
+                                @endphp
+                                @if($hasLowStockBatch)
                                 <span class="badge bg-danger ms-2">Есть партии с малым остатком</span>
-                            @endif
+                                @endif
                         </button>
                     </h2>
                     <div id="collapse{{ $variant->id }}" class="accordion-collapse collapse">
@@ -204,14 +210,14 @@
                                 <tbody>
                                     @foreach ($variant->batches as $batch)
                                     @php
-                                        $batchTotal = $batch->warehouses->sum('pivot.quantity');
+                                    $batchTotal = $batch->warehouses->sum('pivot.quantity');
                                     @endphp
                                     <tr>
                                         <td>
                                             {{ $batch->batch_code }}
                                             @if($batchTotal > 0 && $batchTotal <= 5)
                                                 <span class="badge bg-info text-dark ms-1">Малый остаток</span>
-                                            @endif
+                                                @endif
                                         </td>
                                         <td>
                                             @foreach ($batch->warehouses as $warehouse)
@@ -222,7 +228,7 @@
                                                 <strong>{{ $warehouse->pivot->quantity }}</strong>
                                                 @if($warehouse->pivot->quantity > 0 && $warehouse->pivot->quantity <= 5)
                                                     <span class="badge bg-warning text-dark ms-1">Мало</span>
-                                                @endif
+                                                    @endif
                                             </div>
                                             @endforeach
                                         </td>
