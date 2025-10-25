@@ -34,36 +34,7 @@
     Каталог обоев RAFY WALLS — купить обои в Алматы и по Казахстану
 </h1>
 
-<section class="catalog-banner" style="position: relative; width: 100%; overflow: hidden;">
 
-    <!-- Изображения с улучшенными alt -->
-    <div class="catalog-images">
-        <div class="catalog-image">
-            <img src="{{ asset('images/баннер8.webp') }}" alt="Современные обои в Алматы — каталог RAFY WALLS">
-        </div>
-        <div class="catalog-image hide-on-mobile">
-            <img src="{{ asset('images/баннер12.webp') }}" alt="Флизелиновые и виниловые обои RAFY WALLS">
-        </div>
-        <div class="catalog-image hide-on-mobile">
-            <img src="{{ asset('images/баннер4.webp') }}" alt="Моющиеся обои для интерьера RAFY WALLS Алматы">
-        </div>
-    </div>
-
-    <!-- Затемнение -->
-    <div class="catalog-overlay"></div>
-
-    <!-- Текст -->
-    <div class="catalog-text">
-        <h2 class="h2 mb-3">
-            Каталог <span class="company-name">RAFY WALLS</span>
-        </h2>
-        <p class="fs-5 mb-2">Стены — важнейший элемент атмосферы</p>
-        <p class="fs-6 mb-0">
-            Мы верим, что стены должны вдохновлять. Наш каталог объединяет коллекции,
-            в которых каждая текстура и оттенок создают настроение. Найдите то, что близко именно вам!
-        </p>
-    </div>
-</section>
 
 @include('sections.title')
 
