@@ -7,12 +7,12 @@
   width: 100%;
   color: #111;
   text-align: center;
-  padding: 10px 0;
+  padding: 16px 10px; /* увеличено с 10px до 16px */
   font-family: 'Arial', sans-serif;
-  font-size: 13px;
+  font-size: 14px; /* чуть крупнее */
   font-weight: 400;
-  letter-spacing: 0.5px; /* современный вид */
+  letter-spacing: 0.5px;
+  line-height: 1.6; /* добавлена комфортная высота строк */
+  background-color: #f8f9fa; /* нейтральный светлый фон */
 }
-
-
 </style>

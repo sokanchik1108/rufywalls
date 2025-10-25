@@ -195,7 +195,7 @@ public function website()
                         ->orderBy('products.created_at', 'asc');
             }
 
-            $variants = $variants->paginate(12)->withQueryString();
+            $variants = $variants->paginate(16)->withQueryString();
 
             if ($request->ajax()) {
                 return view('partials.products', compact('variants'))->render();
@@ -270,7 +270,7 @@ public function website()
             ")->orderBy('created_at', 'asc');
         }
 
-        $products = $products->paginate(12)->withQueryString();
+        $products = $products->paginate(16)->withQueryString();
 
         if ($request->ajax()) {
             return view('partials.products', ['variants' => $products])->render();
