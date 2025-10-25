@@ -120,7 +120,10 @@
                             @foreach ($images as $index => $image)
                             @if($image)
                             <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                                <img src="{{ asset('storage/' . $image) }}" class="rafy-card-img lazy-slide" alt="{{ $product->name }}">
+                                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+                                    data-src="{{ asset('storage/' . $image) }}"
+                                    class="rafy-card-img lazy-slide"
+                                    alt="{{ $product->name }}">">
                             </div>
                             @endif
                             @endforeach
@@ -281,7 +284,6 @@
         color: #007bff !important;
     }
 
-
     /* ========== Убираем синий бордер у всех полей при фокусе ========== */
     input:focus,
     select:focus,
@@ -290,31 +292,31 @@
         box-shadow: none;
     }
 
-    /* Сетка */
+    /* ========== Сетка товаров ========== */
     .product-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        /* 4 карточки в ряд */
         gap: 15px;
     }
 
-    /* Карточки */
+    /* ========== Карточки ========== */
     .rafy-card-square {
         position: relative;
         overflow: hidden;
         background: #fff;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        transition: transform .3s ease, box-shadow .3s ease;
+        transition: box-shadow 0.25s ease;
         cursor: pointer;
         width: 100%;
         aspect-ratio: 1 / 1;
+        will-change: opacity, background;
     }
 
     .rafy-card-square:hover {
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
-    /* Карусель */
+    /* ========== Карусель ========== */
     .rafy-carousel-wrapper {
         position: relative;
         width: 100%;
@@ -322,16 +324,20 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        overflow: hidden;
+        will-change: opacity, background;
     }
 
     .rafy-card-img {
         width: 100%;
         height: 500px;
         object-fit: cover;
-        transition: transform .25s ease;
+        backface-visibility: hidden;
+        transform: translateZ(0);
+        transition: none; /* убираем любые анимации изображения */
     }
 
-    /* Стрелки карусели ближе к центру */
+    /* ========== Стрелки карусели ========== */
     .rafy-carousel-wrapper .carousel-control-prev,
     .rafy-carousel-wrapper .carousel-control-next {
         width: 28px;
@@ -339,6 +345,13 @@
         top: 50%;
         transform: translateY(-50%);
         z-index: 5;
+        opacity: 0;
+        transition: opacity 0.2s linear;
+    }
+
+    .rafy-carousel-wrapper.hover-enabled .carousel-control-prev,
+    .rafy-carousel-wrapper.hover-enabled .carousel-control-next {
+        opacity: 1;
     }
 
     .rafy-carousel-wrapper .carousel-control-prev {
@@ -349,7 +362,7 @@
         right: 12px;
     }
 
-    /* Статус */
+    /* ========== Статус ========== */
     .rafy-status {
         position: absolute;
         top: 8px;
@@ -365,20 +378,20 @@
         text-transform: uppercase;
     }
 
-    /* Затемнение только при hover */
+    /* ========== Затемнение ========== */
     .rafy-overlay {
         position: absolute;
         inset: 0;
         background: rgba(0, 0, 0, 0);
-        transition: background .25s ease;
+        transition: background 0.2s linear;
         z-index: 1;
     }
 
     .rafy-card-square:hover .rafy-overlay {
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.47), transparent);
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.45), transparent);
     }
 
-    /* Hover текст */
+    /* ========== Hover текст ========== */
     .rafy-hover-text {
         display: flex;
         flex-direction: column;
@@ -386,19 +399,19 @@
         justify-content: center;
         color: #fff;
         opacity: 0;
-        transition: opacity .25s ease, transform .25s ease;
-        transform: scale(0.95);
+        transition: opacity 0.2s linear;
         z-index: 2;
         text-align: center;
         position: absolute;
         inset: 0;
+        will-change: opacity;
     }
 
     .rafy-card-square:hover .rafy-hover-text {
         opacity: 1;
     }
 
-    /* Текст внутри hover */
+    /* ========== Текст внутри hover ========== */
     .rafy-articul {
         font-size: 0.9rem;
         font-weight: 500;
@@ -432,7 +445,6 @@
     .price-info {
         font-size: 0.85rem;
         font-weight: 400;
-        /* например, золотой цвет */
         text-align: center;
         margin-top: 4px;
         font-family: 'Arial', sans-serif;
@@ -452,17 +464,20 @@
     @media (max-width: 1024px) {
         .product-grid {
             grid-template-columns: repeat(2, 1fr);
-            /* 2 карточки в ряд на планшете */
         }
     }
 
     @media (max-width: 576px) {
         .product-grid {
             grid-template-columns: 1fr;
-            /* 1 карточка на мобильных */
+        }
+
+        .rafy-card-img {
+            height: 400px;
         }
     }
 </style>
+
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
