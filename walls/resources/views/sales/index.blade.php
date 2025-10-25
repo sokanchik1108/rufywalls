@@ -131,27 +131,42 @@
 
 
     {{-- Фильтр по дате --}}
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap position-relative">
         <!-- Кнопка предыдущей даты -->
         <a href="?date={{ $prevDate }}&warehouse_id={{ $currentWarehouseId }}"
-            class="btn btn-outline-secondary btn-sm mb-2">
+            class="btn btn-outline-secondary btn-sm flex-shrink-0">
             &laquo; {{ $prevDate }}
         </a>
 
-        <!-- Форма выбора даты -->
-        <form method="GET" class="d-flex align-items-center gap-2 mb-2" id="dateFilterForm">
-            <input type="date" name="date" class="form-control form-control-sm"
+        <!-- Центрированный блок с датой -->
+        <form method="GET" class="position-absolute start-50 translate-middle-x" id="dateFilterForm">
+            <input type="date" name="date" class="form-control form-control-sm text-center"
                 value="{{ request('date', $currentDate->format('Y-m-d')) }}"
-                style="min-width: 160px;">
+                style="width: 140px;">
             <input type="hidden" name="warehouse_id" value="{{ $currentWarehouseId }}">
         </form>
 
         <!-- Кнопка следующей даты -->
         <a href="?date={{ $nextDate }}&warehouse_id={{ $currentWarehouseId }}"
-            class="btn btn-outline-secondary btn-sm mb-2">
+            class="btn btn-outline-secondary btn-sm flex-shrink-0">
             {{ $nextDate }} &raquo;
         </a>
     </div>
+
+    <style>
+        @media (max-width: 576px) {
+            .btn {
+                font-size: 12px;
+                padding: 4px 8px;
+            }
+
+            #dateFilterForm input[type="date"] {
+                width: 120px;
+                font-size: 13px;
+            }
+        }
+    </style>
+
 
     <script>
         // Автообновление при выборе даты

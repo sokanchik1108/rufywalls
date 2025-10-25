@@ -109,79 +109,64 @@
         ->values()
         ->all();
         @endphp
-
-        <div class="product-card">
-            @if (!empty($images))
-            <div id="carousel{{ $item->id ?? $product->id }}" class="carousel slide mb-3">
-                <div class="carousel-inner">
-                    @foreach ($images as $index => $image)
-                    @if($image) {{-- проверяем, что есть изображение --}}
-                    <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                        <div class="position-relative" style="width: 100%; height: auto;">
-                            <img
-                                src="{{ asset('storage/' . $image) }}"
-                                class="d-block w-100 lazy-slide"
-                                alt="Фото товара {{ $product->name ?? '' }}">
+        <a href="{{ route('product.show', $product->id) }}" class="product-card-link">
+            <div class="product-card rafy-card-square">
+                @if (!empty($images))
+                <div class="rafy-carousel-wrapper position-relative"
+                    onmouseenter="this.classList.add('hover-enabled')"
+                    onmouseleave="this.classList.remove('hover-enabled')">
+                    <div id="carousel{{ $item->id ?? $product->id }}" class="carousel slide">
+                        <div class="carousel-inner">
+                            @foreach ($images as $index => $image)
+                            @if($image)
+                            <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                                <img src="{{ asset('storage/' . $image) }}" class="rafy-card-img lazy-slide" alt="{{ $product->name }}">
+                            </div>
+                            @endif
+                            @endforeach
                         </div>
+
+                        @if (count($images) > 1)
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </button>
+                        @endif
                     </div>
-                    @endif
-                    @endforeach
                 </div>
-
-
-                @if (count($images) > 1)
-                <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon"></span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="next">
-                    <span class="carousel-control-next-icon"></span>
-                </button>
                 @endif
-            </div>
-            @endif
 
-            <div class="product-info">
-                <h4 class="product-title">
-                    {{ $product->name }}
-                    @if ($color)
-                    ({{ $color }})
-                    @endif
+                @if (!empty($product->status))
+                <div class="rafy-status">{{ $product->status }}</div>
+                @endif
 
-                    @if (!empty($product->status))
-                    <span class="product-status">
-                        {{ $product->status }}
-                    </span>
-                    @endif
-                </h4>
-                <div class="product-desc-price">
-                    <p>{{ $product->description }}</p>
+                <div class="rafy-overlay"></div>
 
-                    @if ($product->sale_price == 0)
-                    <span class="d-flex align-items-center" style="font-size: 0.9rem; color: #6c757d; font-weight:500">
-                        <i class="bi bi-info-circle me-2" style="font-size: 1rem; color: #6c757d;"></i>
-                        Информацию о цене можно узнать в WhatsApp
-                    </span>
-                    @elseif ($product->discount_price && $product->discount_price > $product->sale_price)
-                    <div>
-                        <span class="text-muted" style="text-decoration: line-through;">
-                            {{ number_format($product->discount_price, 0, '.', ' ') }} ₸
-                        </span>
-                        <span class="text-danger fw-bold ms-2">
-                            {{ number_format($product->sale_price, 0, '.', ' ') }} ₸
-                        </span>
+                <div class="rafy-hover-text">
+                    <div class="rafy-articul">{{ $shownVariant->sku ?? '---' }}</div>
+                    <div class="rafy-divider"></div>
+                    <div class="rafy-name">{{ $product->name }}</div>
+                    <div class="rafy-price">
+                        @if ($product->sale_price == 0)
+                        <div class="price-info">
+                            <i class="bi bi-info-circle me-2" style="font-size: 1rem;"></i>
+                            Информацию о цене можно узнать в WhatsApp
+                        </div>
+                        @elseif ($product->discount_price && $product->discount_price > $product->sale_price)
+                        <span style="text-decoration: line-through;">{{ number_format($product->discount_price, 0, '.', ' ') }} ₸</span>
+                        <span class="text-danger fw-bold ms-2">{{ number_format($product->sale_price, 0, '.', ' ') }} ₸</span>
+                        @else
+                        <span>{{ number_format($product->sale_price, 0, '.', ' ') }} ₸</span>
+                        @endif
                     </div>
-                    @else
-                    <span>{{ number_format($product->sale_price, 0, '.', ' ') }} ₸</span>
-                    @endif
-                </div>
 
-
-
-                <div class="btn-wrapper">
-                    <a href="{{ route('product.show', $product->id) }}" class="btn btn-dark">Подробнее</a>
                 </div>
             </div>
-        </div>
+        </a>
+
+
         @empty
         <p>Товары не найдены.</p>
         @endforelse
@@ -192,21 +177,7 @@
     {{ $variants->links('vendor.pagination.custom') }}
 </div>
 
-
-
-
 <style>
-    .product-status {
-        display: inline-block;
-        background-color: red;
-        /* тёмно-синий */
-        color: #fff;
-        font-size: 12px;
-        font-weight: bold;
-        padding: 2px 6px;
-        border-radius: 4px;
-    }
-
     /* ========== Общие стили для Top Bar ========== */
     .top-bar {
         display: flex;
@@ -319,99 +290,156 @@
         box-shadow: none;
     }
 
-    /* ========== Каталог карточек ========== */
+    /* Сетка */
     .product-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
+        grid-template-columns: repeat(4, 1fr);
+        /* 4 карточки в ряд */
+        gap: 15px;
     }
 
-    .product-card {
-        background-color: #fff;
-        border-radius: 10px;
+    /* Карточки */
+    .rafy-card-square {
+        position: relative;
         overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        transition: transform 0.3s ease;
-        display: flex;
-        flex-direction: column;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: transform .3s ease, box-shadow .3s ease;
+        cursor: pointer;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+    }
+
+    .rafy-card-square:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Карусель */
+    .rafy-carousel-wrapper {
+        position: relative;
+        width: 100%;
         height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    .product-card:hover {
-        transform: translateY(-5px);
-    }
-
-    .product-card img {
+    .rafy-card-img {
         width: 100%;
         height: 500px;
         object-fit: cover;
+        transition: transform .25s ease;
     }
 
-    .product-info {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        padding: 15px;
+    /* Стрелки карусели ближе к центру */
+    .rafy-carousel-wrapper .carousel-control-prev,
+    .rafy-carousel-wrapper .carousel-control-next {
+        width: 28px;
+        height: 28px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 5;
     }
 
-    .product-title {
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 5px;
-        line-height: 1.2;
-        min-height: 48px;
-        overflow: hidden;
+    .rafy-carousel-wrapper .carousel-control-prev {
+        left: 12px;
     }
 
-    .product-desc-price {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
+    .rafy-carousel-wrapper .carousel-control-next {
+        right: 12px;
     }
 
-    .product-desc-price p {
-        font-size: 14px;
-        color: #777;
-        margin-bottom: 8px;
-        word-break: break-word;
-        white-space: normal;
-        flex-grow: 1;
-    }
-
-    .product-desc-price span {
-        font-size: 16px;
-        font-weight: bold;
-        color: #333;
-        margin-top: auto;
-    }
-
-    .btn-wrapper {
-        margin-top: 10px;
-    }
-
-    .btn-dark {
-        display: block;
-        width: 100%;
-        background-color: #000;
+    /* Статус */
+    .rafy-status {
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: red;
         color: #fff;
-        padding: 10px 15px;
-        text-align: center;
-        border-radius: 5px;
-        text-decoration: none;
-        font-size: 14px;
-        transition: background-color 0.2s ease;
+        font-size: 0.75rem;
+        font-weight: 400;
+        padding: 2px 6px;
+        z-index: 3;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
     }
 
-    .btn-dark:hover {
-        background-color: #333;
+    /* Затемнение только при hover */
+    .rafy-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0);
+        transition: background .25s ease;
+        z-index: 1;
+    }
+
+    .rafy-card-square:hover .rafy-overlay {
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.47), transparent);
+    }
+
+    /* Hover текст */
+    .rafy-hover-text {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        opacity: 0;
+        transition: opacity .25s ease, transform .25s ease;
+        transform: scale(0.95);
+        z-index: 2;
+        text-align: center;
+        position: absolute;
+        inset: 0;
+    }
+
+    .rafy-card-square:hover .rafy-hover-text {
+        opacity: 1;
+    }
+
+    /* Текст внутри hover */
+    .rafy-articul {
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 4px;
+        letter-spacing: 0.5px;
+        font-family: 'Playfair Display', serif;
+    }
+
+    .rafy-divider {
+        width: 70px;
+        height: 1px;
+        background: #01142f;
+        margin: 4px auto;
+    }
+
+    .rafy-name {
+        font-size: 0.9rem;
+        font-weight: 300;
+        margin: 0;
+        font-family: 'Playfair Display', serif;
+        letter-spacing: 1px;
+    }
+
+    .rafy-price {
+        font-size: 1rem;
+        font-weight: 300;
+        margin-top: 4px;
+        font-family: 'Playfair Display', serif;
+    }
+
+    .price-info {
+        font-size: 0.85rem;
+        font-weight: 400;
+        /* например, золотой цвет */
+        text-align: center;
+        margin-top: 4px;
+        font-family: 'Arial', sans-serif;
     }
 
     /* ========== Адаптивность ========== */
     @media (max-width: 1024px) {
-        .product-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
         .top-bar {
             flex-direction: column;
         }
@@ -421,13 +449,17 @@
         }
     }
 
+    @media (max-width: 1024px) {
+        .product-grid {
+            grid-template-columns: repeat(2, 1fr);
+            /* 2 карточки в ряд на планшете */
+        }
+    }
+
     @media (max-width: 576px) {
         .product-grid {
             grid-template-columns: 1fr;
-        }
-
-        .product-card img {
-            height: 300px;
+            /* 1 карточка на мобильных */
         }
     }
 </style>
