@@ -470,7 +470,17 @@
         }
     }
 
-    /* Добавляем мобильное поведение hover */
+    @media (hover: none) {
+
+        /* Если device не поддерживает hover, убираем все :hover-правила, чтобы браузер не "залипал" */
+        .rafy-card-square:hover .rafy-overlay,
+        .rafy-card-square:hover .rafy-hover-text {
+            background: none !important;
+            opacity: 0 !important;
+        }
+    }
+
+    /* 2) Стандартный hover для мышки остаётся */
     @media (hover: hover) and (pointer: fine) {
         .rafy-card-square:hover .rafy-overlay {
             background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
@@ -481,7 +491,7 @@
         }
     }
 
-    /* Только для тач-устройств */
+    /* 3) Класс при касании — применяем эффект через класс, не через :hover */
     .rafy-card-square.active-touch .rafy-overlay {
         background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
     }
@@ -489,49 +499,136 @@
     .rafy-card-square.active-touch .rafy-hover-text {
         opacity: 1;
     }
+
+    /* 4) Когда мы отметили, что устройство тач — можно отключить pointer-events на overlay, но это опционально */
+    /* Убедимся что переходы плавные */
+    .rafy-hover-text {
+        transition: opacity 0.18s linear;
+    }
+
+    .rafy-overlay {
+        transition: background 0.18s linear;
+    }
 </style>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const carousels = document.querySelectorAll(".carousel");
+document.addEventListener('DOMContentLoaded', function () {
+    // ========== Lazy load изображений ==========
+    const carousels = document.querySelectorAll(".carousel");
 
-        // Lazy-load изображений
-        carousels.forEach(carousel => {
-            carousel.addEventListener("slide.bs.carousel", event => {
-                const current = event.relatedTarget;
-                [current?.previousElementSibling, current, current?.nextElementSibling].forEach(slide => {
-                    if (!slide) return;
-                    const img = slide.querySelector("img.lazy-slide");
-                    if (img && img.dataset.src && img.src !== img.dataset.src) img.src = img.dataset.src;
-                });
-            });
-
-            const first = carousel.querySelector(".carousel-item.active");
-            const second = first?.nextElementSibling;
-            [first, second].forEach(slide => {
+    carousels.forEach(carousel => {
+        carousel.addEventListener("slide.bs.carousel", event => {
+            const current = event.relatedTarget;
+            [current?.previousElementSibling, current, current?.nextElementSibling].forEach(slide => {
                 if (!slide) return;
                 const img = slide.querySelector("img.lazy-slide");
-                if (img && img.dataset.src && img.src !== img.dataset.src) img.src = img.dataset.src;
+                if (img && img.dataset.src && img.src !== img.dataset.src) {
+                    img.src = img.dataset.src;
+                }
             });
         });
 
-        // ==================
-        // 💡 Исправление hover для телефонов
-        // ==================
-        const cards = document.querySelectorAll(".rafy-card-square");
-
-        cards.forEach(card => {
-            card.addEventListener("touchstart", () => {
-                card.classList.add("active-touch");
-            });
-
-            card.addEventListener("touchend", () => {
-                card.classList.remove("active-touch");
-            });
-
-            card.addEventListener("touchmove", () => {
-                card.classList.remove("active-touch");
-            });
+        const first = carousel.querySelector(".carousel-item.active");
+        const second = first?.nextElementSibling;
+        [first, second].forEach(slide => {
+            if (!slide) return;
+            const img = slide.querySelector("img.lazy-slide");
+            if (img && img.dataset.src && img.src !== img.dataset.src) {
+                img.src = img.dataset.src;
+            }
         });
     });
+
+    // ========== Исправление hover/active-touch для телефонов ==========
+    const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+    if (isTouch) document.body.classList.add('using-touch');
+
+    const cards = document.querySelectorAll('.rafy-card-square');
+    const MOVE_THRESHOLD = 10;
+
+    cards.forEach(card => {
+        let startX = 0, startY = 0, moved = false;
+
+        function start(x, y) {
+            startX = x;
+            startY = y;
+            moved = false;
+            card.classList.add('active-touch');
+        }
+
+        function move(x, y) {
+            if (Math.abs(x - startX) > MOVE_THRESHOLD || Math.abs(y - startY) > MOVE_THRESHOLD) {
+                moved = true;
+                card.classList.remove('active-touch');
+            }
+        }
+
+        function end() {
+            setTimeout(() => card.classList.remove('active-touch'), 50);
+        }
+
+        // Pointer Events предпочтительнее
+        if (window.PointerEvent) {
+            card.addEventListener('pointerdown', e => {
+                if (e.isPrimary) start(e.clientX, e.clientY);
+            }, { passive: true });
+
+            card.addEventListener('pointermove', e => {
+                if (e.isPrimary) move(e.clientX, e.clientY);
+            }, { passive: true });
+
+            card.addEventListener('pointerup', e => {
+                if (e.isPrimary) end();
+            });
+
+            card.addEventListener('pointercancel', end);
+            card.addEventListener('lostpointercapture', end);
+        } else {
+            // Fallback для старых браузеров
+            card.addEventListener('touchstart', e => {
+                const t = e.touches[0];
+                if (!t) return;
+                start(t.clientX, t.clientY);
+            }, { passive: true });
+
+            card.addEventListener('touchmove', e => {
+                const t = e.touches[0];
+                if (!t) return;
+                move(t.clientX, t.clientY);
+            }, { passive: true });
+
+            card.addEventListener('touchend', end);
+            card.addEventListener('touchcancel', end);
+        }
+    });
+
+    // ========== Глобальный сброс активных состояний ==========
+    const clearAllActiveTouches = () => {
+        document.querySelectorAll('.rafy-card-square.active-touch')
+            .forEach(c => c.classList.remove('active-touch'));
+    };
+
+    // Сброс при свайпе по экрану
+    window.addEventListener('touchmove', clearAllActiveTouches, { passive: true });
+
+    // Сброс при скролле
+    window.addEventListener('scroll', clearAllActiveTouches, { passive: true });
+
+    // Сброс при ресайзе
+    window.addEventListener('resize', clearAllActiveTouches);
+
+    // Сброс при переключении вкладки
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) clearAllActiveTouches();
+    });
+
+    // Сброс при перелистывании карусели
+    document.querySelectorAll('.carousel').forEach(carousel => {
+        carousel.addEventListener('slide.bs.carousel', clearAllActiveTouches);
+        carousel.addEventListener('slid.bs.carousel', clearAllActiveTouches);
+        // На случай, если свайп Bootstrap сработал без slide-события
+        carousel.addEventListener('touchmove', clearAllActiveTouches, { passive: true });
+    });
+});
 </script>
+
