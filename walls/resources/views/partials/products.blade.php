@@ -94,6 +94,7 @@
         }
         }
 
+
         foreach ($productVariants as $otherVariant) {
         if ($shownVariant && $otherVariant->id === $shownVariant->id) continue;
         $otherImages = json_decode($otherVariant->images ?? '[]', true) ?? [];
@@ -108,21 +109,21 @@
         ->values()
         ->all();
         @endphp
-
         <a href="{{ route('product.show', $product->id) }}" class="product-card-link">
             <div class="product-card rafy-card-square">
                 @if (!empty($images))
-                <div class="rafy-carousel-wrapper position-relative">
+                <div class="rafy-carousel-wrapper position-relative"
+                    onmouseenter="this.classList.add('hover-enabled')"
+                    onmouseleave="this.classList.remove('hover-enabled')">
                     <div id="carousel{{ $item->id ?? $product->id }}" class="carousel slide">
                         <div class="carousel-inner">
                             @foreach ($images as $index => $image)
                             @if($image)
                             <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                                <img
-                                    src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+                                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
                                     data-src="{{ asset('storage/' . $image) }}"
                                     class="rafy-card-img lazy-slide"
-                                    alt="{{ $product->name }}">
+                                    alt="{{ $product->name }}">">
                             </div>
                             @endif
                             @endforeach
@@ -163,21 +164,23 @@
                         <span>{{ number_format($product->sale_price, 0, '.', ' ') }} ₸</span>
                         @endif
                     </div>
+
                 </div>
             </div>
         </a>
+
+
         @empty
         <p>Товары не найдены.</p>
         @endforelse
 </div>
+
 
 <div class="pagination-wrapper">
     {{ $variants->links('vendor.pagination.custom') }}
 </div>
 
 <style>
-    /* ========== Твоя основная стилистика остаётся без изменений ========== */
-
     /* ========== Общие стили для Top Bar ========== */
     .top-bar {
         display: flex;
@@ -249,46 +252,6 @@
         box-shadow: none;
     }
 
-    /* ========== Autocomplete jQuery UI ========== */
-    .ui-autocomplete {
-        position: absolute;
-        z-index: 1051;
-        background-color: #fff;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        padding: 5px 0;
-        max-height: 300px;
-        overflow-y: auto;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        font-family: inherit;
-    }
-
-    .ui-menu-item {
-        padding: 8px 15px;
-        font-size: 14px;
-        color: #333;
-        cursor: pointer;
-        transition: background-color 0.2s ease, color 0.2s ease;
-    }
-
-    .ui-menu-item-wrapper:hover {
-        background-color: transparent;
-        color: #007bff;
-    }
-
-    .ui-menu-item-wrapper.ui-state-active {
-        background-color: transparent !important;
-        color: #007bff !important;
-    }
-
-    /* ========== Убираем синий бордер у всех полей при фокусе ========== */
-    input:focus,
-    select:focus,
-    textarea:focus {
-        outline: none;
-        box-shadow: none;
-    }
-
     /* ========== Сетка товаров ========== */
     .product-grid {
         display: grid;
@@ -335,24 +298,6 @@
         /* убираем любые анимации изображения */
     }
 
-
-
-    /* ========== Стрелки карусели ========== */
-    .rafy-carousel-wrapper .carousel-control-prev,
-    .rafy-carousel-wrapper .carousel-control-next {
-        z-index: 10;
-        transition: opacity 0.2s ease;
-        pointer-events: auto;
-    }
-
-    .rafy-carousel-wrapper .carousel-control-prev {
-        left: 3px;
-    }
-
-    .rafy-carousel-wrapper .carousel-control-next {
-        right: 3px;
-    }
-
     /* ========== Статус ========== */
     .rafy-status {
         position: absolute;
@@ -380,7 +325,7 @@
     }
 
     .rafy-card-square:hover .rafy-overlay {
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.45), transparent);
     }
 
     /* ========== Hover текст ========== */
@@ -435,12 +380,19 @@
         font-family: 'Playfair Display', serif;
     }
 
-    .price-info {
-        font-size: 0.85rem;
-        font-weight: 400;
-        text-align: center;
-        margin-top: 4px;
-        font-family: 'Arial', sans-serif;
+    /* ===================== Мобильный ховер ===================== */
+    @media (max-width: 768px) {
+
+        /* Скрываем стандартный hover эффект */
+        .rafy-card-square:hover .rafy-overlay,
+        .rafy-card-square:hover .rafy-hover-text {
+            opacity: 0;
+        }
+
+        .rafy-card-square.touch-active .rafy-overlay,
+        .rafy-card-square.touch-active .rafy-hover-text {
+            opacity: 1;
+        }
     }
 
     /* ========== Адаптивность ========== */
@@ -469,57 +421,34 @@
             height: 400px;
         }
     }
-
-    @media (hover: none) {
-
-        /* Если device не поддерживает hover, убираем все :hover-правила, чтобы браузер не "залипал" */
-        .rafy-card-square:hover .rafy-overlay,
-        .rafy-card-square:hover .rafy-hover-text {
-            background: none !important;
-            opacity: 0 !important;
-        }
-    }
-
-    /* 2) Стандартный hover для мышки остаётся */
-    @media (hover: hover) and (pointer: fine) {
-        .rafy-card-square:hover .rafy-overlay {
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
-        }
-
-        .rafy-card-square:hover .rafy-hover-text {
-            opacity: 1;
-        }
-    }
-
-    /* 3) Класс при касании — применяем эффект через класс, не через :hover */
-    .rafy-card-square.active-touch .rafy-overlay {
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
-    }
-
-    .rafy-card-square.active-touch .rafy-hover-text {
-        opacity: 1;
-    }
-
-    /* 4) Когда мы отметили, что устройство тач — можно отключить pointer-events на overlay, но это опционально */
-    /* Убедимся что переходы плавные */
-    .rafy-hover-text {
-        transition: opacity 0.18s linear;
-    }
-
-    .rafy-overlay {
-        transition: background 0.18s linear;
-    }
 </style>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    // ========== Lazy load изображений ==========
-    const carousels = document.querySelectorAll(".carousel");
 
-    carousels.forEach(carousel => {
-        carousel.addEventListener("slide.bs.carousel", event => {
-            const current = event.relatedTarget;
-            [current?.previousElementSibling, current, current?.nextElementSibling].forEach(slide => {
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const carousels = document.querySelectorAll(".carousel");
+
+        carousels.forEach(carousel => {
+            carousel.addEventListener("slide.bs.carousel", function(event) {
+                // Текущий, следующий и предыдущий слайды
+                const currentSlide = event.relatedTarget;
+                const nextSlide = currentSlide.nextElementSibling;
+                const prevSlide = currentSlide.previousElementSibling;
+
+                [currentSlide, nextSlide, prevSlide].forEach(slide => {
+                    if (!slide) return;
+                    const img = slide.querySelector("img.lazy-slide");
+                    if (img && img.dataset.src && img.src !== img.dataset.src) {
+                        img.src = img.dataset.src;
+                    }
+                });
+            });
+
+            // При инициализации тоже прогрузим первый и второй слайды
+            const first = carousel.querySelector(".carousel-item.active");
+            const second = first?.nextElementSibling;
+            [first, second].forEach(slide => {
                 if (!slide) return;
                 const img = slide.querySelector("img.lazy-slide");
                 if (img && img.dataset.src && img.src !== img.dataset.src) {
@@ -527,108 +456,44 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
         });
-
-        const first = carousel.querySelector(".carousel-item.active");
-        const second = first?.nextElementSibling;
-        [first, second].forEach(slide => {
-            if (!slide) return;
-            const img = slide.querySelector("img.lazy-slide");
-            if (img && img.dataset.src && img.src !== img.dataset.src) {
-                img.src = img.dataset.src;
-            }
-        });
     });
 
-    // ========== Исправление hover/active-touch для телефонов ==========
-    const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
-    if (isTouch) document.body.classList.add('using-touch');
+    document.addEventListener("DOMContentLoaded", function() {
+        const cards = document.querySelectorAll('.rafy-card-square');
+        const LONG_PRESS_MS = 250; // задержка для появления hover
 
-    const cards = document.querySelectorAll('.rafy-card-square');
-    const MOVE_THRESHOLD = 10;
+        cards.forEach(card => {
+            let timer = null;
 
-    cards.forEach(card => {
-        let startX = 0, startY = 0, moved = false;
-
-        function start(x, y) {
-            startX = x;
-            startY = y;
-            moved = false;
-            card.classList.add('active-touch');
-        }
-
-        function move(x, y) {
-            if (Math.abs(x - startX) > MOVE_THRESHOLD || Math.abs(y - startY) > MOVE_THRESHOLD) {
-                moved = true;
-                card.classList.remove('active-touch');
-            }
-        }
-
-        function end() {
-            setTimeout(() => card.classList.remove('active-touch'), 50);
-        }
-
-        // Pointer Events предпочтительнее
-        if (window.PointerEvent) {
-            card.addEventListener('pointerdown', e => {
-                if (e.isPrimary) start(e.clientX, e.clientY);
-            }, { passive: true });
-
-            card.addEventListener('pointermove', e => {
-                if (e.isPrimary) move(e.clientX, e.clientY);
-            }, { passive: true });
-
-            card.addEventListener('pointerup', e => {
-                if (e.isPrimary) end();
+            // при касании — ждём чуть-чуть, чтобы включить hover
+            card.addEventListener('touchstart', function(e) {
+                timer = setTimeout(() => {
+                    card.classList.add('touch-active');
+                }, LONG_PRESS_MS);
+                e.stopPropagation();
+            }, {
+                passive: true
             });
 
-            card.addEventListener('pointercancel', end);
-            card.addEventListener('lostpointercapture', end);
-        } else {
-            // Fallback для старых браузеров
-            card.addEventListener('touchstart', e => {
-                const t = e.touches[0];
-                if (!t) return;
-                start(t.clientX, t.clientY);
-            }, { passive: true });
+            // при движении пальца (скролл) — отменяем
+            card.addEventListener('touchmove', function() {
+                clearTimeout(timer);
+                card.classList.remove('touch-active');
+            }, {
+                passive: true
+            });
 
-            card.addEventListener('touchmove', e => {
-                const t = e.touches[0];
-                if (!t) return;
-                move(t.clientX, t.clientY);
-            }, { passive: true });
+            // при отпускании пальца — убираем hover и таймер
+            card.addEventListener('touchend', function() {
+                clearTimeout(timer);
+                card.classList.remove('touch-active');
+            });
 
-            card.addEventListener('touchend', end);
-            card.addEventListener('touchcancel', end);
-        }
+            // при отмене касания (системное прерывание) — тоже убираем
+            card.addEventListener('touchcancel', function() {
+                clearTimeout(timer);
+                card.classList.remove('touch-active');
+            });
+        });
     });
-
-    // ========== Глобальный сброс активных состояний ==========
-    const clearAllActiveTouches = () => {
-        document.querySelectorAll('.rafy-card-square.active-touch')
-            .forEach(c => c.classList.remove('active-touch'));
-    };
-
-    // Сброс при свайпе по экрану
-    window.addEventListener('touchmove', clearAllActiveTouches, { passive: true });
-
-    // Сброс при скролле
-    window.addEventListener('scroll', clearAllActiveTouches, { passive: true });
-
-    // Сброс при ресайзе
-    window.addEventListener('resize', clearAllActiveTouches);
-
-    // Сброс при переключении вкладки
-    document.addEventListener('visibilitychange', () => {
-        if (document.hidden) clearAllActiveTouches();
-    });
-
-    // Сброс при перелистывании карусели
-    document.querySelectorAll('.carousel').forEach(carousel => {
-        carousel.addEventListener('slide.bs.carousel', clearAllActiveTouches);
-        carousel.addEventListener('slid.bs.carousel', clearAllActiveTouches);
-        // На случай, если свайп Bootstrap сработал без slide-события
-        carousel.addEventListener('touchmove', clearAllActiveTouches, { passive: true });
-    });
-});
 </script>
-
