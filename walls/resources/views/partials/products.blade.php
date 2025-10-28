@@ -94,7 +94,6 @@
         }
         }
 
-
         foreach ($productVariants as $otherVariant) {
         if ($shownVariant && $otherVariant->id === $shownVariant->id) continue;
         $otherImages = json_decode($otherVariant->images ?? '[]', true) ?? [];
@@ -109,21 +108,21 @@
         ->values()
         ->all();
         @endphp
+
         <a href="{{ route('product.show', $product->id) }}" class="product-card-link">
             <div class="product-card rafy-card-square">
                 @if (!empty($images))
-                <div class="rafy-carousel-wrapper position-relative"
-                    onmouseenter="this.classList.add('hover-enabled')"
-                    onmouseleave="this.classList.remove('hover-enabled')">
+                <div class="rafy-carousel-wrapper position-relative">
                     <div id="carousel{{ $item->id ?? $product->id }}" class="carousel slide">
                         <div class="carousel-inner">
                             @foreach ($images as $index => $image)
                             @if($image)
                             <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+                                <img
+                                    src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
                                     data-src="{{ asset('storage/' . $image) }}"
                                     class="rafy-card-img lazy-slide"
-                                    alt="{{ $product->name }}">">
+                                    alt="{{ $product->name }}">
                             </div>
                             @endif
                             @endforeach
@@ -164,23 +163,21 @@
                         <span>{{ number_format($product->sale_price, 0, '.', ' ') }} ₸</span>
                         @endif
                     </div>
-
                 </div>
             </div>
         </a>
-
-
         @empty
         <p>Товары не найдены.</p>
         @endforelse
 </div>
-
 
 <div class="pagination-wrapper">
     {{ $variants->links('vendor.pagination.custom') }}
 </div>
 
 <style>
+    /* ========== Твоя основная стилистика остаётся без изменений ========== */
+
     /* ========== Общие стили для Top Bar ========== */
     .top-bar {
         display: flex;
@@ -383,7 +380,7 @@
     }
 
     .rafy-card-square:hover .rafy-overlay {
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.45), transparent);
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
     }
 
     /* ========== Hover текст ========== */
@@ -472,38 +469,68 @@
             height: 400px;
         }
     }
+
+    /* Добавляем мобильное поведение hover */
+    @media (hover: hover) and (pointer: fine) {
+        .rafy-card-square:hover .rafy-overlay {
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
+        }
+
+        .rafy-card-square:hover .rafy-hover-text {
+            opacity: 1;
+        }
+    }
+
+    /* Только для тач-устройств */
+    .rafy-card-square.active-touch .rafy-overlay {
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
+    }
+
+    .rafy-card-square.active-touch .rafy-hover-text {
+        opacity: 1;
+    }
 </style>
 
-
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", () => {
         const carousels = document.querySelectorAll(".carousel");
 
+        // Lazy-load изображений
         carousels.forEach(carousel => {
-            carousel.addEventListener("slide.bs.carousel", function(event) {
-                // Текущий, следующий и предыдущий слайды
-                const currentSlide = event.relatedTarget;
-                const nextSlide = currentSlide.nextElementSibling;
-                const prevSlide = currentSlide.previousElementSibling;
-
-                [currentSlide, nextSlide, prevSlide].forEach(slide => {
+            carousel.addEventListener("slide.bs.carousel", event => {
+                const current = event.relatedTarget;
+                [current?.previousElementSibling, current, current?.nextElementSibling].forEach(slide => {
                     if (!slide) return;
                     const img = slide.querySelector("img.lazy-slide");
-                    if (img && img.dataset.src && img.src !== img.dataset.src) {
-                        img.src = img.dataset.src;
-                    }
+                    if (img && img.dataset.src && img.src !== img.dataset.src) img.src = img.dataset.src;
                 });
             });
 
-            // При инициализации тоже прогрузим первый и второй слайды
             const first = carousel.querySelector(".carousel-item.active");
             const second = first?.nextElementSibling;
             [first, second].forEach(slide => {
                 if (!slide) return;
                 const img = slide.querySelector("img.lazy-slide");
-                if (img && img.dataset.src && img.src !== img.dataset.src) {
-                    img.src = img.dataset.src;
-                }
+                if (img && img.dataset.src && img.src !== img.dataset.src) img.src = img.dataset.src;
+            });
+        });
+
+        // ==================
+        // 💡 Исправление hover для телефонов
+        // ==================
+        const cards = document.querySelectorAll(".rafy-card-square");
+
+        cards.forEach(card => {
+            card.addEventListener("touchstart", () => {
+                card.classList.add("active-touch");
+            });
+
+            card.addEventListener("touchend", () => {
+                card.classList.remove("active-touch");
+            });
+
+            card.addEventListener("touchmove", () => {
+                card.classList.remove("active-touch");
             });
         });
     });
