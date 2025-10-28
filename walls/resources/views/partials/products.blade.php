@@ -334,32 +334,26 @@
         object-fit: cover;
         backface-visibility: hidden;
         transform: translateZ(0);
-        transition: none; /* убираем любые анимации изображения */
+        transition: none;
+        /* убираем любые анимации изображения */
     }
+
+
 
     /* ========== Стрелки карусели ========== */
     .rafy-carousel-wrapper .carousel-control-prev,
     .rafy-carousel-wrapper .carousel-control-next {
-        width: 28px;
-        height: 28px;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 5;
-        opacity: 0;
-        transition: opacity 0.2s linear;
-    }
-
-    .rafy-carousel-wrapper.hover-enabled .carousel-control-prev,
-    .rafy-carousel-wrapper.hover-enabled .carousel-control-next {
-        opacity: 1;
+        z-index: 10;
+        transition: opacity 0.2s ease;
+        pointer-events: auto;
     }
 
     .rafy-carousel-wrapper .carousel-control-prev {
-        left: 12px;
+        left: 3px;
     }
 
     .rafy-carousel-wrapper .carousel-control-next {
-        right: 12px;
+        right: 3px;
     }
 
     /* ========== Статус ========== */
@@ -384,7 +378,8 @@
         inset: 0;
         background: rgba(0, 0, 0, 0);
         transition: background 0.2s linear;
-        z-index: 1;
+        z-index: 5;
+        pointer-events: none;
     }
 
     .rafy-card-square:hover .rafy-overlay {
@@ -400,11 +395,12 @@
         color: #fff;
         opacity: 0;
         transition: opacity 0.2s linear;
-        z-index: 2;
+        z-index: 5;
         text-align: center;
         position: absolute;
         inset: 0;
         will-change: opacity;
+        pointer-events: none;
     }
 
     .rafy-card-square:hover .rafy-hover-text {
