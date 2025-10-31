@@ -250,3 +250,180 @@
         }
     }
 </style>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.getElementById('filter-form');
+    const toggleFiltersButton = document.querySelector('.toggle-filters');
+    const filtersBlock = document.getElementById('filters');
+
+    if (toggleFiltersButton) {
+        toggleFiltersButton.addEventListener('click', () => {
+            filtersBlock.classList.toggle('visible');
+        });
+    }
+
+    if (form) form.addEventListener('change', sendAjax);
+
+    initTopBarListeners();
+    initRoomLinks(sendAjax);
+    if (typeof initLazyCarousel === "function") initLazyCarousel(document.querySelectorAll(".carousel"));
+
+    // ======================== AJAX обновление каталога ========================
+    function sendAjax() {
+        if (!window.catalogRoutes || !window.catalogRoutes.catalog) {
+            console.error('catalog route not found. Add window.catalogRoutes.catalog in blade.');
+            return;
+        }
+
+        const formData = new FormData(form);
+        const search = document.getElementById('search');
+        const sort = document.getElementById('sort');
+
+        if (search) formData.set('search', search.value);
+        if (sort) formData.set('sort', sort.value);
+
+        const params = new URLSearchParams(formData).toString();
+        const url = `${window.catalogRoutes.catalog}?${params}`;
+
+        fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Network response was not ok');
+                return res.text();
+            })
+            .then(html => {
+                const container = document.getElementById('product-container');
+                if (container) container.innerHTML = html;
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+
+                // 🔁 Реинициализация после AJAX
+                initTopBarListeners();
+                initRoomLinks(sendAjax);
+                if (typeof initLazyCarousel === "function")
+                    initLazyCarousel(document.querySelectorAll(".carousel"));
+            })
+            .catch(err => console.error('Ошибка при фильтрации:', err));
+    }
+
+    // ======================== Верхняя панель (поиск, сортировка, очистка) ========================
+    function initTopBarListeners() {
+        const search = document.getElementById('search');
+        const sort = document.getElementById('sort');
+        const clearBtn = document.getElementById('clearSearch');
+
+        if (search && clearBtn) {
+            clearBtn.style.display = search.value.length > 0 ? 'block' : 'none';
+
+            search.addEventListener('input', () => {
+                clearBtn.style.display = search.value.length > 0 ? 'block' : 'none';
+            });
+
+            clearBtn.addEventListener('click', () => {
+                search.value = '';
+                clearBtn.style.display = 'none';
+                sendAjax();
+            });
+
+            // --- AUTOCOMPLETE ---
+            if (typeof $ === 'undefined' || typeof $.ui === 'undefined' || typeof $(search).autocomplete !== 'function') {
+                console.error('jQuery UI autocomplete не найдена. Убедись, что jQuery UI подключен ДО filters.js');
+            } else {
+                const autocompleteUrl = window.catalogRoutes && window.catalogRoutes.autocomplete ? window.catalogRoutes.autocomplete : null;
+                if (!autocompleteUrl) {
+                    console.error('autocomplete route not found. Add window.catalogRoutes.autocomplete in blade.');
+                } else {
+                    $(search).autocomplete({
+                        source: function(request, response) {
+                            $.ajax({
+                                url: autocompleteUrl,
+                                method: 'GET',
+                                data: { term: request.term },
+                                success: function(data) {
+                                    if (!Array.isArray(data) || data.length === 0) {
+                                        response([{
+                                            label: 'Товары не найдены',
+                                            value: '',
+                                            disabled: true
+                                        }]);
+                                    } else {
+                                        response(data);
+                                    }
+                                },
+                                error: function(xhr, status, err) {
+                                    console.error('Autocomplete error:', status, err);
+                                    response([]);
+                                }
+                            });
+                        },
+                        minLength: 1,
+                        delay: 100,
+                        select: function(event, ui) {
+                            if (ui.item.disabled || ui.item.value === '') {
+                                event.preventDefault();
+                                return false;
+                            }
+                            search.value = ui.item.value;
+                            clearBtn.style.display = 'block';
+                            sendAjax();
+                        }
+                    }).autocomplete("instance")._renderItem = function(ul, item) {
+                        const li = $("<li>");
+                        const wrapper = $("<div>").text(item.label || item.value || '');
+                        if (item.disabled) {
+                            wrapper.css({
+                                color: "#000",
+                                fontStyle: "italic",
+                                pointerEvents: "none",
+                                cursor: "default"
+                            });
+                        }
+                        wrapper.addClass("ui-menu-item-wrapper");
+                        return li.append(wrapper).appendTo(ul);
+                    };
+                }
+            }
+
+            // Enter key
+            if (search._handler) search.removeEventListener('keypress', search._handler);
+            search._handler = e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendAjax();
+                }
+            };
+            search.addEventListener('keypress', search._handler);
+        }
+
+        if (sort) {
+            if (sort._handler) sort.removeEventListener('change', sort._handler);
+            sort._handler = sendAjax;
+            sort.addEventListener('change', sort._handler);
+        }
+    }
+
+    // ======================== Комнаты / фильтр по ссылке ========================
+    function initRoomLinks(sendAjax) {
+        document.querySelectorAll('.filter-links a').forEach(link => {
+            link.removeEventListener('click', link._handler || (() => {}));
+            link._handler = function(e) {
+                e.preventDefault();
+                const roomInput = document.getElementById('room_id');
+                if (roomInput) {
+                    roomInput.value = this.dataset.room;
+                    sendAjax();
+                }
+            };
+            link.addEventListener('click', link._handler);
+        });
+    }
+});
+
+</script>
