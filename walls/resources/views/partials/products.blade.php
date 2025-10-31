@@ -169,7 +169,6 @@
             </div>
         </a>
 
-
         @empty
         <p>Товары не найдены.</p>
         @endforelse
@@ -379,6 +378,13 @@
         font-family: 'Playfair Display', serif;
     }
 
+    .price-info {
+        font-size: 0.8rem;
+        /* уменьшенный шрифт */
+        line-height: 1.3;
+        text-align: center;
+    }
+
     /* ===================== Мобильный ховер ===================== */
     @media (max-width: 768px) {
 
@@ -386,11 +392,6 @@
         .rafy-card-square:hover .rafy-overlay,
         .rafy-card-square:hover .rafy-hover-text {
             opacity: 0;
-        }
-
-        .rafy-card-square.touch-active .rafy-overlay,
-        .rafy-card-square.touch-active .rafy-hover-text {
-            opacity: 1;
         }
     }
 
@@ -420,64 +421,136 @@
             height: 400px;
         }
     }
+
+    /* ===== Активный hover при удержании (работает на телефонах) ===== */
+    .rafy-card-square.touch-active .rafy-overlay {
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.45), transparent) !important;
+        opacity: 1 !important;
+        transition: background 0.2s linear;
+    }
+
+    .rafy-card-square.touch-active .rafy-hover-text {
+        opacity: 1 !important;
+        pointer-events: auto;
+        transition: opacity 0.2s linear;
+    }
 </style>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const carousels = document.querySelectorAll(".carousel");
-
-        carousels.forEach(carousel => {
-            carousel.addEventListener("slide.bs.carousel", function(event) {
-                // Текущий, следующий и предыдущий слайды
-                const currentSlide = event.relatedTarget;
-                const nextSlide = currentSlide.nextElementSibling;
-                const prevSlide = currentSlide.previousElementSibling;
-
-                [currentSlide, nextSlide, prevSlide].forEach(slide => {
-                    if (!slide) return;
-                    const img = slide.querySelector("img.lazy-slide");
+    document.addEventListener("DOMContentLoaded", () => {
+        // ===== Lazy Loading для слайдов =====
+        document.querySelectorAll(".carousel").forEach(carousel => {
+            const loadSlideImages = slides => {
+                slides.forEach(slide => {
+                    const img = slide?.querySelector("img.lazy-slide");
                     if (img && img.dataset.src && img.src !== img.dataset.src) {
                         img.src = img.dataset.src;
                     }
                 });
+            };
+
+            carousel.addEventListener("slide.bs.carousel", e => {
+                loadSlideImages([
+                    e.relatedTarget,
+                    e.relatedTarget?.nextElementSibling,
+                    e.relatedTarget?.previousElementSibling
+                ]);
             });
 
-            // При инициализации тоже прогрузим первый и второй слайды
             const first = carousel.querySelector(".carousel-item.active");
-            const second = first?.nextElementSibling;
-            [first, second].forEach(slide => {
-                if (!slide) return;
-                const img = slide.querySelector("img.lazy-slide");
-                if (img && img.dataset.src && img.src !== img.dataset.src) {
-                    img.src = img.dataset.src;
+            loadSlideImages([first, first?.nextElementSibling]);
+        });
+
+        // ===== Hover / Touch логика =====
+        const cards = document.querySelectorAll(".product-card-link");
+        let activeCard = null;
+        let hoverTimer = null;
+        const HOVER_DELAY = 150; // задержка для hover
+        const TAP_THRESHOLD = 250; // короткий тап = переход
+
+        cards.forEach(link => {
+            const card = link.querySelector(".rafy-card-square");
+            if (!card) return;
+
+            let touchStartTime = 0;
+            let touchMoved = false;
+            let hoverActive = false;
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let tappedInCarousel = false;
+
+            // начало касания
+            link.addEventListener("touchstart", e => {
+                touchStartTime = Date.now();
+                touchMoved = false;
+                hoverActive = false;
+                tappedInCarousel = !!e.target.closest(".rafy-carousel-wrapper");
+                clearTimeout(hoverTimer);
+
+                const touch = e.touches[0];
+                touchStartX = touch.clientX;
+                touchStartY = touch.clientY;
+
+                // ставим задержку на появление hover
+                hoverTimer = setTimeout(() => {
+                    if (activeCard && activeCard !== card) {
+                        activeCard.classList.remove("touch-active");
+                    }
+                    card.classList.add("touch-active");
+                    activeCard = card;
+                    hoverActive = true;
+                    navigator.vibrate?.(30); // вибрация при появлении hover
+                }, HOVER_DELAY);
+            }, {
+                passive: true
+            });
+
+            // движение пальца
+            link.addEventListener("touchmove", e => {
+                const touch = e.touches[0];
+                const dx = Math.abs(touch.clientX - touchStartX);
+                const dy = Math.abs(touch.clientY - touchStartY);
+                if (dx > 10 || dy > 10) {
+                    touchMoved = true;
+                    clearTimeout(hoverTimer);
+                    card.classList.remove("touch-active");
                 }
+            }, {
+                passive: true
+            });
+
+            // отпускание
+            link.addEventListener("touchend", e => {
+                const touchDuration = Date.now() - touchStartTime;
+                clearTimeout(hoverTimer);
+
+                if (touchMoved) return;
+
+                // если удерживал — показываем hover, без перехода
+                if (touchDuration > TAP_THRESHOLD) {
+                    e.preventDefault();
+                    hoverActive = true;
+                    return;
+                }
+
+                // короткий тап — переход по ссылке (если не по карусели)
+                if (!hoverActive && !tappedInCarousel) {
+                    window.location.href = link.href;
+                }
+            }, {
+                passive: false
             });
         });
-    });
 
-    document.addEventListener("DOMContentLoaded", function() {
-        const productCards = document.querySelectorAll('.rafy-card-square');
 
-        productCards.forEach(card => {
-            let touchStart = 0;
-
-            card.addEventListener('touchstart', function() {
-                touchStart = Date.now();
-                card.classList.add('touch-active');
-            });
-
-            card.addEventListener('touchend', function() {
-                const touchEnd = Date.now();
-                const touchDuration = touchEnd - touchStart;
-
-                if (touchDuration < 500) {
-                    card.classList.remove('touch-active');
-                }
-            });
-
-            card.addEventListener('touchmove', function() {
-                card.classList.remove('touch-active');
-            });
+        // тап вне карточки — убрать hover
+        document.addEventListener("touchstart", e => {
+            if (!e.target.closest(".rafy-card-square") && activeCard) {
+                activeCard.classList.remove("touch-active");
+                activeCard = null;
+            }
+        }, {
+            passive: true
         });
     });
 </script>
