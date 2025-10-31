@@ -250,6 +250,47 @@
         box-shadow: none;
     }
 
+    /* ========== Autocomplete jQuery UI ========== */
+    .ui-autocomplete {
+        position: absolute;
+        z-index: 1051;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 5px 0;
+        max-height: 300px;
+        overflow-y: auto;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        font-family: inherit;
+    }
+
+    .ui-menu-item {
+        padding: 8px 15px;
+        font-size: 14px;
+        color: #333;
+        cursor: pointer;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .ui-menu-item-wrapper:hover {
+        background-color: transparent;
+        color: #007bff;
+    }
+
+    .ui-menu-item-wrapper.ui-state-active {
+        background-color: transparent !important;
+        color: #007bff !important;
+    }
+
+
+    /* ========== Убираем синий бордер у всех полей при фокусе ========== */
+    input:focus,
+    select:focus,
+    textarea:focus {
+        outline: none;
+        box-shadow: none;
+    }
+
     /* ========== Сетка товаров ========== */
     .product-grid {
         display: grid;
@@ -437,61 +478,61 @@
 </style>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        // ===== Lazy Loading для слайдов =====
-        document.querySelectorAll(".carousel").forEach(carousel => {
-            const loadSlideImages = slides => {
-                slides.forEach(slide => {
-                    const img = slide?.querySelector("img.lazy-slide");
-                    if (img && img.dataset.src && img.src !== img.dataset.src) {
-                        img.src = img.dataset.src;
-                    }
-                });
-            };
-
-            carousel.addEventListener("slide.bs.carousel", e => {
-                loadSlideImages([
-                    e.relatedTarget,
-                    e.relatedTarget?.nextElementSibling,
-                    e.relatedTarget?.previousElementSibling
-                ]);
+document.addEventListener("DOMContentLoaded", () => {
+    // ===== Lazy Loading для слайдов =====
+    document.querySelectorAll(".carousel").forEach(carousel => {
+        const loadSlideImages = slides => {
+            slides.forEach(slide => {
+                const img = slide?.querySelector("img.lazy-slide");
+                if (img && img.dataset.src && img.src !== img.dataset.src) {
+                    img.src = img.dataset.src;
+                }
             });
+        };
 
-            const first = carousel.querySelector(".carousel-item.active");
-            loadSlideImages([first, first?.nextElementSibling]);
+        carousel.addEventListener("slide.bs.carousel", e => {
+            loadSlideImages([
+                e.relatedTarget,
+                e.relatedTarget?.nextElementSibling,
+                e.relatedTarget?.previousElementSibling
+            ]);
         });
 
-        // ===== Hover / Touch логика =====
-        const cards = document.querySelectorAll(".product-card-link");
-        let activeCard = null;
-        let hoverTimer = null;
-        const HOVER_DELAY = 150; // задержка для hover
-        const TAP_THRESHOLD = 250; // короткий тап = переход
+        const first = carousel.querySelector(".carousel-item.active");
+        loadSlideImages([first, first?.nextElementSibling]);
+    });
 
-        cards.forEach(link => {
-            const card = link.querySelector(".rafy-card-square");
-            if (!card) return;
+    // ===== Hover / Touch логика =====
+    const cards = document.querySelectorAll(".product-card-link");
+    let activeCard = null;
+    let hoverTimer = null;
+    const HOVER_DELAY = 150;
+    const TAP_THRESHOLD = 250;
 
-            let touchStartTime = 0;
-            let touchMoved = false;
-            let hoverActive = false;
-            let touchStartX = 0;
-            let touchStartY = 0;
-            let tappedInCarousel = false;
+    cards.forEach(link => {
+        const card = link.querySelector(".rafy-card-square");
+        if (!card) return;
 
-            // начало касания
-            link.addEventListener("touchstart", e => {
-                touchStartTime = Date.now();
-                touchMoved = false;
-                hoverActive = false;
-                tappedInCarousel = !!e.target.closest(".rafy-carousel-wrapper");
-                clearTimeout(hoverTimer);
+        let touchStartTime = 0;
+        let touchMoved = false;
+        let hoverActive = false;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let tappedInCarousel = false;
 
-                const touch = e.touches[0];
-                touchStartX = touch.clientX;
-                touchStartY = touch.clientY;
+        link.addEventListener("touchstart", e => {
+            touchStartTime = Date.now();
+            touchMoved = false;
+            hoverActive = card.classList.contains("touch-active");
+            tappedInCarousel = !!e.target.closest(".rafy-carousel-wrapper");
+            clearTimeout(hoverTimer);
 
-                // ставим задержку на появление hover
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+
+            // включаем hover только если его нет
+            if (!hoverActive) {
                 hoverTimer = setTimeout(() => {
                     if (activeCard && activeCard !== card) {
                         activeCard.classList.remove("touch-active");
@@ -499,58 +540,65 @@
                     card.classList.add("touch-active");
                     activeCard = card;
                     hoverActive = true;
-                    navigator.vibrate?.(30); // вибрация при появлении hover
+                    navigator.vibrate?.(30);
                 }, HOVER_DELAY);
-            }, {
-                passive: true
-            });
-
-            // движение пальца
-            link.addEventListener("touchmove", e => {
-                const touch = e.touches[0];
-                const dx = Math.abs(touch.clientX - touchStartX);
-                const dy = Math.abs(touch.clientY - touchStartY);
-                if (dx > 10 || dy > 10) {
-                    touchMoved = true;
-                    clearTimeout(hoverTimer);
-                    card.classList.remove("touch-active");
-                }
-            }, {
-                passive: true
-            });
-
-            // отпускание
-            link.addEventListener("touchend", e => {
-                const touchDuration = Date.now() - touchStartTime;
-                clearTimeout(hoverTimer);
-
-                if (touchMoved) return;
-
-                // если удерживал — показываем hover, без перехода
-                if (touchDuration > TAP_THRESHOLD) {
-                    e.preventDefault();
-                    hoverActive = true;
-                    return;
-                }
-
-                // короткий тап — переход по ссылке (если не по карусели)
-                if (!hoverActive && !tappedInCarousel) {
-                    window.location.href = link.href;
-                }
-            }, {
-                passive: false
-            });
-        });
-
-
-        // тап вне карточки — убрать hover
-        document.addEventListener("touchstart", e => {
-            if (!e.target.closest(".rafy-card-square") && activeCard) {
-                activeCard.classList.remove("touch-active");
-                activeCard = null;
             }
-        }, {
-            passive: true
-        });
+        }, { passive: true });
+
+        link.addEventListener("touchmove", e => {
+            const touch = e.touches[0];
+            const dx = Math.abs(touch.clientX - touchStartX);
+            const dy = Math.abs(touch.clientY - touchStartY);
+
+            // если движение — сбрасываем hover таймер
+            if (dx > 10 || dy > 10) {
+                touchMoved = true;
+                clearTimeout(hoverTimer);
+            }
+        }, { passive: true });
+
+        link.addEventListener("touchend", e => {
+            const touchDuration = Date.now() - touchStartTime;
+            clearTimeout(hoverTimer);
+
+            // свайп — ничего не делаем
+            if (touchMoved) return;
+
+            // если был удержан — только hover
+            if (touchDuration > TAP_THRESHOLD && !hoverActive) {
+                e.preventDefault();
+                hoverActive = true;
+                return;
+            }
+
+            // если hover уже активен и тапнули по карусели — не переходить
+            if (hoverActive && tappedInCarousel) {
+                e.preventDefault();
+                return;
+            }
+
+            // если hover активен и тапнули не по карусели — скрываем hover
+            if (hoverActive && !tappedInCarousel) {
+                card.classList.remove("touch-active");
+                activeCard = null;
+                hoverActive = false;
+                e.preventDefault();
+                return;
+            }
+
+            // короткий тап (не в карусели, hover не активен) — переход
+            if (!hoverActive && !tappedInCarousel) {
+                window.location.href = link.href;
+            }
+        }, { passive: false });
     });
+
+    // тап вне карточки — убрать hover
+    document.addEventListener("touchstart", e => {
+        if (!e.target.closest(".rafy-card-square") && activeCard) {
+            activeCard.classList.remove("touch-active");
+            activeCard = null;
+        }
+    }, { passive: true });
+});
 </script>
