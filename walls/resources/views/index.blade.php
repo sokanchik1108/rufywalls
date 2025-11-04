@@ -1,3 +1,4 @@
+@extends('layouts.main')
 {{-- 🔹 Title --}}
 @section('title', 'Корзина — RAFY WALLS')
 

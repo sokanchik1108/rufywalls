@@ -11,49 +11,49 @@ use Illuminate\Support\Facades\Cookie;
 
 class WebsiteController extends Controller
 {
-public function website()
-{
-    $categories = Category::all();
-    $rooms = Room::all();
+    public function website()
+    {
+        $categories = Category::all();
+        $rooms = Room::all();
 
-    // Случайные новинки
-    $products = Product::with('variants.batches')
-        ->where('status', 'новинка')
-        ->whereHas('variants')
-        ->inRandomOrder()
-        ->take(8)
-        ->get();
+        // Случайные новинки
+        $products = Product::with('variants.batches')
+            ->where('status', 'новинка')
+            ->whereHas('variants')
+            ->inRandomOrder()
+            ->take(8)
+            ->get();
 
-    $variants = $products->map(function ($product) {
-        return $product->variants->random();
-    });
-
-    // Варианты по категориям: только по одному уникальному продукту на категорию
-    $allVariants = Variant::with('product.categories')->get();
-    $usedProductIds = []; // ключевое изменение: теперь исключаем не варианты, а продукты
-    $categoryVariants = [];
-
-    foreach ($categories as $category) {
-        $variant = $allVariants->first(function ($v) use ($category, $usedProductIds) {
-            $images = json_decode($v->images, true) ?? [];
-
-            return $v->product
-                && $v->product->categories->contains('id', $category->id)
-                && !in_array($v->product_id, $usedProductIds) // исключаем продукты, не варианты
-                && count($images) >= 7;
+        $variants = $products->map(function ($product) {
+            return $product->variants->random();
         });
 
-        if (!$variant) continue;
+        // Варианты по категориям: только по одному уникальному продукту на категорию
+        $allVariants = Variant::with('product.categories')->get();
+        $usedProductIds = []; // ключевое изменение: теперь исключаем не варианты, а продукты
+        $categoryVariants = [];
 
-        $images = json_decode($variant->images, true) ?? [];
-        $variant->image7 = $images[6];
+        foreach ($categories as $category) {
+            $variant = $allVariants->first(function ($v) use ($category, $usedProductIds) {
+                $images = json_decode($v->images, true) ?? [];
 
-        $categoryVariants[$category->id] = $variant;
-        $usedProductIds[] = $variant->product_id; // теперь помечаем продукт
+                return $v->product
+                    && $v->product->categories->contains('id', $category->id)
+                    && !in_array($v->product_id, $usedProductIds) // исключаем продукты, не варианты
+                    && count($images) >= 7;
+            });
+
+            if (!$variant) continue;
+
+            $images = json_decode($variant->images, true) ?? [];
+            $variant->image7 = $images[6];
+
+            $categoryVariants[$category->id] = $variant;
+            $usedProductIds[] = $variant->product_id; // теперь помечаем продукт
+        }
+
+        return view('website', compact('products', 'categories', 'rooms', 'variants', 'categoryVariants'));
     }
-
-    return view('website', compact('products', 'categories', 'rooms', 'variants', 'categoryVariants'));
-}
 
 
 
@@ -106,10 +106,10 @@ public function website()
 
             // Фильтры
             if ($request->filled('category_id')) {
-                $variants->whereHas('product.categories', fn($q) => $q->where('categories.id', $request->category_id));
+                $variants->whereHas('product.categories', fn($q) => $q->whereIn('categories.id', (array) $request->category_id));
             }
             if ($request->filled('room_id')) {
-                $variants->whereHas('product.rooms', fn($q) => $q->where('rooms.id', $request->room_id));
+                $variants->whereHas('product.rooms', fn($q) => $q->whereIn('rooms.id', (array) $request->room_id));
             }
             if ($request->filled('brand')) {
                 $variants->whereHas('product', fn($q) => $q->whereIn('brand', (array) $request->brand));
@@ -208,11 +208,12 @@ public function website()
         $products = Product::where('is_hidden', false);
 
         if ($request->filled('category_id')) {
-            $products->whereHas('categories', fn($q) => $q->where('categories.id', $request->category_id));
+            $products->whereHas('categories', fn($q) => $q->whereIn('categories.id', (array) $request->category_id));
         }
         if ($request->filled('room_id')) {
-            $products->whereHas('rooms', fn($q) => $q->where('rooms.id', $request->room_id));
+            $products->whereHas('rooms', fn($q) => $q->whereIn('rooms.id', (array) $request->room_id));
         }
+
         if ($request->filled('brand')) {
             $products->whereIn('brand', (array) $request->brand);
         }

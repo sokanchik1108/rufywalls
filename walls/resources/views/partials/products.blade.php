@@ -123,7 +123,7 @@
                                 <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
                                     data-src="{{ asset('storage/' . $image) }}"
                                     class="rafy-card-img lazy-slide"
-                                    alt="{{ $product->name }}">">
+                                    alt="{{ $product->name }}">
                             </div>
                             @endif
                             @endforeach
@@ -478,127 +478,135 @@
 </style>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-    // ===== Lazy Loading для слайдов =====
-    document.querySelectorAll(".carousel").forEach(carousel => {
-        const loadSlideImages = slides => {
-            slides.forEach(slide => {
-                const img = slide?.querySelector("img.lazy-slide");
-                if (img && img.dataset.src && img.src !== img.dataset.src) {
-                    img.src = img.dataset.src;
-                }
-            });
-        };
+    document.addEventListener("DOMContentLoaded", () => {
+        // ===== Lazy Loading для слайдов =====
+        document.querySelectorAll(".carousel").forEach(carousel => {
+            const loadSlideImages = slides => {
+                slides.forEach(slide => {
+                    const img = slide?.querySelector("img.lazy-slide");
+                    if (img && img.dataset.src && img.src !== img.dataset.src) {
+                        img.src = img.dataset.src;
+                    }
+                });
+            };
 
-        carousel.addEventListener("slide.bs.carousel", e => {
-            loadSlideImages([
-                e.relatedTarget,
-                e.relatedTarget?.nextElementSibling,
-                e.relatedTarget?.previousElementSibling
-            ]);
+            carousel.addEventListener("slide.bs.carousel", e => {
+                loadSlideImages([
+                    e.relatedTarget,
+                    e.relatedTarget?.nextElementSibling,
+                    e.relatedTarget?.previousElementSibling
+                ]);
+            });
+
+            const first = carousel.querySelector(".carousel-item.active");
+            loadSlideImages([first, first?.nextElementSibling]);
         });
 
-        const first = carousel.querySelector(".carousel-item.active");
-        loadSlideImages([first, first?.nextElementSibling]);
-    });
+        // ===== Hover / Touch логика =====
+        const cards = document.querySelectorAll(".product-card-link");
+        let activeCard = null;
+        let hoverTimer = null;
+        const HOVER_DELAY = 150;
+        const TAP_THRESHOLD = 250;
 
-    // ===== Hover / Touch логика =====
-    const cards = document.querySelectorAll(".product-card-link");
-    let activeCard = null;
-    let hoverTimer = null;
-    const HOVER_DELAY = 150;
-    const TAP_THRESHOLD = 250;
+        cards.forEach(link => {
+            const card = link.querySelector(".rafy-card-square");
+            if (!card) return;
 
-    cards.forEach(link => {
-        const card = link.querySelector(".rafy-card-square");
-        if (!card) return;
+            let touchStartTime = 0;
+            let touchMoved = false;
+            let hoverActive = false;
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let tappedInCarousel = false;
 
-        let touchStartTime = 0;
-        let touchMoved = false;
-        let hoverActive = false;
-        let touchStartX = 0;
-        let touchStartY = 0;
-        let tappedInCarousel = false;
-
-        link.addEventListener("touchstart", e => {
-            touchStartTime = Date.now();
-            touchMoved = false;
-            hoverActive = card.classList.contains("touch-active");
-            tappedInCarousel = !!e.target.closest(".rafy-carousel-wrapper");
-            clearTimeout(hoverTimer);
-
-            const touch = e.touches[0];
-            touchStartX = touch.clientX;
-            touchStartY = touch.clientY;
-
-            // включаем hover только если его нет
-            if (!hoverActive) {
-                hoverTimer = setTimeout(() => {
-                    if (activeCard && activeCard !== card) {
-                        activeCard.classList.remove("touch-active");
-                    }
-                    card.classList.add("touch-active");
-                    activeCard = card;
-                    hoverActive = true;
-                    navigator.vibrate?.(30);
-                }, HOVER_DELAY);
-            }
-        }, { passive: true });
-
-        link.addEventListener("touchmove", e => {
-            const touch = e.touches[0];
-            const dx = Math.abs(touch.clientX - touchStartX);
-            const dy = Math.abs(touch.clientY - touchStartY);
-
-            // если движение — сбрасываем hover таймер
-            if (dx > 10 || dy > 10) {
-                touchMoved = true;
+            link.addEventListener("touchstart", e => {
+                touchStartTime = Date.now();
+                touchMoved = false;
+                hoverActive = card.classList.contains("touch-active");
+                tappedInCarousel = !!e.target.closest(".rafy-carousel-wrapper");
                 clearTimeout(hoverTimer);
-            }
-        }, { passive: true });
 
-        link.addEventListener("touchend", e => {
-            const touchDuration = Date.now() - touchStartTime;
-            clearTimeout(hoverTimer);
+                const touch = e.touches[0];
+                touchStartX = touch.clientX;
+                touchStartY = touch.clientY;
 
-            // свайп — ничего не делаем
-            if (touchMoved) return;
+                // включаем hover только если его нет
+                if (!hoverActive) {
+                    hoverTimer = setTimeout(() => {
+                        if (activeCard && activeCard !== card) {
+                            activeCard.classList.remove("touch-active");
+                        }
+                        card.classList.add("touch-active");
+                        activeCard = card;
+                        hoverActive = true;
+                        navigator.vibrate?.(30);
+                    }, HOVER_DELAY);
+                }
+            }, {
+                passive: true
+            });
 
-            // если был удержан — только hover
-            if (touchDuration > TAP_THRESHOLD && !hoverActive) {
-                e.preventDefault();
-                hoverActive = true;
-                return;
-            }
+            link.addEventListener("touchmove", e => {
+                const touch = e.touches[0];
+                const dx = Math.abs(touch.clientX - touchStartX);
+                const dy = Math.abs(touch.clientY - touchStartY);
 
-            // если hover уже активен и тапнули по карусели — не переходить
-            if (hoverActive && tappedInCarousel) {
-                e.preventDefault();
-                return;
-            }
+                // если движение — сбрасываем hover таймер
+                if (dx > 10 || dy > 10) {
+                    touchMoved = true;
+                    clearTimeout(hoverTimer);
+                }
+            }, {
+                passive: true
+            });
 
-            // если hover активен и тапнули не по карусели — скрываем hover
-            if (hoverActive && !tappedInCarousel) {
-                card.classList.remove("touch-active");
+            link.addEventListener("touchend", e => {
+                const touchDuration = Date.now() - touchStartTime;
+                clearTimeout(hoverTimer);
+
+                // свайп — ничего не делаем
+                if (touchMoved) return;
+
+                // если был удержан — только hover
+                if (touchDuration > TAP_THRESHOLD && !hoverActive) {
+                    e.preventDefault();
+                    hoverActive = true;
+                    return;
+                }
+
+                // если hover уже активен и тапнули по карусели — не переходить
+                if (hoverActive && tappedInCarousel) {
+                    e.preventDefault();
+                    return;
+                }
+
+                // если hover активен и тапнули не по карусели — скрываем hover
+                if (hoverActive && !tappedInCarousel) {
+                    card.classList.remove("touch-active");
+                    activeCard = null;
+                    hoverActive = false;
+                    e.preventDefault();
+                    return;
+                }
+
+                // короткий тап (не в карусели, hover не активен) — переход
+                if (!hoverActive && !tappedInCarousel) {
+                    window.location.href = link.href;
+                }
+            }, {
+                passive: false
+            });
+        });
+
+        // тап вне карточки — убрать hover
+        document.addEventListener("touchstart", e => {
+            if (!e.target.closest(".rafy-card-square") && activeCard) {
+                activeCard.classList.remove("touch-active");
                 activeCard = null;
-                hoverActive = false;
-                e.preventDefault();
-                return;
             }
-
-            // короткий тап (не в карусели, hover не активен) — переход
-            if (!hoverActive && !tappedInCarousel) {
-                window.location.href = link.href;
-            }
-        }, { passive: false });
+        }, {
+            passive: true
+        });
     });
-
-    // тап вне карточки — убрать hover
-    document.addEventListener("touchstart", e => {
-        if (!e.target.closest(".rafy-card-square") && activeCard) {
-            activeCard.classList.remove("touch-active");
-            activeCard = null;
-        }
-    }, { passive: true });
-});
 </script>
