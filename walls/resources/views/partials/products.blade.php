@@ -30,15 +30,45 @@
     $product = $isVariant ? $item->product : $item;
     $productVariants = $product->variants ?? collect();
 
+    // --- выбранные цвета ---
+    $selectedColors = request()->color ? array_map('strtolower', (array) request()->color) : [];
+
+
+    /* ============================================================
+    ✅ (A) ЕСЛИ ВЫБРАН ЦВЕТ → ОТБОР ТОЛЬКО ВАРИАНТОВ ЭТИХ ЦВЕТОВ
+    ============================================================ */
+    if (!empty($selectedColors)) {
+
+    // Все варианты совпадающих цветов
+    $matchedVariants = $productVariants->filter(function($v) use ($selectedColors) {
+    return in_array(strtolower(trim((string)$v->color)), $selectedColors);
+    });
+
+    // ✅ Если товар НЕ содержит выбранных цветов → НЕ ПОКАЗЫВАЕМ его
+    if ($matchedVariants->isEmpty()) {
+    // пропускаем товар полностью
+    continue;
+    }
+
+    // ✅ shownVariant = первый найденный
+    $shownVariant = $matchedVariants->first();
+
+    } else {
+
+    /* ============================================================
+    ✅ (B) СТАРОЕ ПОВЕДЕНИЕ КОГДА ЦВЕТ НЕ ВЫБРАН
+    ============================================================ */
     if ($isVariant) {
     $shownVariant = $item;
     } else {
+
     $variantsWith7 = $productVariants->filter(function ($v) {
     $imgs = json_decode($v->images ?? '[]', true) ?? [];
     return count($imgs) >= 7;
     });
 
-    $productVariantsForLogic = $variantsWith7->isNotEmpty() && $variantsWith7->count() < $productVariants->count()
+    $productVariantsForLogic =
+    $variantsWith7->isNotEmpty() && $variantsWith7->count() < $productVariants->count()
         ? $variantsWith7
         : $productVariants;
 
@@ -55,7 +85,7 @@
         $groupKey = $groupVariantIds->join('-');
 
         if (!isset($groupColorMap[$groupKey])) {
-        $colors = $productVariantsForLogic->map(fn($v) => strtolower(trim((string) $v->color)))
+        $colors = $productVariantsForLogic->map(fn($v) => strtolower(trim((string)$v->color)))
         ->filter()
         ->unique()
         ->values();
@@ -73,48 +103,87 @@
         }
 
         $targetColor = $groupColorMap[$groupKey];
+
         $shownVariant = $productVariantsForLogic->first(fn($v) =>
         $targetColor !== null &&
-        strtolower(trim((string) $v->color)) === $targetColor
+        strtolower(trim((string)$v->color)) === $targetColor
         ) ?? $productVariantsForLogic->first();
         }
+        }
 
-        $color = $shownVariant->color ?? null;
 
-        $currentImages = json_decode($shownVariant->images ?? '[]', true) ?? [];
+        /* ============================================================
+        ✅ (C) ГЕНЕРАЦИЯ ИЗОБРАЖЕНИЙ
+        ============================================================ */
+
         $images = [];
 
-        if (!empty($currentImages)) {
-        $count = count($currentImages);
-        if ($count >= 7) {
-        $images[] = $currentImages[6];
-        $images[] = $currentImages[0];
+        // Все картинки выбранного варианта
+        $currentImages = json_decode($shownVariant->images ?? '[]', true) ?? [];
+
+        // ✅ fallback: если нет 7-й картинки → берём 7-ю из ЛЮБОГО варианта
+        $seventhImage = null;
+
+        if (isset($currentImages[6])) {
+        $seventhImage = $currentImages[6];
         } else {
-        $images[] = $currentImages[0];
+        foreach ($productVariants as $var) {
+        $imgs = json_decode($var->images ?? '[]', true) ?? [];
+        if (isset($imgs[6])) {
+        $seventhImage = $imgs[6];
+        break;
+        }
         }
         }
 
+        // 7-я картинка
+        if ($seventhImage) $images[] = $seventhImage;
+
+        // 1-я картинка shownVariant
+        if (!empty($currentImages)) {
+        $images[] = $currentImages[0];
+        }
+
+
+        /* ============================================================
+        ✅ (D) ДОБАВЛЯЕМ КАРТИНКИ ДРУГИХ ВЫБРАННЫХ ОТТЕНКОВ
+        ============================================================ */
 
         foreach ($productVariants as $otherVariant) {
-        if ($shownVariant && $otherVariant->id === $shownVariant->id) continue;
-        $otherImages = json_decode($otherVariant->images ?? '[]', true) ?? [];
-        if (!empty($otherImages)) {
-        $images[] = $otherImages[0];
+
+        // Пропускаем основной variant
+        if ($otherVariant->id === $shownVariant->id) continue;
+
+        // Показываем только выбранные цвета
+        if (!empty($selectedColors)) {
+        $variantColor = strtolower(trim((string)$otherVariant->color));
+        if (!in_array($variantColor, $selectedColors)) continue;
+        }
+
+        $imgs = json_decode($otherVariant->images ?? '[]', true) ?? [];
+        if (!empty($imgs)) {
+        $images[] = $imgs[0];
         }
         }
 
+        // Чистим и нормализуем
         $images = collect($images)
-        ->filter(fn($p) => filled($p))
+        ->filter(fn($img) => filled($img))
         ->unique()
         ->values()
         ->all();
+
         @endphp
+
+
         <a href="{{ route('product.show', $product->id) }}" class="product-card-link">
             <div class="product-card rafy-card-square">
+
                 @if (!empty($images))
                 <div class="rafy-carousel-wrapper position-relative"
                     onmouseenter="this.classList.add('hover-enabled')"
                     onmouseleave="this.classList.remove('hover-enabled')">
+
                     <div id="carousel{{ $item->id ?? $product->id }}" class="carousel slide">
                         <div class="carousel-inner">
                             @foreach ($images as $index => $image)
@@ -130,10 +199,12 @@
                         </div>
 
                         @if (count($images) > 1)
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="prev">
+                        <button class="carousel-control-prev" type="button"
+                            data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="prev">
                             <span class="carousel-control-prev-icon"></span>
                         </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="next">
+                        <button class="carousel-control-next" type="button"
+                            data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="next">
                             <span class="carousel-control-next-icon"></span>
                         </button>
                         @endif
@@ -158,16 +229,21 @@
                             Информацию о цене можно узнать в WhatsApp
                         </div>
                         @elseif ($product->discount_price && $product->discount_price > $product->sale_price)
-                        <span style="text-decoration: line-through;">{{ number_format($product->discount_price, 0, '.', ' ') }} ₸</span>
-                        <span class="text-danger fw-bold ms-2">{{ number_format($product->sale_price, 0, '.', ' ') }} ₸</span>
+                        <span style="text-decoration: line-through;">
+                            {{ number_format($product->discount_price, 0, '.', ' ') }} ₸
+                        </span>
+                        <span class="text-danger fw-bold ms-2">
+                            {{ number_format($product->sale_price, 0, '.', ' ') }} ₸
+                        </span>
                         @else
                         <span>{{ number_format($product->sale_price, 0, '.', ' ') }} ₸</span>
                         @endif
                     </div>
-
                 </div>
+
             </div>
         </a>
+
 
         @empty
         <p>Товары не найдены.</p>
@@ -479,7 +555,10 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        // ===== Lazy Loading для слайдов =====
+
+        /* ========================================================
+           LAZY-LOADING + КАРУСЕЛЬ (оставлено без изменений)
+        ========================================================= */
         document.querySelectorAll(".carousel").forEach(carousel => {
             const loadSlideImages = slides => {
                 slides.forEach(slide => {
@@ -502,105 +581,142 @@
             loadSlideImages([first, first?.nextElementSibling]);
         });
 
-        // ===== Hover / Touch логика =====
-        const cards = document.querySelectorAll(".product-card-link");
-        let activeCard = null;
-        let hoverTimer = null;
+        /* ========================================================
+           ГЛОБАЛЬНЫЙ DELEGATED HOVER/TOUCH 
+           Работает для всех карточек, даже если они перерисованы.
+        ========================================================= */
+
         const HOVER_DELAY = 150;
         const TAP_THRESHOLD = 250;
 
-        cards.forEach(link => {
-            const card = link.querySelector(".rafy-card-square");
+        let activeCard = null;
+
+        // Хранение состояния для каждой карточки
+        const state = new WeakMap();
+
+        function getState(card) {
+            if (!state.has(card)) {
+                state.set(card, {
+                    hoverTimer: null,
+                    touchStartTime: 0,
+                    touchMoved: false,
+                    hoverActive: false,
+                    touchStartX: 0,
+                    touchStartY: 0,
+                    tappedInCarousel: false
+                });
+            }
+            return state.get(card);
+        }
+
+        /* ============================
+           TOUCH START
+        ============================= */
+        document.addEventListener("touchstart", (e) => {
+            const link = e.target.closest(".product-card-link");
+            const card = link?.querySelector(".rafy-card-square");
             if (!card) return;
 
-            let touchStartTime = 0;
-            let touchMoved = false;
-            let hoverActive = false;
-            let touchStartX = 0;
-            let touchStartY = 0;
-            let tappedInCarousel = false;
+            const st = getState(card);
 
-            link.addEventListener("touchstart", e => {
-                touchStartTime = Date.now();
-                touchMoved = false;
-                hoverActive = card.classList.contains("touch-active");
-                tappedInCarousel = !!e.target.closest(".rafy-carousel-wrapper");
-                clearTimeout(hoverTimer);
+            st.touchStartTime = Date.now();
+            st.touchMoved = false;
+            st.hoverActive = card.classList.contains("touch-active");
+            st.tappedInCarousel = !!e.target.closest(".rafy-carousel-wrapper");
 
-                const touch = e.touches[0];
-                touchStartX = touch.clientX;
-                touchStartY = touch.clientY;
+            const t = e.touches[0];
+            st.touchStartX = t.clientX;
+            st.touchStartY = t.clientY;
 
-                // включаем hover только если его нет
-                if (!hoverActive) {
-                    hoverTimer = setTimeout(() => {
-                        if (activeCard && activeCard !== card) {
-                            activeCard.classList.remove("touch-active");
-                        }
-                        card.classList.add("touch-active");
-                        activeCard = card;
-                        hoverActive = true;
-                        navigator.vibrate?.(30);
-                    }, HOVER_DELAY);
-                }
-            }, {
-                passive: true
-            });
+            clearTimeout(st.hoverTimer);
 
-            link.addEventListener("touchmove", e => {
-                const touch = e.touches[0];
-                const dx = Math.abs(touch.clientX - touchStartX);
-                const dy = Math.abs(touch.clientY - touchStartY);
-
-                // если движение — сбрасываем hover таймер
-                if (dx > 10 || dy > 10) {
-                    touchMoved = true;
-                    clearTimeout(hoverTimer);
-                }
-            }, {
-                passive: true
-            });
-
-            link.addEventListener("touchend", e => {
-                const touchDuration = Date.now() - touchStartTime;
-                clearTimeout(hoverTimer);
-
-                // свайп — ничего не делаем
-                if (touchMoved) return;
-
-                // если был удержан — только hover
-                if (touchDuration > TAP_THRESHOLD && !hoverActive) {
-                    e.preventDefault();
-                    hoverActive = true;
-                    return;
-                }
-
-                // если hover уже активен и тапнули по карусели — не переходить
-                if (hoverActive && tappedInCarousel) {
-                    e.preventDefault();
-                    return;
-                }
-
-                // если hover активен и тапнули не по карусели — скрываем hover
-                if (hoverActive && !tappedInCarousel) {
-                    card.classList.remove("touch-active");
-                    activeCard = null;
-                    hoverActive = false;
-                    e.preventDefault();
-                    return;
-                }
-
-                // короткий тап (не в карусели, hover не активен) — переход
-                if (!hoverActive && !tappedInCarousel) {
-                    window.location.href = link.href;
-                }
-            }, {
-                passive: false
-            });
+            if (!st.hoverActive) {
+                st.hoverTimer = setTimeout(() => {
+                    if (activeCard && activeCard !== card) {
+                        activeCard.classList.remove("touch-active");
+                    }
+                    card.classList.add("touch-active");
+                    activeCard = card;
+                    st.hoverActive = true;
+                    navigator.vibrate?.(30);
+                }, HOVER_DELAY);
+            }
+        }, {
+            passive: true
         });
 
-        // тап вне карточки — убрать hover
-        document.addEventListener("touchstart", e => {
+        /* ============================
+           TOUCH MOVE
+        ============================= */
+        document.addEventListener("touchmove", (e) => {
+            const link = e.target.closest(".product-card-link");
+            const card = link?.querySelector(".rafy-card-square");
+            if (!card) return;
+
+            const st = getState(card);
+
+            const t = e.touches[0];
+            const dx = Math.abs(t.clientX - st.touchStartX);
+            const dy = Math.abs(t.clientY - st.touchStartY);
+
+            if (dx > 10 || dy > 10) {
+                st.touchMoved = true;
+                clearTimeout(st.hoverTimer);
+            }
+        }, {
+            passive: true
+        });
+
+        /* ============================
+           TOUCH END (passive: false!!)
+        ============================= */
+        document.addEventListener("touchend", (e) => {
+            const link = e.target.closest(".product-card-link");
+            const card = link?.querySelector(".rafy-card-square");
+            if (!card) return;
+
+            const st = getState(card);
+            const touchDuration = Date.now() - st.touchStartTime;
+
+            clearTimeout(st.hoverTimer);
+
+            // свайп
+            if (st.touchMoved) return;
+
+            // долгое удержание → только hover
+            if (touchDuration > TAP_THRESHOLD && !st.hoverActive) {
+                e.preventDefault();
+                st.hoverActive = true;
+                return;
+            }
+
+            // если hover включен и тап по карусели — не переходим
+            if (st.hoverActive && st.tappedInCarousel) {
+                e.preventDefault();
+                return;
+            }
+
+            // если включён hover и тап не по карусели — выключаем hover
+            if (st.hoverActive && !st.tappedInCarousel) {
+                card.classList.remove("touch-active");
+                if (activeCard === card) activeCard = null;
+                st.hoverActive = false;
+                e.preventDefault();
+                return;
+            }
+
+            // обычный короткий тап → переход
+            if (!st.hoverActive && !st.tappedInCarousel) {
+                window.location.href = link.href;
+            }
+        }, {
+            passive: false
+        });
+
+        /* ============================
+           TAP вне карточки → снять hover
+        ============================= */
+        document.addEventListener("touchstart", (e) => {
             if (!e.target.closest(".rafy-card-square") && activeCard) {
                 activeCard.classList.remove("touch-active");
                 activeCard = null;
@@ -608,5 +724,6 @@
         }, {
             passive: true
         });
+
     });
 </script>
