@@ -21,72 +21,49 @@
 
 <div class="product-grid">
     @forelse ($variants as $item)
-    @php
+       @php
     /************************************************************
-    * ✅ ГЛОБАЛЬНЫЕ СТАТИЧЕСКИЕ ПЕРЕМЕННЫЕ
+    * ✅ ГЛОБАЛЬНЫЕ СТАТИЧЕСКИЕ ПЕРЕМЕННЫЕ (кешируются между товарами)
     ************************************************************/
-    static $productSeventhCache = [];
+    static $productSeventhCache = []; // КЭШ ДЛЯ 7-й картинки
     static $groupColorMap = [];
     static $usedGroupColors = [];
     static $groupIndex = 0;
 
-    // ✅ Глобальный цикличный указатель вариантов
-    static $variantPointer = 0;
-
     /************************************************************
-    * ✅ ПОДГОТОВКА ДАННЫХ
+    * ✅ ПОДГОТОВКА ОСНОВНЫХ ДАННЫХ
     ************************************************************/
     $isVariant = isset($item->product);
     $product = $isVariant ? $item->product : $item;
     $productVariants = $product->variants ?? collect();
     $selectedColors = request()->color ? array_map('strtolower', (array) request()->color) : [];
 
-    $isSearch = request()->has('search') && strlen(request('search')) > 0;
 
     /************************************************************
     * ✅ (A) ВЫБОР shownVariant
     ************************************************************/
-
-    // ✅ Логика поиска
-    if ($isSearch) {
-    $shownVariant = $isVariant ? $item : ($productVariants->first() ?? $product);
-    goto skip_variant_logic;
-    }
-
-    /************************************************************
-    * ✅ Цветовой фильтр (оставляем как есть)
-    ************************************************************/
     if (!empty($selectedColors)) {
 
+    // Варианты только выбранных оттенков
     $matchedVariants = $productVariants->filter(function($v) use ($selectedColors) {
     return in_array(strtolower(trim((string)$v->color)), $selectedColors);
     });
 
-    if ($matchedVariants->isEmpty()) continue;
-
-    $orderedMatched = $matchedVariants->sortBy('id')->values();
-
-    foreach ($orderedMatched as $v) {
-    $imgs = json_decode($v->images ?? '[]', true) ?? [];
-    if (!empty($imgs)) {
-    $shownVariant = $v;
-    goto skip_variant_logic;
-    }
+    // Если товар вообще не содержит выбранных оттенков → пропускаем
+    if ($matchedVariants->isEmpty()) {
+    continue;
     }
 
-    $shownVariant = $orderedMatched->first();
-    goto skip_variant_logic;
-    }
+    // shownVariant = первый совпавший
+    $shownVariant = $matchedVariants->first();
 
-    // ✅ Если item сам вариант
+    } else {
+
+    // Старая логика для отсутствия фильтра по цвету
     if ($isVariant) {
     $shownVariant = $item;
-    goto skip_variant_logic;
-    }
+    } else {
 
-    /************************************************************
-    * ✅ Варианты с 7-й картинкой (НЕ ТРОГАЕМ)
-    ************************************************************/
     $variantsWith7 = $productVariants->filter(function ($v) {
     $imgs = json_decode($v->images ?? '[]', true) ?? [];
     return count($imgs) >= 7;
@@ -97,33 +74,23 @@
         ? $variantsWith7
         : $productVariants;
 
-        /************************************************************
-        * ✅ ГРУППИРОВКА ТВОЯ (НЕ ТРОГАЮ)
-        ************************************************************/
         $groupVariantIds = collect();
-
         foreach ($productVariants as $v) {
         $groupVariantIds->push($v->id);
-
         $companions = method_exists($v, 'companions') ? ($v->companions ?? collect()) : collect();
         $companionOf = method_exists($v, 'companionOf') ? ($v->companionOf ?? collect()) : collect();
-
         $groupVariantIds = $groupVariantIds
         ->merge($companions->pluck('id'))
         ->merge($companionOf->pluck('id'));
         }
-
         $groupVariantIds = $groupVariantIds->unique()->sort()->values();
         $groupKey = $groupVariantIds->join('-');
 
-        /************************************************************
-        * ✅ Цветовая логика группы (НЕ ТРОГАЮ)
-        ************************************************************/
         if (!isset($groupColorMap[$groupKey])) {
-
-        $colors = $productVariantsForLogic->map(
-        fn($v) => strtolower(trim((string)$v->color))
-        )->filter()->unique()->values();
+        $colors = $productVariantsForLogic->map(fn($v) => strtolower(trim((string)$v->color)))
+        ->filter()
+        ->unique()
+        ->values();
 
         if ($colors->isEmpty()) {
         $fallback = strtolower(trim((string) optional($productVariantsForLogic->first())->color));
@@ -132,7 +99,6 @@
 
         $countColors = max(1, $colors->count());
         $colorIndex = $groupIndex % $countColors;
-
         $groupColorMap[$groupKey] = $colors[$colorIndex] ?? null;
         $usedGroupColors[] = $groupColorMap[$groupKey];
         $groupIndex++;
@@ -140,117 +106,81 @@
 
         $targetColor = $groupColorMap[$groupKey];
 
-        /************************************************************
-        * ✅ ГЛАВНОЕ: ЦИКЛИЧНАЯ ПОСЛЕДОВАТЕЛЬНОСТЬ ВАРИАНТОВ
-        ************************************************************/
-        $ordered = $productVariantsForLogic->sortBy('id')->values();
-        $total = $ordered->count();
+        $shownVariant = $productVariantsForLogic->first(fn($v) =>
+        $targetColor !== null &&
+        strtolower(trim((string)$v->color)) === $targetColor
+        ) ?? $productVariantsForLogic->first();
+        }
+        }
 
-        /*
-        ✅ ДВИГАЕМ УКАЗАТЕЛЬ ВСЕГДА
-        Это главная правка!
-        */
-        $startIndex = $variantPointer;
-        $variantPointer = ($variantPointer + 1) % $total;
-
-        $shownVariant = null;
 
         /************************************************************
-        * ✅ Ищем подходящий вариант по циклу
+        * ✅ (B) 7-я картинка (С УСТОЙЧИВЫМ КЭШЕМ)
         ************************************************************/
-        for ($offset = 0; $offset < $total; $offset++) {
 
-            $i=($startIndex + $offset) % $total;
-            $v=$ordered[$i];
+        $seventhImage = null;
 
-            $imgs=json_decode($v->images ?? '[]', true) ?? [];
-            $hasImage = !empty($imgs);
+        // ❗ Проверка кеша
+        if (isset($productSeventhCache[$product->id])) {
+        $seventhImage = $productSeventhCache[$product->id];
+        } else {
 
-            $colorMatch =
-            $targetColor === null ||
-            strtolower(trim((string)$v->color)) === $targetColor;
+        // Найти 7-ю среди всех вариантов
+        foreach ($productVariants as $var) {
+        $imgs = json_decode($var->images ?? '[]', true) ?? [];
+        if (isset($imgs[6])) {
+        $seventhImage = $imgs[6];
+        break;
+        }
+        }
 
-            if ($hasImage && $colorMatch) {
-
-            $shownVariant = $v;
-
-            // ✅ снова смещаем pointer на следующий
-            $variantPointer = ($i + 1) % $total;
-
-            break;
-            }
-            }
-
-            // fallback — последний
-            if (!$shownVariant) {
-            $shownVariant = $ordered->last();
-            $variantPointer = 0;
-            }
-
-            skip_variant_logic:
-
-            /************************************************************
-            * ✅ (B) 7-я картинка
-            ************************************************************/
-            $seventhImage = null;
-
-            $imgs = json_decode($shownVariant->images ?? '[]', true) ?? [];
-            if (isset($imgs[6])) {
-            $seventhImage = $imgs[6];
-            }
-
-            /************************************************************
-            * ✅ (C) КАРУСЕЛЬ КАРТИНОК
-            ************************************************************/
-            if ($isSearch) {
-            $imgs = json_decode($shownVariant->images ?? '[]', true) ?? [];
-            $images = [];
-
-            if (!empty($imgs)) $images[] = $imgs[0];
-
-            goto skip_images_logic;
-            }
-
-            $images = [];
-
-            if ($seventhImage) $images[] = $seventhImage;
-
-            $currentImages = json_decode($shownVariant->images ?? '[]', true) ?? [];
-            if (!empty($currentImages)) {
-            $images[] = $currentImages[0];
-            }
-
-            foreach ($productVariants as $otherVariant) {
-
-            if ($otherVariant->id === $shownVariant->id) continue;
-
-            if (!empty($selectedColors)) {
-            $variantColor = strtolower(trim((string)$otherVariant->color));
-            if (!in_array($variantColor, $selectedColors)) continue;
-            }
-
-            $imgs = json_decode($otherVariant->images ?? '[]', true) ?? [];
-
-            if (!empty($imgs)) {
-            $images[] = $imgs[0];
-            }
-            }
-
-            $images = collect($images)
-            ->filter(fn($img) => filled($img))
-            ->unique()
-            ->values()
-            ->all();
-
-            skip_images_logic:
-
-            @endphp
+        // Сохранить в кеш (даже если null — чтобы не искать миллион раз)
+        $productSeventhCache[$product->id] = $seventhImage;
+        }
 
 
+        /************************************************************
+        * ✅ (C) СБОР ВСЕХ КАРТИНОК ДЛЯ КАРУСЕЛИ
+        ************************************************************/
+
+        $images = [];
+
+        // 7-я картинка (если есть)
+        if ($seventhImage) {
+        $images[] = $seventhImage;
+        }
+
+        // 1-я картинка shownVariant
+        $currentImages = json_decode($shownVariant->images ?? '[]', true) ?? [];
+        if (!empty($currentImages)) {
+        $images[] = $currentImages[0];
+        }
+
+        // Для всех других выбранных цветов → добавляем первую картинку
+        foreach ($productVariants as $otherVariant) {
+
+        if ($otherVariant->id === $shownVariant->id) continue;
+
+        if (!empty($selectedColors)) {
+        $variantColor = strtolower(trim((string)$otherVariant->color));
+        if (!in_array($variantColor, $selectedColors)) continue;
+        }
+
+        $imgs = json_decode($otherVariant->images ?? '[]', true) ?? [];
+        if (!empty($imgs)) {
+        $images[] = $imgs[0];
+        }
+        }
 
 
+        // финальная очистка картинок
+        $images = collect($images)
+        ->filter(fn($img) => filled($img))
+        ->unique()
+        ->values()
+        ->all();
 
-
+        @endphp
 
             <a href="{{ route('product.show', $product->id) }}" class="product-card-link">
                 <div class="product-card rafy-card-square">
