@@ -213,6 +213,7 @@
 
 
 
+
         <a href="{{ route('product.show', $product->id) }}" class="product-card-link">
             <div class="product-card rafy-card-square">
 
