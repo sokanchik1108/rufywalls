@@ -180,35 +180,33 @@
 
 
             /************************************************************
-            * ✅ (C) СБОР КАРТИНОК ДЛЯ КАРУСЕЛИ
+            * ✅ 7-я картинка текущего shownVariant
             ************************************************************/
+            $imgs = json_decode($shownVariant->images ?? '[]', true) ?? [];
+            $seventhImage = $imgs[6] ?? $imgs[0] ?? null;
 
+            /************************************************************
+            * ✅ СБОР КАРУСЕЛИ
+            ************************************************************/
             $images = [];
 
-            // определяем, выполняется ли поиск
-            $isSearch = request()->filled('search');
-
-            // ✅ В поиске — только 1-я картинка найденного варианта
-            if ($isSearch) {
-            $imgs = json_decode($shownVariant->images ?? '[]', true) ?? [];
+            // В поиске — только первая картинка
+            if (request()->filled('search')) {
             if (!empty($imgs)) {
-            $images[] = $imgs[0]; // только первая картинка
+            $images[] = $imgs[0];
             }
-            goto skip_images_logic; // пропускаем остальной сбор картинок
-            }
-
-            // ✅ 7-я картинка (только в каталоге, без поиска)
+            } else {
+            // 1️⃣ 7-я картинка текущего shownVariant
             if ($seventhImage) {
             $images[] = $seventhImage;
             }
 
-            // ✅ первая картинка shownVariant
-            $currentImages = json_decode($shownVariant->images ?? '[]', true) ?? [];
-            if (!empty($currentImages)) {
-            $images[] = $currentImages[0];
+            // 2️⃣ Первая картинка текущего shownVariant
+            if (!empty($imgs)) {
+            $images[] = $imgs[0];
             }
 
-            // ✅ картинки других выбранных вариантов
+            // 3️⃣ Первые картинки других вариантов
             foreach ($productVariants as $otherVariant) {
             if ($otherVariant->id === $shownVariant->id) continue;
 
@@ -217,20 +215,15 @@
             if (!in_array($variantColor, $selectedColors)) continue;
             }
 
-            $imgs = json_decode($otherVariant->images ?? '[]', true) ?? [];
-            if (!empty($imgs)) {
-            $images[] = $imgs[0];
+            $otherImgs = json_decode($otherVariant->images ?? '[]', true) ?? [];
+            if (!empty($otherImgs)) {
+            $images[] = $otherImgs[0];
+            }
             }
             }
 
-            skip_images_logic:
+            $images = collect($images)->filter(fn($img) => filled($img))->unique()->values()->all();
 
-            // ✅ финальная очистка картинок
-            $images = collect($images)
-            ->filter(fn($img) => filled($img))
-            ->unique()
-            ->values()
-            ->all();
 
 
             @endphp
