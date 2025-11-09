@@ -23,12 +23,14 @@
     @forelse ($variants as $item)
     @php
     /************************************************************
-    * ✅ ГЛОБАЛЬНЫЕ СТАТИЧЕСКИЕ ПЕРЕМЕННЫЕ (кешируются между товарами)
+    * ✅ ГЛОБАЛЬНЫЕ СТАТИЧЕСКИЕ И СЕССИОННЫЕ ПЕРЕМЕННЫЕ
     ************************************************************/
-    static $productSeventhCache = []; // КЭШ ДЛЯ 7-й картинки
     static $groupColorMap = [];
     static $usedGroupColors = [];
     static $groupIndex = 0;
+
+    // Достаём кеш 7-х картинок из сессии
+    $productSeventhCache = session('product_seventh_cache', []);
 
     /************************************************************
     * ✅ ПОДГОТОВКА ОСНОВНЫХ ДАННЫХ
@@ -38,32 +40,23 @@
     $productVariants = $product->variants ?? collect();
     $selectedColors = request()->color ? array_map('strtolower', (array) request()->color) : [];
 
-
     /************************************************************
-    * ✅ (A) ВЫБОР shownVariant
+    * ✅ ВЫБОР shownVariant
     ************************************************************/
     if (!empty($selectedColors)) {
-
-    // Варианты только выбранных оттенков
-    $matchedVariants = $productVariants->filter(function($v) use ($selectedColors) {
+    $matchedVariants = $productVariants->filter(function ($v) use ($selectedColors) {
     return in_array(strtolower(trim((string)$v->color)), $selectedColors);
     });
 
-    // Если товар вообще не содержит выбранных оттенков → пропускаем
     if ($matchedVariants->isEmpty()) {
     continue;
     }
 
-    // shownVariant = первый совпавший
     $shownVariant = $matchedVariants->first();
-
     } else {
-
-    // Старая логика для отсутствия фильтра по цвету
     if ($isVariant) {
     $shownVariant = $item;
     } else {
-
     $variantsWith7 = $productVariants->filter(function ($v) {
     $imgs = json_decode($v->images ?? '[]', true) ?? [];
     return count($imgs) >= 7;
@@ -83,6 +76,7 @@
         ->merge($companions->pluck('id'))
         ->merge($companionOf->pluck('id'));
         }
+
         $groupVariantIds = $groupVariantIds->unique()->sort()->values();
         $groupKey = $groupVariantIds->join('-');
 
@@ -113,20 +107,21 @@
         }
         }
 
-
         /************************************************************
-        * ✅ Определение 7-й картинки при фильтрации
+        * ✅ 7-я картинка (теперь сохраняется в сессию навсегда)
         ************************************************************/
-
         $seventhImage = null;
-
         $imgs = json_decode($shownVariant->images ?? '[]', true) ?? [];
 
-        // 1️⃣ Если у текущего shownVariant есть 7-я картинка
+        // 1️⃣ Проверяем, есть ли картинка в сессии
+        if (isset($productSeventhCache[$product->id])) {
+        $seventhImage = $productSeventhCache[$product->id];
+        } else {
+        // 2️⃣ Ищем 7-ю среди текущего варианта
         if (isset($imgs[6])) {
         $seventhImage = $imgs[6];
         } else {
-        // 2️⃣ Ищем любой вариант товара с 7-й картинкой (цвет не важен)
+        // 3️⃣ Ищем среди всех вариантов
         $fallbackVariant = $productVariants->first(function ($v) {
         $vi = json_decode($v->images ?? '[]', true) ?? [];
         return isset($vi[6]);
@@ -138,32 +133,30 @@
         }
         }
 
-        // 3️⃣ Если даже среди всех вариантов нет 7-й картинки — оставляем null
-
-        // Кешируем только если фильтра нет
-        if (empty($selectedColors)) {
+        // 4️⃣ Если нашли — сохраняем в сессию
+        if ($seventhImage) {
         $productSeventhCache[$product->id] = $seventhImage;
+        session(['product_seventh_cache' => $productSeventhCache]);
+        }
         }
 
-
-
         /************************************************************
-        * ✅ 7-я картинка текущего shownVariant
+        * ✅ Формирование набора картинок
         ************************************************************/
         $images = [];
 
-        // В поиске — только первая картинка
         if (request()->filled('search')) {
+        // В поиске — только первая
         if (!empty($imgs)) {
         $images[] = $imgs[0];
         }
         } else {
-        // 1️⃣ 7-я картинка текущего shownVariant или fallback
+        // 1️⃣ Всегда добавляем сохранённую 7-ю
         if ($seventhImage) {
         $images[] = $seventhImage;
         }
 
-        // 2️⃣ Первая картинка текущего shownVariant
+        // 2️⃣ Первая картинка текущего варианта
         $images[] = $imgs[0] ?? null;
 
         // 3️⃣ Первые картинки других вариантов
@@ -183,17 +176,12 @@
         }
 
         $images = collect($images)->filter(fn($img) => filled($img))->unique()->values()->all();
-
-
-
-
         @endphp
 
 
-
-
-
-
+        {{-- =========================================================
+    💎 КАРТОЧКА ТОВАРА
+========================================================= --}}
         <a href="{{ route('product.show', $product->id) }}" class="product-card-link">
             <div class="product-card rafy-card-square">
 
@@ -205,7 +193,7 @@
                     <div id="carousel{{ $item->id ?? $product->id }}" class="carousel slide">
                         <div class="carousel-inner">
                             @foreach ($images as $index => $image)
-                            @if($image)
+                            @if ($image)
                             <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
                                 <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
                                     data-src="{{ asset('storage/' . $image) }}"
@@ -261,7 +249,6 @@
 
             </div>
         </a>
-
 
         @empty
         <p>Товары не найдены.</p>
