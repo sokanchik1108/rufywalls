@@ -22,238 +22,175 @@
 <div class="product-grid">
     @forelse ($variants as $item)
     @php
-    /************************************************************
-    * ✅ ГЛОБАЛЬНЫЕ СТАТИЧЕСКИЕ И СЕССИОННЫЕ ПЕРЕМЕННЫЕ
-    ************************************************************/
     static $groupColorMap = [];
     static $usedGroupColors = [];
     static $groupIndex = 0;
 
-    // Достаём кеш 7-х картинок из сессии
     $productSeventhCache = session('product_seventh_cache', []);
-
-    /************************************************************
-    * ✅ ПОДГОТОВКА ОСНОВНЫХ ДАННЫХ
-    ************************************************************/
     $isVariant = isset($item->product);
     $product = $isVariant ? $item->product : $item;
     $productVariants = $product->variants ?? collect();
     $selectedColors = request()->color ? array_map('strtolower', (array) request()->color) : [];
+    $searchQuery = request('search');
 
     /************************************************************
-    * ✅ ВЫБОР shownVariant
+    * ✅ Фильтруем варианты по цвету
     ************************************************************/
     if (!empty($selectedColors)) {
-    $matchedVariants = $productVariants->filter(function ($v) use ($selectedColors) {
-    return in_array(strtolower(trim((string)$v->color)), $selectedColors);
-    });
-
-    if ($matchedVariants->isEmpty()) {
-    continue;
+    $productVariants = $productVariants->filter(fn($v) => in_array(strtolower(trim((string)$v->color)), $selectedColors));
+    if ($productVariants->isEmpty()) continue;
     }
 
-    $shownVariant = $matchedVariants->first();
+    /************************************************************
+    * ✅ Если поиск — показываем только первый вариант, который подходит
+    ************************************************************/
+    if ($searchQuery) {
+    $shownVariant = $productVariants->first();
+    $images = [];
+    if ($shownVariant) {
+    $vi = json_decode($shownVariant->images ?? '[]', true) ?? [];
+    if (!empty($vi)) $images[] = $vi[0];
+    }
     } else {
-    if ($isVariant) {
-    $shownVariant = $item;
+    /************************************************************
+    * ✅ Группировка по компаньонам и выбор shownVariant
+    ************************************************************/
+    $groupVariantIds = collect();
+    foreach ($productVariants as $v) {
+    $groupVariantIds->push($v->id);
+    $companions = method_exists($v, 'companions') ? ($v->companions ?? collect()) : collect();
+    $companionOf = method_exists($v, 'companionOf') ? ($v->companionOf ?? collect()) : collect();
+    $groupVariantIds = $groupVariantIds
+    ->merge($companions->pluck('id'))
+    ->merge($companionOf->pluck('id'));
+    }
+    $groupVariantIds = $groupVariantIds->unique()->sort()->values();
+    $groupKey = $groupVariantIds->join('-');
+
+    if (!isset($groupColorMap[$groupKey])) {
+    $colors = $productVariants->map(fn($v) => strtolower(trim((string)$v->color)))
+    ->filter()
+    ->unique()
+    ->values();
+    if ($colors->isEmpty()) {
+    $fallback = strtolower(trim((string) optional($productVariants->first())->color));
+    $colors = collect($fallback ? [$fallback] : []);
+    }
+    $countColors = max(1, $colors->count());
+    $colorIndex = $groupIndex % $countColors;
+    $groupColorMap[$groupKey] = $colors[$colorIndex] ?? null;
+    $usedGroupColors[] = $groupColorMap[$groupKey];
+    $groupIndex++;
+    }
+
+    $targetColor = $groupColorMap[$groupKey];
+
+    $shownVariant = $productVariants->first(fn($v) =>
+    $targetColor !== null &&
+    strtolower(trim((string)$v->color)) === $targetColor
+    ) ?? $productVariants->first();
+
+    /************************************************************
+    * ✅ 7-я картинка
+    ************************************************************/
+    $seventhImage = $productSeventhCache[$product->id] ?? null;
+    if (!$seventhImage) {
+    $imgs = json_decode($shownVariant->images ?? '[]', true) ?? [];
+    if (isset($imgs[6])) {
+    $seventhImage = $imgs[6];
     } else {
-    $variantsWith7 = $productVariants->filter(function ($v) {
-    $imgs = json_decode($v->images ?? '[]', true) ?? [];
-    return count($imgs) >= 7;
+    $fallbackVariant = $productVariants->first(function ($v) {
+    $vi = json_decode($v->images ?? '[]', true) ?? [];
+    return isset($vi[6]);
     });
+    if ($fallbackVariant) {
+    $vi = json_decode($fallbackVariant->images ?? '[]', true) ?? [];
+    $seventhImage = $vi[6] ?? null;
+    }
+    }
+    if ($seventhImage) {
+    $productSeventhCache[$product->id] = $seventhImage;
+    session(['product_seventh_cache' => $productSeventhCache]);
+    }
+    }
 
-    $productVariantsForLogic =
-    $variantsWith7->isNotEmpty() && $variantsWith7->count() < $productVariants->count()
-        ? $variantsWith7
-        : $productVariants;
+    /************************************************************
+    * ✅ Формируем массив изображений: 7-я + первая каждого варианта
+    ************************************************************/
+    $images = collect();
+    if ($seventhImage) $images->push($seventhImage);
 
-        $groupVariantIds = collect();
-        foreach ($productVariants as $v) {
-        $groupVariantIds->push($v->id);
-        $companions = method_exists($v, 'companions') ? ($v->companions ?? collect()) : collect();
-        $companionOf = method_exists($v, 'companionOf') ? ($v->companionOf ?? collect()) : collect();
-        $groupVariantIds = $groupVariantIds
-        ->merge($companions->pluck('id'))
-        ->merge($companionOf->pluck('id'));
-        }
+    foreach ($productVariants as $v) {
+    $vi = json_decode($v->images ?? '[]', true) ?? [];
+    if (!empty($vi)) $images->push($vi[0]);
+    }
+    $images = $images->filter(fn($img) => filled($img))->unique()->values()->all();
+    }
+    @endphp
 
-        $groupVariantIds = $groupVariantIds->unique()->sort()->values();
-        $groupKey = $groupVariantIds->join('-');
-
-        if (!isset($groupColorMap[$groupKey])) {
-        $colors = $productVariantsForLogic->map(fn($v) => strtolower(trim((string)$v->color)))
-        ->filter()
-        ->unique()
-        ->values();
-
-        if ($colors->isEmpty()) {
-        $fallback = strtolower(trim((string) optional($productVariantsForLogic->first())->color));
-        $colors = collect($fallback ? [$fallback] : []);
-        }
-
-        $countColors = max(1, $colors->count());
-        $colorIndex = $groupIndex % $countColors;
-        $groupColorMap[$groupKey] = $colors[$colorIndex] ?? null;
-        $usedGroupColors[] = $groupColorMap[$groupKey];
-        $groupIndex++;
-        }
-
-        $targetColor = $groupColorMap[$groupKey];
-
-        $shownVariant = $productVariantsForLogic->first(fn($v) =>
-        $targetColor !== null &&
-        strtolower(trim((string)$v->color)) === $targetColor
-        ) ?? $productVariantsForLogic->first();
-        }
-        }
-
-        /************************************************************
-        * ✅ 7-я картинка (теперь сохраняется в сессию навсегда)
-        ************************************************************/
-        $seventhImage = null;
-        $imgs = json_decode($shownVariant->images ?? '[]', true) ?? [];
-
-        // 1️⃣ Проверяем, есть ли картинка в сессии
-        if (isset($productSeventhCache[$product->id])) {
-        $seventhImage = $productSeventhCache[$product->id];
-        } else {
-        // 2️⃣ Ищем 7-ю среди текущего варианта
-        if (isset($imgs[6])) {
-        $seventhImage = $imgs[6];
-        } else {
-        // 3️⃣ Ищем среди всех вариантов
-        $fallbackVariant = $productVariants->first(function ($v) {
-        $vi = json_decode($v->images ?? '[]', true) ?? [];
-        return isset($vi[6]);
-        });
-
-        if ($fallbackVariant) {
-        $vi = json_decode($fallbackVariant->images ?? '[]', true) ?? [];
-        $seventhImage = $vi[6];
-        }
-        }
-
-        // 4️⃣ Если нашли — сохраняем в сессию
-        if ($seventhImage) {
-        $productSeventhCache[$product->id] = $seventhImage;
-        session(['product_seventh_cache' => $productSeventhCache]);
-        }
-        }
-
-        /************************************************************
-        * ✅ Формирование набора картинок
-        ************************************************************/
-        $images = [];
-
-        if (request()->filled('search')) {
-        // В поиске — только первая
-        if (!empty($imgs)) {
-        $images[] = $imgs[0];
-        }
-        } else {
-        // 1️⃣ Всегда добавляем сохранённую 7-ю
-        if ($seventhImage) {
-        $images[] = $seventhImage;
-        }
-
-        // 2️⃣ Первая картинка текущего варианта
-        $images[] = $imgs[0] ?? null;
-
-        // 3️⃣ Первые картинки других вариантов
-        foreach ($productVariants as $otherVariant) {
-        if ($otherVariant->id === $shownVariant->id) continue;
-
-        if (!empty($selectedColors)) {
-        $variantColor = strtolower(trim((string)$otherVariant->color));
-        if (!in_array($variantColor, $selectedColors)) continue;
-        }
-
-        $otherImgs = json_decode($otherVariant->images ?? '[]', true) ?? [];
-        if (!empty($otherImgs)) {
-        $images[] = $otherImgs[0];
-        }
-        }
-        }
-
-        $images = collect($images)->filter(fn($img) => filled($img))->unique()->values()->all();
-        @endphp
-
-
-        {{-- =========================================================
-    💎 КАРТОЧКА ТОВАРА
-========================================================= --}}
-        <a href="{{ route('product.show', $product->id) }}" class="product-card-link">
-            <div class="product-card rafy-card-square">
-
-                @if (!empty($images))
-                <div class="rafy-carousel-wrapper position-relative"
-                    onmouseenter="this.classList.add('hover-enabled')"
-                    onmouseleave="this.classList.remove('hover-enabled')">
-
-                    <div id="carousel{{ $item->id ?? $product->id }}" class="carousel slide">
-                        <div class="carousel-inner">
-                            @foreach ($images as $index => $image)
-                            @if ($image)
-                            <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
-                                    data-src="{{ asset('storage/' . $image) }}"
-                                    class="rafy-card-img lazy-slide"
-                                    alt="{{ $product->name }}">
-                            </div>
-                            @endif
-                            @endforeach
+    <a href="{{ route('product.show', $product->id) }}" class="product-card-link">
+        <div class="product-card rafy-card-square">
+            @if (!empty($images))
+            <div class="rafy-carousel-wrapper position-relative">
+                <div id="carousel{{ $item->id ?? $product->id }}" class="carousel slide">
+                    <div class="carousel-inner">
+                        @foreach ($images as $index => $image)
+                        <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                            <img
+                                src="{{ asset('storage/' . $image) }}"
+                                loading="lazy"
+                                class="rafy-card-img"
+                                alt="{{ $product->name }}">
                         </div>
-
-                        @if (count($images) > 1)
-                        <button class="carousel-control-prev" type="button"
-                            data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                        </button>
-                        <button class="carousel-control-next" type="button"
-                            data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                        </button>
-                        @endif
+                        @endforeach
                     </div>
+
+                    @if (count($images) > 1)
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
+                    @endif
                 </div>
-                @endif
-
-                @if (!empty($product->status))
-                <div class="rafy-status">{{ $product->status }}</div>
-                @endif
-
-                <div class="rafy-overlay"></div>
-
-                <div class="rafy-hover-text">
-                    <div class="rafy-articul">{{ $shownVariant->sku ?? '---' }}</div>
-                    <div class="rafy-divider"></div>
-                    <div class="rafy-name">{{ $product->name }}</div>
-                    <div class="rafy-price">
-                        @if ($product->sale_price == 0)
-                        <div class="price-info">
-                            <i class="bi bi-info-circle me-2" style="font-size: 1rem;"></i>
-                            Информацию о цене можно узнать в WhatsApp
-                        </div>
-                        @elseif ($product->discount_price && $product->discount_price > $product->sale_price)
-                        <span style="text-decoration: line-through;">
-                            {{ number_format($product->discount_price, 0, '.', ' ') }} ₸
-                        </span>
-                        <span class="text-danger fw-bold ms-2">
-                            {{ number_format($product->sale_price, 0, '.', ' ') }} ₸
-                        </span>
-                        @else
-                        <span>{{ number_format($product->sale_price, 0, '.', ' ') }} ₸</span>
-                        @endif
-                    </div>
-                </div>
-
             </div>
-        </a>
+            @endif
 
-        @empty
-        <p>Товары не найдены.</p>
-        @endforelse
+            @if (!empty($product->status))
+            <div class="rafy-status">{{ $product->status }}</div>
+            @endif
+
+            <div class="rafy-overlay"></div>
+            <div class="rafy-hover-text">
+                <div class="rafy-articul">{{ $shownVariant->sku ?? '---' }}</div>
+                <div class="rafy-divider"></div>
+                <div class="rafy-name">{{ $product->name }}</div>
+                <div class="rafy-price">
+                    @if ($product->sale_price == 0)
+                    <div class="price-info">
+                        <i class="bi bi-info-circle me-2" style="font-size: 1rem;"></i>
+                        Информацию о цене можно узнать в WhatsApp
+                    </div>
+                    @elseif ($product->discount_price && $product->discount_price > $product->sale_price)
+                    <span style="text-decoration: line-through;">
+                        {{ number_format($product->discount_price, 0, '.', ' ') }} ₸
+                    </span>
+                    <span class="text-danger fw-bold ms-2">
+                        {{ number_format($product->sale_price, 0, '.', ' ') }} ₸
+                    </span>
+                    @else
+                    <span>{{ number_format($product->sale_price, 0, '.', ' ') }} ₸</span>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </a>
+    @empty
+    <p>Товары не найдены.</p>
+    @endforelse
 </div>
+
 
 <div class="pagination-wrapper">
     {{ $variants->links('vendor.pagination.custom') }}
