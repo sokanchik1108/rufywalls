@@ -2,7 +2,7 @@
     <input type="hidden" name="room_id" id="room_id" value="{{ request('room_id') }}">
 
     <!-- 🔹 Только со скидкой -->
-    <div class="filter-section" style="margin: 5px 0;">
+    <div class="filter-section" style="margin-top: 15px;">
         <label class="text-checkbox">
             <input type="checkbox" name="on_sale" value="1" {{ request('on_sale') == '1' ? 'checked' : '' }}>
             <span style="font-size: medium;">Только со скидкой</span>
@@ -107,7 +107,7 @@
 
 <style>
     .filter-section {
-        margin-bottom: 20px;
+        margin-bottom: 15px;
     }
 
     .filter-section .filter-label {
@@ -274,16 +274,6 @@
         transition: opacity 0.2s, transform 0.2s;
     }
 
-    .apply-filters {
-        color: #fff;
-        padding: 12px 24px;
-        border: none;
-        border-radius: 3px;
-        background-color: black;
-        font-size: 1rem;
-        cursor: pointer;
-    }
-
     .filter-multiselect .options.show {
         display: block;
         opacity: 1;
@@ -340,17 +330,77 @@
 </style>
 
 <style>
-    /* ========================= МОДАЛЬНОЕ ОКНО ========================= */
+    /* --- Заголовок + кнопка в одном блоке --- */
+    .filters-modal-header {
+        position: sticky;
+        top: 0;
+        z-index: 10000;
+        background: #fff;
+        width: 100%;
+        /* блок во всю ширину */
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        /* кнопка растянута */
+        border: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Заголовок во всю ширину, текст слева */
+    .filters-modal-header h3 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #111;
+        margin: 0 0 16px 0;
+        /* отступ снизу */
+        text-align: left;
+        width: 100%;
+        /* заголовок во всю ширину блока */
+    }
+
+    /* Кнопка "Показать товары" */
+    .filters-modal-header .apply-filters {
+        width: 100%;
+        /* кнопка растянута на всю ширину */
+        padding: 14px 0;
+        font-size: 16px;
+        background: #000;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        outline: none;
+        box-shadow: none;
+        transition: background 0.2s;
+    }
+
+    .filters-modal-header .apply-filters:hover {
+        background: #222;
+    }
+
+    /* Крестик закрыть */
+    .close-filters {
+        position: absolute;
+        right: 16px;
+        top: 16px;
+        font-size: 28px;
+        background: none;
+        border: none;
+        color: #222;
+        cursor: pointer;
+        line-height: 1;
+    }
+
+    /* Модальное окно */
     .filters-modal {
         display: none;
         position: fixed;
         inset: 0;
-        width: 100%;
-        height: 100vh;
         background: #fff;
         z-index: 9999;
         overflow-y: auto;
-        padding: 0 20px;
+        padding: 0 0 40px 0;
         animation: fadeIn 0.2s ease;
     }
 
@@ -359,65 +409,25 @@
     }
 
     .filters-modal-content {
-        max-width: 600px;
+        max-width: 520px;
         margin: 0 auto;
-        padding: 20px 0 60px;
+        padding: 0 16px;
+        /* боковые отступы для остального контента */
     }
 
-    .filters-modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: sticky;
-        top: 0;
-        background: #fff;
-        padding: 5px 0;
-        z-index: 10000;
-        border-bottom: 1px solid #ddd;
-    }
-
-    .close-filters {
-        font-size: 2rem;
-        background: none;
-        border: none;
-        color: #000;
-        cursor: pointer;
-    }
-
-    /* Кнопка применить */
-    .filter-actions {
-        position: sticky;
-        bottom: 0;
-        background: #fff;
-        padding: 15px 0;
-        border-top: 1px solid #ddd;
-        text-align: center;
-    }
-
-    /* --- Мобильная логика --- */
+    /* Мобильная версия */
     @media (max-width: 767px) {
-        .filters {
-            display: none !important;
+        .filters-modal-header h3 {
+            font-size: 22px;
         }
 
-        .filters-modal.visible {
-            display: block;
-        }
-
-        .close-filters {
-            display: block;
+        .filters-modal-header .apply-filters {
+            font-size: 15px;
+            padding: 12px 0;
         }
     }
 
-    /* --- Десктоп: скрываем модалку и крестик --- */
-    @media (min-width: 768px) {
-
-        .filters-modal,
-        .close-filters {
-            display: none !important;
-        }
-    }
-
+    /* Анимация */
     @keyframes fadeIn {
         from {
             opacity: 0;

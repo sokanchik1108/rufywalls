@@ -17,21 +17,22 @@
 </div>
 
 <div class="filters-modal" id="filtersModal">
+
+    <!-- Заголовок + кнопка вынесены за padding контента -->
+    <div class="filters-modal-header">
+        <h3>Фильтры</h3>
+        <button class="apply-filters" type="button">Показать товары</button>
+        <button class="close-filters" aria-label="Закрыть">&times;</button>
+    </div>
+
     <div class="filters-modal-content">
-        <div class="filters-modal-header mb-3">
-            <h3>Фильтры</h3>
-            <button class="close-filters" aria-label="Закрыть">&times;</button>
-        </div>
-
         @include('partials.filters-part')
-
-        <div class="filter-actions">
-            <button type="button" class="apply-filters">Показать товары</button>
-        </div>
     </div>
 </div>
 
+
 <style>
+    /* Индикатор загрузки */
     .filters-loading {
         position: fixed;
         top: 0;
@@ -61,8 +62,6 @@
         }
     }
 </style>
-
-
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const toggleFiltersButton = document.querySelector(".toggle-filters");

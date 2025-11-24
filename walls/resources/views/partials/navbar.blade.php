@@ -106,6 +106,7 @@
         .custom-offcanvas {
             transition: transform 0.4s ease-in-out;
             box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+            background-color: #fff8f0; /* добавили цвет фона */
         }
 
         .custom-offcanvas .nav-link {
