@@ -1,4 +1,9 @@
-<!-- Кнопка для мобильных + фильтры рядом -->
+<!-- Индикатор загрузки -->
+<div id="filters-loading" class="filters-loading">
+    <div class="spinner"></div>
+</div>
+
+<!-- Кнопка для мобильного + фильтры рядом -->
 <div class="filters-wrapper">
     <button class="toggle-filters" style="margin-bottom: -10px;">Фильтры</button>
 
@@ -18,7 +23,6 @@
             <button class="close-filters" aria-label="Закрыть">&times;</button>
         </div>
 
-        <!-- ✅ Тут тоже тот же include -->
         @include('partials.filters-part')
 
         <div class="filter-actions">
@@ -26,6 +30,37 @@
         </div>
     </div>
 </div>
+
+<style>
+    .filters-loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(2px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    .filters-loading .spinner {
+        width: 50px;
+        height: 50px;
+        border: 6px solid #ccc;
+        border-top-color: #333;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
 
 
 <script>
@@ -39,6 +74,15 @@
 
         let activeRooms = [];
         let activeCategories = [];
+
+        /* ---- ЛОАДЕР ---- */
+        function showLoader() {
+            document.getElementById("filters-loading").style.display = "flex";
+        }
+
+        function hideLoader() {
+            document.getElementById("filters-loading").style.display = "none";
+        }
 
         function getModalForm() {
             return filtersModal ? filtersModal.querySelector("form") : null;
@@ -55,7 +99,7 @@
             return getDesktopForm() || getModalForm();
         }
 
-        // --- открытие/закрытие фильтров ---
+        /* --- Открытие/закрытие фильтров --- */
         if (toggleFiltersButton) {
             toggleFiltersButton.addEventListener("click", () => {
                 if (window.innerWidth <= 767 && filtersModal) {
@@ -76,16 +120,21 @@
             });
         }
 
-        // --- отправка AJAX ---
+        /* --- AJAX отправка --- */
         function sendAjax(formForRequest) {
+
+            showLoader(); // <-- включили загрузку
+
             if (!window.catalogRoutes || !window.catalogRoutes.catalog) {
                 console.error("catalog route not found.");
+                hideLoader();
                 return;
             }
 
             const form = formForRequest || getActiveForm();
             if (!form) {
                 console.error("Filter form not found.");
+                hideLoader();
                 return;
             }
 
@@ -98,7 +147,7 @@
 
             const params = new URLSearchParams();
             for (const [key, value] of formData.entries()) {
-                if (key === "room_id" || key === "room_id[]" || key === "category_id" || key === "category_id[]") continue;
+                if (["room_id", "room_id[]", "category_id", "category_id[]"].includes(key)) continue;
                 if (value === "") continue;
                 params.append(key, value);
             }
@@ -129,10 +178,11 @@
                         behavior: "smooth"
                     });
                 })
-                .catch(err => console.error("Ошибка при фильтрации:", err));
+                .catch(err => console.error("Ошибка при фильтрации:", err))
+                .finally(() => hideLoader()); // <-- отключили загрузку
         }
 
-        // --- обработчики форм ---
+        /* --- ОБРАБОТЧИКИ ФОРМ --- */
         function bindFormChangeListeners() {
             const desktopForm = getDesktopForm();
             const modalForm = getModalForm();
@@ -150,7 +200,7 @@
             }
         }
 
-        // --- верхняя панель (поиск, сортировка) ---
+        /* --- TopBar (поиск, сортировка) --- */
         function initTopBarListeners() {
             const search = document.getElementById("search");
             const sort = document.getElementById("sort");
@@ -159,69 +209,12 @@
             if (search && clearBtn) {
                 clearBtn.style.display = search.value.length > 0 ? "block" : "none";
                 search.addEventListener("input", () => clearBtn.style.display = search.value.length > 0 ? "block" : "none");
+
                 clearBtn.addEventListener("click", () => {
                     search.value = "";
                     clearBtn.style.display = "none";
                     sendAjax();
                 });
-
-                // --- AUTOCOMPLETE ---
-                if (typeof $ !== 'undefined' && $.ui && typeof $(search).autocomplete === 'function') {
-                    const autocompleteUrl = window.catalogRoutes?.autocomplete ?? null;
-                    if (!autocompleteUrl) console.error('autocomplete route not found.');
-                    else {
-                        $(search).autocomplete({
-                            source: function(request, response) {
-                                $.ajax({
-                                    url: autocompleteUrl,
-                                    method: 'GET',
-                                    data: {
-                                        term: request.term
-                                    },
-                                    success: function(data) {
-                                        if (!Array.isArray(data) || data.length === 0) {
-                                            response([{
-                                                label: 'Товары не найдены',
-                                                value: '',
-                                                disabled: true
-                                            }]);
-                                        } else response(data);
-                                    },
-                                    error: function(xhr, status, err) {
-                                        console.error('Autocomplete error:', status, err);
-                                        response([]);
-                                    }
-                                });
-                            },
-                            minLength: 1,
-                            delay: 100,
-                            select: function(event, ui) {
-                                if (ui.item.disabled || ui.item.value === '') {
-                                    event.preventDefault();
-                                    return false;
-                                }
-                                search.value = ui.item.value;
-                                clearBtn.style.display = 'block';
-                                sendAjax();
-                            }
-                        }).autocomplete("instance")._renderItem = function(ul, item) {
-                            const li = $("<li>");
-                            const wrapper = $("<div>").text(item.label || item.value || '');
-                            if (item.disabled) {
-                                wrapper.css({
-                                    color: "#000",
-                                    fontStyle: "italic",
-                                    pointerEvents: "none",
-                                    cursor: "default"
-                                });
-                            }
-                            wrapper.addClass("ui-menu-item-wrapper");
-                            return li.append(wrapper).appendTo(ul);
-                        };
-                    }
-                } else {
-                    console.error('jQuery UI autocomplete не найдена.');
-                }
 
                 search.addEventListener("keypress", e => {
                     if (e.key === "Enter") {
@@ -238,7 +231,7 @@
             }
         }
 
-        // --- Комнаты (мультивыбор через ссылки) ---
+        /* --- Комнаты (мультивыбор) --- */
         function initRoomLinks() {
             const roomLinks = Array.from(document.querySelectorAll(".filter-links a[data-room]"));
             if (!roomLinks.length) return;
@@ -252,8 +245,6 @@
                     const rid = a.dataset.room || "";
                     if (rid !== "" && activeRooms.includes(rid)) a.classList.add("active");
                 });
-                const allLink = document.querySelector('.filter-links a[data-room=""]');
-                if (allLink) allLink.classList.remove("active");
             }
 
             roomLinks.forEach(link => {
@@ -262,16 +253,20 @@
                     e.preventDefault();
                     const roomId = this.dataset.room ?? "";
                     if (roomId === "") activeRooms = [];
-                    else activeRooms.includes(roomId) ? activeRooms = activeRooms.filter(id => id !== roomId) : activeRooms.push(roomId);
+                    else activeRooms.includes(roomId) ?
+                        activeRooms = activeRooms.filter(id => id !== roomId) :
+                        activeRooms.push(roomId);
 
                     roomLinks.forEach(a => a.classList.remove("active"));
                     if (activeRooms.length === 0) {
                         const allLink = document.querySelector('.filter-links a[data-room=""]');
                         if (allLink) allLink.classList.add("active");
-                    } else roomLinks.forEach(a => {
-                        const rid = a.dataset.room ?? "";
-                        if (rid !== "" && activeRooms.includes(rid)) a.classList.add("active");
-                    });
+                    } else {
+                        roomLinks.forEach(a => {
+                            const rid = a.dataset.room ?? "";
+                            if (rid !== "" && activeRooms.includes(rid)) a.classList.add("active");
+                        });
+                    }
 
                     sendAjax();
                 };
@@ -279,7 +274,7 @@
             });
         }
 
-        // --- Мультиселект категорий ---
+        /* --- Мультиселект категорий --- */
         function initCategoryMultiSelect() {
             const multiselects = document.querySelectorAll(".filter-multiselect");
             multiselects.forEach(ms => {
@@ -288,7 +283,10 @@
                 const options = Array.from(ms.querySelectorAll(".option"));
                 const hiddenInput = ms.querySelector("input[type='hidden']");
 
-                options.forEach(opt => opt.classList.toggle("active", activeCategories.includes(opt.dataset.value)));
+                options.forEach(opt =>
+                    opt.classList.toggle("active", activeCategories.includes(opt.dataset.value))
+                );
+
                 display.textContent = activeCategories.length ?
                     activeCategories.map(v => options.find(o => o.dataset.value === v)?.textContent || v).join(", ") :
                     "Все";
@@ -304,6 +302,7 @@
                     opt.onclick = (e) => {
                         e.stopPropagation();
                         const val = opt.dataset.value;
+
                         if (activeCategories.includes(val)) {
                             activeCategories = activeCategories.filter(v => v !== val);
                             opt.classList.remove("active");
@@ -327,18 +326,17 @@
             });
         }
 
+        /* --- Кнопка "Показать товары" (мобильная) --- */
         if (applyFiltersBtn) {
             applyFiltersBtn.addEventListener("click", () => {
                 const modalForm = getModalForm();
                 sendAjax(modalForm);
-                if (filtersModal) {
-                    filtersModal.classList.remove("visible");
-                    document.body.style.overflow = "";
-                }
+                filtersModal?.classList.remove("visible");
+                document.body.style.overflow = "";
             });
         }
 
-        // --- инициализация ---
+        /* --- Инициализация --- */
         bindFormChangeListeners();
         initTopBarListeners();
         initRoomLinks();

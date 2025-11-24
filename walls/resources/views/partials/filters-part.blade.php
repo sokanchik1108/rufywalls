@@ -274,6 +274,16 @@
         transition: opacity 0.2s, transform 0.2s;
     }
 
+    .apply-filters {
+        color: #fff;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 3px;
+        background-color: black;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+
     .filter-multiselect .options.show {
         display: block;
         opacity: 1;
@@ -382,16 +392,6 @@
         padding: 15px 0;
         border-top: 1px solid #ddd;
         text-align: center;
-    }
-
-    .apply-filters {
-        color: #fff;
-        padding: 12px 24px;
-        border: none;
-        border-radius: 3px;
-        background-color: black;
-        font-size: 1rem;
-        cursor: pointer;
     }
 
     /* --- Мобильная логика --- */

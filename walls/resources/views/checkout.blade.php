@@ -41,8 +41,8 @@
         <strong>Важно!</strong> После оформления заказа <u>подтвердите его</u>, написав нам в
         <a href="https://wa.me/77077121255?text=Здравствуйте,%20я%20хочу%20подтвердить%20заказ"
             class="text-success fw-semibold" target="_blank">
-            WhatsApp
-        </a>.
+            WhatsApp.
+        </a>
         Без подтверждения заказ не будет обработан.
         <br>
         <span class="d-flex align-items-center mt-2" style="font-size: 0.95rem; font-weight: 500;">
