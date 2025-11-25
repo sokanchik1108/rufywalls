@@ -3,6 +3,7 @@
 @section('content')
 
 <style>
+    /* Заголовок */
     .brands-header {
         text-align: center;
         font-size: 45px;
@@ -10,6 +11,7 @@
         margin: 40px 0;
     }
 
+    /* Блок бренда */
     .brand-item {
         width: 100%;
         display: flex;
@@ -28,6 +30,8 @@
     .brand-content-wrapper {
         max-width: 1000px;
         width: 100%;
+        padding: 0 15px;
+        margin: 0 auto;
     }
 
     .brand-top {
@@ -37,7 +41,7 @@
     }
 
     .brand-logo {
-        width: 200px;
+        width: 230px;
         height: auto;
         object-fit: contain;
         flex-shrink: 0;
@@ -64,7 +68,7 @@
     .brand-content .all-products a {
         text-decoration: none;
         color: #01142f;
-        font-size: small;
+        font-size: 14px;
     }
 
     .brand-content .all-products a:hover {
@@ -73,9 +77,9 @@
 
     .brand-products {
         display: flex;
+        flex-wrap: nowrap;
         justify-content: center;
         gap: 20px;
-        flex-wrap: nowrap;
         padding-top: 40px;
     }
 
@@ -90,48 +94,102 @@
         transform: scale(1.01);
     }
 
-    @media(max-width: 1200px) {
-        .brand-products img {
-            width: 45%;
-        }
-    }
-
-    @media(max-width: 768px) {
+    /* Планшеты (769px - 1200px) */
+    @media (max-width: 1200px) and (min-width: 769px) {
         .brand-content-wrapper {
-            width: 95%;
+            width: 90%;
+            padding: 0 15px;
+            margin: 0 auto;
         }
 
         .brand-top {
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 30px;
+            gap: 50px;
         }
 
         .brand-logo {
-            width: 160px;
-            height: auto;
+            width: 200px;
         }
 
         .brand-products {
             flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 15px;
+            padding-top: 30px;
         }
 
         .brand-products img {
-            width: 45%;
+            width: calc(50% - 7.5px);
+            height: 220px;
             margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+    }
+
+    /* Мобильные устройства (до 768px) */
+    @media (max-width: 768px) {
+        .brand-content-wrapper {
+            width: 95%;
+            padding: 0 15px;
+        }
+
+        .brand-top {
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+            gap: 15px;
+        }
+
+        .brand-logo {
+            width: 140px;
+        }
+
+        .brand-products {
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 10px;
+            padding-top: 20px;
+        }
+
+        .brand-products img {
+            width: calc(50% - 5px);
+            height: 140px;
+            /* меньше на телефонах */
+            margin-bottom: 10px;
+            box-sizing: border-box;
         }
 
         .brand-content .all-products {
-            text-align: center;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+    }
+
+    /* Очень маленькие экраны (до 480px) */
+    @media (max-width: 480px) {
+        .brand-logo {
+            width: 100px;
+        }
+
+        .brand-products {
+            justify-content: space-between;
+            /* чтобы картинки не растягивались на всю ширину */
+        }
+
+        .brand-products img {
+            width: calc(50% - 5px);
+            /* две картинки в ряд с небольшим промежутком */
+            height: 130px;
+            /* можно регулировать */
+            margin-bottom: 10px;
+            box-sizing: border-box;
         }
     }
 </style>
 
+
 <div class="brands-header">Бренды</div>
 
-{{-- Далее идут все блоки брендов --}}
-
+{{-- Далее идут блоки брендов, как у тебя в коде, без изменений --}}
 <div class="brand-item">
     <div class="brand-content-wrapper">
         <div class="brand-top">
