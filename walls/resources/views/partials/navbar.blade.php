@@ -13,12 +13,11 @@
             position: sticky;
             top: 0;
             z-index: 1030;
-            /* поверх всего контента */
             background-color: #fff8f0;
             box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
             padding: 0.5rem 1rem;
             max-width: 100%;
-            overflow-x: hidden;
+            /* overflow-x: hidden;  <-- убираем */
         }
 
 
@@ -106,7 +105,8 @@
         .custom-offcanvas {
             transition: transform 0.4s ease-in-out;
             box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
-            background-color: #fff8f0; /* добавили цвет фона */
+            background-color: #fff8f0;
+            /* добавили цвет фона */
         }
 
         .custom-offcanvas .nav-link {
@@ -184,12 +184,22 @@
                     <ul class="navbar-nav mx-auto d-flex align-items-lg-center gap-3">
                         <li class="nav-item"><a class="nav-link" href="/address">Адрес</a></li>
                         <li class="nav-item"><a class="nav-link" href="/address">Контакты</a></li>
+                        <!-- О нас: ссылка на блок внизу страницы -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#about-us" id="aboutDropdown" role="button" aria-expanded="false">
+                                О нас
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
+                                <li><a class="dropdown-item" href="/about-products">О нашей продукции</a></li>
+                                <li><a class="dropdown-item" href="/brands">Бренды</a></li>
+                            </ul>
+                        </li>
                         <li class="nav-item"><a class="nav-link" href="/delivery">Доставка</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/about-products">О нашей продукции</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('how-to-order') }}">Как оформить заказ</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('calculator') }}">Калькулятор обоев</a></li>
                     </ul>
                 </div>
+
 
                 <div class="d-none d-lg-flex align-items-center gap-3">
                     <a href="{{ route('cart') }}" class="cart-icon position-relative">
@@ -214,8 +224,18 @@
             <ul class="navbar-nav flex-grow-1">
                 <li class="nav-item"><a class="nav-link" href="/address">Адрес</a></li>
                 <li class="nav-item"><a class="nav-link" href="/address">Контакты</a></li>
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-toggle="collapse" href="#aboutCollapse" role="button" aria-expanded="false" aria-controls="aboutCollapse">
+                        О нас <i class="bi bi-chevron-down"></i>
+                    </a>
+                    <div class="collapse" id="aboutCollapse">
+                        <ul class="navbar-nav ms-3">
+                            <li class="nav-item"><a class="nav-link" href="/about-products" style="font-weight: 450; font-size: 0.9rem;">О нашей продукции</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/brands" style="font-weight: 450; font-size: 0.9rem;">Бренды</a></li>
+                        </ul>
+                    </div>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="/delivery">Доставка</a></li>
-                <li class="nav-item"><a class="nav-link" href="/about-products">О нашей продукции</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('how-to-order') }}">Как оформить заказ</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('calculator') }}">Калькулятор обоев</a></li>
             </ul>
@@ -227,6 +247,76 @@
             </div>
         </div>
     </div>
+
+    <style>
+        /* Минималистичный стиль для выпадающего меню */
+        .navbar-nav .dropdown-menu {
+            background-color: #fff8f0;
+            /* базовый фон */
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            /* легкая тень */
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            opacity: 0;
+            transform: translateY(10px);
+            display: block;
+            visibility: hidden;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 2000;
+            font-family: 'Arial', sans-serif;
+            /* Новый шрифт для выпадающего списка */
+        }
+
+        /* При наведении на дропдаун - меню становится видимым */
+        .navbar-nav .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            transform: translateY(0);
+            visibility: visible;
+        }
+
+        /* Плавный переход для текста */
+        .navbar-nav .dropdown-menu .dropdown-item {
+            padding: 0.5rem 1.2rem;
+            /* Паддинг */
+            font-weight: 500;
+            font-size: 0.95rem;
+            /* Размер шрифта */
+            transition: color 0.3s ease;
+        }
+
+        /* При наведении меняется только цвет текста */
+        .navbar-nav .dropdown-menu .dropdown-item:hover {
+            color: #007bff;
+            /* Цвет текста при наведении */
+        }
+
+        /* Стрелка в выпадающем меню */
+        .navbar-nav .dropdown-menu .dropdown-item i {
+            font-size: 0.8rem;
+            margin-left: 5px;
+            transition: transform 0.3s;
+        }
+
+        /* Стрелка, когда подменю раскрыто */
+        .navbar-nav .dropdown-menu .dropdown-item.collapsed i {
+            transform: rotate(-90deg);
+        }
+
+        /* Настроим для кнопки с иконкой в оффканвасе */
+        .offcanvas-body .collapse .nav-link i {
+            font-size: 0.9rem;
+            margin-left: 5px;
+            transition: transform 0.3s;
+        }
+
+        .offcanvas-body .collapse.show~.nav-link i {
+            transform: rotate(180deg);
+            margin-left: 10px;
+        }
+    </style>
+
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
