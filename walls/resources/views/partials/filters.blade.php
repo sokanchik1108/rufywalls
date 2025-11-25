@@ -215,6 +215,64 @@
                     sendAjax();
                 });
 
+                // --- AUTOCOMPLETE ---
+                if (typeof $ !== 'undefined' && $.ui && typeof $(search).autocomplete === 'function') {
+                    const autocompleteUrl = window.catalogRoutes?.autocomplete ?? null;
+                    if (!autocompleteUrl) console.error('autocomplete route not found.');
+                    else {
+                        $(search).autocomplete({
+                            source: function(request, response) {
+                                $.ajax({
+                                    url: autocompleteUrl,
+                                    method: 'GET',
+                                    data: {
+                                        term: request.term
+                                    },
+                                    success: function(data) {
+                                        if (!Array.isArray(data) || data.length === 0) {
+                                            response([{
+                                                label: 'Товары не найдены',
+                                                value: '',
+                                                disabled: true
+                                            }]);
+                                        } else response(data);
+                                    },
+                                    error: function(xhr, status, err) {
+                                        console.error('Autocomplete error:', status, err);
+                                        response([]);
+                                    }
+                                });
+                            },
+                            minLength: 1,
+                            delay: 100,
+                            select: function(event, ui) {
+                                if (ui.item.disabled || ui.item.value === '') {
+                                    event.preventDefault();
+                                    return false;
+                                }
+                                search.value = ui.item.value;
+                                clearBtn.style.display = 'block';
+                                sendAjax();
+                            }
+                        }).autocomplete("instance")._renderItem = function(ul, item) {
+                            const li = $("<li>");
+                            const wrapper = $("<div>").text(item.label || item.value || '');
+                            if (item.disabled) {
+                                wrapper.css({
+                                    color: "#000",
+                                    fontStyle: "italic",
+                                    pointerEvents: "none",
+                                    cursor: "default"
+                                });
+                            }
+                            wrapper.addClass("ui-menu-item-wrapper");
+                            return li.append(wrapper).appendTo(ul);
+                        };
+                    }
+                } else {
+                    console.error('jQuery UI autocomplete не найдена.');
+                }
+
                 search.addEventListener("keypress", e => {
                     if (e.key === "Enter") {
                         e.preventDefault();
