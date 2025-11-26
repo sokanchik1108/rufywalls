@@ -538,9 +538,12 @@
         let zoomImages = [];
         let currentZoomIndex = 0;
 
-        // Передаем PHP-массив в JS
+        // PHP-массив всех вариантов
         const variantsData = @json($variantsData);
 
+        // =======================
+        // Функции зума
+        // =======================
         function openZoom(src) {
             const zoomModal = document.getElementById('zoomModal');
             const zoomImage = document.getElementById('zoomImage');
@@ -555,8 +558,7 @@
         }
 
         function showZoomImage() {
-            const zoomImage = document.getElementById('zoomImage');
-            zoomImage.src = zoomImages[currentZoomIndex];
+            document.getElementById('zoomImage').src = zoomImages[currentZoomIndex];
         }
 
         function prevZoomImage() {
@@ -569,32 +571,35 @@
             showZoomImage();
         }
 
+        // Найти вариант с 7-й картинкой
         function findVariantWithSeventhImage(excludeId = null) {
-            return variantsData.find(v =>
-                Array.isArray(v.images) && v.images.length >= 7 && v.id !== excludeId
-            );
+            return variantsData.find(v => Array.isArray(v.images) && v.images.length >= 7 && v.id !== excludeId);
         }
 
+        // =======================
+        // Загрузка варианта
+        // =======================
         function loadVariantById(variantId) {
             fetch(`/variant/${variantId}`)
-                .then(response => response.json())
+                .then(res => res.json())
                 .then(data => {
+                    // SKU и цвет
                     document.getElementById('variant-sku').textContent = data.sku;
                     document.getElementById('variant-color').textContent = data.color;
 
+                    // Галерея
                     const carouselInner = document.getElementById('variant-images');
                     carouselInner.innerHTML = '';
                     zoomImages = [];
-
                     if (Array.isArray(data.images)) {
                         data.images.forEach((img, index) => {
-                            const fullImgSrc = `/storage/${img}`;
-                            zoomImages.push(fullImgSrc);
+                            const fullSrc = `/storage/${img}`;
+                            zoomImages.push(fullSrc);
 
                             const div = document.createElement('div');
                             div.className = 'carousel-item' + (index === 0 ? ' active' : '');
-                            div.innerHTML = `<img src="${fullImgSrc}" class="d-block w-100" alt="Изображение ${index + 1}" style="cursor: zoom-in;">`;
-                            div.querySelector('img').addEventListener('click', () => openZoom(fullImgSrc));
+                            div.innerHTML = `<img src="${fullSrc}" class="d-block w-100" alt="Изображение ${index+1}" style="cursor: zoom-in;">`;
+                            div.querySelector('img').addEventListener('click', () => openZoom(fullSrc));
                             carouselInner.appendChild(div);
                         });
                     }
@@ -607,35 +612,34 @@
                             data.images.forEach((img, index) => {
                                 const thumb = document.createElement('img');
                                 thumb.src = `/storage/${img}`;
-                                thumb.alt = `Миниатюра ${index + 1}`;
+                                thumb.alt = `Миниатюра ${index+1}`;
                                 thumb.className = index === 0 ? 'active' : '';
-                                thumb.setAttribute('data-bs-target', '#mainCarousel');
-                                thumb.setAttribute('data-bs-slide-to', index);
                                 thumb.addEventListener('click', () => {
-                                    document.querySelectorAll('.thumbnail-container img')
-                                        .forEach(i => i.classList.remove('active'));
+                                    document.querySelectorAll('.thumbnail-container img').forEach(i => i.classList.remove('active'));
                                     thumb.classList.add('active');
+                                    const carousel = bootstrap.Carousel.getInstance(document.getElementById('mainCarousel'));
+                                    if (carousel) carousel.to(index);
                                 });
                                 thumbnailContainer.appendChild(thumb);
                             });
                         }
                     }
 
-                    // Баннер (только 7-е изображение)
+                    // Баннер (7-я картинка)
                     const bannerWrapper = document.getElementById('variant-banner-wrapper');
                     const banner = document.getElementById('variant-banner');
-                    let bannerImageSrc = null;
+                    let bannerSrc = null;
 
                     if (Array.isArray(data.images) && data.images.length >= 7) {
-                        bannerImageSrc = `/storage/${data.images[6]}`;
+                        bannerSrc = `/storage/${data.images[6]}`;
                     } else {
                         const other = findVariantWithSeventhImage(data.id);
-                        if (other) bannerImageSrc = `/storage/${other.images[6]}`;
+                        if (other) bannerSrc = `/storage/${other.images[6]}`;
                     }
 
                     if (banner && bannerWrapper) {
-                        if (bannerImageSrc) {
-                            banner.src = bannerImageSrc;
+                        if (bannerSrc) {
+                            banner.src = bannerSrc;
                             bannerWrapper.style.display = '';
                         } else {
                             bannerWrapper.style.display = 'none';
@@ -643,63 +647,55 @@
                     }
 
                     // Компаньоны
-                    // Блок всех компаньонов (список)
                     const companionsContainer = document.getElementById('companions-block');
                     if (companionsContainer) {
-                        if (data.companions && data.companions.length > 0) {
-                            companionsContainer.innerHTML = `
-            <div class="text-muted small">Компаньоны:</div>
-            <div class="text-dark small">${data.companions.join(', ')}</div>
-        `;
-                        } else {
-                            companionsContainer.innerHTML = '';
-                        }
+                        companionsContainer.innerHTML = data.companions && data.companions.length > 0 ?
+                            `<div class="text-muted small">Компаньоны:</div><div class="text-dark small">${data.companions.join(', ')}</div>` :
+                            '';
                     }
 
-                    // Первый компаньон (квадратная карточка)
+                    // Первый компаньон
                     const companionBlock = document.getElementById('first-companion-block');
-                    const companionImage = document.getElementById('companion-image');
-                    const companionSku = document.getElementById('companion-sku');
-                    const companionTitle = document.getElementById('companion-title');
-                    const companionLink = document.getElementById('companion-link');
 
-                    if (data.companion && data.companion.sku && data.companion.id) {
-                        if (companionImage) companionImage.src = data.companion.image ? `/storage/${data.companion.image}` : '/images/no-image.jpg';
-                        if (companionSku) companionSku.textContent = data.companion.sku;
-                        if (companionTitle) companionTitle.textContent = data.companion.title || '';
-                        if (companionLink) companionLink.href = `/product/${data.companion.id}`;
+                    if (data.companion && data.companion.id && data.companion.variant_id) {
+                        document.getElementById('companion-image').src = data.companion.image ? `/storage/${data.companion.image}` : '/images/no-image.jpg';
+                        document.getElementById('companion-sku').textContent = data.companion.sku;
+                        document.getElementById('companion-title').textContent = data.companion.title || '';
+
+                        // Ссылка теперь открывает продукт с активным вариантом
+                        document.getElementById('companion-link').href = `/product/${data.companion.id}?variant=${data.companion.variant_id}`;
+
                         if (companionBlock) companionBlock.style.display = 'block';
-                    } else {
-                        if (companionBlock) companionBlock.style.display = 'none';
+                    } else if (companionBlock) {
+                        companionBlock.style.display = 'none';
                     }
+
+                    // Обновляем URL
+                    window.history.replaceState({}, '', `/product/{{ $product->id }}?variant=${variantId}`);
                 });
         }
 
+        // =======================
+        // Инициализация страницы
+        // =======================
         document.addEventListener('DOMContentLoaded', () => {
+            // Клики по миниатюрам вариантов
             document.querySelectorAll('.variant-thumbnail').forEach(img => {
                 img.addEventListener('click', () => {
-                    const variantId = img.getAttribute('data-variant-id');
-                    document.querySelectorAll('.variant-thumbnail')
-                        .forEach(i => i.classList.remove('border', 'border-2', 'border-dark'));
+                    const id = img.getAttribute('data-variant-id');
+                    document.querySelectorAll('.variant-thumbnail').forEach(i => i.classList.remove('border', 'border-2', 'border-dark'));
                     img.classList.add('border', 'border-dark', 'border-2');
 
-                    variantInput.value = variantId;
-                    loadVariantById(variantId);
+                    variantInput.value = id;
+                    loadVariantById(id);
                 });
             });
 
-            // Загрузка варианта при открытии страницы
-            const initialVariantId = variantInput.value;
-            if (initialVariantId) loadVariantById(initialVariantId);
+            // Загружаем начальный вариант
+            if (variantInput.value) loadVariantById(variantInput.value);
 
-            zoomImages = Array.from(document.querySelectorAll('#variant-images img')).map(img => img.src);
-            document.querySelectorAll('#variant-images img').forEach(img => {
-                img.style.cursor = 'zoom-in';
-                img.addEventListener('click', () => openZoom(img.src));
-            });
-
-            // Клавиши зума
-            document.addEventListener('keydown', (e) => {
+            // Зум клавиши
+            document.addEventListener('keydown', e => {
                 const zoomModal = document.getElementById('zoomModal');
                 if (!zoomModal || zoomModal.classList.contains('d-none')) return;
                 if (e.key === 'ArrowLeft') prevZoomImage();
@@ -707,82 +703,65 @@
                 if (e.key === 'Escape') closeZoom();
             });
 
-            // Добавление в корзину
+            // Форма "Добавить в корзину"
             const form = document.getElementById('add-to-cart-form');
             if (form) {
-                form.addEventListener('submit', function(e) {
+                form.addEventListener('submit', e => {
                     e.preventDefault();
                     const variantId = variantInput.value;
                     const quantity = quantityInput.value;
                     const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
                     fetch('/cart/add', {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': token,
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            body: JSON.stringify({
-                                variant_id: variantId,
-                                quantity
-                            })
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': token,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({
+                            variant_id: variantId,
+                            quantity
                         })
-                        .then(async response => {
-                            const data = await response.json();
-                            const messageBox = document.getElementById('cart-message');
-                            const innerBox = document.getElementById('cart-message-inner');
-                            const textBox = document.getElementById('cart-message-text');
+                    }).then(async res => {
+                        const data = await res.json();
+                        const messageBox = document.getElementById('cart-message');
+                        const innerBox = document.getElementById('cart-message-inner');
+                        const textBox = document.getElementById('cart-message-text');
 
-                            if (!response.ok) throw new Error(data.message || 'Ошибка запроса');
+                        if (!res.ok) throw new Error(data.message || 'Ошибка запроса');
 
-                            innerBox.classList.remove('bg-danger');
-                            innerBox.classList.add('bg-dark');
-                            textBox.textContent = data.message || 'Товар добавлен в корзину';
-                            messageBox.classList.remove('d-none');
-                            setTimeout(() => messageBox.classList.add('d-none'), 3000);
+                        innerBox.classList.remove('bg-danger');
+                        innerBox.classList.add('bg-dark');
+                        textBox.textContent = data.message || 'Товар добавлен в корзину';
+                        messageBox.classList.remove('d-none');
+                        setTimeout(() => messageBox.classList.add('d-none'), 3000);
 
-                            if (document.querySelector('#cart-count')) {
-                                document.querySelector('#cart-count').textContent = data.cart_count;
-                            }
-                            localStorage.setItem('cartUpdated', Date.now());
-                        })
-                        .catch(() => {
-                            const messageBox = document.getElementById('cart-message');
-                            const innerBox = document.getElementById('cart-message-inner');
-                            const textBox = document.getElementById('cart-message-text');
-
-                            innerBox.classList.remove('bg-dark');
-                            innerBox.classList.add('bg-danger');
-                            textBox.textContent = 'Не удалось добавить товар. Попробуйте позже.';
-                            messageBox.classList.remove('d-none');
-                            setTimeout(() => messageBox.classList.add('d-none'), 3000);
-                        });
+                        const cartCount = document.querySelector('#cart-count');
+                        if (cartCount) cartCount.textContent = data.cart_count;
+                        localStorage.setItem('cartUpdated', Date.now());
+                    }).catch(() => {
+                        const messageBox = document.getElementById('cart-message');
+                        const innerBox = document.getElementById('cart-message-inner');
+                        const textBox = document.getElementById('cart-message-text');
+                        innerBox.classList.remove('bg-dark');
+                        innerBox.classList.add('bg-danger');
+                        textBox.textContent = 'Не удалось добавить товар. Попробуйте позже.';
+                        messageBox.classList.remove('d-none');
+                        setTimeout(() => messageBox.classList.add('d-none'), 3000);
+                    });
                 });
             }
 
-            // Навигация миниатюр при смене слайда
-            const carousel = document.getElementById('mainCarousel');
-            if (carousel) {
-                carousel.addEventListener('slid.bs.carousel', (event) => {
-                    const index = event.to;
-                    const thumbnails = document.querySelectorAll('.thumbnail-container img');
-                    thumbnails.forEach(img => img.classList.remove('active'));
-                    if (thumbnails[index]) thumbnails[index].classList.add('active');
-                });
-            }
+            // Кнопки +/- количества
+            window.changeQuantity = delta => {
+                let value = parseInt(quantityInput.value) || 1;
+                const min = parseInt(quantityInput.min) || 1;
+                value = Math.max(min, value + delta);
+                quantityInput.value = value;
+            };
         });
-
-        function changeQuantity(delta) {
-            const input = document.getElementById('quantity');
-            if (!input) return;
-            let value = parseInt(input.value) || 1;
-            const min = parseInt(input.min) || 1;
-            value += delta;
-            if (value < min) value = min;
-            input.value = value;
-        }
     </script>
 
 

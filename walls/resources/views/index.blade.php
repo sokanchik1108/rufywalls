@@ -283,6 +283,15 @@
         opacity: 0;
         transition: opacity 0.4s ease;
     }
+
+    /* Уведомления ниже navbar */
+    #blade-toast,
+    #toast-message {
+        top: calc(4rem + 1rem);
+        /* 4rem = высота navbar, 1rem = отступ */
+        z-index: 2000;
+        /* убедитесь, что выше navbar */
+    }
 </style>
 
 

@@ -322,28 +322,55 @@
         document.addEventListener("DOMContentLoaded", function() {
             const offcanvasEl = document.getElementById("offcanvasMenu");
 
-            // Следим за закрытием Offcanvas и явно удаляем overflow, если оно осталось
+            // Следим за закрытием Offcanvas и убираем overflow
             offcanvasEl.addEventListener('hidden.bs.offcanvas', function() {
                 document.body.style.overflow = '';
             });
 
-            // Закрытие Offcanvas при клике вне его области
+            // Закрытие Offcanvas при клике вне
             document.addEventListener("click", function(event) {
                 const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvasEl);
                 if (!offcanvasInstance) return;
 
                 const isClickInside = offcanvasEl.contains(event.target);
                 const isToggle = event.target.closest("[data-bs-toggle='offcanvas']");
-
-                // Если клик вне Offcanvas и не по кнопке открытия — закрыть
                 if (!isClickInside && !isToggle) {
                     offcanvasInstance.hide();
-
-                    // Подстраховка: убираем overflow после анимации
-                    setTimeout(() => {
-                        document.body.style.overflow = '';
-                    }, 400); // Время в мс, соответствующее длительности анимации Bootstrap
+                    setTimeout(() => document.body.style.overflow = '', 400);
                 }
+            });
+
+            // Управление подменю в оффканвасе
+            const collapsibleLinks = offcanvasEl.querySelectorAll('.nav-link.collapsed');
+
+            collapsibleLinks.forEach(link => {
+                const targetId = link.getAttribute('href');
+                const collapseEl = document.querySelector(targetId);
+                const icon = link.querySelector('i'); // стрелка
+
+                // Убираем стандартный data-bs-toggle
+                link.removeAttribute('data-bs-toggle');
+
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const bsCollapse = bootstrap.Collapse.getOrCreateInstance(collapseEl);
+
+                    if (collapseEl.classList.contains('show')) {
+                        bsCollapse.hide();
+                        if (icon) icon.style.transform = 'rotate(0deg)';
+                    } else {
+                        bsCollapse.show();
+                        if (icon) icon.style.transform = 'rotate(180deg)';
+                    }
+                });
+
+                // Следим за событиями collapse для синхронизации стрелки
+                collapseEl.addEventListener('hidden.bs.collapse', () => {
+                    if (icon) icon.style.transform = 'rotate(0deg)';
+                });
+                collapseEl.addEventListener('shown.bs.collapse', () => {
+                    if (icon) icon.style.transform = 'rotate(180deg)';
+                });
             });
 
             // Обновление количества товаров в корзине
@@ -364,6 +391,7 @@
             updateCartCount(); // начальное обновление при загрузке
         });
     </script>
+
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

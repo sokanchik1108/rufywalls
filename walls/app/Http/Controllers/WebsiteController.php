@@ -367,19 +367,26 @@ class WebsiteController extends Controller
         ])->findOrFail($id);
 
         $variants = $product->variants;
-        $activeVariant = $variants->first();
 
-        $variantStock = 0;
+        // Получаем variant из query-параметра
+        $activeVariantId = request('variant');
 
-        if ($activeVariant) {
-            $variantStock = $activeVariant->batches->flatMap(function ($batch) {
-                return $batch->warehouses;
-            })->sum('pivot.quantity');
+        // Находим активный вариант
+        $activeVariant = $activeVariantId
+            ? $variants->firstWhere('id', $activeVariantId)
+            : $variants->first(); // fallback
+
+        // Если не нашли, просто первый
+        if (!$activeVariant) {
+            $activeVariant = $variants->first();
         }
 
-        // Найдём первого компаньона, если он есть
+        $variantStock = $activeVariant
+            ? $activeVariant->batches->flatMap(fn($b) => $b->warehouses)->sum('pivot.quantity')
+            : 0;
+
         $firstCompanion = $product->companions->first();
-        $firstVariant = $firstCompanion?->variants->first(); // первый вариант компаньона
+        $firstVariant = $firstCompanion?->variants->first();
 
         return view('product-page', compact(
             'product',
@@ -412,11 +419,12 @@ class WebsiteController extends Controller
 
             $companionData = [
                 'id' => $firstCompanion->product->id,
+                'variant_id' => $firstCompanion->id, // <-- добавляем ID варианта
                 'sku' => $firstCompanion->sku,
                 'title' => $firstCompanion->product->title
                     ?? $firstCompanion->product->name
                     ?? $firstCompanion->name
-                    ?? '',   // название компаньона
+                    ?? '',
                 'image' => $companionImages[0] ?? null,
             ];
         }

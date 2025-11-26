@@ -23,9 +23,12 @@
             : asset('images/no-image.jpg');
             @endphp
             <div class="col-6 col-md-4 col-lg-4">
-                <a href="{{ route('product.show', $product->id) }}" class="rafy-card-link">
+                <!-- Ссылка теперь передаёт ID варианта -->
+                <a href="{{ route('product.show', $product->id) }}?variant={{ $variant->id }}" class="rafy-card-link">
                     <div class="rafy-card-square">
+                        @if (!empty($product->status))
                         <div class="rafy-status">{{ $product->status }}</div>
+                        @endif
                         <div class="rafy-img-wrapper">
                             <img src="{{ $imagePath }}" alt="{{ $product->name }}" class="rafy-card-img">
                         </div>
