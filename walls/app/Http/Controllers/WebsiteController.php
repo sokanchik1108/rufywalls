@@ -94,15 +94,11 @@ class WebsiteController extends Controller
             ->distinct()
             ->pluck('color');
 
-
-
         /* ============================================================
        ✅ РЕЖИМ ВАРИАНТОВ: ТОЛЬКО ПРИ ПОИСКЕ
        (ФИЛЬТР ЦВЕТ НЕ ВКЛЮЧАЕТ РЕЖИМ ВАРИАНТОВ)
     ============================================================ */
         $showVariants = $request->filled('search');
-
-
 
         /* ============================================================
        ✅ РЕЖИМ ВАРИАНТОВ
@@ -224,11 +220,12 @@ class WebsiteController extends Controller
                         ->select('variants.*')
                         ->orderByRaw("
                         CASE
-                            WHEN products.status = 'новинка' THEN 1
-                            WHEN products.brand = 'Артекс' THEN 2
-                            ELSE 3
+                            WHEN products.status = 'новинка' THEN 0
+                            WHEN products.brand = 'Артекс' THEN 1
+                            ELSE 2
                         END
                     ")
+                        ->orderByRaw("CASE WHEN products.status = 'новинка' THEN products.created_at END DESC")
                         ->orderBy('products.created_at', 'asc');
             }
 
@@ -241,8 +238,6 @@ class WebsiteController extends Controller
 
             return view('catalog', compact('variants', 'categories', 'rooms', 'brands', 'materials', 'colors'));
         }
-
-
 
         /* ============================================================
        ✅ РЕЖИМ ПРОДУКТОВ (включая фильтр цвета)
@@ -267,7 +262,7 @@ class WebsiteController extends Controller
             $products->whereIn('material', (array)$request->material);
         }
 
-        /* ✅ ФИЛЬТР ПО ЦВЕТУ — ГЛАВНОЕ ИСПРАВЛЕНИЕ */
+        /* ✅ ФИЛЬТР ПО ЦВЕТУ */
         if ($request->filled('color')) {
             $products->whereHas('variants', fn($q) =>
             $q->whereIn('color', (array)$request->color));
@@ -302,7 +297,6 @@ class WebsiteController extends Controller
             $products->whereColumn('discount_price', '>', 'sale_price');
         }
 
-
         /* ---------- Сортировка ---------- */
         switch ($request->input('sort')) {
             case 'price_asc':
@@ -324,13 +318,14 @@ class WebsiteController extends Controller
             default:
                 $products->orderByRaw("
                 CASE
-                    WHEN status = 'новинка' THEN 1
-                    WHEN brand = 'Артекс' THEN 2
-                    ELSE 3
+                    WHEN status = 'новинка' THEN 0
+                    WHEN brand = 'Артекс' THEN 1
+                    ELSE 2
                 END
-            ")->orderBy('created_at', 'asc');
+            ")
+                    ->orderByRaw("CASE WHEN status = 'новинка' THEN created_at END DESC")
+                    ->orderBy('created_at', 'asc');
         }
-
 
         /* ---------- Пагинация ---------- */
         $products = $products->paginate(20)->withQueryString();
@@ -348,6 +343,7 @@ class WebsiteController extends Controller
             'colors'     => $colors
         ]);
     }
+
 
 
 
