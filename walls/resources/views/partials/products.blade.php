@@ -19,6 +19,12 @@
     </select>
 </div>
 
+<IfModule mod_headers.c>
+    <Directory "/var/www/rafywalls/public/storage">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </Directory>
+</IfModule>
+
 <div class="product-grid">
     @forelse ($variants as $item)
     @php
@@ -194,11 +200,33 @@
                         <div class="carousel-inner">
                             @foreach ($images as $index => $image)
                             @if ($image)
+                            @php
+                            // LCP = первая картинка первого товара
+                            $isLCP = $loop->first && $loop->parent->first;
+                            @endphp
+
                             <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+                                @if ($isLCP)
+                                {{-- ✅ LCP image --}}
+                                <img
+                                    src="{{ asset('storage/' . $image) }}"
+                                    class="rafy-card-img"
+                                    alt="{{ $product->name }}"
+                                    loading="eager"
+                                    fetchpriority="high"
+                                    width="400"
+                                    height="400">
+                                @else
+                                {{-- lazy для всех остальных --}}
+                                <img
+                                    src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
                                     data-src="{{ asset('storage/' . $image) }}"
                                     class="rafy-card-img lazy-slide"
-                                    alt="{{ $product->name }}">
+                                    alt="{{ $product->name }}"
+                                    loading="lazy"
+                                    width="400"
+                                    height="400">
+                                @endif
                             </div>
                             @endif
                             @endforeach
