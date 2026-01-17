@@ -19,12 +19,6 @@
     </select>
 </div>
 
-<IfModule mod_headers.c>
-    <Directory "/var/www/rafywalls/public/storage">
-        Header set Cache-Control "public, max-age=31536000, immutable"
-    </Directory>
-</IfModule>
-
 <div class="product-grid">
     @forelse ($variants as $item)
     @php
