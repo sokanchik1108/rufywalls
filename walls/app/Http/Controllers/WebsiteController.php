@@ -224,12 +224,11 @@ class WebsiteController extends Controller
                         ->select('variants.*')
                         ->orderByRaw("
                         CASE
-                            WHEN products.status = 'новинка' THEN 1
-                            WHEN products.brand = 'Артекс' THEN 2
-                            ELSE 3
+                        WHEN products.status = 'новинка' THEN 1
+                        ELSE 2
                         END
                     ")
-                        ->orderBy('products.created_at', 'asc');
+                        ->orderBy('products.created_at', 'desc'); // новее — выше
             }
 
             /* ---------- Пагинация ---------- */
@@ -324,11 +323,10 @@ class WebsiteController extends Controller
             default:
                 $products->orderByRaw("
                 CASE
-                    WHEN status = 'новинка' THEN 1
-                    WHEN brand = 'Артекс' THEN 2
-                    ELSE 3
-                END
-            ")->orderBy('created_at', 'asc');
+                     WHEN status = 'новинка' THEN 1
+                     ELSE 2
+                 END
+                ")->orderBy('created_at', 'desc'); // новее — выше
         }
 
 
