@@ -41,7 +41,7 @@ Route::get('/calculator', [WebsiteController::class, 'Calculator'])->name('calcu
 
 Route::get('/', [WebsiteController::class, 'website'])->name('website');
 
-Route::get('/catalog', [WebsiteController::class, 'catalog'])->name('catalog');
+Route::get('/catalog/{categorySlug?}', [WebsiteController::class, 'catalog'])->name('catalog');
 
 Route::get('/product/{product}', [WebsiteController::class, 'show'])->name('product.show');
 
@@ -102,15 +102,6 @@ Route::get('/admin/sales/history/{sku}', [SaleController::class, 'getHistory'])-
 Route::get('/admin/variants/autocomplete', [AdminController::class, 'autocomplete'])->name('admin.variants.autocomplete');
 
 Route::get('/catalog-autocomplete', [WebsiteController::class, 'catalogAutocomplete'])->name('catalog.autocomplete');
-
-
-
-
-
-
-
-
-
 
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/product/create', [AdminController::class, 'create'])->name('form');

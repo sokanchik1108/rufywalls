@@ -7,11 +7,12 @@
 
         <div class="category-list">
             @foreach($categories as $category)
-            <a href="{{ route('catalog', ['category_id' => $category->id]) }}" class="category-link">
+            <a href="{{ route('catalog', $category->slug) }}" class="category-link">
                 {{ $category->category_name }}
             </a>
             @endforeach
         </div>
+
     </div>
 </section>
 
@@ -138,6 +139,7 @@
         .category-line-title {
             font-size: 2.4rem;
         }
+
         .category-line-subtitle {
             font-size: 1.15rem;
         }
@@ -147,10 +149,12 @@
         .category-line-title {
             font-size: 2rem;
         }
+
         .category-line-subtitle {
             font-size: 1.05rem;
             margin-bottom: 2rem;
         }
+
         .category-list {
             gap: 1.5rem;
         }
@@ -160,16 +164,20 @@
         .category-content {
             padding: 0 1rem;
         }
+
         .category-line-title {
             font-size: 1.6rem;
         }
+
         .category-line-subtitle {
             font-size: 0.95rem;
             margin-bottom: 1.8rem;
         }
+
         .category-list {
             gap: 1rem;
         }
+
         .category-link {
             font-size: 0.95rem;
         }
@@ -179,6 +187,7 @@
         .category-line-title {
             font-size: 1.4rem;
         }
+
         .category-line-subtitle {
             font-size: 0.9rem;
         }

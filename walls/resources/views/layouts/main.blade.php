@@ -4,6 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 
   {{-- ✅ Верификация Google --}}
   <meta name="google-site-verification" content="ZokMn5I_BU2juvru-gwsvFf6N1jPVzyeNN5T5oEbPcc" />
@@ -42,7 +45,7 @@
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "HomeAndConstructionBusiness",
+      "@type": "HomeGoodsStore",
       "name": "RAFY WALLS",
       "image": "https://rafywalls.com/images/og-image.jpg",
       "logo": "https://rafywalls.com/images/лого1.png",
@@ -72,16 +75,15 @@
       },
       "sameAs": [
         "https://www.instagram.com/rafy_walls",
-        "https://maps.app.goo.gl/"
+        "https://maps.app.goo.gl/5j2JSVYFDz8gZyKq7"
       ]
     }
   </script>
 
+
   {{-- 🔹 Расширяемые мета и стили страниц --}}
   @yield('meta')
   @yield('styles')
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 
 <body>
