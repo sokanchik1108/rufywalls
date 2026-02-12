@@ -113,13 +113,11 @@ class WebsiteController extends Controller
                 ->whereHas('product', fn($q) => $q->where('is_hidden', false));
 
             /* ---------- Фильтры ---------- */
-            $categorySlug = $request->route('categorySlug');
-
-            if ($categorySlug) {
+            if ($request->filled('category_id')) {
                 $variants->whereHas(
                     'categories',
                     fn($q) =>
-                    $q->where('slug', $categorySlug)
+                    $q->whereIn('slug', (array)$request->category_id)
                 );
             }
 
@@ -254,16 +252,13 @@ class WebsiteController extends Controller
     ============================================================ */
         $products = Product::where('is_hidden', false);
 
-        $categorySlug = $request->route('categorySlug');
-
-        if ($categorySlug) {
+        if ($request->filled('category_id')) {
             $products->whereHas(
                 'categories',
                 fn($q) =>
-                $q->where('slug', $categorySlug)
+                $q->whereIn('slug', (array)$request->category_id)
             );
         }
-
 
         if ($request->filled('room_id')) {
             $products->whereHas('rooms', fn($q) =>
