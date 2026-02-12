@@ -16,12 +16,12 @@
             <div class="select-display">Все</div>
             <div class="options">
                 @foreach($categories as $category)
-                <div class="option" data-value="{{ $category->id }}">
+                <div class="option" data-value="{{ $category->slug }}">
                     {{ $category->category_name }}
                 </div>
                 @endforeach
             </div>
-            <input type="hidden" name="category_id">
+            <input type="hidden" name="category_id" value="">
         </div>
     </div>
 
