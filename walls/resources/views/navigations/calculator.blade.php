@@ -20,17 +20,24 @@
 @endsection
 
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "Калькулятор обоев — RAFY WALLS",
-  "description": "Удобный калькулятор обоев от RAFY WALLS поможет точно рассчитать, сколько рулонов обоев нужно для вашей комнаты.",
-  "url": "{{ url()->current() }}"
-}
+    {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Калькулятор обоев — RAFY WALLS",
+        "description": "Удобный калькулятор обоев от RAFY WALLS поможет точно рассчитать, сколько рулонов обоев нужно для вашей комнаты.",
+        "url": "{{ url()->current() }}"
+    }
 </script>
 
 
 @section('content')
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+</style>
+
 <div class="container pt-5 mt-5 mb-5 d-flex justify-content-center align-items-start min-vh-100">
     <div class="card shadow-lg border-0 rounded-4 w-100" style="max-width: 900px; background-color: #fff;">
         <div class="card-body p-5">

@@ -25,7 +25,15 @@
 <meta name="twitter:description" content="@yield('meta_description')">
 @endsection
 
+
 @section('content')
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+</style>
+
 <div class="container pt-5 mt-5 d-flex justify-content-center align-items-start min-vh-100 px-2" style="margin-bottom: 200px;">
     <div class="card shadow-lg border-0 rounded-4 w-100" style="max-width: 600px;">
         <div class="card-body p-4 p-md-5">
@@ -35,10 +43,23 @@
             </div>
 
             <div class="mb-4">
-                <h5 class="fw-semibold">Платная доставка</h5>
+                <h5 class="fw-semibold">Доставка</h5>
                 <p class="text-secondary mb-0">
-                    Мы отправляем заказы в любой город Казахстана удобным для вас способом — через транспортную компанию, курьерскую службу или такси по вашему выбору.
-                    Клиент оплачивает доставку самостоятельно.
+                    Мы доставляем заказы по Алматы и всему Казахстану следующими способами:
+                </p>
+
+                <ul class="text-secondary mt-2 ps-3 mb-2">
+                    <li>
+                        По Алматы — доставка осуществляется через Яндекс Курьера, которого клиент вызывает самостоятельно на удобное время.
+                    </li>
+                    <br>
+                    <li>
+                        По РК — отправка осуществляется через транспортную компанию до склада транспортной комнапии в вашем городе.
+                    </li>
+                </ul>
+
+                <p class="text-secondary mb-0">
+                    Стоимость и сроки доставки зависят от выбранного сервиса и оплачиваются клиентом.
                     Подробности уточняйте у менеджера.
                 </p>
             </div>
@@ -66,16 +87,15 @@
                 </p>
                 <ul class="text-secondary mt-2 ps-3 mb-0">
                     <li>Наличными — только при самовывозе</li>
-                    <li>Перевод на Kaspi Gold</li>
-                    <li>Перевод на карту Halyk Bank</li>
+                    <li>Оплата по выставленному счету на номер Kaspi Gold</li>
+                    <li>Оплата по выставленному счету на номер Halyk Bank</li>
                 </ul>
-                <p class="text-secondary mt-2 mb-0">Реквизиты уточняйте у менеджера.</p>
             </div>
 
             <div class="text-center mt-4">
                 <p class="fw-semibold mb-1">По всем вопросам:</p>
-                <a href="tel:+77077121255" class="text-decoration-none text-primary d-block">+7 707 712 12 55</a>
-                <a href="https://wa.me/77077121255" target="_blank" class="text-decoration-none text-success">Написать в WhatsApp</a>
+                <a href="tel:+77077121255" class="text-decoration-none text-primary d-block">+7 777 355 5704</a>
+                <a href="https://wa.me/77773555704" target="_blank" class="text-decoration-none text-success">Написать в WhatsApp</a>
             </div>
         </div>
     </div>

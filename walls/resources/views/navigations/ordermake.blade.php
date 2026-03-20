@@ -73,7 +73,7 @@
                         Оплата производится во время подтверждения заказа в WhatsApp
                     </span>
                 </p>
-                <a href="https://wa.me/77077121255?text=Здравствуйте,%20я%20хочу%20подтвердить%20заказ"
+                <a href="https://wa.me/77773555704?text=Здравствуйте,%20я%20хочу%20подтвердить%20заказ"
                     class="btn btn-success btn-lg px-4 py-2 rounded-pill shadow-sm w-100 w-md-auto"
                     target="_blank">
                     Подтвердить через WhatsApp

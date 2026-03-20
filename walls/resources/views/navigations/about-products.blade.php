@@ -22,6 +22,13 @@
 @endsection
 
 @section('content')
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+</style>
+
 <div class="container pt-5 mt-5 px-3 px-md-4 d-flex justify-content-center align-items-start min-vh-100" style="margin-bottom: 100px;">
     <div class="card shadow-lg border-0 rounded-4 w-100" style="max-width: 800px;">
         <div class="card-body p-3 p-md-4">

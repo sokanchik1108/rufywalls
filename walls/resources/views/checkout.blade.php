@@ -39,7 +39,7 @@
     {{-- 🔹 Предупреждение о подтверждении --}}
     <div class="alert alert-warning rounded-3 shadow-sm mb-4">
         <strong>Важно!</strong> После оформления заказа <u>подтвердите его</u>, написав нам в
-        <a href="https://wa.me/77077121255?text=Здравствуйте,%20я%20хочу%20подтвердить%20заказ"
+        <a href="https://wa.me/77773555704?text=Здравствуйте,%20я%20хочу%20подтвердить%20заказ"
             class="text-success fw-semibold" target="_blank">
             WhatsApp.
         </a>

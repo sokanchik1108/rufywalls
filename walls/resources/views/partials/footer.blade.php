@@ -28,14 +28,14 @@
       <!-- Контакты -->
       <div class="col-md-4 mb-4">
         <h6 class="footer-heading">Контакты</h6>
-        <p class="mb-2 small">+7 707 712 1255</p>
+        <p class="mb-2 small">+7 777 355 5704</p>
         <p class="mb-2 small">Рыскулова / Розыбакиева, рынок Сауран, здание №109, Алматы</p>
         <p class="mb-2 small">Рыскулова / Розыбакиева, рынок Сауран, здание №105, Алматы</p>
 
         <h6 class="footer-heading">Мы в соц. сетях</h6>
         <!-- Соцсети -->
         <div class="social-icons d-flex gap-3 mt-1">
-          <a href="https://wa.me/77077121255" target="_blank" aria-label="WhatsApp">
+          <a href="https://wa.me/77773555704" target="_blank" aria-label="WhatsApp">
             <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/whatsapp.svg" width="24" height="24" alt="WhatsApp">
           </a>
           <a href="https://instagram.com/rafy_walls" target="_blank" aria-label="Instagram">
