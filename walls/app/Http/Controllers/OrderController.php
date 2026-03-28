@@ -8,6 +8,7 @@ use App\Models\Variant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
+use App\Models\Batch;
 
 class OrderController extends Controller
 {
@@ -77,6 +78,7 @@ class OrderController extends Controller
             'phone' => $request->phone,
             'comment' => $request->comment,
             'status' => 'Новый',
+            'is_website' => true, // это заказ с сайта
         ]);
 
         foreach ($cart as $variantId => $item) {
@@ -96,7 +98,7 @@ class OrderController extends Controller
         Cookie::queue(Cookie::forget('cart'));
 
         // WhatsApp-ссылка
-        $whatsappLink = 'https://wa.me/77077121255?text=Я%20подтверждаю%20заказ%20на%20сайте';
+        $whatsappLink = 'https://wa.me/77773555704?text=Я%20подтверждаю%20заказ%20на%20сайте';
         $message = 'Спасибо за заказ!<br>Чтобы мы начали обработку, пожалуйста, подтвердите его в WhatsApp.<br>Это займёт всего пару секунд.<br><br>';
         $message .= '<a href="' . $whatsappLink . '" class="btn btn-success btn-sm mt-2" target="_blank">🔗 Подтвердить заказ в WhatsApp</a>';
 
@@ -105,5 +107,100 @@ class OrderController extends Controller
             ->with('success_html', $message);
     }
 
+    public function create()
+    {
+        $warehouses = \App\Models\Warehouse::all();
+        return view('admin.orders.create', compact('warehouses'));
+    }
 
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'comment' => 'nullable|string',
+            'items' => 'required|array|min:1',
+            'items.*.sku' => 'required|exists:variants,sku',
+            'items.*.batch_id' => 'required|integer|exists:batches,id',
+            'items.*.warehouse_id' => 'required|integer|exists:warehouses,id',
+            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.price' => 'required|numeric|min:0',
+            'items.*.batch_code' => 'required|string',
+            'items.*.warehouse_name' => 'required|string',
+        ]);
+
+        $order = Order::create([
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'comment' => $request->comment,
+            'status' => 'Новый',
+            'is_website' => false,
+        ]);
+
+        foreach ($request->items as $item) {
+            $batchId = $item['batch_id'];
+            $warehouseId = $item['warehouse_id'];
+            $quantity = (int)$item['quantity'];
+            $price = (float)$item['price'];
+
+            $batch = Batch::findOrFail($batchId);
+            $variant = Variant::where('sku', $item['sku'])->firstOrFail();
+
+            if ($batch->variant_id !== $variant->id) {
+                return back()->with('error', "Партия {$batch->batch_code} не принадлежит артикулу {$variant->sku}");
+            }
+
+            $pivot = $batch->warehouses()->where('warehouse_id', $warehouseId)->first();
+            if (!$pivot || $pivot->pivot->quantity < $quantity) {
+                return back()->with('error', "Недостаточно товара на складе для SKU {$variant->sku}");
+            }
+
+            // Обновляем количество на складе
+            $batch->warehouses()->updateExistingPivot($warehouseId, [
+                'quantity' => $pivot->pivot->quantity - $quantity
+            ]);
+
+            // Создаём запись заказа с snapshot
+            $order->items()->create([
+                'variant_id'      => $variant->id,
+                'batch_id'        => $batchId,
+                'warehouse_id'    => $warehouseId,
+                'quantity'        => $quantity,
+                'price'           => $price,
+                'image'           => $variant->image ?? '',
+                'batch_code'      => $item['batch_code'],       // snapshot кода партии
+                'warehouse_name'  => $item['warehouse_name'],   // snapshot имени склада
+            ]);
+        }
+
+        return redirect()->route('admin.orders.seller')->with('success', 'Заказ успешно создан');
+    }
+
+    // Заказы с сайта
+    public function indexWebsite()
+    {
+        $orders = Order::where('is_website', true)->latest()->get();
+        return view('admin.orders.orders_website', compact('orders'));
+    }
+
+    // Заказы продавцов
+    public function indexSeller()
+    {
+        $orders = Order::where('is_website', false)->latest()->get();
+        return view('admin.orders.orders_seller', compact('orders'));
+    }
+
+
+    public function destroyAll(Request $request)
+    {
+        $orders = Order::query();
+
+        if ($date) {
+            $orders->whereDate('created_at', $date);
+        }
+
+        $orders->delete();
+
+        return redirect()->route('admin.orders.seller', ['date' => $date])->with('success', 'Все заказы удалены.');
+    }
 }
