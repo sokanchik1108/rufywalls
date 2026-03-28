@@ -135,16 +135,11 @@ Auth::routes();
 Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('orders/create', [OrderController::class, 'create'])->name('orders.create');
-    Route::post('orders/store', [OrderController::class, 'store'])->name('orders.store');
-});
+    Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
 
-
-Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/orders/website', [OrderController::class, 'indexWebsite'])->name('orders.website');
     Route::get('/orders/seller', [OrderController::class, 'indexSeller'])->name('orders.seller');
-    Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
-    Route::post('orders', [OrderController::class, 'store'])->name('orders.store');
     Route::delete('/orders/destroy-all', [OrderController::class, 'destroyAll'])->name('orders.destroyAll');
     Route::get('/orders/search', [OrderController::class, 'search'])->name('orders.search');
 });
