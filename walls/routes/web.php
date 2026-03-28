@@ -146,4 +146,5 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
     Route::post('orders', [OrderController::class, 'store'])->name('orders.store');
     Route::delete('/orders/destroy-all', [OrderController::class, 'destroyAll'])->name('orders.destroyAll');
+    Route::get('/orders/search', [OrderController::class, 'search'])->name('orders.search');
 });

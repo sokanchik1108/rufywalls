@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use App\Models\Batch;
+use Carbon\Carbon;
 
 class OrderController extends Controller
 {
@@ -184,23 +185,33 @@ class OrderController extends Controller
     }
 
     // Заказы продавцов
-    public function indexSeller()
+    public function indexSeller(Request $request)
     {
-        $orders = Order::where('is_website', false)->latest()->get();
+        $date = $request->get('date') ?? now()->format('Y-m-d');
+
+        $orders = Order::with(['items.variant.product'])
+            ->whereBetween('created_at', [
+                Carbon::parse($date)->startOfDay(),
+                Carbon::parse($date)->endOfDay()
+            ])
+            ->latest()
+            ->get();
+
         return view('admin.orders.orders_seller', compact('orders'));
     }
 
-
-    public function destroyAll(Request $request)
+    public function search(Request $request)
     {
-        $orders = Order::query();
+        $q = $request->get('q');
 
-        if ($date) {
-            $orders->whereDate('created_at', $date);
-        }
+        $orders = Order::with('items')
+            ->where('id', 'like', "%$q%")
+            ->orWhere('phone', 'like', "%$q%")
+            ->orWhere('name', 'like', "%$q%")
+            ->latest()
+            ->limit(20)
+            ->get();
 
-        $orders->delete();
-
-        return redirect()->route('admin.orders.seller', ['date' => $date])->with('success', 'Все заказы удалены.');
+        return response()->json($orders);
     }
 }
