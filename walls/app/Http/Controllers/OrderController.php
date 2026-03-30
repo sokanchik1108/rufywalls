@@ -214,7 +214,7 @@ class OrderController extends Controller
     {
         $q = $request->get('q');
 
-        $orders = Order::with('items')
+        $orders = Order::with(['items.variant']) // <-- вот здесь
             ->where('id', 'like', "%$q%")
             ->orWhere('phone', 'like', "%$q%")
             ->orWhere('name', 'like', "%$q%")
