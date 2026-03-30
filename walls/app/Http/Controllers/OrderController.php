@@ -114,31 +114,40 @@ class OrderController extends Controller
         return view('admin.orders.create', compact('warehouses'));
     }
 
+
     public function store(Request $request)
     {
+
         $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
             'comment' => 'nullable|string',
+            'discount' => 'nullable|numeric|min:0', // ✅ добавлено поле скидки
             'items' => 'required|array|min:1',
             'items.*.sku' => 'required|exists:variants,sku',
             'items.*.batch_id' => 'required|integer|exists:batches,id',
-            'items.*.warehouse_id' => 'required|integer|exists:warehouses,id',
-            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.warehouse_id' => 'nullable|integer|exists:warehouses,id',
+            'items.*.quantity' => 'nullable|integer|min:1',
             'items.*.price' => 'required|numeric|min:0',
             'items.*.batch_code' => 'required|string',
-            'items.*.warehouse_name' => 'required|string',
+            'items.*.warehouse_name' => 'nullable|string',
         ]);
 
         $order = Order::create([
             'name' => $request->name,
             'phone' => $request->phone,
             'comment' => $request->comment,
+            'discount' => $request->discount ?? 0,
             'status' => 'Новый',
             'is_website' => false,
         ]);
 
         foreach ($request->items as $item) {
+
+            if (empty($item['warehouse_id']) || empty($item['quantity'])) {
+                continue;
+            }
+
             $batchId = $item['batch_id'];
             $warehouseId = $item['warehouse_id'];
             $quantity = (int)$item['quantity'];
@@ -152,25 +161,26 @@ class OrderController extends Controller
             }
 
             $pivot = $batch->warehouses()->where('warehouse_id', $warehouseId)->first();
+
             if (!$pivot || $pivot->pivot->quantity < $quantity) {
                 return back()->with('error', "Недостаточно товара на складе для SKU {$variant->sku}");
             }
 
-            // Обновляем количество на складе
+            // уменьшаем количество на складе
             $batch->warehouses()->updateExistingPivot($warehouseId, [
                 'quantity' => $pivot->pivot->quantity - $quantity
             ]);
 
-            // Создаём запись заказа с snapshot
+            // создаём позицию заказа
             $order->items()->create([
-                'variant_id'      => $variant->id,
-                'batch_id'        => $batchId,
-                'warehouse_id'    => $warehouseId,
-                'quantity'        => $quantity,
-                'price'           => $price,
-                'image'           => $variant->image ?? '',
-                'batch_code'      => $item['batch_code'],       // snapshot кода партии
-                'warehouse_name'  => $item['warehouse_name'],   // snapshot имени склада
+                'variant_id' => $variant->id,
+                'batch_id' => $batchId,
+                'warehouse_id' => $warehouseId,
+                'quantity' => $quantity,
+                'price' => $price,
+                'image' => $variant->image ?? '',
+                'batch_code' => $item['batch_code'],
+                'warehouse_name' => $item['warehouse_name'] ?? '',
             ]);
         }
 
