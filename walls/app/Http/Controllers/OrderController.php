@@ -115,77 +115,86 @@ class OrderController extends Controller
     }
 
 
-    public function store(Request $request)
-    {
+public function store(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'phone' => 'required|string|max:20',
+        'comment' => 'nullable|string',
+        'discount' => 'nullable|numeric|min:0',
 
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
-            'comment' => 'nullable|string',
-            'discount' => 'nullable|numeric|min:0', // ✅ добавлено поле скидки
-            'items' => 'required|array|min:1',
-            'items.*.sku' => 'required|exists:variants,sku',
-            'items.*.batch_id' => 'required|integer|exists:batches,id',
-            'items.*.warehouse_id' => 'nullable|integer|exists:warehouses,id',
-            'items.*.quantity' => 'nullable|integer|min:1',
-            'items.*.price' => 'required|numeric|min:0',
-            'items.*.batch_code' => 'required|string',
-            'items.*.warehouse_name' => 'nullable|string',
-        ]);
+        'items' => 'required|array|min:1',
+        'items.*.sku' => 'required|exists:variants,sku',
+        'items.*.batch_id' => 'required|integer|exists:batches,id',
+        'items.*.warehouse_id' => 'nullable|integer|exists:warehouses,id',
+        'items.*.quantity' => 'required|integer', // ✅ разрешаем отрицательные числа
+        'items.*.price' => 'required|numeric|min:0',
+        'items.*.batch_code' => 'required|string',
+        'items.*.warehouse_name' => 'nullable|string',
+    ]);
 
-        $order = Order::create([
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'comment' => $request->comment,
-            'discount' => $request->discount ?? 0,
-            'status' => 'Новый',
-            'is_website' => false,
-        ]);
+    $order = Order::create([
+        'name' => $request->name,
+        'phone' => $request->phone,
+        'comment' => $request->comment,
+        'discount' => $request->discount ?? 0,
+        'status' => 'Новый',
+        'is_website' => false,
+    ]);
 
-        foreach ($request->items as $item) {
+    foreach ($request->items as $item) {
 
-            if (empty($item['warehouse_id']) || empty($item['quantity'])) {
-                continue;
-            }
-
-            $batchId = $item['batch_id'];
-            $warehouseId = $item['warehouse_id'];
-            $quantity = (int)$item['quantity'];
-            $price = (float)$item['price'];
-
-            $batch = Batch::findOrFail($batchId);
-            $variant = Variant::where('sku', $item['sku'])->firstOrFail();
-
-            if ($batch->variant_id !== $variant->id) {
-                return back()->with('error', "Партия {$batch->batch_code} не принадлежит артикулу {$variant->sku}");
-            }
-
-            $pivot = $batch->warehouses()->where('warehouse_id', $warehouseId)->first();
-
-            if (!$pivot || $pivot->pivot->quantity < $quantity) {
-                return back()->with('error', "Недостаточно товара на складе для SKU {$variant->sku}");
-            }
-
-            // уменьшаем количество на складе
-            $batch->warehouses()->updateExistingPivot($warehouseId, [
-                'quantity' => $pivot->pivot->quantity - $quantity
-            ]);
-
-            // создаём позицию заказа
-            $order->items()->create([
-                'variant_id' => $variant->id,
-                'batch_id' => $batchId,
-                'warehouse_id' => $warehouseId,
-                'quantity' => $quantity,
-                'price' => $price,
-                'image' => $variant->image ?? '',
-                'batch_code' => $item['batch_code'],
-                'warehouse_name' => $item['warehouse_name'] ?? '',
-            ]);
+        // ❌ заменяем empty на isset, чтобы поддерживать отрицательные qty
+        if (!isset($item['warehouse_id']) || !isset($item['quantity'])) {
+            continue;
         }
 
-        return redirect()->route('admin.orders.seller')->with('success', 'Заказ успешно создан');
+        $batchId = $item['batch_id'];
+        $warehouseId = $item['warehouse_id'];
+        $quantity = (int)$item['quantity'];
+        $price = (float)$item['price'];
+
+        $batch = Batch::findOrFail($batchId);
+        $variant = Variant::where('sku', $item['sku'])->firstOrFail();
+
+        if ($batch->variant_id !== $variant->id) {
+            return back()->with('error', "Партия {$batch->batch_code} не принадлежит артикулу {$variant->sku}");
+        }
+
+        $pivot = $batch->warehouses()->where('warehouse_id', $warehouseId)->first();
+
+        if (!$pivot) {
+            return back()->with('error', "Склад не найден для SKU {$variant->sku}");
+        }
+
+        $currentStock = $pivot->pivot->quantity;
+
+        // ✅ проверка склада только для продаж
+        if ($quantity > 0 && $currentStock < $quantity) {
+            return back()->with('error', "Недостаточно товара на складе для SKU {$variant->sku}");
+        }
+
+        // ✅ обновление склада: для возврата quantity < 0, склад увеличится
+        $batch->warehouses()->updateExistingPivot($warehouseId, [
+            'quantity' => $currentStock - $quantity
+        ]);
+
+        // создаём позицию заказа (продажа или возврат)
+        $order->items()->create([
+            'variant_id' => $variant->id,
+            'batch_id' => $batchId,
+            'warehouse_id' => $warehouseId,
+            'quantity' => $quantity,
+            'price' => $price,
+            'image' => $variant->image ?? '',
+            'batch_code' => $item['batch_code'],
+            'warehouse_name' => $item['warehouse_name'] ?? '',
+        ]);
     }
+
+    return redirect()->route('admin.orders.seller')
+        ->with('success', 'Заказ успешно создан');
+}
 
     // Заказы с сайта
     public function indexWebsite()
