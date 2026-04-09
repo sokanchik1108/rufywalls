@@ -142,4 +142,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/orders/seller', [OrderController::class, 'indexSeller'])->name('orders.seller');
     Route::delete('/orders/destroy-all', [OrderController::class, 'destroyAll'])->name('orders.destroyAll');
     Route::get('/orders/search', [OrderController::class, 'search'])->name('orders.search');
+    Route::get('/orders/{id}/edit', [OrderController::class, 'edit'])->name('orders.edit');
+    Route::put('/orders/{id}', [OrderController::class, 'update'])->name('orders.update');
 });

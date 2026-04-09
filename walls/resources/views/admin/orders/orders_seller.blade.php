@@ -11,12 +11,12 @@ $nextDate = \Carbon\Carbon::parse($selectedDate)->addDay()->format('Y-m-d');
 // Общая сумма всех заказов за день
 $totalDay = 0;
 foreach($orders as $order){
-    $totalOrder = 0;
-    foreach($order->items as $i){
-        $totalOrder += $i->price * $i->quantity;
-    }
-    $finalOrder = $totalOrder - ($order->discount ?? 0);
-    $totalDay += $finalOrder;
+$totalOrder = 0;
+foreach($order->items as $i){
+$totalOrder += $i->price * $i->quantity;
+}
+$finalOrder = $totalOrder - ($order->discount ?? 0);
+$totalDay += $finalOrder;
 }
 @endphp
 
@@ -70,7 +70,7 @@ foreach($orders as $order){
                 @php
                 $total = 0;
                 foreach($order->items as $i){
-                    $total += $i->price * $i->quantity;
+                $total += $i->price * $i->quantity;
                 }
                 $final = $total - ($order->discount ?? 0);
                 @endphp
@@ -81,10 +81,11 @@ foreach($orders as $order){
                     <td>
                         @if($final < 0)
                             <span class="text-danger fw-bold">ВОЗВРАТ</span>
-                        @endif
-                        {{ $final < 0 ? '-' : '' }}{{ number_format(abs($final), 0, ',', ' ') }} ₸
+                            @endif
+                            {{ $final < 0 ? '-' : '' }}{{ number_format(abs($final), 0, ',', ' ') }} ₸
                     </td>
                     <td class="text-center">
+                        <a href="{{ route('admin.orders.edit', $order->id) }}" class="btn btn-sm btn-warning me-2">Редактировать</a>
                         <button class="btn btn-sm btn-primary me-2" data-bs-toggle="modal" data-bs-target="#orderModal{{ $order->id }}">Детали</button>
                         <form action="{{ route('admin.orders.destroy', $order->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Удалить заказ?')">
                             @csrf
@@ -110,7 +111,7 @@ foreach($orders as $order){
         @php
         $total = 0;
         foreach($order->items as $i){
-            $total += $i->price * $i->quantity;
+        $total += $i->price * $i->quantity;
         }
         $final = $total - ($order->discount ?? 0);
         @endphp
@@ -121,8 +122,8 @@ foreach($orders as $order){
                     <span>
                         @if($final < 0)
                             <span class="text-danger fw-bold">ВОЗВРАТ</span>
-                        @endif
-                        {{ $final < 0 ? '-' : '' }}{{ number_format(abs($final),0,',',' ') }} ₸
+                    @endif
+                    {{ $final < 0 ? '-' : '' }}{{ number_format(abs($final),0,',',' ') }} ₸
                     </span>
                 </div>
                 <div class="mt-2">
@@ -133,6 +134,7 @@ foreach($orders as $order){
                 <div class="text-success small mt-1">Скидка {{ number_format($order->discount,0,',',' ') }} ₸</div>
                 @endif
                 <div class="d-flex gap-2 mt-3">
+                    <a href="{{ route('admin.orders.edit', $order->id) }}" class="btn btn-sm btn-warning w-100">Редактировать</a>
                     <button class="btn btn-sm btn-primary w-100" data-bs-toggle="modal" data-bs-target="#orderModal{{ $order->id }}">Детали</button>
                     <form action="{{ route('admin.orders.destroy', $order->id) }}" method="POST" class="w-100" onsubmit="return confirm('Удалить заказ?')">
                         @csrf
@@ -155,7 +157,7 @@ foreach($orders as $order){
     @php
     $total = 0;
     foreach($order->items as $i){
-        $total += $i->price * $i->quantity;
+    $total += $i->price * $i->quantity;
     }
     $final = $total - ($order->discount ?? 0);
     @endphp
@@ -193,7 +195,7 @@ foreach($orders as $order){
                                                 <strong>{{ $item->variant->sku ?? '—' }}</strong> ( партия {{ $item->batch_code ?? '—'}})
                                                 @if($item->quantity < 0)
                                                     <span class="text-danger fw-bold">ВОЗВРАТ</span>
-                                                @endif
+                                                    @endif
                                             </div>
                                             <div>Кол-во: {{ $item->quantity }} × {{ number_format($item->price,0,',',' ') }} ₸</div>
                                         </div>
@@ -211,9 +213,9 @@ foreach($orders as $order){
                             Общая сумма: {{ $final < 0 ? '-' : '' }}{{ number_format(abs($final),0,',',' ') }} ₸
                             @if($final < 0)
                                 <span class="text-danger fw-bold">(ВОЗВРАТ)</span>
-                            @elseif($order->discount > 0)
+                                @elseif($order->discount > 0)
                                 <span class="text-success small">(Скидка {{ number_format($order->discount,0,',',' ') }} ₸)</span>
-                            @endif
+                                @endif
                         </div>
                     </div>
                 </div>
@@ -225,43 +227,60 @@ foreach($orders as $order){
 </div>
 
 <style>
-tr:hover { background-color: #f1f5f9; }
-.btn-outline-secondary { min-width: 100px; }
-.modal-body { background-color: #f8f9fa; }
+    tr:hover {
+        background-color: #f1f5f9;
+    }
+
+    .btn-outline-secondary {
+        min-width: 100px;
+    }
+
+    .modal-body {
+        background-color: #f8f9fa;
+    }
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
 
-    setTimeout(() => {
-        const alert = document.getElementById('successAlert');
-        if (alert) { alert.style.transition='0.5s'; alert.style.opacity=0; setTimeout(()=>alert.remove(),500); }
-    }, 3000);
+        setTimeout(() => {
+            const alert = document.getElementById('successAlert');
+            if (alert) {
+                alert.style.transition = '0.5s';
+                alert.style.opacity = 0;
+                setTimeout(() => alert.remove(), 500);
+            }
+        }, 3000);
 
-    const searchInput = document.getElementById('searchInput');
-    const desktopContainer = document.getElementById('desktopOrders');
-    const mobileContainer = document.getElementById('mobileOrders');
-    const originalDesktop = desktopContainer.innerHTML;
-    const originalMobile = mobileContainer.innerHTML;
+        const searchInput = document.getElementById('searchInput');
+        const desktopContainer = document.getElementById('desktopOrders');
+        const mobileContainer = document.getElementById('mobileOrders');
+        const originalDesktop = desktopContainer.innerHTML;
+        const originalMobile = mobileContainer.innerHTML;
 
-    let timeout = null;
-    searchInput.addEventListener('input', function() {
-        const query = this.value.trim();
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            if(query.length<1){ desktopContainer.innerHTML=originalDesktop; mobileContainer.innerHTML=originalMobile; return; }
+        let timeout = null;
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                if (query.length < 1) {
+                    desktopContainer.innerHTML = originalDesktop;
+                    mobileContainer.innerHTML = originalMobile;
+                    return;
+                }
 
-            fetch(`/admin/orders/search?q=${query}`).then(res=>res.json()).then(data=>{
-                desktopContainer.innerHTML=''; mobileContainer.innerHTML='';
-                document.querySelectorAll('.dynamic-modal').forEach(m=>m.remove());
+                fetch(`/admin/orders/search?q=${query}`).then(res => res.json()).then(data => {
+                    desktopContainer.innerHTML = '';
+                    mobileContainer.innerHTML = '';
+                    document.querySelectorAll('.dynamic-modal').forEach(m => m.remove());
 
-                data.forEach(order=>{
-                    let total=0;
-                    order.items.forEach(i=>total+=i.price*i.quantity);
-                    const isReturn = total < 0;
+                    data.forEach(order => {
+                        let total = 0;
+                        order.items.forEach(i => total += i.price * i.quantity);
+                        const isReturn = total < 0;
 
-                    // Десктоп
-                    desktopContainer.innerHTML += `
+                        // Десктоп
+                        desktopContainer.innerHTML += `
 <tr class="order-row">
 <td>${order.id}</td>
 <td>${order.name}</td>
@@ -277,8 +296,8 @@ document.addEventListener('DOMContentLoaded', function() {
 </td>
 </tr>`;
 
-                    // Мобильные
-                    mobileContainer.innerHTML += `
+                        // Мобильные
+                        mobileContainer.innerHTML += `
 <div class="card mb-3 shadow-sm border-0 rounded-4 order-card">
 <div class="card-body p-3">
 <div class="d-flex justify-content-between">
@@ -299,12 +318,12 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </div></div>`;
 
-                    // Модалка
-                    const modal = document.createElement('div');
-                    modal.classList.add('modal','fade','dynamic-modal');
-                    modal.id = `orderModal${order.id}`;
-                    modal.tabIndex = -1;
-                    modal.innerHTML = `
+                        // Модалка
+                        const modal = document.createElement('div');
+                        modal.classList.add('modal', 'fade', 'dynamic-modal');
+                        modal.id = `orderModal${order.id}`;
+                        modal.tabIndex = -1;
+                        modal.innerHTML = `
 <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
 <div class="modal-content">
 <div class="modal-header bg-primary text-white">
@@ -333,15 +352,13 @@ ${order.items.map(i=>`
 Общая сумма: ${Math.abs(total).toLocaleString()} ₸ ${isReturn?'<span class="text-danger fw-bold">(ВОЗВРАТ)</span>':''}
 </div>
 </div></div></div></div>`;
-                    document.body.appendChild(modal);
+                        document.body.appendChild(modal);
+                    });
                 });
-            });
-        },300);
-    });
+            }, 300);
+        });
 
-});
+    });
 </script>
 
 @endsection
-
-
