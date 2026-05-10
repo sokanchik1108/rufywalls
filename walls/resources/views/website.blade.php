@@ -1,15 +1,15 @@
 @extends('layouts.main')
 
 {{-- 🔹 Title --}}
-@section('title', 'Обои в Алматы — купить современные моющиеся обои | RAFY WALLS магазин обоев')
+@section('title', 'Обои в Алматы — купить современные моющиеся обои | KURBANOV WALLS магазин обоев')
 
 {{-- 🔹 Meta Description --}}
-@section('meta_description', 'Купить обои в Алматы в магазине RAFY WALLS. Современные флизелиновые, виниловые и моющиеся обои. Новые коллекции Artex, Maxdecor, Dilmax и других брендов.')
+@section('meta_description', 'Купить обои в Алматы в магазине KURBANOV WALLS. Современные флизелиновые, виниловые и моющиеся обои. Новые коллекции Artex, Maxdecor, Dilmax и других брендов.')
 
 {{-- 🔹 Open Graph / Twitter / Canonical --}}
 @section('meta')
 <link rel="canonical" href="{{ url()->current() }}">
-<meta name="keywords" content="обои Алматы, купить обои Алматы, магазин обоев Алматы, моющиеся обои Алматы, флизелиновые обои Алматы, виниловые обои Алматы, RAFY WALLS, современные обои, Artex, Maxdecor, Dilmax">
+<meta name="keywords" content="обои Алматы, купить обои Алматы, магазин обоев Алматы, моющиеся обои Алматы, флизелиновые обои Алматы, виниловые обои Алматы, KURBANOV WALLS, современные обои, Artex, Maxdecor, Dilmax">
 
 {{-- Open Graph --}}
 <meta property="og:title" content="@yield('title')">
@@ -29,7 +29,7 @@
 
     {{-- 🔹 Скрытый H1 для SEO --}}
     <h1 class="visually-hidden">
-        Купить обои в Алматы — RAFY WALLS магазин современных моющихся обоев
+        Купить обои в Алматы — KURBANOV WALLS магазин современных моющихся обоев
     </h1>
 
     {{-- 🔹 Основной контент --}}

@@ -1,10 +1,10 @@
 @extends('layouts.main')
 
 {{-- 🔹 Title --}}
-@section('title', 'О продукции — купить стильные и качественные обои в Алматы | RAFY WALLS')
+@section('title', 'О продукции — купить стильные и качественные обои в Алматы | KURBANOV WALLS')
 
 {{-- 🔹 Meta Description (для SEO + Open Graph + Twitter) --}}
-@section('meta_description', 'Качественные моющиеся виниловые обои на флизелиновой основе в Алматы — RAFY WALLS. Широкий выбор оттенков, фактур и коллекций от лучших брендов. Создайте стильный и уютный интерьер с нами.')
+@section('meta_description', 'Качественные моющиеся виниловые обои на флизелиновой основе в Алматы — KURBANOV WALLS. Широкий выбор оттенков, фактур и коллекций от лучших брендов. Создайте стильный и уютный интерьер с нами.')
 
 {{-- 🔹 Дополнительные мета-теги --}}
 @section('meta')
@@ -69,8 +69,8 @@
                 <p class="text-secondary fs-6 mb-0">
                     Ознакомьтесь с отзывами и результатами наших работ на нашей Instagram-странице:
                     <br>
-                    <a href="https://www.instagram.com/rafy_walls" target="_blank" class="text-primary text-decoration-none">
-                        @Rafy_walls
+                    <a href="https://www.instagram.com/kurbanovwalls" target="_blank" class="text-primary text-decoration-none">
+                        @kurbanovwalls
                     </a>
                 </p>
             </div>

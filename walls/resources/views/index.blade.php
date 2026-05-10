@@ -1,9 +1,9 @@
 @extends('layouts.main')
 {{-- 🔹 Title --}}
-@section('title', 'Корзина — RAFY WALLS')
+@section('title', 'Корзина — KURBANOV WALLS')
 
 {{-- 🔹 Meta Description --}}
-@section('meta_description', 'Ваша корзина RAFY WALLS — шаг до стильного интерьера. Проверьте товары и оформите заказ легко и быстро.')
+@section('meta_description', 'Ваша корзина KURBANOV WALLS — шаг до стильного интерьера. Проверьте товары и оформите заказ легко и быстро.')
 
 {{-- 🔹 Дополнительные мета-теги --}}
 @section('meta')
@@ -17,7 +17,7 @@
 <meta property="og:image" content="{{ asset('images/лого1.png') }}" />
 <meta property="og:url" content="{{ url('/cart') }}" />
 <meta property="og:type" content="website" />
-<meta property="og:site_name" content="RAFY WALLS" />
+<meta property="og:site_name" content="KURBANOV WALLS" />
 
 {{-- 🔹 Twitter Card --}}
 <meta name="twitter:card" content="summary_large_image">
@@ -61,7 +61,7 @@
 
 
     <h1 class="mb-4 fw-semibold text-body-emphasis">
-        Корзина <span class="visually-hidden">RAFY WALLS — оформление заказа на обои в Алматы</span>
+        Корзина <span class="visually-hidden">KURBÂNOV WALLS — оформление заказа на обои в Алматы</span>
     </h1>
 
 

@@ -1,10 +1,10 @@
 @extends('layouts.main')
 
 {{-- 🔹 Title --}}
-@section('title', 'Калькулятор обоев — рассчитайте рулоны для вашей комнаты | RAFY WALLS')
+@section('title', 'Калькулятор обоев — рассчитайте рулоны для вашей комнаты | KURBANOV WALLS')
 
 {{-- 🔹 Meta Description (для SEO + Open Graph + Twitter) --}}
-@section('meta_description', 'Удобный калькулятор обоев от RAFY WALLS поможет точно рассчитать, сколько рулонов обоев нужно для вашей комнаты. Учитываются размеры стен, окон и дверей.')
+@section('meta_description', 'Удобный калькулятор обоев от KURBANOV WALLS поможет точно рассчитать, сколько рулонов обоев нужно для вашей комнаты. Учитываются размеры стен, окон и дверей.')
 
 {{-- 🔹 Дополнительные мета-теги --}}
 @section('meta')
@@ -12,8 +12,8 @@
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="{{ url('/calculator') }}">
 
-<meta property="og:title" content="Калькулятор обоев — рассчитайте рулоны для вашей комнаты | RAFY WALLS">
-<meta property="og:description" content="Удобный калькулятор обоев от RAFY WALLS поможет точно рассчитать, сколько рулонов обоев нужно для вашей комнаты.">
+<meta property="og:title" content="Калькулятор обоев — рассчитайте рулоны для вашей комнаты | KURBANOV WALLS">
+<meta property="og:description" content="Удобный калькулятор обоев от KURBANOV WALLS поможет точно рассчитать, сколько рулонов обоев нужно для вашей комнаты.">
 <meta property="og:url" content="{{ url()->current() }}">
 <meta property="og:type" content="website">
 <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
@@ -23,8 +23,8 @@
     {
         "@context": "https://schema.org",
         "@type": "WebPage",
-        "name": "Калькулятор обоев — RAFY WALLS",
-        "description": "Удобный калькулятор обоев от RAFY WALLS поможет точно рассчитать, сколько рулонов обоев нужно для вашей комнаты.",
+        "name": "Калькулятор обоев — KURBANOV WALLS",
+        "description": "Удобный калькулятор обоев от KURBANOV WALLS поможет точно рассчитать, сколько рулонов обоев нужно для вашей комнаты.",
         "url": "{{ url()->current() }}"
     }
 </script>

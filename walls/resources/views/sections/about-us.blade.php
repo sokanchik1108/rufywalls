@@ -3,17 +3,17 @@
   <div class="content-wrapper">
     <!-- ВИДИМЫЙ H1 для Google, но по стилю меньше H2 -->
     <h1 class="about-h1 mb-4">
-      О компании <span class="company-name">RAFY WALLS</span>
+      О нашей компании
     </h1>
 
     <div class="section-text">
       <p>
-        <strong><span class="company-name inline">RAFY WALLS</span> — магазин премиальных обоев в Алматы с широким ассортиментом решений для современного интерьера.</strong>
+        <strong><span class="company-name inline">KURBÂNOV WALLS</span> — магазин премиальных обоев в Алматы с широким ассортиментом решений для современного интерьера.</strong>
         Мы помогаем создать стильное, уютное и гармоничное пространство для дома, офиса и коммерческих помещений.
       </p>
 
       <p>
-        В каталоге <span class="company-name inline">RAFY WALLS</span> представлены флизелиновые и моющиеся обои
+        В нашем каталоге представлены флизелиновые и моющиеся обои
         от проверенных производителей, сочетающие высокое качество, актуальный дизайн и долговечность.
         Мы внимательно подходим к подбору коллекций и работаем только с надёжными брендами.
       </p>
@@ -25,7 +25,7 @@
       </p>
 
       <p>
-        <strong><span class="company-name inline">RAFY WALLS</span></strong> обеспечивает удобный онлайн-заказ
+        Наша компания обеспечивает удобный онлайн-заказ
         и доставку обоев по всему Казахстану, делая процесс покупки комфортным и доступным вне зависимости
         от города и времени.
       </p>
@@ -82,10 +82,10 @@
 
   /* H1 теперь меньше по размеру, визуально аккуратнее */
   .about-h1 {
-    font-size: 1.6rem;
-    /* меньше, чем H2 раньше */
-    font-weight: 700;
-    color: #01142f;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+    font-weight: 800;
     margin-bottom: 1.5rem;
     line-height: 1.3;
   }
@@ -98,8 +98,8 @@
   /* Заголовок RAFY WALLS */
   .company-name {
     font-family: 'Playfair Display', serif;
-    font-weight: 600;
-    font-size: 1.9rem;
+    font-weight: 500;
+    font-size: 1.6rem;
     letter-spacing: 2px;
   }
 
@@ -107,7 +107,7 @@
   .company-name.inline {
     font-family: 'Playfair Display', serif;
     font-weight: 600;
-    font-size: 17px;
+    font-size: 20px;
     letter-spacing: 0.5px;
   }
 

@@ -4,7 +4,7 @@
 
       <!-- Бренд -->
       <div class="col-md-4 mb-4">
-        <h5 class="footer-logo">RAFY WALLS</h5>
+        <h5 class="footer-logo">KURBÂNOV WALLS</h5>
         <div class="footer-description">
           <p class="small mb-2">Премиум-обои для тех, кто ценит стиль и качество. Мы предлагаем широкий ассортимент высококачественных обоев, которые подойдут для любого интерьера.</p>
           <p class="small ">Наши коллекции созданы с вниманием к деталям, чтобы добавить вашему дому элегантности и уюта.</p>
@@ -38,7 +38,7 @@
           <a href="https://wa.me/77773555704" target="_blank" aria-label="WhatsApp">
             <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/whatsapp.svg" width="24" height="24" alt="WhatsApp">
           </a>
-          <a href="https://instagram.com/rafy_walls" target="_blank" aria-label="Instagram">
+          <a href="https://instagram.com/kurbanovwalls" target="_blank" aria-label="Instagram">
             <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg" width="24" height="24" alt="Instagram">
           </a>
         </div>
@@ -46,7 +46,7 @@
     </div>
 
     <div class="text-center mt-4 small text-muted">
-      © {{ date('Y') }} Rafy Walls — Все права защищены
+      © {{ date('Y') }} KURBÂNOV WALLS — Все права защищены
     </div>
   </div>
 
@@ -73,10 +73,10 @@
 
   .footer-logo {
     font-family: 'Playfair Display', serif;
-    font-weight: 600;
-    font-size: 1.9rem;
+    font-weight: 500;
+    font-size: 1.6rem;
     color: #01142f;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
   }
 
   .footer-description {

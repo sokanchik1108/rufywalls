@@ -13,8 +13,8 @@
 
     .navbar-brand {
         font-family: 'Playfair Display', serif;
-        font-weight: 600;
-        font-size: 1.7rem;
+        font-weight: 450;
+        font-size: 1.5rem;
         color: #01142f;
         letter-spacing: 1px;
         user-select: none;
@@ -158,7 +158,7 @@
 <header>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/">RAFY WALLS</a>
+            <a class="navbar-brand" href="/">KURBÂNOV WALLS</a>
 
             <div class="d-lg-none d-flex align-items-center ms-auto gap-2">
                 <a href="{{ route('catalog') }}" class="catalog-btn catalog-btn-sm">Каталог</a>
@@ -204,7 +204,7 @@
     data-bs-backdrop="false" data-bs-scroll="false" style="width: 90%;">
     <div class="offcanvas-header border-bottom">
         <a class="navbar-brand m-0 w-100" href="/" style="font-size: 1.7rem; color: #01142f; font-weight: 600;">
-            RAFY WALLS
+            KURBÂNOV WALLS 
         </a>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
     </div>

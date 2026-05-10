@@ -1,9 +1,9 @@
 @extends('layouts.main')
 
-@section('title', 'Как нас найти — адрес и контакты RAFY WALLS в Алматы')
+@section('title', 'Как нас найти — адрес и контакты KURBANOV WALLS в Алматы')
 
 @section('meta')
-<meta name="description" content="Адрес и контакты магазина RAFY WALLS в Алматы. Загляните к нам и подберите обои, которые преобразят ваш интерьер.">
+<meta name="description" content="Адрес и контакты магазина KURBANOV WALLS в Алматы. Загляните к нам и подберите обои, которые преобразят ваш интерьер.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="{{ url()->current() }}">
 @endsection
@@ -108,7 +108,7 @@
 
                 <div>
                     <h4 style="font-family: 'Playfair Display', serif;font-weight: 300;font-size: 1.5rem;color: #01142f;letter-spacing: 1px;">
-                        RAFY WALLS — АЛМАТЫ
+                        KURBÂNOV WALLS — АЛМАТЫ
                     </h4>
                     <p class="contact-address mb-2 mt-2" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
                         <span itemprop="streetAddress">

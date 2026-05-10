@@ -5,7 +5,7 @@
     <div class="container px-2 px-md-0 mb-3">
         <!-- Заголовок -->
         <div class="rafy-header text-center">
-            <h2 class="rafy-main-title">Новые коллекции RAFY WALLS</h2>
+            <h2 class="rafy-main-title">Новые коллекции KURBÂNOV WALLS</h2>
             <p class="rafy-subtitle">
                 Следите за последними трендами интерьера с новинками сезона — стильные, качественные и эксклюзивные коллекции для вдохновения
             </p>
@@ -81,9 +81,9 @@
 
     .rafy-main-title {
         font-family: 'Playfair Display', serif;
-        font-size: 1.9rem;
+        font-size: 1.7rem;
         letter-spacing: 1.5px;
-        font-weight: 600;
+        font-weight: 450;
         color: black;
         margin-bottom: 1.5rem;
         text-align: center;

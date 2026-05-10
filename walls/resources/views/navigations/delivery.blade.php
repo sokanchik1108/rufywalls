@@ -1,10 +1,10 @@
 @extends('layouts.main')
 
 {{-- 🔹 Title --}}
-@section('title', 'Доставка заказов — RAFY WALLS в Алматы и Казахстане')
+@section('title', 'Доставка заказов — KURBANOV WALLS в Алматы и Казахстане')
 
 {{-- 🔹 Meta Description --}}
-@section('meta_description', 'Узнайте о способах доставки заказов RAFY WALLS: курьерская доставка, самовывоз, сроки и условия по Алматы и всему Казахстану.')
+@section('meta_description', 'Узнайте о способах доставки заказов KURBANOV WALLS: курьерская доставка, самовывоз, сроки и условия по Алматы и всему Казахстану.')
 
 {{-- 🔹 Дополнительные мета-теги --}}
 @section('meta')
@@ -17,7 +17,7 @@
 <meta property="og:description" content="@yield('meta_description')">
 <meta property="og:url" content="{{ url()->current() }}">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="RAFY WALLS">
+<meta property="og:site_name" content="KURBANOV WALLS">
 
 {{-- 🔹 Twitter Card --}}
 <meta name="twitter:card" content="summary_large_image">

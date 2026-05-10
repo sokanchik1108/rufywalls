@@ -1,10 +1,10 @@
 @extends('layouts.main')
 
 {{-- 🔹 Title --}}
-@section('title', 'Как оформить заказ обоев — RAFY WALLS в Алматы и Казахстане')
+@section('title', 'Как оформить заказ обоев — KURBANOV WALLS в Алматы и Казахстане')
 
 {{-- 🔹 Meta Description --}}
-@section('meta_description', 'Простая инструкция, как оформить заказ на сайте RAFY WALLS: выберите обои, добавьте в корзину, подтвердите через WhatsApp. Быстрая покупка в Алматы и по Казахстану.')
+@section('meta_description', 'Простая инструкция, как оформить заказ на сайте KURBANOV WALLS: выберите обои, добавьте в корзину, подтвердите через WhatsApp. Быстрая покупка в Алматы и по Казахстану.')
 
 {{-- 🔹 Дополнительные мета-теги --}}
 @section('meta')
@@ -17,7 +17,7 @@
 <meta property="og:description" content="@yield('meta_description')">
 <meta property="og:url" content="{{ url()->current() }}">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="RAFY WALLS">
+<meta property="og:site_name" content="KURBANOV WALLS">
 
 {{-- 🔹 Twitter Card --}}
 <meta name="twitter:card" content="summary_large_image">

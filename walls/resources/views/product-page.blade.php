@@ -14,7 +14,7 @@
     ? asset('storage/' . ltrim($images[0], '/'))
     : asset('images/default.jpg');
 
-    $shortDescription = "Купить $productName — $materialText в Алматы. Новые коллекции RAFY WALLS: современные моющиеся и флизелиновые обои. Артикул $sku.";
+    $shortDescription = "Купить $productName — $materialText в Алматы. Новые коллекции KURBANOV WALLS: современные моющиеся и флизелиновые обои. Артикул $sku.";
     @endphp
 
     <meta charset="UTF-8">
@@ -22,24 +22,24 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     {{-- 🔹 Title --}}
-    <title>{{ $productName }} — стильные {{ $materialText }} в Алматы | RAFY WALLS</title>
+    <title>{{ $productName }} — стильные {{ $materialText }} в Алматы | KURBANOV WALLS</title>
 
     {{-- 🔹 Meta Description и Keywords --}}
     <meta name="description" content="{{ $shortDescription }}">
-    <meta name="keywords" content="{{ $productName }}, {{ $materialText }}, обои Алматы, купить обои Алматы, RAFY WALLS, моющиеся обои, флизелиновые, виниловые">
+    <meta name="keywords" content="{{ $productName }}, {{ $materialText }}, обои Алматы, купить обои Алматы, KURBANOV WALLS, моющиеся обои, флизелиновые, виниловые">
     <link rel="canonical" href="{{ $pageUrl }}">
 
     {{-- 🔹 Open Graph --}}
-    <meta property="og:title" content="{{ $productName }} — стильные {{ $materialText }} | RAFY WALLS">
+    <meta property="og:title" content="{{ $productName }} — стильные {{ $materialText }} | KURBANOV WALLS">
     <meta property="og:description" content="{{ $shortDescription }}">
     <meta property="og:image" content="{{ $ogImage }}">
     <meta property="og:url" content="{{ $pageUrl }}">
     <meta property="og:type" content="product">
-    <meta property="og:site_name" content="RAFY WALLS">
+    <meta property="og:site_name" content="KURBANOV WALLS">
 
     {{-- 🔹 Twitter Card --}}
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ $productName }} — стильные {{ $materialText }} | RAFY WALLS">
+    <meta name="twitter:title" content="{{ $productName }} — стильные {{ $materialText }} | KURBANOV WALLS">
     <meta name="twitter:description" content="{{ $shortDescription }}">
     <meta name="twitter:image" content="{{ $ogImage }}">
 
@@ -54,7 +54,7 @@
             "sku": "{{ $sku }}",
             "brand": {
                 "@type": "Brand",
-                "name": "RAFY WALLS"
+                "name": "KURBANOV WALLS"
             },
             "offers": {
                 "@type": "Offer",
@@ -277,7 +277,7 @@
             <div class="col-lg-6">
                 <h1 class="h4 fw-bold">
                     {{ $product->name }}
-                    <span class="visually-hidden"> — {{ $product->material }} купить в Алматы | RAFY WALLS</span>
+                    <span class="visually-hidden"> — {{ $product->material }} купить в Алматы | KURBANOV WALLS</span>
                 </h1>
 
                 @if ($product->sale_price == 0)

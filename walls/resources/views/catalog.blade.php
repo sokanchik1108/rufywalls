@@ -1,28 +1,28 @@
 @extends('layouts.main')
 
 {{-- 🔹 Title --}}
-@section('title', 'Каталог обоев RAFY WALLS — купить флизелиновые, виниловые и моющиеся обои в Алматы и Казахстане')
+@section('title', 'Каталог обоев KURBANOV WALLS — купить флизелиновые, виниловые и моющиеся обои в Алматы и Казахстане')
 
 {{-- 🔹 Meta Description --}}
-@section('meta_description', 'Каталог обоев RAFY WALLS в Алматы и по Казахстану. Современные коллекции: флизелиновые, виниловые, моющиеся обои. Выбирайте стильные обои для интерьера — доставка по Казахстану.')
+@section('meta_description', 'Каталог обоев KURBANOV WALLS в Алматы и по Казахстану. Современные коллекции: флизелиновые, виниловые, моющиеся обои. Выбирайте стильные обои для интерьера — доставка по Казахстану.')
 
 {{-- 🔹 Дополнительные мета-теги --}}
 @section('meta')
 <meta name="description" content="@yield('meta_description')" />
-<meta name="keywords" content="каталог обоев, RAFY WALLS, флизелиновые обои, виниловые обои, моющиеся обои, купить обои Алматы, обои Казахстан">
+<meta name="keywords" content="каталог обоев, KURBANOV WALLS, флизелиновые обои, виниловые обои, моющиеся обои, купить обои Алматы, обои Казахстан">
 <link rel="canonical" href="{{ url('/catalog') }}">
 
 {{-- Open Graph --}}
-<meta property="og:title" content="Каталог обоев RAFY WALLS — стильные обои для вашего интерьера">
+<meta property="og:title" content="Каталог обоев KURBANOV WALLS — стильные обои для вашего интерьера">
 <meta property="og:description" content="@yield('meta_description')">
 <meta property="og:image" content="{{ asset('images/баннер8.webp') }}">
 <meta property="og:url" content="{{ url('/catalog') }}">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="RAFY WALLS">
+<meta property="og:site_name" content="KURBANOV WALLS">
 
 {{-- Twitter Card --}}
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Каталог обоев RAFY WALLS — стильные обои для интерьера">
+<meta name="twitter:title" content="Каталог обоев KURBANOV WALLS — стильные обои для интерьера">
 <meta name="twitter:description" content="@yield('meta_description')">
 <meta name="twitter:image" content="{{ asset('images/баннер8.webp') }}">
 @endsection
@@ -31,7 +31,7 @@
 
 <!-- 🔹 Скрытый H1 для SEO -->
 <h1 style="position:absolute; left:-9999px; top:-9999px;">
-    Каталог обоев RAFY WALLS — купить обои в Алматы и по Казахстану
+    Каталог обоев KURBANOV WALLS — купить обои в Алматы и по Казахстану
 </h1>
 
 
@@ -52,9 +52,9 @@
     {
         "@context": "https://schema.org",
         "@type": "Store",
-        "name": "RAFY WALLS",
+        "name": "KURBANOV WALLS",
         "image": "{{ asset('images/баннер8.webp') }}",
-        "description": "Магазин обоев RAFY WALLS в Алматы — каталог флизелиновых, виниловых и моющихся обоев.",
+        "description": "Магазин обоев KURBANOV WALLS в Алматы — каталог флизелиновых, виниловых и моющихся обоев.",
         "address": {
             "@type": "PostalAddress",
             "streetAddress": "проспект Турара Рыскулова, 103/2, бутики 105 и 109",
