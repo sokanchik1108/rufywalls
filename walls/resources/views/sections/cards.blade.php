@@ -239,7 +239,7 @@
 
     @media (max-width: 575.98px) {
         .rafy-main-title {
-            font-size: 1.4rem;
+            font-size: 1.1rem;
             letter-spacing: 1.3px;
         }
 

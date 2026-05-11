@@ -14,7 +14,7 @@
     .navbar-brand {
         font-family: 'Playfair Display', serif;
         font-weight: 450;
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         color: #01142f;
         letter-spacing: 1px;
         user-select: none;
