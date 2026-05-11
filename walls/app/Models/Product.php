@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
 
 class Product extends Model
 {
@@ -71,5 +72,29 @@ class Product extends Model
     public function companionOf()
     {
         return $this->belongsToMany(Product::class, 'product_companions', 'product_id', 'companion_id');
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($product) {
+
+            $base = Str::slug($product->name);
+            $slug = $base;
+            $i = 1;
+
+            while (Product::where('slug', $slug)->exists()) {
+                $slug = $base . '-' . $i++;
+            }
+
+            $product->slug = $slug;
+        });
     }
 }

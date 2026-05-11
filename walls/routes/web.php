@@ -43,7 +43,7 @@ Route::get('/', [WebsiteController::class, 'website'])->name('website');
 
 Route::get('/catalog/{categorySlug?}', [WebsiteController::class, 'catalog'])->name('catalog');
 
-Route::get('/product/{product}', [WebsiteController::class, 'show'])->name('product.show');
+Route::get('/product/{slug}', [WebsiteController::class, 'show'])->name('product.show');
 
 Route::get('/variant/{id}', [WebsiteController::class, 'variantData'])->name('variant.data');
 

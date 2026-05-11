@@ -671,7 +671,10 @@
                     }
 
                     // Обновляем URL
-                    window.history.replaceState({}, '', `/product/{{ $product->id }}?variant=${variantId}`);
+                    window.history.replaceState({},
+                        '',
+                        `/product/{{ $product->slug }}?variant=${variantId}`
+                    );
                 });
         }
 

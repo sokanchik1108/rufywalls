@@ -266,14 +266,16 @@ class WebsiteController extends Controller
 
 
 
-    public function show($id)
+    public function show($slug)
     {
-        $product = Product::with([
-            'categories',
-            'rooms',
-            'variants.batches.warehouses',
-            'companions.variants'
-        ])->findOrFail($id);
+        $product = Product::where('slug', $slug)
+            ->with([
+                'categories',
+                'rooms',
+                'variants.batches.warehouses',
+                'companions.variants'
+            ])
+            ->firstOrFail();
 
         $variants = $product->variants;
 
