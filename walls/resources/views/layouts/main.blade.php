@@ -37,8 +37,8 @@
   <meta name="twitter:image" content="@yield('og_image', asset('images/og-image.jpg'))">
 
   {{-- ✅ Favicon --}}
-  <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/KURBANOVWALLS LOGO BIG.png') }}">
-  <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/KURBANOVWALLS LOGO BIG.png') }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/kurbanovwalls logo.png') }}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/kurbanovwalls logo.png') }}">
   <meta name="theme-color" content="#ffffff">
 
   {{-- 🔹 Structured Data (Schema.org) --}}
