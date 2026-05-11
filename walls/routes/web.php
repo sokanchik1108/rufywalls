@@ -35,7 +35,7 @@ Route::get('/welcome', function () {
 
 
 
-
+Route::get('/oboi/{categorySlug}/{filter?}', [WebsiteController::class, 'filteredCategory'])->name('category.filter');
 
 Route::get('/calculator', [WebsiteController::class, 'Calculator'])->name('calculator');
 

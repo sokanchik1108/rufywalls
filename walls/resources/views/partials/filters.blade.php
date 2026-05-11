@@ -152,9 +152,21 @@
             }
 
             activeRooms.forEach(rid => params.append("room_id[]", rid));
-            activeCategories.forEach(cid => params.append("category_id[]", cid));
 
-            const url = `${window.catalogRoutes.catalog}?${params.toString()}`;
+            let currentPath = "/catalog";
+
+            /* SEO CATEGORY */
+            if (activeCategories.length === 1) {
+                currentPath = `/catalog/${activeCategories[0]}`;
+            }
+
+            const queryString = params.toString();
+
+            const url = queryString ?
+                `${currentPath}?${queryString}` :
+                currentPath;
+
+            window.history.pushState({}, "", url);
 
             fetch(url, {
                     headers: {

@@ -46,7 +46,7 @@
     </div>
 
     <div class="text-center mt-4 small text-muted">
-      © {{ date('Y') }} KURBÂNOV WALLS — Все права защищены
+      © 2025 KURBÂNOV WALLS 
     </div>
   </div>
 

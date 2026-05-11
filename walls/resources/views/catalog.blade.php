@@ -10,7 +10,7 @@
 @section('meta')
 <meta name="description" content="@yield('meta_description')" />
 <meta name="keywords" content="каталог обоев, KURBANOV WALLS, флизелиновые обои, виниловые обои, моющиеся обои, купить обои Алматы, обои Казахстан">
-<link rel="canonical" href="{{ url('/catalog') }}">
+<link rel="canonical" href="{{ url()->current() }}">
 
 {{-- Open Graph --}}
 <meta property="og:title" content="Каталог обоев KURBANOV WALLS — стильные обои для вашего интерьера">

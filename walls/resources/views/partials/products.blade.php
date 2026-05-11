@@ -182,48 +182,40 @@
         {{-- =========================================================
     💎 КАРТОЧКА ТОВАРА
 ========================================================= --}}
-        <a href="{{ route('product.show', $product->id) }}?variant={{ $shownVariant->id }}" class="product-card-link">
-            <div class="product-card rafy-card-square">
+        <a href="{{ route('product.show', $product->slug ?? $product->id) }}?variant={{ $shownVariant->id }}"
+            class="product-card-link">
 
+            <div class="product-card rafy-card-square"
+                itemscope
+                itemtype="https://schema.org/Product">
+
+                {{-- ================= IMAGE ================= --}}
                 @if (!empty($images))
-                <div class="rafy-carousel-wrapper position-relative"
-                    onmouseenter="this.classList.add('hover-enabled')"
-                    onmouseleave="this.classList.remove('hover-enabled')">
+                <div class="rafy-carousel-wrapper position-relative">
 
                     <div id="carousel{{ $item->id ?? $product->id }}" class="carousel slide">
                         <div class="carousel-inner">
+
                             @foreach ($images as $index => $image)
                             @if ($image)
-                            @php
-                            // LCP = первая картинка первого товара
-                            $isLCP = $loop->first && $loop->parent->first;
-                            @endphp
 
                             <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                                @if ($isLCP)
-                                {{-- ✅ LCP image --}}
+
                                 <img
                                     src="{{ asset('storage/' . $image) }}"
                                     class="rafy-card-img"
-                                    alt="{{ $product->name }}"
-                                    loading="eager"
-                                    fetchpriority="high"
+                                    alt="{{ $product->name }} - купить обои Алматы Казахстан"
+                                    loading="{{ $index == 0 ? 'eager' : 'lazy' }}"
+                                    decoding="async"
                                     width="400"
-                                    height="400">
-                                @else
-                                {{-- lazy для всех остальных --}}
-                                <img
-                                    src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
-                                    data-src="{{ asset('storage/' . $image) }}"
-                                    class="rafy-card-img lazy-slide"
-                                    alt="{{ $product->name }}"
-                                    loading="lazy"
-                                    width="400"
-                                    height="400">
-                                @endif
+                                    height="400"
+                                    itemprop="image">
+
                             </div>
+
                             @endif
                             @endforeach
+
                         </div>
 
                         @if (count($images) > 1)
@@ -231,42 +223,73 @@
                             data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="prev">
                             <span class="carousel-control-prev-icon"></span>
                         </button>
+
                         <button class="carousel-control-next" type="button"
                             data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="next">
                             <span class="carousel-control-next-icon"></span>
                         </button>
                         @endif
+
                     </div>
                 </div>
                 @endif
 
+                {{-- ================= STATUS ================= --}}
                 @if (!empty($product->status))
                 <div class="rafy-status">{{ $product->status }}</div>
                 @endif
 
+                {{-- ================= OVERLAY ================= --}}
                 <div class="rafy-overlay"></div>
 
+                {{-- ================= TEXT ================= --}}
                 <div class="rafy-hover-text">
-                    <div class="rafy-articul">{{ $shownVariant->sku ?? '---' }}</div>
+
+                    <div class="rafy-articul">
+                        <span itemprop="sku">{{ $shownVariant->sku ?? '---' }}</span>
+                    </div>
+
                     <div class="rafy-divider"></div>
-                    <div class="rafy-name">{{ $product->name }}</div>
-                    <div class="rafy-price">
+
+                    {{-- 🔥 SEO H2 --}}
+                    <h2 class="rafy-name" itemprop="name">
+                        {{ $product->name }}
+                    </h2>
+
+                    {{-- 💰 PRICE --}}
+                    <div class="rafy-price" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+
+                        <meta itemprop="priceCurrency" content="KZT">
+
                         @if ($product->sale_price == 0)
                         <div class="price-info">
-                            <i class="bi bi-info-circle me-2" style="font-size: 1rem;"></i>
                             Информацию о цене можно узнать в WhatsApp
                         </div>
+
                         @elseif ($product->discount_price && $product->discount_price > $product->sale_price)
+
                         <span style="text-decoration: line-through;">
                             {{ number_format($product->discount_price, 0, '.', ' ') }} ₸
                         </span>
-                        <span class="text-danger fw-bold ms-2">
+
+                        <span class="text-danger fw-bold ms-2" itemprop="price">
                             {{ number_format($product->sale_price, 0, '.', ' ') }} ₸
                         </span>
+
                         @else
-                        <span>{{ number_format($product->sale_price, 0, '.', ' ') }} ₸</span>
+                        <span itemprop="price">
+                            {{ number_format($product->sale_price, 0, '.', ' ') }} ₸
+                        </span>
                         @endif
+
                     </div>
+
+                </div>
+
+                {{-- ================= SEO TEXT (hidden but indexable) ================= --}}
+                <div class="rafy-seo-text">
+                    Виниловые и флизелиновые обои {{ $product->name }} подходят для спальни, кухни и гостиной.
+                    Купить обои в Алматы с доставкой по Казахстану.
                 </div>
 
             </div>
@@ -282,6 +305,13 @@
 </div>
 
 <style>
+    .rafy-seo-text {
+        position: absolute;
+        left: -9999px;
+        height: 1px;
+        overflow: hidden;
+    }
+
     /* ========== Общие стили для Top Bar ========== */
     .top-bar {
         display: flex;
