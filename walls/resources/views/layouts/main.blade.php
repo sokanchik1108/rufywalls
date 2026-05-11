@@ -37,8 +37,8 @@
   <meta name="twitter:image" content="@yield('og_image', asset('images/og-image.jpg'))">
 
   {{-- ✅ Favicon --}}
-  <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/лого1.png') }}">
-  <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/лого1.png') }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/KURBANOV WALLS LOGO.png') }}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/KURBANOV WALLS LOGO.png') }}">
   <meta name="theme-color" content="#ffffff">
 
   {{-- 🔹 Structured Data (Schema.org) --}}
@@ -48,7 +48,7 @@
       "@type": "HomeGoodsStore",
       "name": "RAFY WALLS",
       "image": "https://rafywalls.com/images/og-image.jpg",
-      "logo": "https://rafywalls.com/images/лого1.png",
+      "logo": "https://rafywalls.com/images/KURBANOV WALLS LOGO.png",
       "url": "https://rafywalls.com",
       "description": "Магазин обоев RAFY WALLS в Алматы. Флизелиновые, виниловые и моющиеся обои. Доставка по Казахстану.",
       "telephone": "+7 707 712 12 55",
