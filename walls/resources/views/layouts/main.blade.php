@@ -10,6 +10,7 @@
 
   {{-- ✅ Верификация Google --}}
   <meta name="google-site-verification" content="ZokMn5I_BU2juvru-gwsvFf6N1jPVzyeNN5T5oEbPcc" />
+  <meta name="google-site-verification" content="q2udgjCcwKMXdDsI1eoT1oWY9KbRaAHoS0cg2iWp0Es" />
 
   {{-- 🔹 Базовые SEO-теги --}}
   <title>@yield('title', 'RAFY WALLS — магазин обоев в Алматы | Флизелиновые, виниловые и моющиеся обои')</title>
