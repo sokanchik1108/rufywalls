@@ -23,22 +23,23 @@
     @forelse ($variants as $item)
     @php
     /************************************************************
-    * ✅ ГЛОБАЛЬНЫЕ СТАТИЧЕСКИЕ ПЕРЕМЕННЫЕ
+    * ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ (для цвета групп)
     ************************************************************/
     static $groupColorMap = [];
-    static $usedGroupColors = [];
     static $groupIndex = 0;
 
     /************************************************************
-    * ✅ ПОДГОТОВКА ОСНОВНЫХ ДАННЫХ
+    * ДАННЫЕ
     ************************************************************/
     $isVariant = isset($item->product);
     $product = $isVariant ? $item->product : $item;
     $productVariants = $product->variants ?? collect();
-    $selectedColors = request()->color ? array_map('strtolower', (array) request()->color) : [];
+    $selectedColors = request()->color
+    ? array_map('strtolower', (array) request()->color)
+    : [];
 
     /************************************************************
-    * ✅ ВЫБОР shownVariant
+    * ВЫБОР shownVariant
     ************************************************************/
     if (!empty($selectedColors)) {
 
@@ -58,255 +59,245 @@
     $shownVariant = $item;
     } else {
 
-    $variantsWith7 = $productVariants->filter(function ($v) {
-    $imgs = json_decode($v->images ?? '[]', true) ?? [];
-    return count($imgs) >= 7;
-    });
+    $groupVariantIds = collect();
 
-    $productVariantsForLogic =
-    $variantsWith7->isNotEmpty() && $variantsWith7->count() < $productVariants->count()
-        ? $variantsWith7
-        : $productVariants;
+    foreach ($productVariants as $v) {
+    $groupVariantIds->push($v->id);
 
-        $groupVariantIds = collect();
+    $companions = $v->companions ?? collect();
+    $companionOf = $v->companionOf ?? collect();
 
-        foreach ($productVariants as $v) {
-        $groupVariantIds->push($v->id);
+    $groupVariantIds = $groupVariantIds
+    ->merge($companions->pluck('id'))
+    ->merge($companionOf->pluck('id'));
+    }
 
-        $companions = method_exists($v, 'companions') ? ($v->companions ?? collect()) : collect();
-        $companionOf = method_exists($v, 'companionOf') ? ($v->companionOf ?? collect()) : collect();
+    $groupKey = $groupVariantIds->unique()->sort()->values()->join('-');
 
-        $groupVariantIds = $groupVariantIds
-        ->merge($companions->pluck('id'))
-        ->merge($companionOf->pluck('id'));
-        }
+    if (!isset($groupColorMap[$groupKey])) {
 
-        $groupVariantIds = $groupVariantIds->unique()->sort()->values();
-        $groupKey = $groupVariantIds->join('-');
+    $colors = $productVariants
+    ->map(fn($v) => strtolower(trim((string)$v->color)))
+    ->filter()
+    ->unique()
+    ->values();
 
-        if (!isset($groupColorMap[$groupKey])) {
+    if ($colors->isEmpty()) {
+    $colors = collect([strtolower(trim((string) optional($productVariants->first())->color))]);
+    }
 
-        $colors = $productVariantsForLogic->map(fn($v) =>
-        strtolower(trim((string)$v->color))
-        )
-        ->filter()
-        ->unique()
-        ->values();
+    $colorIndex = $groupIndex % max(1, $colors->count());
+    $groupColorMap[$groupKey] = $colors[$colorIndex] ?? null;
 
-        if ($colors->isEmpty()) {
-        $fallback = strtolower(trim((string) optional($productVariantsForLogic->first())->color));
-        $colors = collect($fallback ? [$fallback] : []);
-        }
+    $groupIndex++;
+    }
 
-        $countColors = max(1, $colors->count());
-        $colorIndex = $groupIndex % $countColors;
+    $targetColor = $groupColorMap[$groupKey];
 
-        $groupColorMap[$groupKey] = $colors[$colorIndex] ?? null;
-        $usedGroupColors[] = $groupColorMap[$groupKey];
+    $shownVariant = $productVariants->first(fn($v) =>
+    strtolower(trim((string)$v->color)) === $targetColor
+    ) ?? $productVariants->first();
+    }
+    }
 
-        $groupIndex++;
-        }
+    /************************************************************
+    * 🔥 7-Я КАРТИНКА — ИМЕННО ДЛЯ SHOWN VARIANT
+    * кеш по VARIANT ID (ВАЖНО)
+    ************************************************************/
+    $imgs = json_decode($shownVariant->images ?? '[]', true) ?? [];
 
-        $targetColor = $groupColorMap[$groupKey];
+    $productSeventhCache = session('product_seventh_cache', []);
 
-        $shownVariant = $productVariantsForLogic->first(fn($v) =>
-        $targetColor !== null &&
-        strtolower(trim((string)$v->color)) === $targetColor
-        ) ?? $productVariantsForLogic->first();
-        }
-        }
+    // ключ = variant ID
+    $variantId = $shownVariant->id;
 
-        /************************************************************
-        * ✅ 7-я КАРТИНКА (КЕШ ПО VARIANT ID)
-        ************************************************************/
-        $imgs = json_decode($shownVariant->images ?? '[]', true) ?? [];
+    // 1. берём из кеша
+    $seventhImage = $productSeventhCache[$variantId] ?? null;
 
-        $productSeventhCache = session('product_seventh_cache', []);
+    // 2. если нет — берём из текущего варианта
+    if (!$seventhImage && isset($imgs[6])) {
+    $seventhImage = $imgs[6];
+    }
 
-        // 1️⃣ берем из кеша по variant ID
-        $seventhImage = $productSeventhCache[$shownVariant->id] ?? null;
+    // 3. если нет — ищем среди всех вариантов (fallback)
+    if (!$seventhImage) {
+    foreach ($productVariants as $v) {
+    $vi = json_decode($v->images ?? '[]', true) ?? [];
+    if (isset($vi[6])) {
+    $seventhImage = $vi[6];
+    break;
+    }
+    }
+    }
 
-        // 2️⃣ если нет — берем из текущего variant
-        if (!$seventhImage && isset($imgs[6])) {
-        $seventhImage = $imgs[6];
-        }
+    // 4. сохраняем в кеш
+    if ($seventhImage) {
+    $productSeventhCache[$variantId] = $seventhImage;
+    session(['product_seventh_cache' => $productSeventhCache]);
+    }
 
-        // 3️⃣ сохраняем в session по variant ID
-        if ($seventhImage) {
-        $productSeventhCache[$shownVariant->id] = $seventhImage;
-        session(['product_seventh_cache' => $productSeventhCache]);
-        }
+    /************************************************************
+    * ФОРМИРОВАНИЕ КАРТИНОК
+    ************************************************************/
+    $images = [];
 
-        /************************************************************
-        * ✅ ФОРМИРОВАНИЕ КАРТИНОК
-        ************************************************************/
-        $images = [];
+    /************************************************************
+    * 1. СНАЧАЛА 7-я картинка (ВАЖНО!)
+    ************************************************************/
+    if ($seventhImage) {
+    $images[] = $seventhImage;
+    }
 
-        if (request()->filled('search')) {
+    /************************************************************
+    * 2. ПОТОМ 1-я картинка варианта
+    ************************************************************/
+    if (!empty($imgs[0])) {
+    $images[] = $imgs[0];
+    }
 
-        if (!empty($imgs[0])) {
-        $images[] = $imgs[0];
-        }
+    // остальные варианты
+    foreach ($productVariants as $otherVariant) {
 
-        } else {
+    if ($otherVariant->id === $shownVariant->id) continue;
 
-        // 1️⃣ первая картинка текущего variant
-        if (!empty($imgs[0])) {
-        $images[] = $imgs[0];
-        }
+    if (!empty($selectedColors)) {
+    $color = strtolower(trim((string)$otherVariant->color));
+    if (!in_array($color, $selectedColors)) continue;
+    }
 
-        // 2️⃣ 7-я картинка текущего variant (из кеша)
-        if (!empty($seventhImage)) {
-        $images[] = $seventhImage;
-        }
+    $otherImgs = json_decode($otherVariant->images ?? '[]', true) ?? [];
 
-        // 3️⃣ остальные варианты
-        foreach ($productVariants as $otherVariant) {
+    if (!empty($otherImgs[0])) {
+    $images[] = $otherImgs[0];
+    }
+    }
 
-        if ($otherVariant->id === $shownVariant->id) continue;
+    $images = collect($images)
+    ->filter()
+    ->unique()
+    ->values()
+    ->all();
+    @endphp
 
-        if (!empty($selectedColors)) {
-        $variantColor = strtolower(trim((string)$otherVariant->color));
-
-        if (!in_array($variantColor, $selectedColors)) {
-        continue;
-        }
-        }
-
-        $otherImgs = json_decode($otherVariant->images ?? '[]', true) ?? [];
-
-        if (!empty($otherImgs[0])) {
-        $images[] = $otherImgs[0];
-        }
-        }
-        }
-
-        $images = collect($images)
-        ->filter(fn($img) => filled($img))
-        ->unique()
-        ->values()
-        ->all();
-        @endphp
-
-
-        {{-- =========================================================
+    {{-- =========================================================
     💎 КАРТОЧКА ТОВАРА
-========================================================= --}}
-        <a href="{{ route('product.show', ['slug' => $product->slug,'variant' => $shownVariant->id]) }}" class="product-card-link">
+    ========================================================= --}}
 
-            <div class="product-card rafy-card-square"
-                itemscope
-                itemtype="https://schema.org/Product">
+    <a href="{{ route('product.show', ['slug' => $product->slug,'variant' => $shownVariant->id]) }}" class="product-card-link">
 
-                {{-- ================= IMAGE ================= --}}
-                @if (!empty($images))
-                <div class="rafy-carousel-wrapper position-relative">
+        <div class="product-card rafy-card-square"
+            itemscope
+            itemtype="https://schema.org/Product">
 
-                    <div id="carousel{{ $item->id ?? $product->id }}" class="carousel slide">
-                        <div class="carousel-inner">
+            {{-- ================= IMAGE ================= --}}
+            @if (!empty($images))
+            <div class="rafy-carousel-wrapper position-relative">
 
-                            @foreach ($images as $index => $image)
-                            @if ($image)
+                <div id="carousel{{ $item->id ?? $product->id }}" class="carousel slide">
+                    <div class="carousel-inner">
 
-                            <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                        @foreach ($images as $index => $image)
+                        @if ($image)
 
-                                <img
-                                    src="{{ asset('storage/' . $image) }}"
-                                    class="rafy-card-img"
-                                    alt="{{ $product->name }} - купить обои Алматы Казахстан"
-                                    loading="{{ $index == 0 ? 'eager' : 'lazy' }}"
-                                    decoding="async"
-                                    width="400"
-                                    height="400"
-                                    itemprop="image">
+                        <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
 
-                            </div>
-
-                            @endif
-                            @endforeach
+                            <img
+                                src="{{ asset('storage/' . $image) }}"
+                                class="rafy-card-img"
+                                alt="{{ $product->name }} - купить обои Алматы Казахстан"
+                                loading="{{ $index == 0 ? 'eager' : 'lazy' }}"
+                                decoding="async"
+                                width="400"
+                                height="400"
+                                itemprop="image">
 
                         </div>
 
-                        @if (count($images) > 1)
-                        <button class="carousel-control-prev" type="button"
-                            data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                        </button>
-
-                        <button class="carousel-control-next" type="button"
-                            data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                        </button>
                         @endif
+                        @endforeach
 
                     </div>
-                </div>
-                @endif
 
-                {{-- ================= STATUS ================= --}}
-                @if (!empty($product->status))
-                <div class="rafy-status">{{ $product->status }}</div>
-                @endif
+                    @if (count($images) > 1)
+                    <button class="carousel-control-prev" type="button"
+                        data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
 
-                {{-- ================= OVERLAY ================= --}}
-                <div class="rafy-overlay"></div>
-
-                {{-- ================= TEXT ================= --}}
-                <div class="rafy-hover-text">
-
-                    <div class="rafy-articul">
-                        <span itemprop="sku">{{ $shownVariant->sku ?? '---' }}</span>
-                    </div>
-
-                    <div class="rafy-divider"></div>
-
-                    {{-- 🔥 SEO H2 --}}
-                    <h2 class="rafy-name" itemprop="name">
-                        {{ $product->name }}
-                    </h2>
-
-                    {{-- 💰 PRICE --}}
-                    <div class="rafy-price" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
-
-                        <meta itemprop="priceCurrency" content="KZT">
-
-                        @if ($product->sale_price == 0)
-                        <div class="price-info">
-                            Информацию о цене можно узнать в WhatsApp
-                        </div>
-
-                        @elseif ($product->discount_price && $product->discount_price > $product->sale_price)
-
-                        <span style="text-decoration: line-through;">
-                            {{ number_format($product->discount_price, 0, '.', ' ') }} ₸
-                        </span>
-
-                        <span class="text-danger fw-bold ms-2" itemprop="price">
-                            {{ number_format($product->sale_price, 0, '.', ' ') }} ₸
-                        </span>
-
-                        @else
-                        <span itemprop="price">
-                            {{ number_format($product->sale_price, 0, '.', ' ') }} ₸
-                        </span>
-                        @endif
-
-                    </div>
+                    <button class="carousel-control-next" type="button"
+                        data-bs-target="#carousel{{ $item->id ?? $product->id }}" data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
+                    @endif
 
                 </div>
+            </div>
+            @endif
 
-                {{-- ================= SEO TEXT (hidden but indexable) ================= --}}
-                <div class="rafy-seo-text">
-                    Виниловые и флизелиновые обои {{ $product->name }} подходят для спальни, кухни и гостиной.
-                    Купить обои в Алматы с доставкой по Казахстану.
+            {{-- ================= STATUS ================= --}}
+            @if (!empty($product->status))
+            <div class="rafy-status">{{ $product->status }}</div>
+            @endif
+
+            {{-- ================= OVERLAY ================= --}}
+            <div class="rafy-overlay"></div>
+
+            {{-- ================= TEXT ================= --}}
+            <div class="rafy-hover-text">
+
+                <div class="rafy-articul">
+                    <span itemprop="sku">{{ $shownVariant->sku ?? '---' }}</span>
+                </div>
+
+                <div class="rafy-divider"></div>
+
+                {{-- 🔥 SEO H2 --}}
+                <h2 class="rafy-name" itemprop="name">
+                    {{ $product->name }}
+                </h2>
+
+                {{-- 💰 PRICE --}}
+                <div class="rafy-price" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+
+                    <meta itemprop="priceCurrency" content="KZT">
+
+                    @if ($product->sale_price == 0)
+                    <div class="price-info">
+                        Информацию о цене можно узнать в WhatsApp
+                    </div>
+
+                    @elseif ($product->discount_price && $product->discount_price > $product->sale_price)
+
+                    <span style="text-decoration: line-through;">
+                        {{ number_format($product->discount_price, 0, '.', ' ') }} ₸
+                    </span>
+
+                    <span class="text-danger fw-bold ms-2" itemprop="price">
+                        {{ number_format($product->sale_price, 0, '.', ' ') }} ₸
+                    </span>
+
+                    @else
+                    <span itemprop="price">
+                        {{ number_format($product->sale_price, 0, '.', ' ') }} ₸
+                    </span>
+                    @endif
+
                 </div>
 
             </div>
-        </a>
 
-        @empty
-        <p>Товары не найдены.</p>
-        @endforelse
+            {{-- ================= SEO TEXT (hidden but indexable) ================= --}}
+            <div class="rafy-seo-text">
+                Виниловые и флизелиновые обои {{ $product->name }} подходят для спальни, кухни и гостиной.
+                Купить обои в Алматы с доставкой по Казахстану.
+            </div>
+
+        </div>
+    </a>
+
+    @empty
+    <p>Товары не найдены.</p>
+    @endforelse
 </div>
 
 <div class="pagination-wrapper">
