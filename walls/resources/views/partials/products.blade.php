@@ -182,7 +182,7 @@
         {{-- =========================================================
     💎 КАРТОЧКА ТОВАРА
 ========================================================= --}}
-        <a href="{{ route('product.show', $product->slug) }}" class="product-card-link">
+        <a href="{{ route('product.show', ['slug' => $product->slug,'variant' => $shownVariant->id]) }}" class="product-card-link">
 
             <div class="product-card rafy-card-square"
                 itemscope
