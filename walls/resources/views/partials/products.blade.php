@@ -23,20 +23,67 @@
     @forelse ($variants as $item)
     @php
     /************************************************************
-    * ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ (для цвета групп)
+    * ГЛОБАЛЬНЫЙ КЕШ ДЛЯ ГРУПП КОМПАНЬОНОВ
     ************************************************************/
-    static $groupColorMap = [];
-    static $groupIndex = 0;
+    static $groupVariantMap = [];
 
     /************************************************************
     * ДАННЫЕ
     ************************************************************/
     $isVariant = isset($item->product);
+
     $product = $isVariant ? $item->product : $item;
+
     $productVariants = $product->variants ?? collect();
+
     $selectedColors = request()->color
     ? array_map('strtolower', (array) request()->color)
     : [];
+
+    /************************************************************
+    * СОБИРАЕМ ОБЩУЮ ГРУППУ КОМПАНЬОНОВ
+    ************************************************************/
+    $allGroupIds = collect();
+
+    foreach ($productVariants as $variant) {
+
+    // сам вариант
+    $allGroupIds->push($variant->id);
+
+    // companions
+    foreach (($variant->companions ?? collect()) as $c) {
+
+    $allGroupIds->push($c->id);
+
+    foreach (($c->companions ?? collect()) as $cc) {
+    $allGroupIds->push($cc->id);
+    }
+
+    foreach (($c->companionOf ?? collect()) as $cc) {
+    $allGroupIds->push($cc->id);
+    }
+    }
+
+    // companionOf
+    foreach (($variant->companionOf ?? collect()) as $c) {
+
+    $allGroupIds->push($c->id);
+
+    foreach (($c->companions ?? collect()) as $cc) {
+    $allGroupIds->push($cc->id);
+    }
+
+    foreach (($c->companionOf ?? collect()) as $cc) {
+    $allGroupIds->push($cc->id);
+    }
+    }
+    }
+
+    $groupKey = $allGroupIds
+    ->unique()
+    ->sort()
+    ->values()
+    ->join('-');
 
     /************************************************************
     * ВЫБОР shownVariant
@@ -44,97 +91,101 @@
     if (!empty($selectedColors)) {
 
     $matchedVariants = $productVariants->filter(function ($v) use ($selectedColors) {
-    return in_array(strtolower(trim((string)$v->color)), $selectedColors);
+
+    return in_array(
+    strtolower(trim((string)$v->color)),
+    $selectedColors
+    );
     });
 
     if ($matchedVariants->isEmpty()) {
     continue;
     }
 
+    /************************************************
+    * ОДИН ВАРИАНТ НА ВСЮ ГРУППУ
+    ************************************************/
+    if (!isset($groupVariantMap[$groupKey])) {
+
+    $randomVariant = $matchedVariants->random();
+
+    $groupVariantMap[$groupKey] = [
+    'color' => strtolower(trim((string)$randomVariant->color)),
+    ];
+    }
+
+    $targetColor = $groupVariantMap[$groupKey]['color'];
+
+    $shownVariant = $matchedVariants->first(function ($v) use ($targetColor) {
+
+    return strtolower(trim((string)$v->color)) === $targetColor;
+    });
+
+    // fallback
+    if (!$shownVariant) {
     $shownVariant = $matchedVariants->first();
+    }
 
     } else {
 
     if ($isVariant) {
+
     $shownVariant = $item;
+
     } else {
 
-    $groupVariantIds = collect();
+    /************************************************
+    * ТОЛЬКО ВАРИАНТЫ С КАРТИНКАМИ
+    ************************************************/
+    $validVariants = $productVariants->filter(function ($v) {
 
-    foreach ($productVariants as $v) {
-    $groupVariantIds->push($v->id);
+    $imgs = json_decode($v->images ?? '[]', true) ?? [];
 
-    $companions = $v->companions ?? collect();
-    $companionOf = $v->companionOf ?? collect();
+    return !empty($imgs[0]) || !empty($imgs[6]);
+    });
 
-    $groupVariantIds = $groupVariantIds
-    ->merge($companions->pluck('id'))
-    ->merge($companionOf->pluck('id'));
+    if ($validVariants->isEmpty()) {
+
+    $shownVariant = $productVariants->first();
+
+    } else {
+
+    /************************************************
+    * ОДИН RANDOM COLOR НА ВСЮ COMPANION ГРУППУ
+    ************************************************/
+    if (!isset($groupVariantMap[$groupKey])) {
+
+    $randomVariant = $validVariants->random();
+
+    $groupVariantMap[$groupKey] = [
+    'color' => strtolower(trim((string)$randomVariant->color)),
+    ];
     }
 
-    $groupKey = $groupVariantIds->unique()->sort()->values()->join('-');
+    $targetColor = $groupVariantMap[$groupKey]['color'];
 
-    if (!isset($groupColorMap[$groupKey])) {
+    $shownVariant = $validVariants->first(function ($v) use ($targetColor) {
 
-    $colors = $productVariants
-    ->map(fn($v) => strtolower(trim((string)$v->color)))
-    ->filter()
-    ->unique()
-    ->values();
+    return strtolower(trim((string)$v->color)) === $targetColor;
+    });
 
-    if ($colors->isEmpty()) {
-    $colors = collect([strtolower(trim((string) optional($productVariants->first())->color))]);
+    // fallback
+    if (!$shownVariant) {
+    $shownVariant = $validVariants->first();
     }
-
-    $colorIndex = $groupIndex % max(1, $colors->count());
-    $groupColorMap[$groupKey] = $colors[$colorIndex] ?? null;
-
-    $groupIndex++;
     }
-
-    $targetColor = $groupColorMap[$groupKey];
-
-    $shownVariant = $productVariants->first(fn($v) =>
-    strtolower(trim((string)$v->color)) === $targetColor
-    ) ?? $productVariants->first();
     }
     }
 
     /************************************************************
-    * 🔥 7-Я КАРТИНКА — ИМЕННО ДЛЯ SHOWN VARIANT
-    * кеш по VARIANT ID (ВАЖНО)
+    * КАРТИНКИ SHOWN VARIANT
     ************************************************************/
     $imgs = json_decode($shownVariant->images ?? '[]', true) ?? [];
 
-    $productSeventhCache = session('product_seventh_cache', []);
-
-    // ключ = variant ID
-    $variantId = $shownVariant->id;
-
-    // 1. берём из кеша
-    $seventhImage = $productSeventhCache[$variantId] ?? null;
-
-    // 2. если нет — берём из текущего варианта
-    if (!$seventhImage && isset($imgs[6])) {
-    $seventhImage = $imgs[6];
-    }
-
-    // 3. если нет — ищем среди всех вариантов (fallback)
-    if (!$seventhImage) {
-    foreach ($productVariants as $v) {
-    $vi = json_decode($v->images ?? '[]', true) ?? [];
-    if (isset($vi[6])) {
-    $seventhImage = $vi[6];
-    break;
-    }
-    }
-    }
-
-    // 4. сохраняем в кеш
-    if ($seventhImage) {
-    $productSeventhCache[$variantId] = $seventhImage;
-    session(['product_seventh_cache' => $productSeventhCache]);
-    }
+    /************************************************************
+    * 7-Я КАРТИНКА ИМЕННО ЭТОГО ВАРИАНТА
+    ************************************************************/
+    $seventhImage = $imgs[6] ?? null;
 
     /************************************************************
     * ФОРМИРОВАНИЕ КАРТИНОК
@@ -142,7 +193,7 @@
     $images = [];
 
     /************************************************************
-    * 1. СНАЧАЛА 7-я картинка (ВАЖНО!)
+    * 1. СНАЧАЛА 7-я картинка
     ************************************************************/
     if ($seventhImage) {
     $images[] = $seventhImage;
@@ -155,14 +206,22 @@
     $images[] = $imgs[0];
     }
 
-    // остальные варианты
+    /************************************************************
+    * 3. ДОБАВЛЯЕМ 1-е ФОТО ДРУГИХ ВАРИАНТОВ
+    ************************************************************/
     foreach ($productVariants as $otherVariant) {
 
-    if ($otherVariant->id === $shownVariant->id) continue;
+    if ($otherVariant->id === $shownVariant->id) {
+    continue;
+    }
 
     if (!empty($selectedColors)) {
+
     $color = strtolower(trim((string)$otherVariant->color));
-    if (!in_array($color, $selectedColors)) continue;
+
+    if (!in_array($color, $selectedColors)) {
+    continue;
+    }
     }
 
     $otherImgs = json_decode($otherVariant->images ?? '[]', true) ?? [];
@@ -172,6 +231,9 @@
     }
     }
 
+    /************************************************************
+    * УНИКАЛЬНЫЕ КАРТИНКИ
+    ************************************************************/
     $images = collect($images)
     ->filter()
     ->unique()
