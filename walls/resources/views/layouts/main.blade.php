@@ -15,6 +15,9 @@
    {{-- ✅ Верификация Yandex --}}
    <meta name="yandex-verification" content="13f5f8faad2e928e" />
 
+   {{-- ✅ Верификация Pinterest --}}
+   <meta name="p:domain_verify" content="3d2e66743df2716675422c5a8487e8dd"/>
+
   {{-- 🔹 Базовые SEO-теги --}}
   <title>@yield('title', 'RAFY WALLS — магазин обоев в Алматы | Флизелиновые, виниловые и моющиеся обои')</title>
   <meta name="description" content="@yield('meta_description', 'RAFY WALLS — магазин современных обоев в Алматы. Флизелиновые, виниловые и моющиеся обои от ведущих брендов. Доставка по Казахстану!')">
