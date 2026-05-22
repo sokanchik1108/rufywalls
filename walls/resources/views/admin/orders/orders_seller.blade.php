@@ -10,44 +10,46 @@ $prevDate = \Carbon\Carbon::parse($selectedDate)->subDay()->format('Y-m-d');
 $nextDate = \Carbon\Carbon::parse($selectedDate)->addDay()->format('Y-m-d');
 @endphp
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
 <div class="container py-3">
 
-    {{-- SUCCESS --}}
+    {{-- ALERT --}}
     @if(session('success'))
-    <div id="successAlert" class="alert alert-success shadow-sm rounded-3">
+    <div class="alert alert-success rounded-3 shadow-sm">
         {{ session('success') }}
     </div>
     @endif
 
     {{-- HEADER --}}
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-        <h5 class="fw-bold mb-0">Заказы</h5>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-semibold mb-0">Заказы</h5>
 
         <a href="{{ route('admin.orders.create') }}"
-            class="btn btn-primary btn-sm rounded-pill px-3">
-            + Создать
+            class="btn btn-primary btn-sm rounded-3 px-3">
+            Создать
         </a>
     </div>
 
-    {{-- DATE NAV --}}
-    <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+    {{-- DATE --}}
+    <div class="d-flex gap-2 align-items-center mb-3">
 
         <a href="{{ route('admin.orders.seller', ['date' => $prevDate]) }}"
-            class="btn btn-outline-secondary btn-sm px-3">
-            ←
+            class="btn btn-light border btn-sm">
+            <i class="bi bi-chevron-left"></i>
         </a>
 
-        <form method="GET" class="flex-grow-1 text-center">
+        <form method="GET" class="flex-grow-1">
             <input type="date"
                 name="date"
                 value="{{ $selectedDate }}"
                 onchange="this.form.submit()"
-                class="form-control form-control-sm text-center fw-semibold">
+                class="form-control form-control-sm text-center rounded-3">
         </form>
 
         <a href="{{ route('admin.orders.seller', ['date' => $nextDate]) }}"
-            class="btn btn-outline-secondary btn-sm px-3">
-            →
+            class="btn btn-light border btn-sm">
+            <i class="bi bi-chevron-right"></i>
         </a>
 
     </div>
@@ -55,63 +57,54 @@ $nextDate = \Carbon\Carbon::parse($selectedDate)->addDay()->format('Y-m-d');
     {{-- SEARCH --}}
     <input type="text"
         id="searchInput"
-        class="form-control form-control-sm mb-3"
-        placeholder="Поиск по заказу, имени, телефону">
+        class="form-control form-control-sm mb-3 rounded-3"
+        placeholder="Поиск заказов">
 
-    {{-- ORDERS --}}
+    {{-- LIST --}}
     <div id="mobileOrders">
 
         @foreach($orders as $order)
 
-        <div class="card mb-2 shadow-sm border-0 rounded-4">
+        <div class="card mb-2 border-0 shadow-sm rounded-4 position-relative">
 
-            <div class="card-body p-3">
+            {{-- EDIT --}}
+            <a href="{{ route('admin.orders.edit', $order->id) }}"
+                class="icon-btn icon-edit">
+                <i class="bi bi-pencil"></i>
+            </a>
 
-                {{-- HEADER --}}
-                <div class="d-flex justify-content-between align-items-center">
-                    <strong>#{{ $order->id }}</strong>
-                    <small class="text-muted">
+            {{-- DELETE --}}
+            <form action="{{ route('admin.orders.destroy', $order->id) }}"
+                method="POST"
+                class="icon-btn icon-delete"
+                onsubmit="return confirm('Удалить заказ?')">
+
+                @csrf
+                @method('DELETE')
+
+                <button type="submit">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </form>
+
+            <div class="card-body pt-5">
+
+                <div class="d-flex justify-content-between">
+                    <span class="fw-semibold">#{{ $order->id }}</span>
+                    <span class="text-muted small">
                         {{ $order->created_at->format('d.m.Y H:i') }}
-                    </small>
+                    </span>
                 </div>
 
-                {{-- CLIENT --}}
                 <div class="mt-2">
-                    <div class="fw-semibold">{{ $order->name }}</div>
+                    <div class="fw-medium">{{ $order->name }}</div>
                     <div class="text-muted small">{{ $order->phone }}</div>
                 </div>
 
-                {{-- ACTIONS --}}
-                <div class="d-flex gap-2 mt-3">
-
-                    {{-- EDIT --}}
-                    <a href="{{ route('admin.orders.edit', $order->id) }}"
-                        class="btn btn-warning btn-sm w-50 d-flex justify-content-center align-items-center gap-1">
-                        ✏️ Ред
-                    </a>
-
-                    {{-- DELETE --}}
-                    <form action="{{ route('admin.orders.destroy', $order->id) }}"
-                        method="POST"
-                        class="w-50"
-                        onsubmit="return confirm('Удалить заказ?')">
-
-                        @csrf
-                        @method('DELETE')
-
-                        <button class="btn btn-outline-danger btn-sm w-100 d-flex justify-content-center align-items-center gap-1">
-                            🗑 Удал
-                        </button>
-
-                    </form>
-
-                </div>
-
-                {{-- DETAILS --}}
-                <button class="btn btn-primary btn-sm w-100 mt-2"
+                <button class="btn btn-primary btn-sm w-100 mt-2 rounded-3"
                     data-bs-toggle="modal"
                     data-bs-target="#orderModal{{ $order->id }}">
-                    👁 Детали
+                    Подробнее
                 </button>
 
             </div>
@@ -130,41 +123,44 @@ $nextDate = \Carbon\Carbon::parse($selectedDate)->addDay()->format('Y-m-d');
 
             <div class="modal-content">
 
-                <div class="modal-header bg-primary text-white">
+                <div class="modal-header">
                     <h6 class="modal-title">Заказ #{{ $order->id }}</h6>
-                    <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body">
 
-                    <div class="p-2 bg-light rounded mb-2">
-                        <b>Дата:</b> {{ $order->created_at->format('d.m.Y H:i') }}
+                    <div class="mb-2">
+                        <div class="text-muted small">Дата</div>
+                        <div>{{ $order->created_at->format('d.m.Y H:i') }}</div>
                     </div>
 
-                    <div class="p-2 bg-light rounded mb-2">
-                        <b>Имя:</b> {{ $order->name }}
+                    <div class="mb-2">
+                        <div class="text-muted small">Имя</div>
+                        <div>{{ $order->name }}</div>
                     </div>
 
-                    <div class="p-2 bg-light rounded mb-2">
-                        <b>Телефон:</b> {{ $order->phone }}
+                    <div class="mb-2">
+                        <div class="text-muted small">Телефон</div>
+                        <div>{{ $order->phone }}</div>
                     </div>
 
                     @if($order->comment)
-                    <div class="p-2 bg-light rounded mb-2">
-                        <b>Комментарий:</b> {{ $order->comment }}
+                    <div class="mb-2">
+                        <div class="text-muted small">Комментарий</div>
+                        <div>{{ $order->comment }}</div>
                     </div>
                     @endif
 
                     <hr>
 
                     @foreach($order->items as $item)
-
-                    <div class="border rounded p-2 mb-2">
-                        <div class="fw-bold">{{ $item->variant->sku ?? '—' }}</div>
-                        <div>Кол-во: {{ $item->quantity }}</div>
-                        <div class="text-muted small">{{ $item->warehouse_name }}</div>
+                    <div class="border rounded-3 p-2 mb-2">
+                        <div class="fw-medium">{{ $item->variant->sku ?? '—' }}</div>
+                        <div class="text-muted small">
+                            Кол-во: {{ $item->quantity }} • {{ $item->warehouse_name }}
+                        </div>
                     </div>
-
                     @endforeach
 
                 </div>
@@ -196,7 +192,7 @@ $nextDate = \Carbon\Carbon::parse($selectedDate)->addDay()->format('Y-m-d');
 
                 const q = this.value.trim();
 
-                if (q.length < 1) {
+                if (!q.length) {
                     container.innerHTML = original;
                     return;
                 }
@@ -210,29 +206,41 @@ $nextDate = \Carbon\Carbon::parse($selectedDate)->addDay()->format('Y-m-d');
                         data.forEach(o => {
 
                             container.innerHTML += `
-<div class="card mb-2 shadow-sm border-0 rounded-4">
-  <div class="card-body p-3">
-    <div class="d-flex justify-content-between">
-      <strong>#${o.id}</strong>
-      <small>${o.created_at ? o.created_at.replace('T', ' ').slice(0,16) : ''}</small>
+<div class="card mb-2 border-0 shadow-sm rounded-4 position-relative">
+
+    <a href="/admin/orders/${o.id}/edit" class="icon-btn icon-edit">
+        <i class="bi bi-pencil"></i>
+    </a>
+
+    <form action="/admin/orders/${o.id}" method="POST"
+          class="icon-btn icon-delete"
+          onsubmit="return confirm('Удалить заказ?')">
+
+        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="_method" value="DELETE">
+
+        <button type="submit">
+            <i class="bi bi-trash"></i>
+        </button>
+    </form>
+
+    <div class="card-body pt-5">
+
+        <div class="d-flex justify-content-between">
+            <span class="fw-semibold">#${o.id}</span>
+            <span class="text-muted small">${o.created_at ? o.created_at.replace('T',' ').slice(0,16) : ''}</span>
+        </div>
+
+        <div class="mt-2 fw-medium">${o.name}</div>
+        <div class="text-muted small">${o.phone}</div>
+
+        <button class="btn btn-primary btn-sm w-100 mt-2 rounded-3"
+                data-bs-toggle="modal"
+                data-bs-target="#orderModal${o.id}">
+            Подробнее
+        </button>
+
     </div>
-
-    <div class="fw-semibold mt-2">${o.name}</div>
-    <div class="text-muted small">${o.phone}</div>
-
-    <div class="d-flex gap-2 mt-3">
-
-      <a href="/admin/orders/${o.id}/edit" class="btn btn-warning btn-sm w-50">✏️ Ред</a>
-
-      <form action="/admin/orders/${o.id}" method="POST" class="w-50">
-        @csrf
-        @method('DELETE')
-        <button class="btn btn-outline-danger btn-sm w-100">🗑 Удал</button>
-      </form>
-
-    </div>
-
-  </div>
 </div>`;
                         });
 
@@ -251,12 +259,42 @@ $nextDate = \Carbon\Carbon::parse($selectedDate)->addDay()->format('Y-m-d');
         background: #f6f7fb;
     }
 
-    .card {
-        border-radius: 14px;
+    .icon-btn {
+        position: absolute;
+        top: 8px;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        font-size: 14px;
     }
 
-    .btn {
-        border-radius: 12px;
+    .icon-edit {
+        left: 8px;
+        background: #eef4ff;
+        color: #0d6efd;
+    }
+
+    .icon-delete {
+        right: 8px;
+    }
+
+    .icon-delete button {
+        width: 30px;
+        height: 30px;
+        border: none;
+        border-radius: 8px;
+        background: #ffecec;
+        color: #dc3545;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .card {
+        border-radius: 14px;
     }
 </style>
 
