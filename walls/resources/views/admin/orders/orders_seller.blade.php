@@ -197,6 +197,116 @@ $totalDaySum = 0;
 
 </div>
 
+{{-- SEARCH JS --}}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const search = document.getElementById('searchInput');
+    const container = document.getElementById('mobileOrders');
+
+    let timer;
+
+    search.addEventListener('input', function () {
+
+        clearTimeout(timer);
+
+        timer = setTimeout(() => {
+
+            const q = this.value.trim();
+
+            // если пустой поиск — перезагружаем страницу (возвращаем Blade)
+            if (!q.length) {
+                location.reload();
+                return;
+            }
+
+            fetch(`/admin/orders/search?q=${encodeURIComponent(q)}`)
+                .then(res => res.json())
+                .then(data => {
+
+                    container.innerHTML = '';
+
+                    data.forEach(o => {
+
+                        // считаем сумму заказа
+                        let orderSum = 0;
+
+                        if (o.items && o.items.length) {
+                            orderSum = o.items.reduce((sum, i) => {
+                                return sum + ((i.price || 0) * (i.quantity || 0));
+                            }, 0);
+                        }
+
+                        const discount = o.discount || 0;
+                        const finalSum = orderSum - discount;
+
+                        const date = o.order_date
+                            ? o.order_date.replace('T', ' ').slice(0, 16)
+                            : (o.created_at ? o.created_at.replace('T', ' ').slice(0, 16) : '');
+
+                        container.innerHTML += `
+<div class="card mb-2 border-0 shadow-sm rounded-4 position-relative">
+
+    <a href="/admin/orders/${o.id}/edit" class="icon-btn icon-edit">
+        <i class="bi bi-pencil"></i>
+    </a>
+
+    <form action="/admin/orders/${o.id}" method="POST"
+          class="icon-btn icon-delete"
+          onsubmit="return confirm('Удалить заказ?')">
+
+        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="_method" value="DELETE">
+
+        <button type="submit">
+            <i class="bi bi-trash"></i>
+        </button>
+    </form>
+
+    <div class="card-body pt-5">
+
+        <div class="d-flex justify-content-between">
+            <span class="fw-semibold">#${o.id}</span>
+            <span class="text-muted small">${date}</span>
+        </div>
+
+        <div class="mt-2">
+            <div class="fw-medium">${o.name ?? ''}</div>
+            <div class="text-muted small">${o.phone ?? ''}</div>
+
+            <div class="mt-2 text-end">
+                <span class="small text-muted">
+                    Скидка: ${discount.toLocaleString()} ₸
+                </span><br>
+
+                <span class="small fw-semibold">
+                    ${finalSum.toLocaleString()} ₸
+                </span>
+            </div>
+        </div>
+
+        <button class="btn btn-primary btn-sm w-100 mt-2 rounded-3"
+                data-bs-toggle="modal"
+                data-bs-target="#orderModal${o.id}">
+            Подробнее
+        </button>
+
+    </div>
+</div>`;
+                    });
+
+                })
+                .catch(err => {
+                    console.error('Search error:', err);
+                });
+
+        }, 300);
+
+    });
+
+});
+</script>
+
 {{-- STYLE --}}
 <style>
     body {
