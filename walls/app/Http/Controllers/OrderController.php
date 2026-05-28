@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use App\Models\Batch;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class OrderController extends Controller
@@ -225,10 +226,10 @@ class OrderController extends Controller
         $end = $date->copy()->endOfDay();
 
         $orders = Order::with(['items.variant.product'])
-            ->where(function ($q) use ($start, $end) {
-                $q->whereBetween('order_date', [$start, $end])
-                    ->orWhereNull('order_date'); // старые заказы всегда видны
-            })
+            ->whereBetween(
+                DB::raw('COALESCE(order_date, created_at)'),
+                [$start, $end]
+            )
             ->latest()
             ->get();
 
