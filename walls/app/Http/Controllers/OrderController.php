@@ -121,12 +121,16 @@ class OrderController extends Controller
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
             'comment' => 'nullable|string',
+            'discount' => 'nullable|numeric|min:0',
+
+            'order_date' => 'required|date',
 
             'items' => 'required|array|min:1',
             'items.*.sku' => 'required|exists:variants,sku',
             'items.*.batch_id' => 'required|integer|exists:batches,id',
             'items.*.warehouse_id' => 'nullable|integer|exists:warehouses,id',
             'items.*.quantity' => 'required|integer',
+            'items.*.price' => 'required|numeric|min:0',
             'items.*.batch_code' => 'required|string',
             'items.*.warehouse_name' => 'nullable|string',
         ]);
@@ -135,19 +139,25 @@ class OrderController extends Controller
             'name' => $request->name,
             'phone' => $request->phone,
             'comment' => $request->comment,
+            'discount' => $request->discount ?? 0,
             'status' => 'Новый',
             'is_website' => false,
+            'order_date' => $request->order_date
+                ? Carbon::parse($request->order_date, 'Asia/Almaty')
+                : now('Asia/Almaty'),
         ]);
 
         foreach ($request->items as $item) {
 
+            // ❌ заменяем empty на isset, чтобы поддерживать отрицательные qty
             if (!isset($item['warehouse_id']) || !isset($item['quantity'])) {
                 continue;
             }
 
             $batchId = $item['batch_id'];
             $warehouseId = $item['warehouse_id'];
-            $quantity = (int) $item['quantity'];
+            $quantity = (int)$item['quantity'];
+            $price = (float)$item['price'];
 
             $batch = Batch::findOrFail($batchId);
             $variant = Variant::where('sku', $item['sku'])->firstOrFail();
@@ -156,9 +166,7 @@ class OrderController extends Controller
                 return back()->with('error', "Партия {$batch->batch_code} не принадлежит артикулу {$variant->sku}");
             }
 
-            $pivot = $batch->warehouses()
-                ->where('warehouse_id', $warehouseId)
-                ->first();
+            $pivot = $batch->warehouses()->where('warehouse_id', $warehouseId)->first();
 
             if (!$pivot) {
                 return back()->with('error', "Склад не найден для SKU {$variant->sku}");
@@ -166,32 +174,33 @@ class OrderController extends Controller
 
             $currentStock = $pivot->pivot->quantity;
 
-            // проверка только для продаж
+            // ✅ проверка склада только для продаж
             if ($quantity > 0 && $currentStock < $quantity) {
                 return back()->with('error', "Недостаточно товара на складе для SKU {$variant->sku}");
             }
 
-            // обновление остатков (возвраты увеличивают склад)
+            // ✅ обновление склада: для возврата quantity < 0, склад увеличится
             $batch->warehouses()->updateExistingPivot($warehouseId, [
                 'quantity' => $currentStock - $quantity
             ]);
 
-            // запись позиции БЕЗ цены
+            // создаём позицию заказа (продажа или возврат)
             $order->items()->create([
                 'variant_id' => $variant->id,
                 'batch_id' => $batchId,
                 'warehouse_id' => $warehouseId,
                 'quantity' => $quantity,
+                'price' => $price,
                 'image' => $variant->image ?? '',
                 'batch_code' => $item['batch_code'],
                 'warehouse_name' => $item['warehouse_name'] ?? '',
-                'price' => 0, // временно
+                'order_date' => $request->order_date,
             ]);
         }
 
-        return redirect()
-            ->route('admin.orders.seller')
-            ->with('success', 'Заказ успешно создан');
+        return redirect()->route('admin.orders.seller', [
+            'date' => $request->order_date
+        ])->with('success', 'Заказ успешно создан');
     }
 
     // Заказы с сайта
@@ -204,13 +213,19 @@ class OrderController extends Controller
     // Заказы продавцов
     public function indexSeller(Request $request)
     {
-        $date = $request->get('date') ?? now()->format('Y-m-d');
+        $date = $request->get('date');
+
+        if (!$date) {
+            $date = now('Asia/Almaty');
+        } else {
+            $date = Carbon::parse($date, 'Asia/Almaty');
+        }
+
+        $start = $date->copy()->startOfDay();
+        $end = $date->copy()->endOfDay();
 
         $orders = Order::with(['items.variant.product'])
-            ->whereBetween('created_at', [
-                Carbon::parse($date)->startOfDay(),
-                Carbon::parse($date)->endOfDay()
-            ])
+            ->whereBetween('order_date', [$start, $end])
             ->latest()
             ->get();
 
@@ -256,40 +271,43 @@ class OrderController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $order = Order::with('items')->findOrFail($id);
+{
+    $order = Order::with('items')->findOrFail($id);
 
-        // Валидация (без price)
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
-            'comment' => 'nullable|string',
-            'items' => 'required|array|min:1',
-            'items.*.id' => 'required|integer|exists:order_items,id',
-            'items.*.quantity' => 'required|integer',
-        ]);
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'phone' => 'required|string|max:20',
+        'comment' => 'nullable|string',
+        'discount' => 'nullable|numeric|min:0',
+        'items' => 'required|array|min:1',
+        'items.*.id' => 'required|integer|exists:order_items,id',
+        'items.*.quantity' => 'required|integer',
+        'items.*.price' => 'required|numeric|min:0',
+    ]);
 
-        // Обновляем данные клиента
-        $order->update([
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'comment' => $request->comment,
-        ]);
+    // обновляем заказ (включая скидку)
+    $order->update([
+        'name' => $request->name,
+        'phone' => $request->phone,
+        'comment' => $request->comment,
+        'discount' => $request->discount ?? 0,
+    ]);
 
-        // Обновляем только количество (без цены)
-        foreach ($request->items as $itemData) {
+    // обновляем items
+    foreach ($request->items as $itemData) {
 
-            $orderItem = $order->items()->find($itemData['id']);
+        $orderItem = $order->items()->find($itemData['id']);
 
-            if ($orderItem) {
-                $orderItem->update([
-                    'quantity' => $itemData['quantity'],
-                ]);
-            }
+        if ($orderItem) {
+            $orderItem->update([
+                'quantity' => $itemData['quantity'],
+                'price' => $itemData['price'], // 🔥 добавили цену
+            ]);
         }
-
-        return redirect()
-            ->route('admin.orders.seller')
-            ->with('success', 'Данные заказа успешно обновлены');
     }
+
+    return redirect()
+        ->route('admin.orders.seller')
+        ->with('success', 'Заказ успешно обновлён');
+}
 }
