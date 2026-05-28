@@ -310,4 +310,5 @@ class OrderController extends Controller
         ->route('admin.orders.seller')
         ->with('success', 'Заказ успешно обновлён');
 }
+
 }
