@@ -9,7 +9,9 @@
 {{-- 🔹 Дополнительные мета-теги --}}
 @section('meta')
 <meta name="description" content="@yield('meta_description')" />
-<meta name="keywords" content="каталог обоев, KURBANOV WALLS, флизелиновые обои, виниловые обои, моющиеся обои, купить обои Алматы, обои Казахстан">
+
+<meta name="keywords" content="каталог обоев, KURBANOV WALLS, Kurbanov Walls, kurbanovwalls, kurbanov walls, Курбанов Воллс, купить обои Алматы, обои Казахстан, флизелиновые обои, виниловые обои, моющиеся обои, магазин обоев Алматы">
+
 <link rel="canonical" href="{{ url()->current() }}">
 
 {{-- Open Graph --}}

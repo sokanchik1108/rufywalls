@@ -26,7 +26,7 @@
 
     {{-- 🔹 Meta Description и Keywords --}}
     <meta name="description" content="{{ $shortDescription }}">
-    <meta name="keywords" content="{{ $productName }}, {{ $materialText }}, обои Алматы, купить обои Алматы, KURBANOV WALLS, моющиеся обои, флизелиновые, виниловые">
+    <meta name="keywords" content="{{ $productName }}, {{ $materialText }}, обои Алматы, купить обои Алматы, KURBANOV WALLS, Kurbanov Walls, kurbanovwalls, kurbanov walls, Курбанов Воллс, моющиеся обои, флизелиновые обои, виниловые обои, магазин обоев Алматы">
     <link rel="canonical" href="{{ $pageUrl }}">
 
     {{-- 🔹 Open Graph --}}
