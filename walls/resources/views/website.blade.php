@@ -67,7 +67,7 @@
 <style>
     .info-section {
         position: relative;
-        background-image: url('{{ asset(' images/11316-01 7.webp') }}');
+        background-image: url('{{ asset('images/11316-01 7.webp') }}');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -159,7 +159,7 @@
     /* Мобильные устройства */
     @media (max-width: 768px) {
         .info-section {
-            background-image: url('{{ asset(' images/11212-05 5.webp') }}');
+            background-image: url('{{ asset('images/11212-05 5.webp') }}');
             flex-direction: column;
             justify-content: center;
             align-items: center;
