@@ -472,7 +472,7 @@ class AdminController extends Controller
 
     public function toggleHidden(Request $request, Product $product)
     {
-        $product->is_hidden = $request->has('is_hidden');
+        $product->is_hidden = $request->boolean('is_hidden');
         $product->save();
 
         return back()->with('success', 'Статус отображения товара обновлён.');

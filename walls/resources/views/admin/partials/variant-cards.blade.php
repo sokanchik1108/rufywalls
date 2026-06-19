@@ -84,13 +84,22 @@ $images = json_decode($variant->images ?? '[]', true);
 
 
                     <!-- Скрыть/показать товар -->
-                    <form action="{{ route('admin.products.toggle-hidden', $product->id) }}" method="POST" class="mt-2">
+                    <form action="{{ route('admin.products.toggle-hidden', $product) }}" method="POST" class="mt-2">
                         @csrf
                         @method('PATCH')
 
+                        <!-- важно: гарантирует отправку 0 если чекбокс снят -->
+                        <input type="hidden" name="is_hidden" value="0">
+
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="is_hidden" id="hideProduct{{ $product->id }}"
-                                onchange="this.form.submit()" {{ $product->is_hidden ? 'checked' : '' }}>
+                            <input class="form-check-input"
+                                type="checkbox"
+                                name="is_hidden"
+                                value="1"
+                                id="hideProduct{{ $product->id }}"
+                                onchange="this.form.submit()"
+                                {{ $product->is_hidden ? 'checked' : '' }}>
+
                             <label class="form-check-label" for="hideProduct{{ $product->id }}">
                                 🔒 Скрыть товар
                             </label>
