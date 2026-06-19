@@ -663,7 +663,8 @@
                         document.getElementById('companion-title').textContent = data.companion.title || '';
 
                         // Ссылка теперь открывает продукт с активным вариантом
-                        document.getElementById('companion-link').href = `/product/${data.companion.id}?variant=${data.companion.variant_id}`;
+                        document.getElementById('companion-link').href =
+                            `/product/${data.companion.slug}?variant=${data.companion.variant_id}`;
 
                         if (companionBlock) companionBlock.style.display = 'block';
                     } else if (companionBlock) {

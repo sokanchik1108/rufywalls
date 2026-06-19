@@ -424,12 +424,14 @@ class WebsiteController extends Controller
         $firstCompanion = $companions->first();
 
         $companionData = null;
+
         if ($firstCompanion && $firstCompanion->product) {
             $companionImages = json_decode($firstCompanion->images, true);
 
             $companionData = [
                 'id' => $firstCompanion->product->id,
-                'variant_id' => $firstCompanion->id, // <-- добавляем ID варианта
+                'slug' => $firstCompanion->product->slug, // добавили slug
+                'variant_id' => $firstCompanion->id,
                 'sku' => $firstCompanion->sku,
                 'title' => $firstCompanion->product->title
                     ?? $firstCompanion->product->name
