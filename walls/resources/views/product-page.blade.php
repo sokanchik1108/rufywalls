@@ -69,11 +69,6 @@
         }
     </script>
 
-    {{-- 🔹 Favicon --}}
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/лого1.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/лого1.png') }}">
-    <meta name="theme-color" content="#ffffff">
-
     {{-- 🔹 Bootstrap и Icons --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
