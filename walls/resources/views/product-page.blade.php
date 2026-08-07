@@ -43,6 +43,10 @@
     <meta name="twitter:description" content="{{ $shortDescription }}">
     <meta name="twitter:image" content="{{ $ogImage }}">
 
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/kurbanovwalls logo.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/kurbanovwalls logo.png') }}">
+    <meta name="theme-color" content="#ffffff">
+
     {{-- 🔹 Schema.org Product --}}
     <script type="application/ld+json">
         {
