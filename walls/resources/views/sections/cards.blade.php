@@ -24,7 +24,7 @@
             @endphp
             <div class="col-6 col-md-4 col-lg-4">
                 <!-- Ссылка теперь передаёт ID варианта -->
-                <a href="{{ route('product.show', $product->id) }}?variant={{ $variant->id }}" class="rafy-card-link">
+                <a href="{{ route('product.show', ['slug' => $product->slug]) }}?variant={{ $variant->id }}" class="rafy-card-link">
                     <div class="rafy-card-square">
                         @if (!empty($product->status))
                         <div class="rafy-status">{{ $product->status }}</div>
