@@ -97,4 +97,13 @@ class Product extends Model
             $product->slug = $slug;
         });
     }
+
+    protected static function booted()
+    {
+        static::saving(function ($product) {
+            if ($product->isDirty('name')) {
+                $product->slug = Str::slug($product->name);
+            }
+        });
+    }
 }
