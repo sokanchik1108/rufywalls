@@ -1052,14 +1052,6 @@
                             Вариант / SKU
                         </th>
 
-                        <th>
-                            Товар
-                        </th>
-
-                        <th>
-                            Цвет
-                        </th>
-
                         <th class="text-right">
                             Продано
                         </th>
@@ -1111,32 +1103,6 @@
                             <div class="product-name">
 
                                 {{ $variant['sku'] ?? '—' }}
-
-                            </div>
-
-                        </td>
-
-
-                        {{-- ТОВАР --}}
-
-                        <td>
-
-                            <div class="product-name">
-
-                                {{ $variant['product_name'] ?? 'Без названия' }}
-
-                            </div>
-
-                        </td>
-
-
-                        {{-- ЦВЕТ --}}
-
-                        <td>
-
-                            <div class="product-color">
-
-                                {{ $variant['color'] ?? '—' }}
 
                             </div>
 
