@@ -466,98 +466,126 @@
         @media (max-width: 800px) {
 
             .payments-page {
-                padding: 14px;
+                padding: 10px;
+                width: 100%;
+                box-sizing: border-box;
             }
 
             .payments-header {
                 display: block;
+                width: 100%;
             }
 
             .payments-title {
                 margin-bottom: 13px;
             }
 
-            .payments-title h1 {
-                font-size: 22px;
-            }
-
-            /* ФИЛЬТР ПЕРИОДА */
+            /* =========================
+       ВЕРХНИЙ ФИЛЬТР С / ПО
+    ========================= */
 
             .filter-box {
-                width: 100%;
-                max-width: 100%;
-                box-sizing: border-box;
-
-                display: grid;
-                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-                gap: 8px;
+                display: flex !important;
+                flex-direction: column !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+                gap: 8px !important;
+                padding: 8px !important;
             }
 
             .filter-box .field {
-                width: 100%;
-                min-width: 0;
-                box-sizing: border-box;
+                display: block !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                box-sizing: border-box !important;
             }
 
-            .filter-box .field input,
-            .filter-box .field input[type="date"] {
+            .filter-box .field label {
                 display: block;
-                width: 100%;
-                max-width: 100%;
-                min-width: 0;
-                height: 38px;
-                box-sizing: border-box;
-                padding: 0 8px;
-                font-size: 13px;
+                margin-bottom: 4px;
+            }
+
+            .filter-box .field input {
+                display: block !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                height: 38px !important;
+                box-sizing: border-box !important;
+                padding: 0 10px !important;
+                margin: 0 !important;
+            }
+
+            .filter-box .field input[type="date"] {
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                box-sizing: border-box !important;
+                margin: 0 !important;
             }
 
             .filter-box .btn {
-                grid-column: 1 / -1;
-                width: 100%;
-                box-sizing: border-box;
+                display: block !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+                margin: 0 !important;
             }
 
-            /* БЛОКИ */
+
+            /* =========================
+       БЛОК ДОБАВЛЕНИЯ ПЛАТЕЖА
+    ========================= */
 
             .section {
-                padding: 15px;
+                width: 100%;
+                box-sizing: border-box;
+                padding: 13px;
             }
 
-            /* ФОРМА */
-
             .form-grid {
-                grid-template-columns: minmax(0, 1fr);
+                display: grid !important;
+                grid-template-columns: minmax(0, 1fr) !important;
+                width: 100% !important;
+                gap: 10px !important;
             }
 
             .form-grid>div {
-                width: 100%;
-                min-width: 0;
-                box-sizing: border-box;
-            }
-
-            .form-full {
-                grid-column: auto;
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                box-sizing: border-box !important;
             }
 
             .form-control,
-            input[type="date"].form-control,
-            input[type="number"].form-control {
-                display: block;
-                width: 100%;
-                max-width: 100%;
-                min-width: 0;
-                box-sizing: border-box;
+            .form-control[type="date"],
+            .form-control[type="number"],
+            input.form-control,
+            input[type="date"].form-control {
+                display: block !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                box-sizing: border-box !important;
+                margin: 0 !important;
             }
 
             .form-grid .btn {
-                width: 100%;
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
             }
 
-            /* ТАБЛИЦА */
+
+            /* =========================
+       ТАБЛИЦА
+    ========================= */
 
             .table-wrapper {
-                margin: 0 -15px;
-                padding: 0 15px;
+                margin: 0 -13px;
+                padding: 0 13px;
             }
         }
     </style>
