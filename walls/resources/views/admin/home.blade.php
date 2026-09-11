@@ -32,11 +32,7 @@
                         <strong>{{ Auth::user()->email }}</strong>
                     </p>
 
-                    @if(auth()->user()->can_view_analytics)
-                    <script>
-                        window.location.href = "{{ route('admin.analytics.menu') }}";
-                    </script>
-                    @endif
+
 
 
                     @if(
@@ -130,18 +126,6 @@
                         </div>
                         @endif
 
-
-                        <div class="col-md-3">
-                            <a href="{{ route('admin.sales.select_warehouse') }}"
-                                class="btn btn-outline-danger w-100 py-3 shadow-sm rounded-3 d-flex align-items-center justify-content-center">
-
-                                <span class="me-2">💰</span>
-                                <span>Продажи</span>
-
-                            </a>
-                        </div>
-
-
                         {{-- Склады --}}
                         <div class="col-md-3">
                             <a href="{{ route('admin.stocks.warehouses') }}"
@@ -166,16 +150,20 @@
                         </div>
 
 
-                        {{-- История продаж --}}
-                        <div class="col-md-3">
-                            <a href="{{ route('admin.sales.returns') }}"
-                                class="btn btn-outline-warning w-100 py-3 shadow-sm rounded-3 d-flex align-items-center justify-content-center">
+                        {{-- Аналитика --}}
+                        @if(auth()->user()->is_owner)
 
-                                <span class="me-2">🔍</span>
-                                <span>История продаж</span>
+                        <div class="col-md-3">
+                            <a href="{{ route('admin.analytics.menu') }}"
+                                class="btn btn-outline-primary w-100 py-3 shadow-sm rounded-3 d-flex align-items-center justify-content-center">
+
+                                <span class="me-2">📊</span>
+                                <span>Аналитика</span>
 
                             </a>
                         </div>
+
+                        @endif
 
                     </div>
 

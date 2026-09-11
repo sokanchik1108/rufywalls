@@ -2,36 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('auth');
     }
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
     public function index()
     {
         $user = Auth::user();
 
-        // Если пользователь аналитик,
-        // но НЕ владелец — отправляем его в меню аналитики
-        if ($user->can_view_analytics && !$user->is_owner) {
+        // Владелец всегда остаётся на /admin
+        if ((int) $user->is_owner === 1) {
+            return view('admin.home');
+        }
+
+        // Аналитик попадает в меню аналитики
+        if ((int) $user->can_view_analytics === 1) {
             return redirect()->route('admin.analytics.menu');
         }
 
+        // Остальные пользователи тоже остаются на /admin
         return view('admin.home');
     }
 }
