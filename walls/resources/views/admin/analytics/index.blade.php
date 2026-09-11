@@ -1,976 +1,1525 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+
+    <title>Аналитика</title>
 </head>
 
 <body>
 
+<style>
+    :root {
+        --bg: #f4f5f7;
+        --surface: #ffffff;
+        --ink: #1a1d21;
+        --ink-soft: #6e7580;
+        --ink-faint: #9aa0a8;
+        --border: #dfe3e8;
 
-    <style>
-        :root {
-            --bg: #f4f5f7;
-            --surface: #ffffff;
-            --ink: #1a1d21;
-            --ink-soft: #6e7580;
-            --ink-faint: #9aa0a8;
-            --border: #dfe3e8;
+        --primary: #2f6fed;
+        --primary-hover: #1f56d1;
+        --primary-soft: #eaf1fe;
 
-            --primary: #2f6fed;
-            --primary-hover: #1f56d1;
-            --primary-soft: #eaf1fe;
+        --danger: #e5484d;
+        --danger-soft: #fdeceb;
 
-            --danger: #e5484d;
-            --danger-soft: #fdeceb;
+        --success: #1c9a6c;
+        --success-soft: #e6f6ef;
 
-            --success: #1c9a6c;
-            --success-soft: #e6f6ef;
+        --radius: 6px;
+        --radius-lg: 8px;
+    }
 
-            --radius: 6px;
-            --radius-lg: 8px;
-        }
+    * {
+        box-sizing: border-box;
+    }
 
-        * {
-            box-sizing: border-box;
-        }
+    body {
+        margin: 0;
+        background: var(--bg);
+        font-family: sans-serif;
+        color: var(--ink);
+        font-size: 14px;
+    }
 
-        body {
-            background: var(--bg);
-            font-family: sans-serif;
-            color: var(--ink);
-            font-size: 14px;
-        }
+    .analytics-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 24px 16px 40px;
+    }
 
-        .analytics-container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 24px 16px 40px;
-        }
-
-        /* =========================
+    /* =========================
        NAVIGATION
     ========================= */
 
-        .analytics-navigation {
-            margin-bottom: 18px;
-        }
+    .analytics-navigation {
+        margin-bottom: 18px;
+    }
 
-        .analytics-nav-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
+    .analytics-nav-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
 
-            height: 36px;
-            padding: 0 13px;
+        height: 36px;
+        padding: 0 13px;
 
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
 
-            color: #374151;
-            text-decoration: none;
+        color: #374151;
+        text-decoration: none;
 
-            font-size: 13px;
-            font-weight: 600;
+        font-size: 13px;
+        font-weight: 600;
 
-            transition: .15s ease;
-        }
+        transition: .15s ease;
+    }
 
-        .analytics-nav-btn:hover {
-            background: #f9fafb;
-            border-color: #d1d5db;
-            color: #111827;
-        }
+    .analytics-nav-btn:hover {
+        background: #f9fafb;
+        border-color: #d1d5db;
+        color: #111827;
+    }
 
-        /* =========================
+    /* =========================
        HEADER
     ========================= */
 
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 18px;
-        }
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+    }
 
-        .page-header h5 {
-            font-size: 18px;
-            font-weight: 700;
-            margin: 0;
-        }
+    .page-header h5 {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0;
+    }
 
-        /* =========================
+    /* =========================
        FILTER
     ========================= */
 
-        .filter-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 14px;
-            margin-bottom: 16px;
-        }
+    .filter-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 14px;
+        margin-bottom: 16px;
+    }
 
-        .filter-form {
-            display: flex;
-            gap: 8px;
-            align-items: end;
-        }
+    .filter-form {
+        display: flex;
+        gap: 8px;
+        align-items: end;
+    }
 
-        .filter-group {
-            flex: 1;
-        }
+    .filter-group {
+        flex: 1;
+    }
 
-        .filter-label {
-            display: block;
-            font-size: 11px;
-            color: var(--ink-soft);
-            margin-bottom: 5px;
-        }
+    .filter-label {
+        display: block;
+        font-size: 11px;
+        color: var(--ink-soft);
+        margin-bottom: 5px;
+    }
 
-        .form-control {
-            border: 1px solid var(--border) !important;
-            border-radius: var(--radius) !important;
-            font-family: inherit;
-            font-size: 13px;
-            height: 36px;
-            box-shadow: none !important;
-        }
+    .form-control {
+        width: 100%;
+        border: 1px solid var(--border) !important;
+        border-radius: var(--radius) !important;
+        font-family: inherit;
+        font-size: 13px;
+        height: 36px;
+        padding: 0 10px;
+        background: #fff;
+        box-shadow: none !important;
+    }
 
-        .form-control:focus {
-            border-color: var(--primary) !important;
-            box-shadow: 0 0 0 3px var(--primary-soft) !important;
-        }
+    .form-control:focus {
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 3px var(--primary-soft) !important;
+        outline: none;
+    }
 
-        .btn-primary {
-            background: var(--primary);
-            border: none;
-            color: white;
-            font-weight: 600;
-            font-size: 13px;
-            border-radius: var(--radius) !important;
-            height: 36px;
-            padding: 0 18px;
-        }
+    .btn-primary {
+        background: var(--primary);
+        border: none;
+        color: white;
+        font-weight: 600;
+        font-size: 13px;
+        border-radius: var(--radius) !important;
+        height: 36px;
+        padding: 0 18px;
+        cursor: pointer;
+    }
 
-        .btn-primary:hover {
-            background: var(--primary-hover);
-            color: white;
-        }
+    .btn-primary:hover {
+        background: var(--primary-hover);
+        color: white;
+    }
 
-        /* =========================
+    /* =========================
        STAT CARDS
     ========================= */
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 16px;
-        }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 16px;
+    }
 
-        .stat-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 16px;
-        }
+    .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 16px;
+    }
 
-        .stat-label {
-            font-size: 12px;
-            color: var(--ink-soft);
-            margin-bottom: 7px;
-        }
+    .stat-label {
+        font-size: 12px;
+        color: var(--ink-soft);
+        margin-bottom: 7px;
+    }
 
-        .stat-value {
-            font-size: 20px;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-        }
+    .stat-value {
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
 
-        .stat-small {
-            margin-top: 5px;
-            font-size: 11px;
-            color: var(--ink-faint);
-        }
+    .stat-small {
+        margin-top: 5px;
+        font-size: 11px;
+        color: var(--ink-faint);
+    }
 
-        .stat-sales .stat-value {
-            color: var(--success);
-        }
+    .stat-sales .stat-value {
+        color: var(--success);
+    }
 
-        .stat-returns .stat-value {
-            color: var(--danger);
-        }
+    .stat-returns .stat-value {
+        color: var(--danger);
+    }
 
-        .stat-profit .stat-value {
-            color: var(--primary);
-        }
+    .stat-profit .stat-value {
+        color: var(--primary);
+    }
 
-        /* =========================
+    /* =========================
        SECONDARY
     ========================= */
 
-        .secondary-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
+    .secondary-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 16px;
+    }
 
-        .secondary-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 16px;
-        }
+    .secondary-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 16px;
+    }
 
-        .secondary-title {
-            font-size: 12px;
-            color: var(--ink-soft);
-            margin-bottom: 7px;
-        }
+    .secondary-title {
+        font-size: 12px;
+        color: var(--ink-soft);
+        margin-bottom: 7px;
+    }
 
-        .secondary-value {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--primary);
-        }
+    .secondary-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--primary);
+    }
 
-        /* =========================
+    /* =========================
        SECTION
     ========================= */
 
-        .section-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            margin-bottom: 16px;
-        }
+    .section-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        margin-bottom: 16px;
+    }
 
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 16px;
-            border-bottom: 1px solid var(--border);
-        }
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border);
+        gap: 15px;
+    }
 
-        .section-title {
-            font-size: 14px;
-            font-weight: 700;
-        }
+    .section-title {
+        font-size: 14px;
+        font-weight: 700;
+    }
 
-        .section-description {
-            font-size: 11px;
-            color: var(--ink-faint);
-        }
+    .section-description {
+        font-size: 11px;
+        color: var(--ink-faint);
+    }
 
-        /* =========================
+    /* =========================
        CHART
     ========================= */
 
-        .chart-container {
-            position: relative;
-            height: 340px;
-            padding: 20px;
-        }
+    .chart-container {
+        position: relative;
+        height: 340px;
+        padding: 20px;
+    }
 
-        /* =========================
+    /* =========================
        DAYS SUMMARY
     ========================= */
 
-        .days-summary {
-            padding: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-        }
+    .days-summary {
+        padding: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
 
-        .days-summary-info {
-            display: flex;
-            gap: 30px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
+    .days-summary-info {
+        display: flex;
+        gap: 30px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
 
-        .days-summary-item {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
+    .days-summary-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
 
-        .days-summary-label {
-            font-size: 11px;
-            color: var(--ink-faint);
-        }
+    .days-summary-label {
+        font-size: 11px;
+        color: var(--ink-faint);
+    }
 
-        .days-summary-value {
-            font-size: 15px;
-            font-weight: 700;
-        }
+    .days-summary-value {
+        font-size: 15px;
+        font-weight: 700;
+    }
 
-        .details-btn {
-            border: 1px solid var(--border);
-            background: white;
-            color: var(--ink);
-            border-radius: 6px;
-            padding: 9px 14px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: .15s;
-            white-space: nowrap;
-        }
+    .details-btn {
+        border: 1px solid var(--border);
+        background: white;
+        color: var(--ink);
+        border-radius: 6px;
+        padding: 9px 14px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: .15s;
+        white-space: nowrap;
+    }
 
-        .details-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            background: var(--primary-soft);
-        }
+    .details-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: var(--primary-soft);
+    }
 
-        /* =========================
-       PRODUCTS
+    /* =========================
+       PRODUCTS / VARIANTS
     ========================= */
 
-        .product-rank {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: #f4f5f7;
+    .product-rank {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #f4f5f7;
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--ink-soft);
-        }
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--ink-soft);
+    }
 
-        .product-rank.first {
-            background: var(--primary-soft);
-            color: var(--primary);
-        }
+    .product-rank.first {
+        background: var(--primary-soft);
+        color: var(--primary);
+    }
 
-        .product-name {
-            font-weight: 600;
-            color: var(--ink);
-        }
+    .product-name {
+        font-weight: 600;
+        color: var(--ink);
+    }
 
-        .product-quantity {
-            font-weight: 700;
-        }
+    .product-product-name {
+        margin-top: 3px;
+        font-size: 11px;
+        color: var(--ink-faint);
+        font-weight: 400;
+    }
 
-        /* =========================
+    .product-color {
+        margin-top: 3px;
+        font-size: 11px;
+        color: var(--ink-soft);
+        font-weight: 400;
+    }
+
+    .product-quantity {
+        font-weight: 700;
+    }
+
+    /* =========================
        MODAL
     ========================= */
 
-        .analytics-modal {
-            display: none;
-            position: fixed;
-            z-index: 9999;
-            inset: 0;
-            background: rgba(15, 20, 28, .45);
-            padding: 30px 15px;
-            overflow-y: auto;
+    .analytics-modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        inset: 0;
+        background: rgba(15, 20, 28, .45);
+        padding: 30px 15px;
+        overflow-y: auto;
+    }
+
+    .analytics-modal.active {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+    }
+
+    .analytics-modal-content {
+        width: 100%;
+        max-width: 1100px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, .2);
+        overflow: hidden;
+        animation: modalOpen .18s ease-out;
+    }
+
+    @keyframes modalOpen {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
         }
 
-        .analytics-modal.active {
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
+    }
 
-        .analytics-modal-content {
-            width: 100%;
-            max-width: 1100px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, .2);
-            overflow: hidden;
-            animation: modalOpen .18s ease-out;
-        }
+    .modal-header-custom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--border);
+    }
 
-        @keyframes modalOpen {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
+    .modal-title-custom {
+        font-size: 15px;
+        font-weight: 700;
+    }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    .modal-close {
+        border: none;
+        background: transparent;
+        font-size: 22px;
+        line-height: 1;
+        color: var(--ink-soft);
+        cursor: pointer;
+        padding: 0 4px;
+    }
 
-        .modal-header-custom {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 18px;
-            border-bottom: 1px solid var(--border);
-        }
+    .modal-close:hover {
+        color: var(--ink);
+    }
 
-        .modal-title-custom {
-            font-size: 15px;
-            font-weight: 700;
-        }
+    .modal-body-custom {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
 
-        .modal-close {
-            border: none;
-            background: transparent;
-            font-size: 22px;
-            line-height: 1;
-            color: var(--ink-soft);
-            cursor: pointer;
-            padding: 0 4px;
-        }
-
-        .modal-close:hover {
-            color: var(--ink);
-        }
-
-        .modal-body-custom {
-            max-height: 70vh;
-            overflow-y: auto;
-        }
-
-        /* =========================
+    /* =========================
        TABLE
     ========================= */
 
-        .table-wrap {
-            overflow-x: auto;
-        }
+    .table-wrap {
+        overflow-x: auto;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
-        th {
-            text-align: left;
-            padding: 10px 16px;
-            font-size: 11px;
-            color: var(--ink-faint);
-            font-weight: 600;
-            background: #fafbfc;
-            border-bottom: 1px solid var(--border);
-            white-space: nowrap;
-        }
+    th {
+        text-align: left;
+        padding: 10px 16px;
+        font-size: 11px;
+        color: var(--ink-faint);
+        font-weight: 600;
+        background: #fafbfc;
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+    }
 
-        td {
-            padding: 11px 16px;
-            font-size: 13px;
-            border-bottom: 1px solid var(--border);
-            white-space: nowrap;
-        }
+    td {
+        padding: 11px 16px;
+        font-size: 13px;
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+    }
 
-        tr:last-child td {
-            border-bottom: none;
-        }
+    tr:last-child td {
+        border-bottom: none;
+    }
 
-        .text-right {
-            text-align: right;
-        }
+    .text-right {
+        text-align: right;
+    }
 
-        .sales-value {
-            color: var(--success);
-            font-weight: 700;
-        }
+    .sales-value {
+        color: var(--success);
+        font-weight: 700;
+    }
 
-        .return-value {
-            color: var(--danger);
-            font-weight: 600;
-        }
+    .return-value {
+        color: var(--danger);
+        font-weight: 600;
+    }
 
-        .profit-value {
-            color: var(--primary);
-            font-weight: 700;
-        }
+    .profit-value {
+        color: var(--primary);
+        font-weight: 700;
+    }
 
-        .order-count {
-            color: var(--ink-soft);
-        }
+    .order-count {
+        color: var(--ink-soft);
+    }
 
-        /* =========================
+    /* =========================
        TABLET
     ========================= */
 
-        @media (max-width: 800px) {
+    @media (max-width: 800px) {
 
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
         }
+    }
 
-        /* =========================
+    /* =========================
        MOBILE
     ========================= */
 
-        @media (max-width: 600px) {
+    @media (max-width: 600px) {
 
-            .analytics-container {
-                padding: 16px 10px 30px;
-            }
-
-            .analytics-navigation {
-                margin-bottom: 14px;
-            }
-
-            .analytics-nav-btn {
-                height: 34px;
-                font-size: 12px;
-            }
-
-            .filter-form {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .filter-form .btn-primary {
-                grid-column: 1 / -1;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .stat-card {
-                padding: 13px;
-            }
-
-            .stat-value {
-                font-size: 17px;
-            }
-
-            .secondary-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .chart-container {
-                height: 330px;
-                padding: 10px 4px 20px;
-            }
-
-            .days-summary {
-                align-items: flex-start;
-                flex-direction: column;
-            }
-
-            .days-summary-info {
-                gap: 18px;
-            }
-
-            .details-btn {
-                width: 100%;
-            }
-
-            .analytics-modal {
-                padding: 10px;
-            }
-
-            .analytics-modal-content {
-                border-radius: 8px;
-            }
+        .analytics-container {
+            padding: 16px 10px 30px;
         }
-    </style>
+
+        .analytics-navigation {
+            margin-bottom: 14px;
+        }
+
+        .analytics-nav-btn {
+            height: 34px;
+            font-size: 12px;
+        }
+
+        .filter-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .filter-form .btn-primary {
+            grid-column: 1 / -1;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .stat-card {
+            padding: 13px;
+        }
+
+        .stat-value {
+            font-size: 17px;
+        }
+
+        .secondary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .chart-container {
+            height: 330px;
+            padding: 10px 4px 20px;
+        }
+
+        .days-summary {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .days-summary-info {
+            gap: 18px;
+        }
+
+        .details-btn {
+            width: 100%;
+        }
+
+        .analytics-modal {
+            padding: 10px;
+        }
+
+        .analytics-modal-content {
+            border-radius: 8px;
+        }
+
+        .section-header {
+            align-items: flex-start;
+        }
+
+        .section-header .details-btn {
+            width: auto;
+        }
+
+        th,
+        td {
+            padding: 10px 12px;
+        }
+    }
+</style>
 
 
-    <div class="analytics-container">
+<div class="analytics-container">
 
-        {{-- =========================
+
+    {{-- =========================
          НАВИГАЦИЯ
     ========================== --}}
 
-        <div class="analytics-navigation">
+    <div class="analytics-navigation">
 
-            <a
-                href="{{ route('admin.analytics.menu') }}"
-                class="analytics-nav-btn">
-                ← В меню аналитики
-            </a>
+        <a
+            href="{{ route('admin.analytics.menu') }}"
+            class="analytics-nav-btn">
 
-        </div>
+            ← В меню аналитики
 
+        </a>
 
-        {{-- HEADER --}}
-
-        <div class="page-header">
-
-            <h5>
-                Аналитика
-            </h5>
-
-        </div>
+    </div>
 
 
-        {{-- ФИЛЬТР --}}
+    {{-- =========================
+         HEADER
+    ========================== --}}
 
-        <div class="filter-card">
+    <div class="page-header">
 
-            <form
-                method="GET"
-                action="{{ route('admin.analytics.index') }}"
-                class="filter-form">
+        <h5>
+            Аналитика
+        </h5>
 
-                <div class="filter-group">
-
-                    <label class="filter-label">
-                        От
-                    </label>
-
-                    <input
-                        type="date"
-                        name="from"
-                        value="{{ $from->format('Y-m-d') }}"
-                        class="form-control">
-
-                </div>
+    </div>
 
 
-                <div class="filter-group">
+    {{-- =========================
+         ФИЛЬТР
+    ========================== --}}
 
-                    <label class="filter-label">
-                        До
-                    </label>
+    <div class="filter-card">
 
-                    <input
-                        type="date"
-                        name="to"
-                        value="{{ $to->format('Y-m-d') }}"
-                        class="form-control">
-
-                </div>
+        <form
+            method="GET"
+            action="{{ route('admin.analytics.index') }}"
+            class="filter-form">
 
 
-                <button
-                    type="submit"
-                    class="btn btn-primary">
+            <div class="filter-group">
 
-                    <i class="bi bi-funnel"></i>
+                <label class="filter-label">
+                    От
+                </label>
 
-                    Показать
-
-                </button>
-
-            </form>
-
-        </div>
-
-
-        {{-- ОСНОВНЫЕ ПОКАЗАТЕЛИ --}}
-
-        <div class="stats-grid">
-
-            <div class="stat-card stat-sales">
-
-                <div class="stat-label">
-                    Продажи
-                </div>
-
-                <div class="stat-value">
-                    {{ number_format($totalSales, 0, '.', ' ') }} ₸
-                </div>
-
-                <div class="stat-small">
-                    общая сумма продаж
-                </div>
+                <input
+                    type="date"
+                    name="from"
+                    value="{{ $from->format('Y-m-d') }}"
+                    class="form-control">
 
             </div>
 
 
-            <div class="stat-card stat-returns">
+            <div class="filter-group">
 
-                <div class="stat-label">
-                    Возвраты
-                </div>
+                <label class="filter-label">
+                    До
+                </label>
 
-                <div class="stat-value">
-                    {{ number_format($totalReturns, 0, '.', ' ') }} ₸
-                </div>
-
-                <div class="stat-small">
-                    общая сумма возвратов
-                </div>
+                <input
+                    type="date"
+                    name="to"
+                    value="{{ $to->format('Y-m-d') }}"
+                    class="form-control">
 
             </div>
 
 
-            <div class="stat-card stat-profit">
+            <button
+                type="submit"
+                class="btn btn-primary">
 
-                <div class="stat-label">
-                    Итог
-                </div>
+                <i class="bi bi-funnel"></i>
 
-                <div class="stat-value">
-                    {{ number_format($totalProfit, 0, '.', ' ') }} ₸
-                </div>
+                Показать
 
-                <div class="stat-small">
-                    продажи − возвраты
-                </div>
+            </button>
 
+        </form>
+
+    </div>
+
+
+    {{-- =========================
+         ОСНОВНЫЕ ПОКАЗАТЕЛИ
+    ========================== --}}
+
+    <div class="stats-grid">
+
+
+        <div class="stat-card stat-sales">
+
+            <div class="stat-label">
+                Продажи
             </div>
 
+            <div class="stat-value">
+                {{ number_format($totalSales, 0, '.', ' ') }} ₸
+            </div>
 
-            <div class="stat-card">
-
-                <div class="stat-label">
-                    Заказы
-                </div>
-
-                <div class="stat-value">
-                    {{ number_format($totalOrders, 0, '.', ' ') }}
-                </div>
-
-                <div class="stat-small">
-                    количество заказов
-                </div>
-
+            <div class="stat-small">
+                общая сумма продаж
             </div>
 
         </div>
 
 
-        {{-- СЕГОДНЯ / МЕСЯЦ --}}
+        <div class="stat-card stat-returns">
 
-        <div class="secondary-grid">
-
-            <div class="secondary-card">
-
-                <div class="secondary-title">
-                    Сегодня
-                </div>
-
-                <div class="secondary-value">
-                    {{ number_format($todayProfit, 0, '.', ' ') }} ₸
-                </div>
-
-                <div class="stat-small">
-
-                    Продажи:
-                    {{ number_format($todaySales, 0, '.', ' ') }} ₸
-
-                    &nbsp; · &nbsp;
-
-                    Возвраты:
-                    {{ number_format($todayReturns, 0, '.', ' ') }} ₸
-
-                    &nbsp; · &nbsp;
-
-                    {{ $todayOrders->count() }} заказов
-
-                </div>
-
+            <div class="stat-label">
+                Возвраты
             </div>
 
+            <div class="stat-value">
+                {{ number_format($totalReturns, 0, '.', ' ') }} ₸
+            </div>
 
-            <div class="secondary-card">
+            <div class="stat-small">
+                общая сумма возвратов
+            </div>
 
-                <div class="secondary-title">
-                    Текущий месяц
-                </div>
+        </div>
 
-                <div class="secondary-value">
-                    {{ number_format($monthProfit, 0, '.', ' ') }} ₸
-                </div>
 
-                <div class="stat-small">
+        <div class="stat-card stat-profit">
 
-                    Продажи:
-                    {{ number_format($monthSales, 0, '.', ' ') }} ₸
+            <div class="stat-label">
+                Итог
+            </div>
 
-                    &nbsp; · &nbsp;
+            <div class="stat-value">
+                {{ number_format($totalProfit, 0, '.', ' ') }} ₸
+            </div>
 
-                    Возвраты:
-                    {{ number_format($monthReturns, 0, '.', ' ') }} ₸
+            <div class="stat-small">
+                продажи − возвраты
+            </div>
 
-                    &nbsp; · &nbsp;
+        </div>
 
-                    {{ $monthOrders->count() }} заказов
 
-                </div>
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Заказы
+            </div>
+
+            <div class="stat-value">
+                {{ number_format($totalOrders, 0, '.', ' ') }}
+            </div>
+
+            <div class="stat-small">
+                количество заказов
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    {{-- =========================
+         СЕГОДНЯ / МЕСЯЦ
+    ========================== --}}
+
+    <div class="secondary-grid">
+
+
+        <div class="secondary-card">
+
+            <div class="secondary-title">
+                Сегодня
+            </div>
+
+            <div class="secondary-value">
+                {{ number_format($todayProfit, 0, '.', ' ') }} ₸
+            </div>
+
+            <div class="stat-small">
+
+                Продажи:
+                {{ number_format($todaySales, 0, '.', ' ') }} ₸
+
+                &nbsp; · &nbsp;
+
+                Возвраты:
+                {{ number_format($todayReturns, 0, '.', ' ') }} ₸
+
+                &nbsp; · &nbsp;
+
+                {{ $todayOrders->count() }} заказов
 
             </div>
 
         </div>
 
 
-        {{-- ГРАФИК --}}
+        <div class="secondary-card">
 
-        <div class="section-card">
-
-            <div class="section-header">
-
-                <span class="section-title">
-                    Торговля по дням недели
-                </span>
-
-                <span class="section-description">
-                    Средний итог за день
-                </span>
-
+            <div class="secondary-title">
+                Текущий месяц
             </div>
 
+            <div class="secondary-value">
+                {{ number_format($monthProfit, 0, '.', ' ') }} ₸
+            </div>
 
-            <div class="chart-container">
+            <div class="stat-small">
 
-                <canvas id="weeklySalesChart"></canvas>
+                Продажи:
+                {{ number_format($monthSales, 0, '.', ' ') }} ₸
+
+                &nbsp; · &nbsp;
+
+                Возвраты:
+                {{ number_format($monthReturns, 0, '.', ' ') }} ₸
+
+                &nbsp; · &nbsp;
+
+                {{ $monthOrders->count() }} заказов
 
             </div>
 
         </div>
 
 
-        {{-- ПРОДАЖИ ПО ДНЯМ --}}
+    </div>
 
-        <div class="section-card">
 
-            <div class="section-header">
+    {{-- =========================
+         ГРАФИК
+    ========================== --}}
 
-                <span class="section-title">
-                    Продажи по дням
-                </span>
+    <div class="section-card">
+
+
+        <div class="section-header">
+
+            <span class="section-title">
+                Торговля по дням недели
+            </span>
+
+            <span class="section-description">
+                Средний итог за день
+            </span>
+
+        </div>
+
+
+        <div class="chart-container">
+
+            <canvas id="weeklySalesChart"></canvas>
+
+        </div>
+
+
+    </div>
+
+
+    {{-- =========================
+         ПРОДАЖИ ПО ДНЯМ
+    ========================== --}}
+
+    <div class="section-card">
+
+
+        <div class="section-header">
+
+            <span class="section-title">
+                Продажи по дням
+            </span>
+
+        </div>
+
+
+        @php
+
+        $daysWithSales = count($salesByDay);
+
+        $periodSales = collect($salesByDay)->sum('sales');
+
+        $periodReturns = collect($salesByDay)->sum('returns');
+
+        $periodProfit = collect($salesByDay)->sum('profit');
+
+        @endphp
+
+
+        <div class="days-summary">
+
+
+            <div class="days-summary-info">
+
+
+                <div class="days-summary-item">
+
+                    <span class="days-summary-label">
+                        Дней с заказами
+                    </span>
+
+                    <span class="days-summary-value">
+                        {{ $daysWithSales }}
+                    </span>
+
+                </div>
+
+
+                <div class="days-summary-item">
+
+                    <span class="days-summary-label">
+                        Продажи
+                    </span>
+
+                    <span class="days-summary-value sales-value">
+                        {{ number_format($periodSales, 0, '.', ' ') }} ₸
+                    </span>
+
+                </div>
+
+
+                <div class="days-summary-item">
+
+                    <span class="days-summary-label">
+                        Возвраты
+                    </span>
+
+                    <span class="days-summary-value return-value">
+                        {{ number_format($periodReturns, 0, '.', ' ') }} ₸
+                    </span>
+
+                </div>
+
+
+                <div class="days-summary-item">
+
+                    <span class="days-summary-label">
+                        Итог
+                    </span>
+
+                    <span class="days-summary-value profit-value">
+                        {{ number_format($periodProfit, 0, '.', ' ') }} ₸
+                    </span>
+
+                </div>
+
 
             </div>
 
 
-            @php
+            <button
+                type="button"
+                class="details-btn"
+                onclick="openSalesDaysModal()">
 
-            $daysWithSales = count($salesByDay);
+                Посмотреть дни
 
-            $periodSales = collect($salesByDay)->sum('sales');
+                <i class="bi bi-arrow-right"></i>
 
-            $periodReturns = collect($salesByDay)->sum('returns');
-
-            $periodProfit = collect($salesByDay)->sum('profit');
-
-            @endphp
-
-
-            <div class="days-summary">
-
-                <div class="days-summary-info">
+            </button>
 
 
-                    <div class="days-summary-item">
-
-                        <span class="days-summary-label">
-                            Дней с заказами
-                        </span>
-
-                        <span class="days-summary-value">
-                            {{ $daysWithSales }}
-                        </span>
-
-                    </div>
+        </div>
 
 
-                    <div class="days-summary-item">
+    </div>
 
-                        <span class="days-summary-label">
+
+    {{-- =========================================================
+         САМЫЕ ПРОДАВАЕМЫЕ ВАРИАНТЫ
+    ========================================================== --}}
+
+    <div class="section-card">
+
+
+        <div class="section-header">
+
+
+            <div>
+
+                <div class="section-title">
+                    Самые продаваемые варианты
+                </div>
+
+                <div class="section-description">
+                    Варианты с наибольшим количеством проданных единиц за выбранный период
+                </div>
+
+            </div>
+
+
+            @if(isset($productStats) && $productStats->count() > 10)
+
+            <button
+                type="button"
+                class="details-btn"
+                onclick="openProductsModal()">
+
+                <i class="bi bi-list"></i>
+
+                Подробнее
+
+            </button>
+
+            @endif
+
+
+        </div>
+
+
+        @if(isset($topProducts) && $topProducts->count())
+
+
+        <div class="table-wrap">
+
+            <table>
+
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            #
+                        </th>
+
+                        <th>
+                            Вариант / SKU
+                        </th>
+
+                        <th>
+                            Товар
+                        </th>
+
+                        <th>
+                            Цвет
+                        </th>
+
+                        <th class="text-right">
+                            Продано
+                        </th>
+
+                        <th class="text-right">
+                            Возврат
+                        </th>
+
+                        <th class="text-right">
                             Продажи
-                        </span>
+                        </th>
 
-                        <span class="days-summary-value sales-value">
-                            {{ number_format($periodSales, 0, '.', ' ') }} ₸
-                        </span>
-
-                    </div>
-
-
-                    <div class="days-summary-item">
-
-                        <span class="days-summary-label">
-                            Возвраты
-                        </span>
-
-                        <span class="days-summary-value return-value">
-                            {{ number_format($periodReturns, 0, '.', ' ') }} ₸
-                        </span>
-
-                    </div>
-
-
-                    <div class="days-summary-item">
-
-                        <span class="days-summary-label">
+                        <th class="text-right">
                             Итог
-                        </span>
+                        </th>
 
-                        <span class="days-summary-value profit-value">
-                            {{ number_format($periodProfit, 0, '.', ' ') }} ₸
-                        </span>
+                    </tr>
 
-                    </div>
-
-                </div>
+                </thead>
 
 
-                <button
-                    type="button"
-                    class="details-btn"
-                    onclick="openSalesDaysModal()">
+                <tbody>
 
-                    Посмотреть дни
 
-                    <i class="bi bi-arrow-right"></i>
+                    @foreach($topProducts as $index => $variant)
 
-                </button>
 
-            </div>
+                    <tr>
+
+
+                        {{-- РАНГ --}}
+
+                        <td>
+
+                            <div
+                                class="product-rank {{ $index === 0 ? 'first' : '' }}">
+
+                                {{ $index + 1 }}
+
+                            </div>
+
+                        </td>
+
+
+                        {{-- SKU --}}
+
+                        <td>
+
+                            <div class="product-name">
+
+                                {{ $variant['sku'] ?? '—' }}
+
+                            </div>
+
+                        </td>
+
+
+                        {{-- ТОВАР --}}
+
+                        <td>
+
+                            <div class="product-name">
+
+                                {{ $variant['product_name'] ?? 'Без названия' }}
+
+                            </div>
+
+                        </td>
+
+
+                        {{-- ЦВЕТ --}}
+
+                        <td>
+
+                            <div class="product-color">
+
+                                {{ $variant['color'] ?? '—' }}
+
+                            </div>
+
+                        </td>
+
+
+                        {{-- ПРОДАНО --}}
+
+                        <td class="text-right product-quantity">
+
+                            {{ number_format(
+                                $variant['sold_quantity'] ?? 0,
+                                0,
+                                '.',
+                                ' '
+                            ) }}
+
+                        </td>
+
+
+                        {{-- ВОЗВРАТ ШТУК --}}
+
+                        <td class="text-right return-value">
+
+                            {{ number_format(
+                                $variant['return_quantity'] ?? 0,
+                                0,
+                                '.',
+                                ' '
+                            ) }}
+
+                        </td>
+
+
+                        {{-- ПРОДАЖИ --}}
+
+                        <td class="text-right sales-value">
+
+                            {{ number_format(
+                                $variant['sales'] ?? 0,
+                                0,
+                                '.',
+                                ' '
+                            ) }} ₸
+
+                        </td>
+
+
+                        {{-- ИТОГ --}}
+
+                        <td class="text-right profit-value">
+
+                            {{ number_format(
+                                $variant['profit'] ?? 0,
+                                0,
+                                '.',
+                                ' '
+                            ) }} ₸
+
+                        </td>
+
+
+                    </tr>
+
+
+                    @endforeach
+
+
+                </tbody>
+
+
+            </table>
 
         </div>
 
 
-        {{-- САМЫЕ ПРОДАВАЕМЫЕ ТОВАРЫ --}}
+        @else
 
-        <div class="section-card">
 
-            <div class="section-header">
+        <div style="
+            padding:30px;
+            text-align:center;
+            color:var(--ink-faint);
+        ">
 
-                <div>
+            За выбранный период продаж вариантов нет.
 
-                    <div class="section-title">
-                        Самые продаваемые товары
-                    </div>
+        </div>
 
-                    <div class="section-description">
-                        Товары с наибольшим количеством продаж за выбранный период
-                    </div>
 
+        @endif
+
+
+    </div>
+
+
+</div>
+
+
+{{-- =========================================================
+     MODAL: ПРОДАЖИ ПО ДНЯМ
+========================================================= --}}
+
+<div
+    id="salesDaysModal"
+    class="analytics-modal"
+    onclick="closeSalesDaysModal(event)">
+
+
+    <div
+        class="analytics-modal-content"
+        onclick="event.stopPropagation()">
+
+
+        <div class="modal-header-custom">
+
+
+            <div>
+
+                <div class="modal-title-custom">
+                    Продажи по дням
                 </div>
 
+                <div
+                    class="section-description"
+                    style="margin-top:4px;">
 
-                @if(isset($productStats) && $productStats->count() > 10)
+                    {{ $from->format('d.m.Y') }}
 
-                <button
-                    type="button"
-                    class="details-btn"
-                    onclick="openProductsModal()">
+                    —
 
-                    <i class="bi bi-list"></i>
+                    {{ $to->format('d.m.Y') }}
 
-                    Подробнее
-
-                </button>
-
-                @endif
+                </div>
 
             </div>
 
 
-            @if(isset($topProducts) && $topProducts->count())
+            <button
+                type="button"
+                class="modal-close"
+                onclick="closeSalesDaysModal()">
+
+                &times;
+
+            </button>
+
+
+        </div>
+
+
+        <div class="modal-body-custom">
+
 
             <div class="table-wrap">
 
+
                 <table>
+
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Дата
+                            </th>
+
+                            <th>
+                                День недели
+                            </th>
+
+                            <th>
+                                Заказы
+                            </th>
+
+                            <th class="text-right">
+                                Продажи
+                            </th>
+
+                            <th class="text-right">
+                                Возвраты
+                            </th>
+
+                            <th class="text-right">
+                                Итог
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                        @forelse($salesByDay as $day)
+
+
+                        @php
+
+                        $carbonDate = \Carbon\Carbon::parse(
+                            $day['date'],
+                            'Asia/Almaty'
+                        );
+
+                        @endphp
+
+
+                        <tr>
+
+
+                            <td>
+                                {{ $carbonDate->format('d.m.Y') }}
+                            </td>
+
+
+                            <td>
+                                {{ $carbonDate->locale('ru')->translatedFormat('l') }}
+                            </td>
+
+
+                            <td class="order-count">
+                                {{ $day['orders'] }}
+                            </td>
+
+
+                            <td class="text-right sales-value">
+
+                                {{ number_format(
+                                    $day['sales'],
+                                    0,
+                                    '.',
+                                    ' '
+                                ) }} ₸
+
+                            </td>
+
+
+                            <td class="text-right return-value">
+
+                                {{ number_format(
+                                    $day['returns'],
+                                    0,
+                                    '.',
+                                    ' '
+                                ) }} ₸
+
+                            </td>
+
+
+                            <td class="text-right profit-value">
+
+                                {{ number_format(
+                                    $day['profit'],
+                                    0,
+                                    '.',
+                                    ' '
+                                ) }} ₸
+
+                            </td>
+
+
+                        </tr>
+
+
+                        @empty
+
+
+                        <tr>
+
+                            <td
+                                colspan="6"
+                                style="
+                                    text-align:center;
+                                    color:var(--ink-faint);
+                                    padding:30px;
+                                ">
+
+                                За выбранный период заказов нет
+
+                            </td>
+
+                        </tr>
+
+
+                        @endforelse
+
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+{{-- =========================================================
+     MODAL: ВСЕ ВАРИАНТЫ
+========================================================= --}}
+
+<div
+    id="productsModal"
+    class="analytics-modal"
+    onclick="closeProductsModal(event)">
+
+
+    <div
+        class="analytics-modal-content"
+        onclick="event.stopPropagation()">
+
+
+        <div class="modal-header-custom">
+
+
+            <div>
+
+                <div class="modal-title-custom">
+                    Продажи по вариантам
+                </div>
+
+
+                <div
+                    class="section-description"
+                    style="margin-top:4px;">
+
+                    {{ $from->format('d.m.Y') }}
+
+                    —
+
+                    {{ $to->format('d.m.Y') }}
+
+
+                    @if(isset($productStats))
+
+                    &nbsp; · &nbsp;
+
+                    {{ $productStats->count() }}
+
+                    вариантов
+
+                    @endif
+
+                </div>
+
+
+            </div>
+
+
+            <button
+                type="button"
+                class="modal-close"
+                onclick="closeProductsModal()">
+
+                &times;
+
+            </button>
+
+
+        </div>
+
+
+        <div class="modal-body-custom">
+
+
+            @if(isset($productStats) && $productStats->count())
+
+
+            <div class="table-wrap">
+
+
+                <table>
+
 
                     <thead>
 
@@ -981,7 +1530,15 @@
                             </th>
 
                             <th>
-                                Артикул
+                                Вариант / SKU
+                            </th>
+
+                            <th>
+                                Товар
+                            </th>
+
+                            <th>
+                                Цвет
                             </th>
 
                             <th class="text-right">
@@ -997,6 +1554,10 @@
                             </th>
 
                             <th class="text-right">
+                                Возвраты
+                            </th>
+
+                            <th class="text-right">
                                 Итог
                             </th>
 
@@ -1007,13 +1568,19 @@
 
                     <tbody>
 
-                        @foreach($topProducts as $index => $product)
+
+                        @foreach($productStats as $index => $variant)
+
 
                         <tr>
 
+
+                            {{-- РАНГ --}}
+
                             <td>
 
-                                <div class="product-rank {{ $index === 0 ? 'first' : '' }}">
+                                <div
+                                    class="product-rank {{ $index === 0 ? 'first' : '' }}">
 
                                     {{ $index + 1 }}
 
@@ -1022,610 +1589,229 @@
                             </td>
 
 
+                            {{-- SKU --}}
+
                             <td>
 
-                                @if(
-                                isset($product['variants']) &&
-                                count($product['variants'])
-                                )
-
                                 <div class="product-name">
 
-                                    @foreach(
-                                    collect($product['variants'])->take(3)
-                                    as $variant
-                                    )
-
-                                    {{ $variant['sku'] }}
-
-                                    @if(!$loop->last)
-                                    ·
-                                    @endif
-
-                                    @endforeach
-
-
-                                    @if(count($product['variants']) > 3)
-
-                                    · ещё
-                                    {{ count($product['variants']) - 3 }}
-
-                                    @endif
+                                    {{ $variant['sku'] ?? '—' }}
 
                                 </div>
-
-                                @else
-
-                                <div class="product-name">
-                                    —
-                                </div>
-
-                                @endif
 
                             </td>
 
+
+                            {{-- ТОВАР --}}
+
+                            <td>
+
+                                <div class="product-name">
+
+                                    {{ $variant['product_name'] ?? 'Без названия' }}
+
+                                </div>
+
+                            </td>
+
+
+                            {{-- ЦВЕТ --}}
+
+                            <td>
+
+                                <div class="product-color">
+
+                                    {{ $variant['color'] ?? '—' }}
+
+                                </div>
+
+                            </td>
+
+
+                            {{-- ПРОДАНО --}}
 
                             <td class="text-right product-quantity">
 
                                 {{ number_format(
-                                        $product['sold_quantity'],
-                                        0,
-                                        '.',
-                                        ' '
-                                    ) }}
+                                    $variant['sold_quantity'] ?? 0,
+                                    0,
+                                    '.',
+                                    ' '
+                                ) }}
 
                             </td>
 
+
+                            {{-- ВОЗВРАТ ШТУК --}}
 
                             <td class="text-right return-value">
 
                                 {{ number_format(
-                                        $product['return_quantity'],
-                                        0,
-                                        '.',
-                                        ' '
-                                    ) }}
+                                    $variant['return_quantity'] ?? 0,
+                                    0,
+                                    '.',
+                                    ' '
+                                ) }}
 
                             </td>
 
+
+                            {{-- ПРОДАЖИ --}}
 
                             <td class="text-right sales-value">
 
                                 {{ number_format(
-                                        $product['sales'],
-                                        0,
-                                        '.',
-                                        ' '
-                                    ) }} ₸
+                                    $variant['sales'] ?? 0,
+                                    0,
+                                    '.',
+                                    ' '
+                                ) }} ₸
 
                             </td>
 
+
+                            {{-- СУММА ВОЗВРАТОВ --}}
+
+                            <td class="text-right return-value">
+
+                                {{ number_format(
+                                    $variant['returns'] ?? 0,
+                                    0,
+                                    '.',
+                                    ' '
+                                ) }} ₸
+
+                            </td>
+
+
+                            {{-- ИТОГ --}}
 
                             <td class="text-right profit-value">
 
                                 {{ number_format(
-                                        $product['profit'],
-                                        0,
-                                        '.',
-                                        ' '
-                                    ) }} ₸
+                                    $variant['profit'] ?? 0,
+                                    0,
+                                    '.',
+                                    ' '
+                                ) }} ₸
 
                             </td>
 
+
                         </tr>
+
 
                         @endforeach
 
+
                     </tbody>
+
 
                 </table>
 
+
             </div>
+
 
             @else
 
+
             <div style="
-                padding:30px;
+                padding:40px;
                 text-align:center;
                 color:var(--ink-faint);
             ">
 
-                За выбранный период продаж товаров нет.
+                За выбранный период продаж вариантов нет.
 
             </div>
+
 
             @endif
 
+
         </div>
+
 
     </div>
 
 
-    {{-- =========================================================
-     MODAL: ПРОДАЖИ ПО ДНЯМ
-========================================================= --}}
+</div>
 
-    <div
-        id="salesDaysModal"
-        class="analytics-modal"
-        onclick="closeSalesDaysModal(event)">
 
-        <div
-            class="analytics-modal-content"
-            onclick="event.stopPropagation()">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-            <div class="modal-header-custom">
 
-                <div>
+<script>
 
-                    <div class="modal-title-custom">
-                        Продажи по дням
-                    </div>
 
-                    <div
-                        class="section-description"
-                        style="margin-top:4px;">
-
-                        {{ $from->format('d.m.Y') }}
-                        —
-                        {{ $to->format('d.m.Y') }}
-
-                    </div>
-
-                </div>
-
-
-                <button
-                    type="button"
-                    class="modal-close"
-                    onclick="closeSalesDaysModal()">
-
-                    &times;
-
-                </button>
-
-            </div>
-
-
-            <div class="modal-body-custom">
-
-                <div class="table-wrap">
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    Дата
-                                </th>
-
-                                <th>
-                                    День недели
-                                </th>
-
-                                <th>
-                                    Заказы
-                                </th>
-
-                                <th class="text-right">
-                                    Продажи
-                                </th>
-
-                                <th class="text-right">
-                                    Возвраты
-                                </th>
-
-                                <th class="text-right">
-                                    Итог
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-                            @forelse($salesByDay as $day)
-
-                            @php
-
-                            $carbonDate = \Carbon\Carbon::parse(
-                            $day['date'],
-                            'Asia/Almaty'
-                            );
-
-                            @endphp
-
-
-                            <tr>
-
-                                <td>
-                                    {{ $carbonDate->format('d.m.Y') }}
-                                </td>
-
-
-                                <td>
-                                    {{ $carbonDate->locale('ru')->translatedFormat('l') }}
-                                </td>
-
-
-                                <td class="order-count">
-                                    {{ $day['orders'] }}
-                                </td>
-
-
-                                <td class="text-right sales-value">
-
-                                    {{ number_format(
-                                        $day['sales'],
-                                        0,
-                                        '.',
-                                        ' '
-                                    ) }} ₸
-
-                                </td>
-
-
-                                <td class="text-right return-value">
-
-                                    {{ number_format(
-                                        $day['returns'],
-                                        0,
-                                        '.',
-                                        ' '
-                                    ) }} ₸
-
-                                </td>
-
-
-                                <td class="text-right profit-value">
-
-                                    {{ number_format(
-                                        $day['profit'],
-                                        0,
-                                        '.',
-                                        ' '
-                                    ) }} ₸
-
-                                </td>
-
-                            </tr>
-
-
-                            @empty
-
-                            <tr>
-
-                                <td
-                                    colspan="6"
-                                    style="
-                                        text-align:center;
-                                        color:var(--ink-faint);
-                                        padding:30px;
-                                    ">
-
-                                    За выбранный период заказов нет
-
-                                </td>
-
-                            </tr>
-
-                            @endforelse
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    {{-- =========================================================
-     MODAL: ТОВАРЫ
-========================================================= --}}
-
-    <div
-        id="productsModal"
-        class="analytics-modal"
-        onclick="closeProductsModal(event)">
-
-        <div
-            class="analytics-modal-content"
-            onclick="event.stopPropagation()">
-
-
-            <div class="modal-header-custom">
-
-                <div>
-
-                    <div class="modal-title-custom">
-                        Продажи по товарам
-                    </div>
-
-                    <div
-                        class="section-description"
-                        style="margin-top:4px;">
-
-                        {{ $from->format('d.m.Y') }}
-                        —
-                        {{ $to->format('d.m.Y') }}
-
-                        @if(isset($productStats))
-
-                        &nbsp; · &nbsp;
-
-                        {{ $productStats->count() }} товаров
-
-                        @endif
-
-                    </div>
-
-                </div>
-
-
-                <button
-                    type="button"
-                    class="modal-close"
-                    onclick="closeProductsModal()">
-
-                    &times;
-
-                </button>
-
-            </div>
-
-
-            <div class="modal-body-custom">
-
-
-                @if(isset($productStats) && $productStats->count())
-
-
-                <div class="table-wrap">
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    #
-                                </th>
-
-                                <th>
-                                    Артикул
-                                </th>
-
-                                <th class="text-right">
-                                    Продано
-                                </th>
-
-                                <th class="text-right">
-                                    Возврат
-                                </th>
-
-                                <th class="text-right">
-                                    Продажи
-                                </th>
-
-                                <th class="text-right">
-                                    Возвраты
-                                </th>
-
-                                <th class="text-right">
-                                    Итог
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-
-                            @foreach($productStats as $index => $product)
-
-                            <tr>
-
-                                <td>
-
-                                    <div class="product-rank {{ $index === 0 ? 'first' : '' }}">
-
-                                        {{ $index + 1 }}
-
-                                    </div>
-
-                                </td>
-
-
-                                <td>
-
-                                    @if(
-                                    isset($product['variants']) &&
-                                    count($product['variants'])
-                                    )
-
-                                    @foreach($product['variants'] as $variant)
-
-                                    <div
-                                        class="product-name"
-                                        style="margin-bottom:5px;">
-
-                                        {{ $variant['sku'] }}
-
-                                    </div>
-
-                                    @endforeach
-
-                                    @else
-
-                                    —
-
-                                    @endif
-
-                                </td>
-
-
-                                <td class="text-right product-quantity">
-
-                                    {{ number_format(
-                                            $product['sold_quantity'],
-                                            0,
-                                            '.',
-                                            ' '
-                                        ) }}
-
-                                </td>
-
-
-                                <td class="text-right return-value">
-
-                                    {{ number_format(
-                                            $product['return_quantity'],
-                                            0,
-                                            '.',
-                                            ' '
-                                        ) }}
-
-                                </td>
-
-
-                                <td class="text-right sales-value">
-
-                                    {{ number_format(
-                                            $product['sales'],
-                                            0,
-                                            '.',
-                                            ' '
-                                        ) }} ₸
-
-                                </td>
-
-
-                                <td class="text-right return-value">
-
-                                    {{ number_format(
-                                            $product['returns'],
-                                            0,
-                                            '.',
-                                            ' '
-                                        ) }} ₸
-
-                                </td>
-
-
-                                <td class="text-right profit-value">
-
-                                    {{ number_format(
-                                            $product['profit'],
-                                            0,
-                                            '.',
-                                            ' '
-                                        ) }} ₸
-
-                                </td>
-
-                            </tr>
-
-                            @endforeach
-
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-
-                @else
-
-                <div style="
-                    padding:40px;
-                    text-align:center;
-                    color:var(--ink-faint);
-                ">
-
-                    За выбранный период продаж товаров нет.
-
-                </div>
-
-                @endif
-
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <script>
-        /*
+    /*
     |--------------------------------------------------------------------------
     | ГРАФИК
     |--------------------------------------------------------------------------
     */
 
-        document.addEventListener('DOMContentLoaded', function() {
-
-            const weeklyData =
-                @json(array_values($weeklyStats));
+    document.addEventListener('DOMContentLoaded', function() {
 
 
-            const labels =
-                weeklyData.map(function(item) {
+        const weeklyData =
+            @json(array_values($weeklyStats));
 
-                    return item.day +
-                        ' (' +
-                        item.days_count +
-                        ' ' +
+
+        const labels =
+            weeklyData.map(function(item) {
+
+
+                return item.day +
+                    ' (' +
+                    item.days_count +
+                    ' ' +
+                    (
+                        item.days_count === 1 ?
+
+                        'день' :
+
                         (
-                            item.days_count === 1 ?
-                            'день' :
-                            (
-                                item.days_count >= 2 &&
-                                item.days_count <= 4 ?
-                                'дня' :
-                                'дней'
-                            )
-                        ) +
-                        ')';
+                            item.days_count >= 2 &&
+                            item.days_count <= 4 ?
 
-                });
+                            'дня' :
+
+                            'дней'
+                        )
+                    ) +
+                    ')';
 
 
-            const averageProfit =
-                weeklyData.map(function(item) {
-
-                    return Math.round(item.average_profit);
-
-                });
+            });
 
 
-            const chartElement =
-                document.getElementById('weeklySalesChart');
+        const averageProfit =
+            weeklyData.map(function(item) {
+
+                return Math.round(
+                    item.average_profit
+                );
+
+            });
 
 
-            if (!chartElement) {
-                return;
-            }
+        const chartElement =
+            document.getElementById(
+                'weeklySalesChart'
+            );
 
 
-            new Chart(chartElement, {
+        if (!chartElement) {
+            return;
+        }
+
+
+        new Chart(
+            chartElement,
+            {
 
                 type: 'bar',
 
@@ -1686,6 +1872,7 @@
 
                                 title: function(context) {
 
+
                                     if (!context.length) {
                                         return '';
                                     }
@@ -1702,21 +1889,25 @@
                                     let countText;
 
 
-                                    if (item.days_count === 1) {
+                                    if (
+                                        item.days_count === 1
+                                    ) {
 
-                                        countText = 'день';
+                                        countText =
+                                            'день';
 
                                     } else if (
                                         item.days_count >= 2 &&
                                         item.days_count <= 4
                                     ) {
 
-                                        countText = 'дня';
+                                        countText =
+                                            'дня';
 
                                     } else {
 
-                                        countText = 'дней';
-
+                                        countText =
+                                            'дней';
                                     }
 
 
@@ -1732,8 +1923,11 @@
                                 label: function(context) {
 
                                     return 'Средний итог: ' +
-                                        new Intl.NumberFormat('ru-RU')
-                                        .format(context.raw) +
+                                        new Intl.NumberFormat(
+                                            'ru-RU'
+                                        ).format(
+                                            context.raw
+                                        ) +
                                         ' ₸';
 
                                 }
@@ -1754,6 +1948,7 @@
                                 display: false
                             },
 
+
                             ticks: {
 
                                 font: {
@@ -1770,9 +1965,12 @@
 
                                 minRotation: 90,
 
+
                                 callback: function(value) {
 
-                                    return this.getLabelForValue(value);
+                                    return this.getLabelForValue(
+                                        value
+                                    );
 
                                 }
 
@@ -1790,8 +1988,9 @@
 
                                 callback: function(value) {
 
-                                    return new Intl.NumberFormat('ru-RU')
-                                        .format(value) +
+                                    return new Intl.NumberFormat(
+                                        'ru-RU'
+                                    ).format(value) +
                                         ' ₸';
 
                                 },
@@ -1811,126 +2010,153 @@
 
                 }
 
-            });
-
-        });
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | MODAL: ПРОДАЖИ ПО ДНЯМ
-        |--------------------------------------------------------------------------
-        */
-
-        function openSalesDaysModal() {
-
-            const modal =
-                document.getElementById('salesDaysModal');
-
-
-            if (!modal) {
-                return;
             }
+        );
 
 
-            modal.classList.add('active');
+    });
 
 
-            document.body.style.overflow = 'hidden';
+    /*
+    |--------------------------------------------------------------------------
+    | MODAL: ПРОДАЖИ ПО ДНЯМ
+    |--------------------------------------------------------------------------
+    */
+
+    function openSalesDaysModal() {
+
+
+        const modal =
+            document.getElementById(
+                'salesDaysModal'
+            );
+
+
+        if (!modal) {
+            return;
+        }
+
+
+        modal.classList.add('active');
+
+
+        document.body.style.overflow =
+            'hidden';
+
+    }
+
+
+    function closeSalesDaysModal(event) {
+
+
+        const modal =
+            document.getElementById(
+                'salesDaysModal'
+            );
+
+
+        if (!modal) {
+            return;
+        }
+
+
+        if (
+            event &&
+            event.target !== modal
+        ) {
+
+            return;
 
         }
 
 
-        function closeSalesDaysModal(event) {
-
-            const modal =
-                document.getElementById('salesDaysModal');
-
-
-            if (!modal) {
-                return;
-            }
+        modal.classList.remove(
+            'active'
+        );
 
 
-            if (
-                event &&
-                event.target !== modal
-            ) {
+        document.body.style.overflow =
+            '';
 
-                return;
-
-            }
+    }
 
 
-            modal.classList.remove('active');
+    /*
+    |--------------------------------------------------------------------------
+    | MODAL: ВАРИАНТЫ
+    |--------------------------------------------------------------------------
+    */
+
+    function openProductsModal() {
 
 
-            document.body.style.overflow = '';
+        const modal =
+            document.getElementById(
+                'productsModal'
+            );
+
+
+        if (!modal) {
+            return;
+        }
+
+
+        modal.classList.add(
+            'active'
+        );
+
+
+        document.body.style.overflow =
+            'hidden';
+
+    }
+
+
+    function closeProductsModal(event) {
+
+
+        const modal =
+            document.getElementById(
+                'productsModal'
+            );
+
+
+        if (!modal) {
+            return;
+        }
+
+
+        if (
+            event &&
+            event.target !== modal
+        ) {
+
+            return;
 
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | MODAL: ТОВАРЫ
-        |--------------------------------------------------------------------------
-        */
-
-        function openProductsModal() {
-
-            const modal =
-                document.getElementById('productsModal');
+        modal.classList.remove(
+            'active'
+        );
 
 
-            if (!modal) {
-                return;
-            }
+        document.body.style.overflow =
+            '';
+
+    }
 
 
-            modal.classList.add('active');
+    /*
+    |--------------------------------------------------------------------------
+    | ESC
+    |--------------------------------------------------------------------------
+    */
 
+    document.addEventListener(
+        'keydown',
+        function(event) {
 
-            document.body.style.overflow = 'hidden';
-
-        }
-
-
-        function closeProductsModal(event) {
-
-            const modal =
-                document.getElementById('productsModal');
-
-
-            if (!modal) {
-                return;
-            }
-
-
-            if (
-                event &&
-                event.target !== modal
-            ) {
-
-                return;
-
-            }
-
-
-            modal.classList.remove('active');
-
-
-            document.body.style.overflow = '';
-
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | ESC
-        |--------------------------------------------------------------------------
-        */
-
-        document.addEventListener('keydown', function(event) {
 
             if (event.key !== 'Escape') {
                 return;
@@ -1938,38 +2164,52 @@
 
 
             const salesModal =
-                document.getElementById('salesDaysModal');
+                document.getElementById(
+                    'salesDaysModal'
+                );
 
 
             const productsModal =
-                document.getElementById('productsModal');
+                document.getElementById(
+                    'productsModal'
+                );
 
 
             if (
                 salesModal &&
-                salesModal.classList.contains('active')
+                salesModal.classList.contains(
+                    'active'
+                )
             ) {
 
-                salesModal.classList.remove('active');
+                salesModal.classList.remove(
+                    'active'
+                );
 
             }
 
 
             if (
                 productsModal &&
-                productsModal.classList.contains('active')
+                productsModal.classList.contains(
+                    'active'
+                )
             ) {
 
-                productsModal.classList.remove('active');
+                productsModal.classList.remove(
+                    'active'
+                );
 
             }
 
 
-            document.body.style.overflow = '';
+            document.body.style.overflow =
+                '';
 
-        });
-    </script>
+        }
+    );
 
+</script>
 
 
 </body>
