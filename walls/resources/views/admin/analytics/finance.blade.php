@@ -387,7 +387,6 @@
 
             .finance-header {
                 display: block;
-
                 margin-bottom: 16px;
             }
 
@@ -401,37 +400,47 @@
 
             .filter-box {
                 width: 100%;
-
+                max-width: 100%;
                 box-sizing: border-box;
-
                 display: grid;
-
-                grid-template-columns: 1fr 1fr;
-
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
                 gap: 8px;
             }
 
-            .filter-box .btn {
-                grid-column: 1 / -1;
-
+            .field {
+                min-width: 0;
                 width: 100%;
             }
 
             .field input {
                 width: 100%;
-
+                max-width: 100%;
+                min-width: 0;
                 box-sizing: border-box;
+                padding: 0 6px;
+                font-size: 13px;
+            }
+
+            .field input[type="date"] {
+                min-width: 0;
+                width: 100%;
+                max-width: 100%;
+                appearance: none;
+                -webkit-appearance: none;
+            }
+
+            .filter-box .btn {
+                grid-column: 1 / -1;
+                width: 100%;
             }
 
             .finance-cards {
                 grid-template-columns: 1fr 1fr;
-
                 gap: 8px;
             }
 
             .finance-card {
                 padding: 14px;
-
                 border-radius: 11px;
             }
 
@@ -441,7 +450,6 @@
 
             .finance-card-title {
                 font-size: 11px;
-
                 margin-bottom: 7px;
             }
 
@@ -451,19 +459,16 @@
 
             .section {
                 padding: 15px;
-
                 border-radius: 11px;
             }
 
             .section h2 {
                 font-size: 15px;
-
                 margin-bottom: 14px;
             }
 
             .table-wrapper {
                 margin: 0 -15px;
-
                 padding: 0 15px;
             }
 
