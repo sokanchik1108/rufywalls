@@ -463,131 +463,201 @@
        MOBILE
     ======================================== */
 
-        @media (max-width: 800px) {
+@media (max-width: 800px) {
 
-            .payments-page {
-                padding: 10px;
-                width: 100%;
-                box-sizing: border-box;
-            }
+    /* ================================
+       ОСНОВНОЙ КОНТЕЙНЕР
+    ================================= */
 
-            .payments-header {
-                display: block;
-                width: 100%;
-            }
-
-            .payments-title {
-                margin-bottom: 13px;
-            }
-
-            /* =========================
-       ВЕРХНИЙ ФИЛЬТР С / ПО
-    ========================= */
-
-            .filter-box {
-                display: flex !important;
-                flex-direction: column !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                box-sizing: border-box !important;
-                gap: 8px !important;
-                padding: 8px !important;
-            }
-
-            .filter-box .field {
-                display: block !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                min-width: 0 !important;
-                box-sizing: border-box !important;
-            }
-
-            .filter-box .field label {
-                display: block;
-                margin-bottom: 4px;
-            }
-
-            .filter-box .field input {
-                display: block !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                min-width: 0 !important;
-                height: 38px !important;
-                box-sizing: border-box !important;
-                padding: 0 10px !important;
-                margin: 0 !important;
-            }
-
-            .filter-box .field input[type="date"] {
-                width: 100% !important;
-                max-width: 100% !important;
-                min-width: 0 !important;
-                box-sizing: border-box !important;
-                margin: 0 !important;
-            }
-
-            .filter-box .btn {
-                display: block !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                box-sizing: border-box !important;
-                margin: 0 !important;
-            }
+    .payments-page {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        padding: 10px;
+        box-sizing: border-box;
+        overflow-x: hidden;
+    }
 
 
-            /* =========================
+    /* ================================
+       ВЕРХНИЙ ФИЛЬТР "С / ПО"
+    ================================= */
+
+    .payments-header {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        display: block;
+        box-sizing: border-box;
+    }
+
+    .filter-box {
+        display: flex !important;
+        flex-direction: column !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        padding: 8px !important;
+        margin: 0 !important;
+
+        gap: 8px !important;
+
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+    }
+
+    .filter-box .field {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        box-sizing: border-box !important;
+    }
+
+    .filter-box .field label {
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .filter-box .field input,
+    .filter-box .field input[type="date"] {
+        display: block !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        height: 38px !important;
+
+        margin: 0 !important;
+        padding: 0 10px !important;
+
+        box-sizing: border-box !important;
+    }
+
+    .filter-box .btn {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        margin: 0 !important;
+
+        box-sizing: border-box !important;
+    }
+
+
+    /* ================================
        БЛОК ДОБАВЛЕНИЯ ПЛАТЕЖА
-    ========================= */
+    ================================= */
 
-            .section {
-                width: 100%;
-                box-sizing: border-box;
-                padding: 13px;
-            }
+    .section {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
 
-            .form-grid {
-                display: grid !important;
-                grid-template-columns: minmax(0, 1fr) !important;
-                width: 100% !important;
-                gap: 10px !important;
-            }
+        box-sizing: border-box;
+        overflow: hidden;
+    }
 
-            .form-grid>div {
-                width: 100% !important;
-                max-width: 100% !important;
-                min-width: 0 !important;
-                box-sizing: border-box !important;
-            }
+    .form-grid {
+        display: grid !important;
 
-            .form-control,
-            .form-control[type="date"],
-            .form-control[type="number"],
-            input.form-control,
-            input[type="date"].form-control {
-                display: block !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                min-width: 0 !important;
-                box-sizing: border-box !important;
-                margin: 0 !important;
-            }
+        grid-template-columns: minmax(0, 1fr) !important;
 
-            .form-grid .btn {
-                width: 100% !important;
-                max-width: 100% !important;
-                box-sizing: border-box !important;
-            }
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        gap: 10px !important;
+
+        box-sizing: border-box !important;
+    }
+
+    .form-grid > div {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        box-sizing: border-box !important;
+    }
+
+    .form-control {
+        display: block;
+
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        height: 40px !important;
+
+        margin: 0 !important;
+
+        box-sizing: border-box !important;
+    }
 
 
-            /* =========================
+    /* ================================
+       НИЖНЯЯ ДАТА
+       ВЫРАВНИВАЕМ ТЕКСТ ПО ЦЕНТРУ
+    ================================= */
+
+    input[type="date"].form-control {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        height: 40px !important;
+
+        padding: 0 10px !important;
+
+        line-height: 40px !important;
+
+        box-sizing: border-box !important;
+
+        text-align: left;
+    }
+
+    /*
+       В Chrome на Android / некоторых мобильных
+       браузерах дата имеет внутреннее вертикальное
+       выравнивание.
+    */
+
+    input[type="date"].form-control::-webkit-date-and-time-value {
+        height: 40px;
+        line-height: 40px;
+        padding: 0;
+        margin: 0;
+    }
+
+    input[type="date"].form-control::-webkit-datetime-edit {
+        padding: 0;
+        line-height: 40px;
+    }
+
+    input[type="date"].form-control::-webkit-datetime-edit-fields-wrapper {
+        padding: 0;
+        margin: 0;
+        line-height: 40px;
+    }
+
+
+    /* ================================
        ТАБЛИЦА
-    ========================= */
+    ================================= */
 
-            .table-wrapper {
-                margin: 0 -13px;
-                padding: 0 13px;
-            }
-        }
+    .table-wrapper {
+        width: auto;
+        max-width: none;
+
+        margin-left: -13px;
+        margin-right: -13px;
+
+        padding-left: 13px;
+        padding-right: 13px;
+    }
+}
     </style>
 
 
