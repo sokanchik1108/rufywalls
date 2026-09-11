@@ -53,7 +53,7 @@
 
     /* =========================
        NAVIGATION
-    ========================= */
+    ========================== */
 
     .analytics-navigation {
         margin-bottom: 18px;
@@ -63,20 +63,15 @@
         display: inline-flex;
         align-items: center;
         gap: 7px;
-
         height: 36px;
         padding: 0 13px;
-
         background: #fff;
         border: 1px solid #e5e7eb;
         border-radius: 8px;
-
         color: #374151;
         text-decoration: none;
-
         font-size: 13px;
         font-weight: 600;
-
         transition: .15s ease;
     }
 
@@ -88,7 +83,7 @@
 
     /* =========================
        HEADER
-    ========================= */
+    ========================== */
 
     .page-header {
         display: flex;
@@ -105,7 +100,7 @@
 
     /* =========================
        FILTER
-    ========================= */
+    ========================== */
 
     .filter-card {
         background: var(--surface);
@@ -169,7 +164,7 @@
 
     /* =========================
        STAT CARDS
-    ========================= */
+    ========================== */
 
     .stats-grid {
         display: grid;
@@ -217,7 +212,7 @@
 
     /* =========================
        SECONDARY
-    ========================= */
+    ========================== */
 
     .secondary-grid {
         display: grid;
@@ -247,7 +242,7 @@
 
     /* =========================
        SECTION
-    ========================= */
+    ========================== */
 
     .section-card {
         background: var(--surface);
@@ -278,7 +273,7 @@
 
     /* =========================
        CHART
-    ========================= */
+    ========================== */
 
     .chart-container {
         position: relative;
@@ -288,7 +283,7 @@
 
     /* =========================
        DAYS SUMMARY
-    ========================= */
+    ========================== */
 
     .days-summary {
         padding: 18px;
@@ -341,8 +336,8 @@
     }
 
     /* =========================
-       PRODUCTS / VARIANTS
-    ========================= */
+       PRODUCTS
+    ========================== */
 
     .product-rank {
         width: 28px;
@@ -369,27 +364,13 @@
         color: var(--ink);
     }
 
-    .product-product-name {
-        margin-top: 3px;
-        font-size: 11px;
-        color: var(--ink-faint);
-        font-weight: 400;
-    }
-
-    .product-color {
-        margin-top: 3px;
-        font-size: 11px;
-        color: var(--ink-soft);
-        font-weight: 400;
-    }
-
     .product-quantity {
         font-weight: 700;
     }
 
     /* =========================
        MODAL
-    ========================= */
+    ========================== */
 
     .analytics-modal {
         display: none;
@@ -463,7 +444,7 @@
 
     /* =========================
        TABLE
-    ========================= */
+    ========================== */
 
     .table-wrap {
         overflow-x: auto;
@@ -521,7 +502,7 @@
 
     /* =========================
        TABLET
-    ========================= */
+    ========================== */
 
     @media (max-width: 800px) {
 
@@ -532,7 +513,7 @@
 
     /* =========================
        MOBILE
-    ========================= */
+    ========================== */
 
     @media (max-width: 600px) {
 
@@ -693,7 +674,7 @@
 
             <button
                 type="submit"
-                class="btn btn-primary">
+                class="btn-primary">
 
                 <i class="bi bi-funnel"></i>
 
@@ -900,13 +881,13 @@
 
         @php
 
-        $daysWithSales = count($salesByDay);
+            $daysWithSales = count($salesByDay);
 
-        $periodSales = collect($salesByDay)->sum('sales');
+            $periodSales = collect($salesByDay)->sum('sales');
 
-        $periodReturns = collect($salesByDay)->sum('returns');
+            $periodReturns = collect($salesByDay)->sum('returns');
 
-        $periodProfit = collect($salesByDay)->sum('profit');
+            $periodProfit = collect($salesByDay)->sum('profit');
 
         @endphp
 
@@ -1015,16 +996,16 @@
 
             @if(isset($productStats) && $productStats->count() > 10)
 
-            <button
-                type="button"
-                class="details-btn"
-                onclick="openProductsModal()">
+                <button
+                    type="button"
+                    class="details-btn"
+                    onclick="openProductsModal()">
 
-                <i class="bi bi-list"></i>
+                    <i class="bi bi-list"></i>
 
-                Подробнее
+                    Подробнее
 
-            </button>
+                </button>
 
             @endif
 
@@ -1035,162 +1016,182 @@
         @if(isset($topProducts) && $topProducts->count())
 
 
-        <div class="table-wrap">
+            <div class="table-wrap">
 
-            <table>
-
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            #
-                        </th>
-
-                        <th>
-                            Вариант / SKU
-                        </th>
-
-                        <th class="text-right">
-                            Продано
-                        </th>
-
-                        <th class="text-right">
-                            Возврат
-                        </th>
-
-                        <th class="text-right">
-                            Продажи
-                        </th>
-
-                        <th class="text-right">
-                            Итог
-                        </th>
-
-                    </tr>
-
-                </thead>
+                <table>
 
 
-                <tbody>
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                #
+                            </th>
+
+                            <th>
+                                Вариант / SKU
+                            </th>
+
+                            <th class="text-right">
+                                Продано
+                            </th>
+
+                            <th class="text-right">
+                                Возврат
+                            </th>
+
+                            <th class="text-right">
+                                Продажи
+                            </th>
+
+                            {{-- ДОБАВЛЕНО --}}
+
+                            <th class="text-right">
+                                Сумма возвратов
+                            </th>
+
+                            <th class="text-right">
+                                Итог
+                            </th>
+
+                        </tr>
+
+                    </thead>
 
 
-                    @foreach($topProducts as $index => $variant)
+                    <tbody>
 
 
-                    <tr>
+                        @foreach($topProducts as $index => $variant)
 
 
-                        {{-- РАНГ --}}
-
-                        <td>
-
-                            <div
-                                class="product-rank {{ $index === 0 ? 'first' : '' }}">
-
-                                {{ $index + 1 }}
-
-                            </div>
-
-                        </td>
+                            <tr>
 
 
-                        {{-- SKU --}}
+                                {{-- № --}}
 
-                        <td>
+                                <td>
 
-                            <div class="product-name">
+                                    <div
+                                        class="product-rank {{ $index === 0 ? 'first' : '' }}">
 
-                                {{ $variant['sku'] ?? '—' }}
+                                        {{ $index + 1 }}
 
-                            </div>
+                                    </div>
 
-                        </td>
-
-
-                        {{-- ПРОДАНО --}}
-
-                        <td class="text-right product-quantity">
-
-                            {{ number_format(
-                                $variant['sold_quantity'] ?? 0,
-                                0,
-                                '.',
-                                ' '
-                            ) }}
-
-                        </td>
+                                </td>
 
 
-                        {{-- ВОЗВРАТ ШТУК --}}
+                                {{-- SKU --}}
 
-                        <td class="text-right return-value">
+                                <td>
 
-                            {{ number_format(
-                                $variant['return_quantity'] ?? 0,
-                                0,
-                                '.',
-                                ' '
-                            ) }}
+                                    <div class="product-name">
 
-                        </td>
+                                        {{ $variant['sku'] ?? '—' }}
 
+                                    </div>
 
-                        {{-- ПРОДАЖИ --}}
-
-                        <td class="text-right sales-value">
-
-                            {{ number_format(
-                                $variant['sales'] ?? 0,
-                                0,
-                                '.',
-                                ' '
-                            ) }} ₸
-
-                        </td>
+                                </td>
 
 
-                        {{-- ИТОГ --}}
+                                {{-- ПРОДАНО --}}
 
-                        <td class="text-right profit-value">
+                                <td class="text-right product-quantity">
 
-                            {{ number_format(
-                                $variant['profit'] ?? 0,
-                                0,
-                                '.',
-                                ' '
-                            ) }} ₸
+                                    {{ number_format(
+                                        $variant['sold_quantity'] ?? 0,
+                                        0,
+                                        '.',
+                                        ' '
+                                    ) }}
 
-                        </td>
-
-
-                    </tr>
+                                </td>
 
 
-                    @endforeach
+                                {{-- ВОЗВРАТ ШТУК --}}
+
+                                <td class="text-right return-value">
+
+                                    {{ number_format(
+                                        $variant['return_quantity'] ?? 0,
+                                        0,
+                                        '.',
+                                        ' '
+                                    ) }}
+
+                                </td>
 
 
-                </tbody>
+                                {{-- ПРОДАЖИ --}}
+
+                                <td class="text-right sales-value">
+
+                                    {{ number_format(
+                                        $variant['sales'] ?? 0,
+                                        0,
+                                        '.',
+                                        ' '
+                                    ) }} ₸
+
+                                </td>
 
 
-            </table>
+                                {{-- СУММА ВОЗВРАТОВ --}}
 
-        </div>
+                                <td class="text-right return-value">
+
+                                    {{ number_format(
+                                        $variant['returns'] ?? 0,
+                                        0,
+                                        '.',
+                                        ' '
+                                    ) }} ₸
+
+                                </td>
+
+
+                                {{-- ИТОГ --}}
+
+                                <td class="text-right profit-value">
+
+                                    {{ number_format(
+                                        $variant['profit'] ?? 0,
+                                        0,
+                                        '.',
+                                        ' '
+                                    ) }} ₸
+
+                                </td>
+
+
+                            </tr>
+
+
+                        @endforeach
+
+
+                    </tbody>
+
+
+                </table>
+
+            </div>
 
 
         @else
 
 
-        <div style="
-            padding:30px;
-            text-align:center;
-            color:var(--ink-faint);
-        ">
+            <div style="
+                padding:30px;
+                text-align:center;
+                color:var(--ink-faint);
+            ">
 
-            За выбранный период продаж вариантов нет.
+                За выбранный период продаж вариантов нет.
 
-        </div>
+            </div>
 
 
         @endif
@@ -1302,91 +1303,91 @@
                         @forelse($salesByDay as $day)
 
 
-                        @php
+                            @php
 
-                        $carbonDate = \Carbon\Carbon::parse(
-                            $day['date'],
-                            'Asia/Almaty'
-                        );
+                                $carbonDate = \Carbon\Carbon::parse(
+                                    $day['date'],
+                                    'Asia/Almaty'
+                                );
 
-                        @endphp
-
-
-                        <tr>
+                            @endphp
 
 
-                            <td>
-                                {{ $carbonDate->format('d.m.Y') }}
-                            </td>
+                            <tr>
 
 
-                            <td>
-                                {{ $carbonDate->locale('ru')->translatedFormat('l') }}
-                            </td>
+                                <td>
+                                    {{ $carbonDate->format('d.m.Y') }}
+                                </td>
 
 
-                            <td class="order-count">
-                                {{ $day['orders'] }}
-                            </td>
+                                <td>
+                                    {{ $carbonDate->locale('ru')->translatedFormat('l') }}
+                                </td>
 
 
-                            <td class="text-right sales-value">
-
-                                {{ number_format(
-                                    $day['sales'],
-                                    0,
-                                    '.',
-                                    ' '
-                                ) }} ₸
-
-                            </td>
+                                <td class="order-count">
+                                    {{ $day['orders'] }}
+                                </td>
 
 
-                            <td class="text-right return-value">
+                                <td class="text-right sales-value">
 
-                                {{ number_format(
-                                    $day['returns'],
-                                    0,
-                                    '.',
-                                    ' '
-                                ) }} ₸
+                                    {{ number_format(
+                                        $day['sales'],
+                                        0,
+                                        '.',
+                                        ' '
+                                    ) }} ₸
 
-                            </td>
-
-
-                            <td class="text-right profit-value">
-
-                                {{ number_format(
-                                    $day['profit'],
-                                    0,
-                                    '.',
-                                    ' '
-                                ) }} ₸
-
-                            </td>
+                                </td>
 
 
-                        </tr>
+                                <td class="text-right return-value">
+
+                                    {{ number_format(
+                                        $day['returns'],
+                                        0,
+                                        '.',
+                                        ' '
+                                    ) }} ₸
+
+                                </td>
+
+
+                                <td class="text-right profit-value">
+
+                                    {{ number_format(
+                                        $day['profit'],
+                                        0,
+                                        '.',
+                                        ' '
+                                    ) }} ₸
+
+                                </td>
+
+
+                            </tr>
 
 
                         @empty
 
 
-                        <tr>
+                            <tr>
 
-                            <td
-                                colspan="6"
-                                style="
-                                    text-align:center;
-                                    color:var(--ink-faint);
-                                    padding:30px;
-                                ">
+                                <td
+                                    colspan="6"
+                                    style="
+                                        text-align:center;
+                                        color:var(--ink-faint);
+                                        padding:30px;
+                                    ">
 
-                                За выбранный период заказов нет
+                                    За выбранный период заказов нет
 
-                            </td>
+                                </td>
 
-                        </tr>
+                            </tr>
 
 
                         @endforelse
@@ -1445,14 +1446,13 @@
 
                     {{ $to->format('d.m.Y') }}
 
-
                     @if(isset($productStats))
 
-                    &nbsp; · &nbsp;
+                        &nbsp; · &nbsp;
 
-                    {{ $productStats->count() }}
+                        {{ $productStats->count() }}
 
-                    вариантов
+                        вариантов
 
                     @endif
 
@@ -1481,216 +1481,182 @@
             @if(isset($productStats) && $productStats->count())
 
 
-            <div class="table-wrap">
+                <div class="table-wrap">
 
 
-                <table>
+                    <table>
 
 
-                    <thead>
+                        <thead>
 
-                        <tr>
+                            <tr>
 
-                            <th>
-                                #
-                            </th>
+                                <th>
+                                    #
+                                </th>
 
-                            <th>
-                                Вариант / SKU
-                            </th>
+                                <th>
+                                    Вариант / SKU
+                                </th>
 
-                            <th>
-                                Товар
-                            </th>
+                                <th class="text-right">
+                                    Продано
+                                </th>
 
-                            <th>
-                                Цвет
-                            </th>
+                                <th class="text-right">
+                                    Возврат
+                                </th>
 
-                            <th class="text-right">
-                                Продано
-                            </th>
+                                <th class="text-right">
+                                    Продажи
+                                </th>
 
-                            <th class="text-right">
-                                Возврат
-                            </th>
+                                <th class="text-right">
+                                    Сумма возвратов
+                                </th>
 
-                            <th class="text-right">
-                                Продажи
-                            </th>
+                                <th class="text-right">
+                                    Итог
+                                </th>
 
-                            <th class="text-right">
-                                Возвраты
-                            </th>
+                            </tr>
 
-                            <th class="text-right">
-                                Итог
-                            </th>
+                        </thead>
 
-                        </tr>
 
-                    </thead>
+                        <tbody>
 
 
-                    <tbody>
+                            @foreach($productStats as $index => $variant)
 
 
-                        @foreach($productStats as $index => $variant)
+                                <tr>
 
 
-                        <tr>
+                                    {{-- № --}}
 
+                                    <td>
 
-                            {{-- РАНГ --}}
+                                        <div
+                                            class="product-rank {{ $index === 0 ? 'first' : '' }}">
 
-                            <td>
+                                            {{ $index + 1 }}
 
-                                <div
-                                    class="product-rank {{ $index === 0 ? 'first' : '' }}">
+                                        </div>
 
-                                    {{ $index + 1 }}
+                                    </td>
 
-                                </div>
 
-                            </td>
+                                    {{-- SKU --}}
 
+                                    <td>
 
-                            {{-- SKU --}}
+                                        <div class="product-name">
 
-                            <td>
+                                            {{ $variant['sku'] ?? '—' }}
 
-                                <div class="product-name">
+                                        </div>
 
-                                    {{ $variant['sku'] ?? '—' }}
+                                    </td>
 
-                                </div>
 
-                            </td>
+                                    {{-- ПРОДАНО, ШТ --}}
 
+                                    <td class="text-right product-quantity">
 
-                            {{-- ТОВАР --}}
+                                        {{ number_format(
+                                            $variant['sold_quantity'] ?? 0,
+                                            0,
+                                            '.',
+                                            ' '
+                                        ) }}
 
-                            <td>
+                                    </td>
 
-                                <div class="product-name">
 
-                                    {{ $variant['product_name'] ?? 'Без названия' }}
+                                    {{-- ВОЗВРАТ, ШТ --}}
 
-                                </div>
+                                    <td class="text-right return-value">
 
-                            </td>
+                                        {{ number_format(
+                                            $variant['return_quantity'] ?? 0,
+                                            0,
+                                            '.',
+                                            ' '
+                                        ) }}
 
+                                    </td>
 
-                            {{-- ЦВЕТ --}}
 
-                            <td>
+                                    {{-- ПРОДАЖИ --}}
 
-                                <div class="product-color">
+                                    <td class="text-right sales-value">
 
-                                    {{ $variant['color'] ?? '—' }}
+                                        {{ number_format(
+                                            $variant['sales'] ?? 0,
+                                            0,
+                                            '.',
+                                            ' '
+                                        ) }} ₸
 
-                                </div>
+                                    </td>
 
-                            </td>
 
+                                    {{-- ОБЩАЯ СУММА ВОЗВРАТОВ --}}
 
-                            {{-- ПРОДАНО --}}
+                                    <td class="text-right return-value">
 
-                            <td class="text-right product-quantity">
+                                        {{ number_format(
+                                            $variant['returns'] ?? 0,
+                                            0,
+                                            '.',
+                                            ' '
+                                        ) }} ₸
 
-                                {{ number_format(
-                                    $variant['sold_quantity'] ?? 0,
-                                    0,
-                                    '.',
-                                    ' '
-                                ) }}
+                                    </td>
 
-                            </td>
 
+                                    {{-- ИТОГ --}}
 
-                            {{-- ВОЗВРАТ ШТУК --}}
+                                    <td class="text-right profit-value">
 
-                            <td class="text-right return-value">
+                                        {{ number_format(
+                                            $variant['profit'] ?? 0,
+                                            0,
+                                            '.',
+                                            ' '
+                                        ) }} ₸
 
-                                {{ number_format(
-                                    $variant['return_quantity'] ?? 0,
-                                    0,
-                                    '.',
-                                    ' '
-                                ) }}
+                                    </td>
 
-                            </td>
 
+                                </tr>
 
-                            {{-- ПРОДАЖИ --}}
 
-                            <td class="text-right sales-value">
+                            @endforeach
 
-                                {{ number_format(
-                                    $variant['sales'] ?? 0,
-                                    0,
-                                    '.',
-                                    ' '
-                                ) }} ₸
 
-                            </td>
+                        </tbody>
 
 
-                            {{-- СУММА ВОЗВРАТОВ --}}
+                    </table>
 
-                            <td class="text-right return-value">
 
-                                {{ number_format(
-                                    $variant['returns'] ?? 0,
-                                    0,
-                                    '.',
-                                    ' '
-                                ) }} ₸
-
-                            </td>
-
-
-                            {{-- ИТОГ --}}
-
-                            <td class="text-right profit-value">
-
-                                {{ number_format(
-                                    $variant['profit'] ?? 0,
-                                    0,
-                                    '.',
-                                    ' '
-                                ) }} ₸
-
-                            </td>
-
-
-                        </tr>
-
-
-                        @endforeach
-
-
-                    </tbody>
-
-
-                </table>
-
-
-            </div>
+                </div>
 
 
             @else
 
 
-            <div style="
-                padding:40px;
-                text-align:center;
-                color:var(--ink-faint);
-            ">
+                <div style="
+                    padding:40px;
+                    text-align:center;
+                    color:var(--ink-faint);
+                ">
 
-                За выбранный период продаж вариантов нет.
+                    За выбранный период продаж вариантов нет.
 
-            </div>
+                </div>
 
 
             @endif
@@ -1705,13 +1671,9 @@
 </div>
 
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-
 <script>
-
 
     /*
     |--------------------------------------------------------------------------
@@ -1721,7 +1683,6 @@
 
     document.addEventListener('DOMContentLoaded', function() {
 
-
         const weeklyData =
             @json(array_values($weeklyStats));
 
@@ -1729,27 +1690,21 @@
         const labels =
             weeklyData.map(function(item) {
 
-
                 return item.day +
                     ' (' +
                     item.days_count +
                     ' ' +
                     (
-                        item.days_count === 1 ?
-
-                        'день' :
-
-                        (
-                            item.days_count >= 2 &&
-                            item.days_count <= 4 ?
-
-                            'дня' :
-
-                            'дней'
-                        )
+                        item.days_count === 1
+                            ? 'день'
+                            : (
+                                item.days_count >= 2 &&
+                                item.days_count <= 4
+                                    ? 'дня'
+                                    : 'дней'
+                            )
                     ) +
                     ')';
-
 
             });
 
@@ -1838,7 +1793,6 @@
 
                                 title: function(context) {
 
-
                                     if (!context.length) {
                                         return '';
                                     }
@@ -1859,21 +1813,19 @@
                                         item.days_count === 1
                                     ) {
 
-                                        countText =
-                                            'день';
+                                        countText = 'день';
 
                                     } else if (
                                         item.days_count >= 2 &&
                                         item.days_count <= 4
                                     ) {
 
-                                        countText =
-                                            'дня';
+                                        countText = 'дня';
 
                                     } else {
 
-                                        countText =
-                                            'дней';
+                                        countText = 'дней';
+
                                     }
 
 
@@ -1906,7 +1858,6 @@
 
 
                     scales: {
-
 
                         x: {
 
@@ -1979,7 +1930,6 @@
             }
         );
 
-
     });
 
 
@@ -1990,7 +1940,6 @@
     */
 
     function openSalesDaysModal() {
-
 
         const modal =
             document.getElementById(
@@ -2013,7 +1962,6 @@
 
 
     function closeSalesDaysModal(event) {
-
 
         const modal =
             document.getElementById(
@@ -2055,7 +2003,6 @@
 
     function openProductsModal() {
 
-
         const modal =
             document.getElementById(
                 'productsModal'
@@ -2079,7 +2026,6 @@
 
 
     function closeProductsModal(event) {
-
 
         const modal =
             document.getElementById(
@@ -2122,7 +2068,6 @@
     document.addEventListener(
         'keydown',
         function(event) {
-
 
             if (event.key !== 'Escape') {
                 return;
