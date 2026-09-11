@@ -26,9 +26,9 @@ class HomeController extends Controller
     {
         $user = Auth::user();
 
-        // Если пользователь аналитик —
-        // сразу отправляем его в меню аналитики
-        if ($user->can_view_analytics) {
+        // Если пользователь аналитик,
+        // но НЕ владелец — отправляем его в меню аналитики
+        if ($user->can_view_analytics && !$user->is_owner) {
             return redirect()->route('admin.analytics.menu');
         }
 
