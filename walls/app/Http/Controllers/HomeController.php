@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -23,6 +24,14 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $user = Auth::user();
+
+        // Если пользователь аналитик —
+        // сразу отправляем его в меню аналитики
+        if ($user->can_view_analytics) {
+            return redirect()->route('admin.analytics.menu');
+        }
+
         return view('admin.home');
     }
 }

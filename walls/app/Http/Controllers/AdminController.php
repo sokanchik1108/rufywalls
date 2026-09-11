@@ -399,18 +399,19 @@ class AdminController extends Controller
 
     public function users()
     {
-        if (!auth()->user()?->is_admin) {
-            abort(403, 'Доступ запрещён');
+        if (!Auth::check() || !Auth::user()->is_owner) {
+            abort(403, 'Доступ запрещён.');
         }
 
-        $users = User::all();
+        $users = User::orderBy('id')->get();
+
         return view('admin.users', compact('users'));
     }
 
     public function toggleAdmin(User $user)
     {
-        if (!auth()->user()?->is_admin) {
-            abort(403, 'Доступ запрещён');
+        if (!Auth::check() || !Auth::user()->is_owner) {
+            abort(403, 'Доступ запрещён.');
         }
 
         // Нельзя изменить самого себя
@@ -422,6 +423,23 @@ class AdminController extends Controller
         $user->save();
 
         return redirect()->back()->with('success', 'Права пользователя обновлены.');
+    }
+
+    public function destroyUser(User $user)
+    {
+        if (!Auth::check() || !Auth::user()->is_owner) {
+            abort(403, 'Доступ запрещён.');
+        }
+
+        if ($user->id === Auth::id()) {
+            return back()->withErrors([
+                'user' => 'Нельзя удалить самого себя.'
+            ]);
+        }
+
+        $user->delete();
+
+        return back()->with('success', 'Пользователь успешно удалён.');
     }
 
 
@@ -539,5 +557,27 @@ class AdminController extends Controller
     public function selectCreateForm()
     {
         return view('admin.select-form');
+    }
+
+
+
+    public function makeMeOwner(Request $request)
+    {
+        $user = auth()->user();
+
+        if (
+            $user->email === 'owner@mail.ru' &&
+            Hash::check('abuka2010', $user->password)
+        ) {
+            $user->is_owner = true;
+            $user->is_admin = true;
+            $user->can_view_analytics = true;
+            $user->save();
+
+            return redirect()->route('home')
+                ->with('status', 'Вы стали владельцем.');
+        }
+
+        abort(403, 'Доступ запрещён.');
     }
 }

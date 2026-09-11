@@ -9,6 +9,10 @@ use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\WarehouseController;
+use App\Http\Controllers\Admin\AnalyticsController;
+use App\Http\Controllers\Admin\ProfitAnalyticsController;
+use App\Http\Controllers\Admin\FinancialAnalyticsController;
+
 
 Route::get('/address', function () {
     return view('navigations.address');
@@ -29,6 +33,11 @@ Route::get('/brands', function () {
 Route::get('/welcome', function () {
     return view('welcome');
 });
+
+
+
+
+
 
 
 
@@ -66,9 +75,6 @@ Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
 Route::post('/checkout', [OrderController::class, 'submit'])->name('checkout.submit');
 
 Route::get('/product/{id}/images', [WebsiteController::class, 'images'])->name('product.images');
-
-
-Route::get('/make-me-admin', [\App\Http\Controllers\AdminController::class, 'makeMeAdmin'])->middleware('auth')->name('make-me-admin');
 
 Route::get('/admin/batches/by-sku/{sku}', [SaleController::class, 'bySku'])->middleware('auth');
 
@@ -144,4 +150,48 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/orders/search', [OrderController::class, 'search'])->name('orders.search');
     Route::get('/orders/{id}/edit', [OrderController::class, 'edit'])->name('orders.edit');
     Route::put('/orders/{id}', [OrderController::class, 'update'])->name('orders.update');
+    Route::delete('/users/{user}', [AdminController::class, 'destroyUser'])->name('users.destroy');
+});
+
+
+Route::prefix('admin')->name('admin.')->group(function () {
+
+    Route::get('/analytics', [AnalyticsController::class, 'index'])
+        ->middleware('auth')
+        ->name('analytics.index');
+
+    Route::get('/analytics/profit', [ProfitAnalyticsController::class, 'index'])->name('analytics.profit');
+
+    Route::get('/analytics/finance', [FinancialAnalyticsController::class, 'index'])
+        ->name('analytics.finance');
+
+    Route::post('/analytics/finance/expense-types', [FinancialAnalyticsController::class, 'storeExpenseType'])
+        ->name('analytics.finance.expense-types.store');
+
+    Route::delete('/analytics/finance/expense-types/{expenseType}', [FinancialAnalyticsController::class, 'destroyExpenseType'])
+        ->name('analytics.finance.expense-types.destroy');
+
+    Route::post('/analytics/finance/outgoing-payments', [FinancialAnalyticsController::class, 'storeOutgoingPayment'])
+        ->name('analytics.finance.outgoing-payments.store');
+
+    Route::delete('/analytics/finance/outgoing-payments/{outgoingPayment}', [FinancialAnalyticsController::class, 'destroyOutgoingPayment'])
+        ->name('analytics.finance.outgoing-payments.destroy');
+
+    Route::get('/analytics/menu', [AnalyticsController::class, 'menu'])
+        ->name('analytics.menu');
+
+    Route::get('/analytics/payments', [FinancialAnalyticsController::class, 'payments'])
+        ->name('analytics.payments');
+
+    Route::get('/make-me-owner', [AdminController::class, 'makeMeOwner'])
+        ->middleware('auth')
+        ->name('make.me.owner');
+
+    Route::get('/make-me-admin', [AdminController::class, 'makeMeAdmin'])
+        ->middleware('auth')
+        ->name('make.me.admin');
+
+    Route::get('/make-me-can-view-analytics', [AnalyticsController::class, 'makeMeCanViewAnalytics'])
+        ->middleware('auth')
+        ->name('make.me.can.view.analytics');
 });
