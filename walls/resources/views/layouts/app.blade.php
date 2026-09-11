@@ -173,7 +173,6 @@
                     <hr class="my-1">
                     <a class="nav-link" href="{{ route('admin.sales.returns') }}">Поиск в истории продаж</a>
                     <hr class="my-1">
-                    <a class="nav-link" href="{{ route('website') }}" style="color: blue;">ПЕРЕЙТИ НА САЙТ</a>
                     @endif
                     @endauth
                     @guest
