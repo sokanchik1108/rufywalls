@@ -481,50 +481,7 @@
                 font-size: 22px;
             }
 
-            .filter-box {
-                width: 100%;
-                max-width: 100%;
-                box-sizing: border-box;
-
-                display: grid;
-                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-                gap: 8px;
-            }
-
-            .field {
-                width: 100%;
-                min-width: 0;
-            }
-
-            .field input {
-                display: block;
-
-                width: 100%;
-                max-width: 100%;
-                min-width: 0;
-
-                box-sizing: border-box;
-
-                padding: 0 6px;
-                font-size: 13px;
-            }
-
-            .field input[type="date"] {
-                width: 100%;
-                max-width: 100%;
-                min-width: 0;
-
-                box-sizing: border-box;
-
-                appearance: none;
-                -webkit-appearance: none;
-            }
-
-            .filter-box .btn {
-                grid-column: 1 / -1;
-                width: 100%;
-                box-sizing: border-box;
-            }
+            /* ФИЛЬТР ПЕРИОДА */
 
             .filter-box {
                 width: 100%;
@@ -536,33 +493,22 @@
                 gap: 8px;
             }
 
-            .field {
+            .filter-box .field {
                 width: 100%;
                 min-width: 0;
+                box-sizing: border-box;
             }
 
-            .field input {
+            .filter-box .field input,
+            .filter-box .field input[type="date"] {
                 display: block;
-
                 width: 100%;
                 max-width: 100%;
                 min-width: 0;
-
+                height: 38px;
                 box-sizing: border-box;
-
-                padding: 0 6px;
+                padding: 0 8px;
                 font-size: 13px;
-            }
-
-            .field input[type="date"] {
-                width: 100%;
-                max-width: 100%;
-                min-width: 0;
-
-                box-sizing: border-box;
-
-                appearance: none;
-                -webkit-appearance: none;
             }
 
             .filter-box .btn {
@@ -570,51 +516,48 @@
                 width: 100%;
                 box-sizing: border-box;
             }
+
+            /* БЛОКИ */
 
             .section {
                 padding: 15px;
             }
 
+            /* ФОРМА */
+
             .form-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .form-grid>div {
+                width: 100%;
+                min-width: 0;
+                box-sizing: border-box;
             }
 
             .form-full {
                 grid-column: auto;
             }
 
+            .form-control,
+            input[type="date"].form-control,
+            input[type="number"].form-control {
+                display: block;
+                width: 100%;
+                max-width: 100%;
+                min-width: 0;
+                box-sizing: border-box;
+            }
+
             .form-grid .btn {
                 width: 100%;
             }
 
+            /* ТАБЛИЦА */
+
             .table-wrapper {
                 margin: 0 -15px;
-
                 padding: 0 15px;
-            }
-        }
-
-
-        @media (max-width: 480px) {
-
-            .payments-page {
-                padding: 10px;
-            }
-
-            .section {
-                padding: 13px;
-            }
-
-            .expense-type-name {
-                font-size: 12px;
-            }
-
-            .payments-menu-back-btn {
-                height: 34px;
-
-                padding: 0 12px;
-
-                font-size: 11px;
             }
         }
     </style>
