@@ -9,7 +9,8 @@
 
 <body>
 
-  <style>
+<style>
+
     * {
         box-sizing: border-box;
     }
@@ -565,13 +566,26 @@
             grid-column: auto !important;
         }
 
-        /* ВСЕ ИНПУТЫ ФОРМЫ — 95% */
+        /* ========================================
+           ВСЕ ОСТАЛЬНЫЕ ИНПУТЫ — 100%
+        ======================================== */
 
         .form-control,
         input.form-control,
-        input[type="date"].form-control,
         input[type="number"].form-control,
         select.form-control {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 0 !important;
+            box-sizing: border-box !important;
+        }
+
+        /* ========================================
+           ТОЛЬКО DATE — 95%
+        ======================================== */
+
+        input[type="date"].form-control {
             display: block !important;
             width: 95% !important;
             max-width: 95% !important;
@@ -616,8 +630,8 @@
         ======================================== */
 
         textarea.form-control {
-            width: 95% !important;
-            max-width: 95% !important;
+            width: 100% !important;
+            max-width: 100% !important;
         }
 
         /* ========================================
@@ -674,6 +688,7 @@
             font-size: 12px;
         }
     }
+
 </style>
 
 
