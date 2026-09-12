@@ -28,8 +28,8 @@ $totalDaySum = 0;
         --ink-faint: #9aa0a8;
         --border: #dfe3e8;
         --border-strong: #c9ced6;
-        --primary: #2f6fed;
-        --primary-hover: #1f56d1;
+        --primary: #01142f;
+        --primary-hover: #02214b;
         --primary-soft: #eaf1fe;
         --danger: #e5484d;
         --danger-soft: #fdeceb;
@@ -279,8 +279,8 @@ $totalDaySum = 0;
     .details-btn {
         width: 100%;
         margin-top: 10px;
-        background: var(--surface);
-        color: var(--primary);
+        background: var(--primary);
+        color: var(--surface);
         border: 1px solid var(--border);
         border-radius: var(--radius);
         font-weight: 600;
@@ -372,6 +372,12 @@ $totalDaySum = 0;
         font-size: 13.5px;
         text-align: right;
         margin-top: 4px;
+    }
+
+    .item-batch {
+        margin-top: 5px;
+        color: var(--ink-soft);
+        font-size: 12px;
     }
 </style>
 
@@ -496,9 +502,33 @@ $totalDaySum = 0;
 
                 <div class="modal-body">
 
+
+                    <div class="info-row">
+                        <div class="info-label">Имя</div>
+                        <div class="info-value">
+                            {{ $order->name ?: '—' }}
+                        </div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-label">Номер телефона</div>
+                        <div class="info-value">
+                            {{ $order->phone ?: '—' }}
+                        </div>
+                    </div>
+
                     <div class="info-row">
                         <div class="info-label">Дата</div>
-                        <div class="info-value">{{ $order->order_date?->format('d.m.Y H:i') ?? '—' }}</div>
+                        <div class="info-value">
+                            {{ $order->order_date?->format('d.m.Y H:i') ?? '—' }}
+                        </div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-label">Комментарий</div>
+                        <div class="info-value">
+                            {{ $order->comment ?: '—' }}
+                        </div>
                     </div>
 
                     <div class="info-row">
@@ -517,24 +547,24 @@ $totalDaySum = 0;
 
                     <hr>
 
-                    @foreach($order->items as $item)
 
+                    @foreach($order->items as $item)
                     <div class="modal-item">
 
                         <div class="item-sku">
-                            {{ $item->variant->sku ?? '—' }}
+                            {{ $item->variant->sku ?? '—' }} ({{ $item->batch->batch_code ?? '—' }})
                         </div>
 
                         <div class="item-qty">
-                            {{ $item->quantity }} × {{ number_format($item->price ?? 0, 0, '.', ' ') }} ₸
+                            {{ $item->quantity }}
+                            ×
+                            {{ number_format($item->price ?? 0, 0, '.', ' ') }} ₸
                         </div>
 
                         <div class="item-sum">
-                            {{ number_format(($item->price ?? 0)*$item->quantity, 0, '.', ' ') }} ₸
+                            {{ number_format(($item->price ?? 0) * $item->quantity, 0, '.', ' ') }} ₸
                         </div>
-
                     </div>
-
                     @endforeach
 
                 </div>

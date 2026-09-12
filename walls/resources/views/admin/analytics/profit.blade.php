@@ -160,6 +160,49 @@
         }
 
 
+        /* DATE INPUT — общий сброс и ровный вид */
+
+        .profit-filter input[type="date"] {
+            -webkit-appearance: none;
+            appearance: none;
+
+            box-sizing: border-box;
+
+            line-height: 38px;
+
+            padding: 0 10px;
+
+            color: var(--profit-text);
+
+            background: #fff;
+        }
+
+
+        .profit-filter input[type="date"]::-webkit-date-and-time-value {
+            text-align: left;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        .profit-filter input[type="date"]::-webkit-calendar-picker-indicator {
+            margin-left: auto;
+            padding: 0;
+
+            width: 16px;
+            height: 16px;
+
+            opacity: .6;
+
+            cursor: pointer;
+        }
+
+
+        .profit-filter input[type="date"]::-webkit-inner-spin-button {
+            display: none;
+        }
+
+
         .profit-filter button {
             height: 40px;
 
@@ -477,7 +520,7 @@
 
                 height: 40px;
 
-                padding: 0 8px;
+                padding: 0 10px;
 
                 font-size: 13px;
 
@@ -490,6 +533,8 @@
                 max-width: 100%;
                 min-width: 0;
                 box-sizing: border-box;
+
+                line-height: 38px;
             }
 
             .profit-filter button {
@@ -548,6 +593,20 @@
 
             .profit-chart-container {
                 height: 300px;
+            }
+
+        }
+
+
+        /* ОЧЕНЬ МАЛЕНЬКИЕ ТЕЛЕФОНЫ */
+
+        @media (max-width: 380px) {
+
+            .profit-filter input[type="date"] {
+                padding-left: 8px;
+                padding-right: 8px;
+
+                font-size: 12px;
             }
 
         }

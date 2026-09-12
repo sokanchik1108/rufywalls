@@ -2,18 +2,37 @@
 <html lang="ru">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
     <title>Платежи</title>
+
 </head>
 
 <body>
 
 <style>
-
     * {
         box-sizing: border-box;
     }
+
+    html {
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+    }
+
+    body {
+        margin: 0;
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+    }
+
+    /* ========================================
+       ОСНОВНАЯ СТРАНИЦА
+    ======================================== */
 
     .payments-page {
         width: 100%;
@@ -146,6 +165,10 @@
         box-sizing: border-box;
     }
 
+    .field input:focus {
+        border-color: #9ca3af;
+    }
+
     /* ========================================
        BUTTONS
     ======================================== */
@@ -273,20 +296,54 @@
     ======================================== */
 
     input[type="date"] {
+        -webkit-appearance: none;
+        appearance: none;
         display: block;
         width: 100%;
         max-width: 100%;
         min-width: 0;
         box-sizing: border-box;
+        color: #111827;
+        background: #fff;
+    }
+
+    input[type="date"]::-webkit-date-and-time-value {
+        text-align: left;
+        margin: 0;
+        padding: 0;
+    }
+
+    input[type="date"]::-webkit-datetime-edit {
+        padding: 0;
+    }
+
+    input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+        padding: 0;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        margin-left: auto;
+        padding: 0;
+        width: 16px;
+        height: 16px;
+        opacity: .6;
+        cursor: pointer;
+    }
+
+    input[type="date"]::-webkit-inner-spin-button {
+        display: none;
+    }
+
+    .field input[type="date"] {
+        height: 38px;
+        line-height: 36px;
+        padding: 0 10px;
     }
 
     input[type="date"].form-control {
         height: 40px;
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-        padding: 0 10px;
-        box-sizing: border-box;
+        line-height: 38px;
+        padding: 0 11px;
     }
 
     /* ========================================
@@ -470,7 +527,7 @@
         }
 
         /* ========================================
-           ФИЛЬТР ПЕРИОДА
+           ФИЛЬТР
         ======================================== */
 
         .filter-box {
@@ -503,17 +560,16 @@
             padding: 0;
         }
 
-        /* ВЕРХНИЕ ДАТЫ — 95% */
-
         .filter-box .field input,
         .filter-box .field input[type="date"] {
             display: block !important;
-            width: 95% !important;
-            max-width: 95% !important;
+            width: 100% !important;
+            max-width: 100% !important;
             min-width: 0 !important;
             height: 38px !important;
+            line-height: 36px !important;
             margin: 0 !important;
-            padding: 0 8px !important;
+            padding: 0 10px !important;
             box-sizing: border-box !important;
             font-size: 13px !important;
         }
@@ -542,7 +598,7 @@
         }
 
         /* ========================================
-           ФОРМА ДОБАВЛЕНИЯ ПЛАТЕЖА
+           ФОРМА
         ======================================== */
 
         .form-grid {
@@ -567,45 +623,39 @@
         }
 
         /* ========================================
-           ВСЕ ОСТАЛЬНЫЕ ИНПУТЫ — 100%
+           INPUTS
         ======================================== */
 
         .form-control,
         input.form-control,
         input[type="number"].form-control,
-        select.form-control {
+        input[type="text"].form-control,
+        input[type="date"].form-control,
+        select.form-control,
+        textarea.form-control {
             display: block !important;
             width: 100% !important;
             max-width: 100% !important;
             min-width: 0 !important;
             box-sizing: border-box !important;
+            font-size: 13px !important;
         }
 
         /* ========================================
-           ТОЛЬКО DATE — 95%
+           DATE
         ======================================== */
 
         input[type="date"].form-control {
             display: block !important;
-            width: 95% !important;
-            max-width: 95% !important;
+            width: 100% !important;
+            max-width: 100% !important;
             min-width: 0 !important;
-            box-sizing: border-box !important;
-        }
-
-        /* ========================================
-           НИЖНЯЯ ДАТА
-        ======================================== */
-
-        input[type="date"].form-control {
             height: 40px !important;
-            width: 95% !important;
-            max-width: 95% !important;
-            min-width: 0 !important;
-            padding: 0 10px !important;
+            line-height: 38px !important;
+            padding: 0 11px !important;
             margin: 0 !important;
             box-sizing: border-box !important;
-            line-height: normal !important;
+            font-size: 13px !important;
         }
 
         input[type="date"].form-control::-webkit-date-and-time-value {
@@ -632,10 +682,11 @@
         textarea.form-control {
             width: 100% !important;
             max-width: 100% !important;
+            font-size: 13px !important;
         }
 
         /* ========================================
-           КНОПКИ ФОРМЫ
+           КНОПКИ
         ======================================== */
 
         .form-grid .btn {
@@ -657,6 +708,18 @@
             padding-left: 13px;
             padding-right: 13px;
             box-sizing: border-box;
+        }
+
+        /* ========================================
+           ЗАПРЕЩАЕМ ИЗМЕНЕНИЕ РАЗМЕРА ТЕКСТА
+        ======================================== */
+
+        input,
+        select,
+        textarea,
+        button {
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
         }
     }
 
@@ -687,308 +750,316 @@
         .expense-type-name {
             font-size: 12px;
         }
-    }
 
+        input[type="date"].form-control {
+            padding: 0 9px !important;
+            font-size: 12px !important;
+        }
+
+        .filter-box .field input[type="date"] {
+            padding: 0 9px !important;
+            font-size: 12px !important;
+        }
+    }
 </style>
 
 
-    <div class="payments-page">
+<div class="payments-page">
 
-
-        {{-- ========================================
+    {{-- ========================================
          НАВИГАЦИЯ
     ======================================== --}}
 
-        <div class="payments-navigation">
+    <div class="payments-navigation">
 
-            <a
-                href="{{ route('admin.analytics.menu') }}"
-                class="payments-menu-back-btn">
+        <a
+            href="{{ route('admin.analytics.menu') }}"
+            class="payments-menu-back-btn">
 
-                ← В меню аналитики
+            ← В меню аналитики
 
-            </a>
+        </a>
+
+    </div>
+
+
+    {{-- ========================================
+         HEADER
+    ======================================== --}}
+
+    <div class="payments-header">
+
+        <div class="payments-title">
+
+            <h1>
+                Платежи
+            </h1>
+
+            <p>
+                Управление исходящими платежами и видами расходов
+            </p>
 
         </div>
 
 
-        {{-- ========================================
-         HEADER
-    ======================================== --}}
+        {{-- ФИЛЬТР ПЕРИОДА --}}
 
-        <div class="payments-header">
+        <form
+            method="GET"
+            class="filter-box">
 
-            <div class="payments-title">
+            <div class="field">
 
-                <h1>
-                    Платежи
-                </h1>
+                <label>
+                    С
+                </label>
 
-                <p>
-                    Управление исходящими платежами и видами расходов
-                </p>
+                <input
+                    type="date"
+                    name="from"
+                    value="{{ $from->format('Y-m-d') }}">
 
             </div>
 
 
-            {{-- ФИЛЬТР ПЕРИОДА --}}
+            <div class="field">
 
-            <form
-                method="GET"
-                class="filter-box">
+                <label>
+                    По
+                </label>
 
-                <div class="field">
+                <input
+                    type="date"
+                    name="to"
+                    value="{{ $to->format('Y-m-d') }}">
 
-                    <label>
-                        С
-                    </label>
-
-                    <input
-                        type="date"
-                        name="from"
-                        value="{{ $from->format('Y-m-d') }}">
-
-                </div>
+            </div>
 
 
-                <div class="field">
+            <button
+                type="submit"
+                class="btn btn-primary">
 
-                    <label>
-                        По
-                    </label>
+                Применить
 
-                    <input
-                        type="date"
-                        name="to"
-                        value="{{ $to->format('Y-m-d') }}">
+            </button>
 
-                </div>
+        </form>
 
-
-                <button
-                    type="submit"
-                    class="btn btn-primary">
-
-                    Применить
-
-                </button>
-
-            </form>
-
-        </div>
+    </div>
 
 
-        {{-- ========================================
+    {{-- ========================================
          СООБЩЕНИЯ
     ======================================== --}}
 
-        @if(session('success'))
+    @if(session('success'))
 
         <div class="alert alert-success">
             {{ session('success') }}
         </div>
 
-        @endif
+    @endif
 
 
-        @if($errors->any())
+    @if($errors->any())
 
         <div class="errors">
 
             @foreach($errors->all() as $error)
 
-            <div>
-                {{ $error }}
-            </div>
+                <div>
+                    {{ $error }}
+                </div>
 
             @endforeach
 
         </div>
 
-        @endif
+    @endif
 
 
-        {{-- ========================================
+    {{-- ========================================
          ДОБАВИТЬ ИСХОДЯЩИЙ ПЛАТЁЖ
     ======================================== --}}
 
-        <div class="section">
+    <div class="section">
 
-            <h2>
-                Добавить исходящий платёж
-            </h2>
-
-
-            <form
-                method="POST"
-                action="{{ route('admin.analytics.finance.outgoing-payments.store') }}">
-
-                @csrf
-
-                <input
-                    type="hidden"
-                    name="from"
-                    value="{{ $from->format('Y-m-d') }}">
-
-                <input
-                    type="hidden"
-                    name="to"
-                    value="{{ $to->format('Y-m-d') }}">
+        <h2>
+            Добавить исходящий платёж
+        </h2>
 
 
-                <div class="form-grid">
+        <form
+            method="POST"
+            action="{{ route('admin.analytics.finance.outgoing-payments.store') }}">
+
+            @csrf
+
+            <input
+                type="hidden"
+                name="from"
+                value="{{ $from->format('Y-m-d') }}">
+
+            <input
+                type="hidden"
+                name="to"
+                value="{{ $to->format('Y-m-d') }}">
 
 
-                    {{-- ДАТА --}}
-
-                    <div>
-
-                        <label class="form-label">
-                            Дата
-                        </label>
-
-                        <input
-                            type="date"
-                            name="payment_date"
-                            class="form-control"
-                            value="{{ now()->format('Y-m-d') }}"
-                            required>
-
-                    </div>
+            <div class="form-grid">
 
 
-                    {{-- СУММА --}}
+                {{-- ДАТА --}}
 
-                    <div>
+                <div>
 
-                        <label class="form-label">
-                            Сумма
-                        </label>
+                    <label class="form-label">
+                        Дата
+                    </label>
 
-                        <input
-                            type="number"
-                            name="amount"
-                            class="form-control"
-                            step="0.01"
-                            min="0.01"
-                            placeholder="150000"
-                            required>
+                    <input
+                        type="date"
+                        name="payment_date"
+                        class="form-control"
+                        value="{{ now()->format('Y-m-d') }}"
+                        required>
 
-                    </div>
+                </div>
 
 
-                    {{-- ВИД РАСХОДА --}}
+                {{-- СУММА --}}
 
-                    <div class="form-full">
+                <div>
 
-                        <label class="form-label">
-                            Вид расхода
-                        </label>
+                    <label class="form-label">
+                        Сумма
+                    </label>
 
-                        <select
-                            name="expense_type_id"
-                            class="form-control"
-                            required>
+                    <input
+                        type="number"
+                        name="amount"
+                        class="form-control"
+                        step="0.01"
+                        min="0.01"
+                        placeholder="150000"
+                        required>
 
-                            <option value="">
-                                Выберите вид расхода
-                            </option>
+                </div>
 
-                            @foreach($expenseTypes as $type)
+
+                {{-- ВИД РАСХОДА --}}
+
+                <div class="form-full">
+
+                    <label class="form-label">
+                        Вид расхода
+                    </label>
+
+                    <select
+                        name="expense_type_id"
+                        class="form-control"
+                        required>
+
+                        <option value="">
+                            Выберите вид расхода
+                        </option>
+
+                        @foreach($expenseTypes as $type)
 
                             <option value="{{ $type->id }}">
                                 {{ $type->name }}
                             </option>
 
-                            @endforeach
+                        @endforeach
 
-                        </select>
-
-                    </div>
-
-
-                    {{-- ОПИСАНИЕ --}}
-
-                    <div class="form-full">
-
-                        <label class="form-label">
-                            Описание
-                        </label>
-
-                        <textarea
-                            name="description"
-                            class="form-control"
-                            placeholder="Например: Аренда магазина за сентябрь"></textarea>
-
-                    </div>
-
-
-                    {{-- КНОПКА --}}
-
-                    <div class="form-full">
-
-                        <button
-                            type="submit"
-                            class="btn btn-primary">
-
-                            Добавить платёж
-
-                        </button>
-
-                    </div>
+                    </select>
 
                 </div>
 
-            </form>
 
-        </div>
+                {{-- ОПИСАНИЕ --}}
+
+                <div class="form-full">
+
+                    <label class="form-label">
+                        Описание
+                    </label>
+
+                    <textarea
+                        name="description"
+                        class="form-control"
+                        placeholder="Например: Аренда магазина за сентябрь"></textarea>
+
+                </div>
 
 
-        {{-- ========================================
+                {{-- КНОПКА --}}
+
+                <div class="form-full">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        Добавить платёж
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    {{-- ========================================
          ИСХОДЯЩИЕ ПЛАТЕЖИ
     ======================================== --}}
 
-        <div class="section">
+    <div class="section">
 
-            <h2>
-                Исходящие платежи
-            </h2>
-
-
-            <div class="table-wrapper">
-
-                <table class="payment-table">
-
-                    <thead>
-
-                        <tr>
-
-                            <th>
-                                Дата
-                            </th>
-
-                            <th>
-                                Вид расхода
-                            </th>
-
-                            <th>
-                                Сумма
-                            </th>
-
-                            <th>
-                                Описание
-                            </th>
-
-                            <th></th>
-
-                        </tr>
-
-                    </thead>
+        <h2>
+            Исходящие платежи
+        </h2>
 
 
-                    <tbody>
+        <div class="table-wrapper">
 
-                        @forelse($outgoingPayments as $payment)
+            <table class="payment-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Дата
+                        </th>
+
+                        <th>
+                            Вид расхода
+                        </th>
+
+                        <th>
+                            Сумма
+                        </th>
+
+                        <th>
+                            Описание
+                        </th>
+
+                        <th></th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @forelse($outgoingPayments as $payment)
 
                         <tr>
 
@@ -1046,7 +1117,7 @@
 
                         </tr>
 
-                        @empty
+                    @empty
 
                         <tr>
 
@@ -1060,31 +1131,31 @@
 
                         </tr>
 
-                        @endforelse
+                    @endforelse
 
-                    </tbody>
+                </tbody>
 
-                </table>
-
-            </div>
+            </table>
 
         </div>
 
+    </div>
 
-        {{-- ========================================
+
+    {{-- ========================================
          ВИДЫ РАСХОДОВ
     ======================================== --}}
 
-        <div class="section">
+    <div class="section">
 
-            <h2>
-                Виды расходов
-            </h2>
+        <h2>
+            Виды расходов
+        </h2>
 
 
-            <div class="expense-type-list">
+        <div class="expense-type-list">
 
-                @forelse($expenseTypes as $type)
+            @forelse($expenseTypes as $type)
 
                 <div class="expense-type-item">
 
@@ -1095,11 +1166,8 @@
                         </span>
 
                         <span class="expense-type-count">
-
                             {{ $type->outgoing_payments_count }}
-
                             платежей
-
                         </span>
 
                     </div>
@@ -1107,95 +1175,95 @@
 
                     @if($type->outgoing_payments_count == 0)
 
-                    <form
-                        method="POST"
-                        action="{{ route(
+                        <form
+                            method="POST"
+                            action="{{ route(
                                 'admin.analytics.finance.expense-types.destroy',
                                 $type
                             ) }}">
 
-                        @csrf
+                            @csrf
 
-                        @method('DELETE')
+                            @method('DELETE')
 
-                        <button
-                            type="submit"
-                            class="btn btn-danger"
-                            onclick="return confirm('Удалить этот вид расхода?')">
+                            <button
+                                type="submit"
+                                class="btn btn-danger"
+                                onclick="return confirm('Удалить этот вид расхода?')">
 
-                            Удалить
+                                Удалить
 
-                        </button>
+                            </button>
 
-                    </form>
+                        </form>
 
                     @endif
 
                 </div>
 
-                @empty
+            @empty
 
                 <div class="empty">
                     Виды расходов ещё не добавлены.
                 </div>
 
-                @endforelse
+            @endforelse
 
+        </div>
+
+
+        {{-- ДОБАВИТЬ ВИД РАСХОДА --}}
+
+        <div class="add-expense-type">
+
+            <div class="add-expense-type-title">
+                Добавить новый вид расхода
             </div>
 
 
-            {{-- ДОБАВИТЬ ВИД РАСХОДА --}}
+            <form
+                method="POST"
+                action="{{ route('admin.analytics.finance.expense-types.store') }}">
 
-            <div class="add-expense-type">
-
-                <div class="add-expense-type-title">
-                    Добавить новый вид расхода
-                </div>
+                @csrf
 
 
-                <form
-                    method="POST"
-                    action="{{ route('admin.analytics.finance.expense-types.store') }}">
+                <div class="form-grid">
 
-                    @csrf
+                    <div class="form-full">
 
-
-                    <div class="form-grid">
-
-                        <div class="form-full">
-
-                            <input
-                                type="text"
-                                name="name"
-                                class="form-control"
-                                placeholder="Например: Аренда"
-                                required>
-
-                        </div>
-
-
-                        <div class="form-full">
-
-                            <button
-                                type="submit"
-                                class="btn btn-primary">
-
-                                Добавить вид расхода
-
-                            </button>
-
-                        </div>
+                        <input
+                            type="text"
+                            name="name"
+                            class="form-control"
+                            placeholder="Например: Аренда"
+                            required>
 
                     </div>
 
-                </form>
 
-            </div>
+                    <div class="form-full">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary">
+
+                            Добавить вид расхода
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
 
         </div>
 
     </div>
 
-</body>
+</div>
 
+
+</body>
 </html>

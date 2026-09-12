@@ -20,8 +20,8 @@
         --ink-faint: #9aa0a8;
         --border: #dfe3e8;
         --border-strong: #c9ced6;
-        --primary: #2f6fed;
-        --primary-hover: #1f56d1;
+        --primary: #01142f;
+        --primary-hover: #02214b;
         --primary-soft: #eaf1fe;
         --danger: #e5484d;
         --danger-soft: #fdeceb;
@@ -154,17 +154,25 @@
         font-weight: 500;
     }
 
+    select.form-select {
+        padding: 6px 10px;
+    }
+
     input.form-control,
     select.form-select {
+        display: block;
         width: 100%;
+        height: 40px;
         border: 1px solid var(--border);
         border-radius: var(--radius);
-        padding: 8px 10px;
+        padding: 0 10px;
         margin-bottom: 0;
         background: var(--surface);
         font-family: inherit;
-        font-size: 13.5px;
+        font-size: 16px;
+        line-height: 38px;
         color: var(--ink);
+        box-sizing: border-box;
         transition: border-color .12s, box-shadow .12s;
         appearance: none;
         -webkit-appearance: none;
@@ -186,6 +194,52 @@
         outline: none;
         border-color: var(--primary);
         box-shadow: 0 0 0 3px var(--primary-soft);
+    }
+
+    /* ---------- Date / datetime input reset ---------- */
+
+    input[type="datetime-local"],
+    input[type="date"] {
+        -webkit-appearance: none;
+        appearance: none;
+
+        height: 40px;
+        line-height: 38px;
+
+        color: var(--ink);
+        background: var(--surface);
+    }
+
+    input[type="datetime-local"]::-webkit-date-and-time-value,
+    input[type="date"]::-webkit-date-and-time-value {
+        text-align: left;
+        margin: 0;
+        padding: 0;
+    }
+
+    input[type="datetime-local"]::-webkit-datetime-edit,
+    input[type="date"]::-webkit-datetime-edit {
+        padding: 0;
+    }
+
+    input[type="datetime-local"]::-webkit-datetime-edit-fields-wrapper,
+    input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+        padding: 0;
+    }
+
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        margin-left: 6px;
+        padding: 0;
+        width: 16px;
+        height: 16px;
+        opacity: .6;
+        cursor: pointer;
+    }
+
+    input[type="datetime-local"]::-webkit-inner-spin-button,
+    input[type="date"]::-webkit-inner-spin-button {
+        display: none;
     }
 
     /* ---------- Positions ---------- */
@@ -300,7 +354,7 @@
         padding: 5px 24px 5px 7px;
         background: var(--surface);
         font-family: inherit;
-        font-size: 13px;
+        font-size: 16px;
         color: var(--ink);
         transition: border-color .12s;
     }
@@ -341,7 +395,7 @@
         justify-content: center;
         gap: 6px;
         transition: background .12s, border-color .12s;
-        background-color: #2f6fed;
+        background-color: #01142f;
         color: white;
     }
 
@@ -510,7 +564,7 @@
 
     .qty-input {
         width: 100%;
-        font-size: 13.5px;
+        font-size: 16px;
         padding: 6px 8px;
         border-radius: var(--radius);
         border: 1px solid var(--border);
