@@ -552,7 +552,7 @@ $totalDaySum = 0;
                     <div class="modal-item">
 
                         <div class="item-sku">
-                            {{ $item->variant->sku ?? '—' }} ({{ $item->batch->batch_code ?? '—' }})
+                            {{ $item->variant->sku ?? '—' }} ({{ $item->batch_code ?? '—' }})
                         </div>
 
                         <div class="item-qty">
