@@ -90,10 +90,6 @@
     ======================================== */
 
     .payments-header {
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-        gap: 20px;
         margin-bottom: 20px;
         width: 100%;
         max-width: 100%;
@@ -118,6 +114,23 @@
     }
 
     /* ========================================
+       SECTION HEADER (заголовок + фильтр)
+    ======================================== */
+
+    .section-head-row {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+    }
+
+    .section-head-row h2 {
+        margin: 0;
+    }
+
+    /* ========================================
        FILTER
     ======================================== */
 
@@ -125,7 +138,7 @@
         display: flex;
         align-items: flex-end;
         gap: 8px;
-        background: #fff;
+        background: #fafbfc;
         padding: 8px;
         border: 1px solid #eceef1;
         border-radius: 12px;
@@ -133,6 +146,7 @@
         max-width: 100%;
         min-width: 0;
         box-sizing: border-box;
+        flex: 0 0 auto;
     }
 
     .field {
@@ -201,6 +215,17 @@
 
     .btn-danger:hover {
         background: #fee2e2;
+    }
+
+    .btn-outline {
+        background: #fff;
+        color: #01142f;
+        border: 1px solid #e5e7eb;
+    }
+
+    .btn-outline:hover {
+        border-color: #01142f;
+        background: #f8fafc;
     }
 
     /* ========================================
@@ -289,6 +314,26 @@
         padding-top: 10px;
         resize: vertical;
         font-family: inherit;
+    }
+
+    /* ПОЛЕ + КНОПКА "ДОБАВИТЬ ВИД РАСХОДА" РЯДОМ */
+
+    .field-with-action {
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+    }
+
+    .field-with-action > div {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .field-action-btn {
+        flex: 0 0 auto;
+        height: 40px;
+        padding: 0 12px;
+        white-space: nowrap;
     }
 
     /* ========================================
@@ -411,7 +456,6 @@
         display: flex;
         flex-direction: column;
         gap: 6px;
-        margin-bottom: 18px;
     }
 
     .expense-type-item {
@@ -448,18 +492,6 @@
         font-size: 11px;
     }
 
-    .add-expense-type {
-        padding-top: 18px;
-        border-top: 1px solid #eef0f2;
-    }
-
-    .add-expense-type-title {
-        margin-bottom: 9px;
-        font-size: 12px;
-        font-weight: 600;
-        color: #8a919c;
-    }
-
     /* ========================================
        ALERTS
     ======================================== */
@@ -493,10 +525,92 @@
     }
 
     /* ========================================
+       MODAL (добавление вида расхода)
+    ======================================== */
+
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: rgba(15, 20, 28, .45);
+        padding: 20px;
+        overflow-y: auto;
+        box-sizing: border-box;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-box {
+        width: 100%;
+        max-width: 420px;
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, .2);
+        overflow: hidden;
+        animation: modalPop .15s ease-out;
+    }
+
+    @keyframes modalPop {
+        from {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .modal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 16px 18px;
+        border-bottom: 1px solid #eceef1;
+    }
+
+    .modal-head h3 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .modal-close {
+        border: none;
+        background: transparent;
+        font-size: 22px;
+        line-height: 1;
+        color: #9aa0a9;
+        cursor: pointer;
+        padding: 0 4px;
+    }
+
+    .modal-close:hover {
+        color: #111827;
+    }
+
+    .modal-content-body {
+        padding: 18px;
+    }
+
+    /* ========================================
        MOBILE
     ======================================== */
 
     @media (max-width: 800px) {
+
+
+        .payment-table th,
+        .payment-table td {
+            padding-left: 3px;
+            padding-right: 3px;
+        }
 
         .payments-page {
             width: 100%;
@@ -509,21 +623,18 @@
 
         /* HEADER */
 
-        .payments-header {
-            display: block;
-            width: 100%;
-            max-width: 100%;
-            min-width: 0;
-            margin-bottom: 14px;
-        }
-
-        .payments-title {
-            width: 100%;
-            margin-bottom: 13px;
-        }
-
         .payments-title h1 {
             font-size: 22px;
+        }
+
+        /* ========================================
+           SECTION HEAD ROW
+        ======================================== */
+
+        .section-head-row {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
         }
 
         /* ========================================
@@ -620,6 +731,17 @@
 
         .form-full {
             grid-column: auto !important;
+        }
+
+        /* ПОЛЕ + КНОПКА "ДОБАВИТЬ ВИД РАСХОДА" — В СТОЛБИК */
+
+        .field-with-action {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .field-action-btn {
+            width: 100%;
         }
 
         /* ========================================
@@ -729,6 +851,13 @@
 
     @media (max-width: 480px) {
 
+
+        .payment-table th,
+        .payment-table td {
+            padding-left: 2px;
+            padding-right: 2px;
+        }
+
         .payments-page {
             padding: 8px;
         }
@@ -760,6 +889,10 @@
             padding: 0 9px !important;
             font-size: 12px !important;
         }
+
+        .modal-box {
+            max-width: 100%;
+        }
     }
 </style>
 
@@ -772,8 +905,8 @@
 
     <div class="payments-navigation">
 
-        <a
-            href="{{ route('admin.analytics.menu') }}"
+        
+           <a href="{{ route('admin.analytics.menu') }}"
             class="payments-menu-back-btn">
 
             ← В меню аналитики
@@ -800,51 +933,6 @@
             </p>
 
         </div>
-
-
-        {{-- ФИЛЬТР ПЕРИОДА --}}
-
-        <form
-            method="GET"
-            class="filter-box">
-
-            <div class="field">
-
-                <label>
-                    С
-                </label>
-
-                <input
-                    type="date"
-                    name="from"
-                    value="{{ $from->format('Y-m-d') }}">
-
-            </div>
-
-
-            <div class="field">
-
-                <label>
-                    По
-                </label>
-
-                <input
-                    type="date"
-                    name="to"
-                    value="{{ $to->format('Y-m-d') }}">
-
-            </div>
-
-
-            <button
-                type="submit"
-                class="btn btn-primary">
-
-                Применить
-
-            </button>
-
-        </form>
 
     </div>
 
@@ -948,7 +1036,7 @@
                 </div>
 
 
-                {{-- ВИД РАСХОДА --}}
+                {{-- ВИД РАСХОДА + КНОПКА ДОБАВИТЬ НОВЫЙ --}}
 
                 <div class="form-full">
 
@@ -956,24 +1044,42 @@
                         Вид расхода
                     </label>
 
-                    <select
-                        name="expense_type_id"
-                        class="form-control"
-                        required>
+                    <div class="field-with-action">
 
-                        <option value="">
-                            Выберите вид расхода
-                        </option>
+                        <div>
 
-                        @foreach($expenseTypes as $type)
+                            <select
+                                name="expense_type_id"
+                                id="expenseTypeSelect"
+                                class="form-control"
+                                required>
 
-                            <option value="{{ $type->id }}">
-                                {{ $type->name }}
-                            </option>
+                                <option value="">
+                                    Выберите вид расхода
+                                </option>
 
-                        @endforeach
+                                @foreach($expenseTypes as $type)
 
-                    </select>
+                                    <option value="{{ $type->id }}">
+                                        {{ $type->name }}
+                                    </option>
+
+                                @endforeach
+
+                            </select>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            class="btn btn-outline field-action-btn"
+                            onclick="openExpenseTypeModal()">
+
+                            + Новый вид расхода
+
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -1016,14 +1122,63 @@
 
 
     {{-- ========================================
-         ИСХОДЯЩИЕ ПЛАТЕЖИ
+         ИСХОДЯЩИЕ ПЛАТЕЖИ (заголовок + фильтр периода)
     ======================================== --}}
 
     <div class="section">
 
-        <h2>
-            Исходящие платежи
-        </h2>
+        <div class="section-head-row">
+
+            <h2>
+                Исходящие платежи
+            </h2>
+
+
+            {{-- ФИЛЬТР ПЕРИОДА --}}
+
+            <form
+                method="GET"
+                class="filter-box">
+
+                <div class="field">
+
+                    <label>
+                        С
+                    </label>
+
+                    <input
+                        type="date"
+                        name="from"
+                        value="{{ $from->format('Y-m-d') }}">
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        По
+                    </label>
+
+                    <input
+                        type="date"
+                        name="to"
+                        value="{{ $to->format('Y-m-d') }}">
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary">
+
+                    Применить
+
+                </button>
+
+            </form>
+
+        </div>
 
 
         <div class="table-wrapper">
@@ -1143,7 +1298,7 @@
 
 
     {{-- ========================================
-         ВИДЫ РАСХОДОВ
+         ВИДЫ РАСХОДОВ (только список + удаление)
     ======================================== --}}
 
     <div class="section">
@@ -1211,15 +1366,43 @@
 
         </div>
 
+    </div>
 
-        {{-- ДОБАВИТЬ ВИД РАСХОДА --}}
+</div>
 
-        <div class="add-expense-type">
 
-            <div class="add-expense-type-title">
-                Добавить новый вид расхода
-            </div>
+{{-- ========================================
+     MODAL: ДОБАВИТЬ ВИД РАСХОДА
+======================================== --}}
 
+<div
+    id="expenseTypeModal"
+    class="modal-overlay"
+    onclick="closeExpenseTypeModal(event)">
+
+    <div
+        class="modal-box"
+        onclick="event.stopPropagation()">
+
+        <div class="modal-head">
+
+            <h3>
+                Добавить вид расхода
+            </h3>
+
+            <button
+                type="button"
+                class="modal-close"
+                onclick="closeExpenseTypeModal()">
+
+                &times;
+
+            </button>
+
+        </div>
+
+
+        <div class="modal-content-body">
 
             <form
                 method="POST"
@@ -1227,17 +1410,21 @@
 
                 @csrf
 
-
                 <div class="form-grid">
 
                     <div class="form-full">
+
+                        <label class="form-label">
+                            Название
+                        </label>
 
                         <input
                             type="text"
                             name="name"
                             class="form-control"
                             placeholder="Например: Аренда"
-                            required>
+                            required
+                            autofocus>
 
                     </div>
 
@@ -1263,6 +1450,38 @@
     </div>
 
 </div>
+
+
+<script>
+    function openExpenseTypeModal() {
+        const modal = document.getElementById('expenseTypeModal');
+        if (!modal) return;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeExpenseTypeModal(event) {
+        const modal = document.getElementById('expenseTypeModal');
+        if (!modal) return;
+        if (event && event.target !== modal) return;
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key !== 'Escape') return;
+        const modal = document.getElementById('expenseTypeModal');
+        if (modal && modal.classList.contains('active')) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+
+    @if($errors->any() && old('name'))
+        // если была ошибка валидации именно формы вида расхода — открываем модалку сразу
+        openExpenseTypeModal();
+    @endif
+</script>
 
 
 </body>
