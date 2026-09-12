@@ -153,6 +153,7 @@ $totalDaySum = 0;
 
     #searchInput {
         height: 36px;
+        font-size: 16px;
     }
 
     /* ---------- Daily total ---------- */
