@@ -82,8 +82,8 @@ class FinancialAnalyticsController extends Controller
 
         $outgoingPayments = OutgoingPayment::with('expenseType')
             ->whereBetween('payment_date', [
-                $from->toDateString(),
-                $to->toDateString(),
+                $from->startOfDay(),
+                $to->endOfDay(),
             ])
             ->orderByDesc('payment_date')
             ->orderByDesc('id')

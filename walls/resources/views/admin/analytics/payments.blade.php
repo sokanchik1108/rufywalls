@@ -849,51 +849,87 @@
        VERY SMALL MOBILE
     ======================================== */
 
-    @media (max-width: 480px) {
+@media (max-width: 480px) {
 
-
-        .payment-table th,
-        .payment-table td {
-            padding-left: 2px;
-            padding-right: 2px;
-        }
-
-        .payments-page {
-            padding: 8px;
-        }
-
-        .section {
-            padding: 12px;
-        }
-
-        .payments-title h1 {
-            font-size: 21px;
-        }
-
-        .payments-menu-back-btn {
-            height: 34px;
-            padding: 0 12px;
-            font-size: 11px;
-        }
-
-        .expense-type-name {
-            font-size: 12px;
-        }
-
-        input[type="date"].form-control {
-            padding: 0 9px !important;
-            font-size: 12px !important;
-        }
-
-        .filter-box .field input[type="date"] {
-            padding: 0 9px !important;
-            font-size: 12px !important;
-        }
-
-        .modal-box {
-            max-width: 100%;
-        }
+    .payment-table {
+        min-width: 0;
+        width: max-content;
+        table-layout: auto;
     }
+
+    .payment-table th,
+    .payment-table td {
+        padding: 8px 28px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .payment-table th:first-child,
+    .payment-table td:first-child {
+        width: auto;
+    }
+
+    .payment-table th:nth-child(2),
+    .payment-table td:nth-child(2) {
+        width: auto;
+    }
+
+    .payment-table th:nth-child(3),
+    .payment-table td:nth-child(3) {
+        width: auto;
+    }
+
+    .payment-table th:nth-child(4),
+    .payment-table td:nth-child(4) {
+        width: auto;
+    }
+
+    .payment-table th:nth-child(5),
+    .payment-table td:nth-child(5) {
+        width: auto;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .payments-page {
+        padding: 8px;
+    }
+
+    .section {
+        padding: 12px;
+    }
+
+    .payments-title h1 {
+        font-size: 21px;
+    }
+
+    .payments-menu-back-btn {
+        height: 34px;
+        padding: 0 12px;
+        font-size: 11px;
+    }
+
+    .expense-type-name {
+        font-size: 12px;
+    }
+
+    input[type="date"].form-control {
+        padding: 0 9px !important;
+        font-size: 12px !important;
+    }
+
+    .filter-box .field input[type="date"] {
+        padding: 0 9px !important;
+        font-size: 12px !important;
+    }
+
+    .modal-box {
+        max-width: 100%;
+    }
+}
 </style>
 
 

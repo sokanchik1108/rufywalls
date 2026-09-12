@@ -707,13 +707,17 @@
                     {{ number_format($revenue, 0, '.', ' ') }} ₸
                 </div>
 
+                <div class="profit-card-small">
+                    Продажи − возвраты
+                </div>
+
             </div>
 
 
             <div class="profit-card">
 
                 <div class="profit-card-label">
-                    Себестоимость
+                    Себестоимость товара
                 </div>
 
                 <div class="profit-card-value">
@@ -726,7 +730,7 @@
             <div class="profit-card profit-main">
 
                 <div class="profit-card-label">
-                    Прибыль
+                    Прибыль 
                 </div>
 
                 <div class="profit-card-value">

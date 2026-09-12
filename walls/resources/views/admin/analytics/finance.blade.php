@@ -477,48 +477,51 @@
             }
         }
 
-        /* SMALL MOBILE */
-
         @media (max-width: 480px) {
 
-            .finance-page {
-                padding: 10px;
+            .payment-table {
+                min-width: 0;
+                width: max-content;
+                table-layout: auto;
             }
 
-            .finance-title h1 {
-                font-size: 20px;
-            }
-
-            .finance-cards {
-                gap: 7px;
-            }
-
-            .finance-card {
-                padding: 12px;
-            }
-
-            .finance-card-value {
-                font-size: 16px;
-            }
-
-            .finance-card-title {
-                font-size: 10px;
-            }
-
-            .section {
-                padding: 13px;
-            }
-
-            .payment-table th {
-                font-size: 9px;
-            }
-
+            .payment-table th,
             .payment-table td {
+                padding: 8px 17px;
                 font-size: 12px;
+                white-space: nowrap;
             }
 
-            .payments-total-value {
-                font-size: 15px;
+            .payment-table th:first-child,
+            .payment-table td:first-child {
+                width: auto;
+            }
+
+            .payment-table th:nth-child(2),
+            .payment-table td:nth-child(2) {
+                width: auto;
+            }
+
+            .payment-table th:nth-child(3),
+            .payment-table td:nth-child(3) {
+                width: auto;
+            }
+
+            .payment-table th:nth-child(4),
+            .payment-table td:nth-child(4) {
+                width: auto;
+            }
+
+            .payment-description {
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .table-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
             }
         }
     </style>
