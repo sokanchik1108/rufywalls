@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Добавить скрытый товар')
+
 @section('content')
 <div class="container py-3" style="max-width: 600px">
     <div class="card shadow-sm border-0">

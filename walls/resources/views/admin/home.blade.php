@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Панель администратора')
+
 @section('content')
 
 <style>

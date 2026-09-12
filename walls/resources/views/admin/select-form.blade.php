@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Добавить товар')
+
 @section('content')
 <div class="container py-5">
     <h2 class="mb-5 text-center fw-semibold">Выберите тип формы добавления товара</h2>

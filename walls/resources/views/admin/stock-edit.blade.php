@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Добавить товар на склад')
+
 @section('content')
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

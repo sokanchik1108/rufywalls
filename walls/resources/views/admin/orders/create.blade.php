@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Создать заказ')
+
 @section('content')
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -20,8 +22,8 @@
         --ink-faint: #9aa0a8;
         --border: #dfe3e8;
         --border-strong: #c9ced6;
-        --primary: #01142f;
-        --primary-hover: #02214b;
+        --primary: #2f6fed;
+        --primary-hover: #1f56d1;
         --primary-soft: #eaf1fe;
         --danger: #e5484d;
         --danger-soft: #fdeceb;
@@ -395,7 +397,7 @@
         justify-content: center;
         gap: 6px;
         transition: background .12s, border-color .12s;
-        background-color: #01142f;
+        background-color: #2f6fed;
         color: white;
     }
 

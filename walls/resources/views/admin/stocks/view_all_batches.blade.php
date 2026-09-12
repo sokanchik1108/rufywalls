@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Остатки товаров по складам')
+@section('title', 'Остатки товаров по всем складам')
 
 @section('content')
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">

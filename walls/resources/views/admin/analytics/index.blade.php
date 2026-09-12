@@ -19,8 +19,8 @@
         --ink-faint: #9aa0a8;
         --border: #dfe3e8;
 
-        --primary: #2f6fed;
-        --primary-hover: #1f56d1;
+        --primary: #01142f;
+        --primary-hover: #02214b;
         --primary-soft: #eaf1fe;
 
         --danger: #e5484d;

@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'База данных')
+
 @section('content')
 <!-- Стили и скрипты -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
