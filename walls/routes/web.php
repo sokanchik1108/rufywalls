@@ -194,4 +194,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/make-me-can-view-analytics', [AnalyticsController::class, 'makeMeCanViewAnalytics'])
         ->middleware('auth')
         ->name('make.me.can.view.analytics');
+
+
+    Route::get('/payment-methods', [OrderController::class, 'paymentMethods'])
+        ->name('payment-methods');
+
+    Route::post('/payment-methods', [OrderController::class, 'storePaymentMethod'])
+        ->name('payment-methods.store');
+
+    Route::delete('/payment-methods/{id}', [OrderController::class, 'destroyPaymentMethod'])
+        ->name('payment-methods.destroy');
 });

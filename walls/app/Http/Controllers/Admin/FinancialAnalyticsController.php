@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ExpenseType;
 use App\Models\Order;
 use App\Models\OutgoingPayment;
+use App\Models\PointOfSale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +15,6 @@ class FinancialAnalyticsController extends Controller
 {
     public function index(Request $request)
     {
-        // Проверка доступа к аналитике
         if (!Auth::check() || !Auth::user()->can_view_analytics) {
             abort(403, 'Доступ к аналитике запрещён');
         }
@@ -27,21 +27,25 @@ class FinancialAnalyticsController extends Controller
             ? Carbon::parse($request->to)->endOfDay()
             : now()->endOfDay();
 
-        /*
-        |--------------------------------------------------------------------------
-        | Заказы
-        |--------------------------------------------------------------------------
-        */
+        $pointsOfSale = PointOfSale::orderBy('name')->get();
+
+        $selectedPointOfSale = $request->filled('point_of_sale_id')
+            ? (int) $request->point_of_sale_id
+            : null;
 
         $orders = Order::with([
-            'items.variant.product'
-        ])->get();
+            'items.variant.product',
+            'payments'
+        ])
+            ->when($selectedPointOfSale, function ($query) use ($selectedPointOfSale) {
+                $query->where('point_of_sale_id', $selectedPointOfSale);
+            })
+            ->get();
 
         $revenue = 0;
         $cost = 0;
 
         foreach ($orders as $order) {
-
             $orderDate = $order->order_date
                 ? Carbon::parse($order->order_date)
                 : Carbon::parse($order->created_at);
@@ -51,7 +55,6 @@ class FinancialAnalyticsController extends Controller
             }
 
             foreach ($order->items as $item) {
-
                 if (!$item->variant || !$item->variant->product) {
                     continue;
                 }
@@ -61,30 +64,68 @@ class FinancialAnalyticsController extends Controller
                 $purchasePrice = (float) $item->variant->product->purchase_price;
 
                 $revenue += $quantity * $salePrice;
-
                 $cost += $quantity * $purchasePrice;
             }
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Прибыль с продаж
-        |--------------------------------------------------------------------------
-        */
-
         $salesProfit = $revenue - $cost;
 
         /*
-        |--------------------------------------------------------------------------
-        | Исходящие платежи
-        |--------------------------------------------------------------------------
-        */
+    |--------------------------------------------------------------------------
+    | Способы оплаты
+    |--------------------------------------------------------------------------
+    */
 
-        $outgoingPayments = OutgoingPayment::with('expenseType')
-            ->whereBetween('payment_date', [
-                $from->startOfDay(),
-                $to->endOfDay(),
-            ])
+        $paymentMethodTotals = [];
+
+        foreach ($orders as $order) {
+            $orderDate = $order->order_date
+                ? Carbon::parse($order->order_date)
+                : Carbon::parse($order->created_at);
+
+            if ($orderDate->lt($from) || $orderDate->gt($to)) {
+                continue;
+            }
+
+            foreach ($order->payments as $payment) {
+                $method = trim($payment->payment_method);
+
+                if ($method === '') {
+                    $method = 'Не указано';
+                }
+
+                if (!isset($paymentMethodTotals[$method])) {
+                    $paymentMethodTotals[$method] = 0;
+                }
+
+                $paymentMethodTotals[$method] += (float) $payment->amount;
+            }
+        }
+
+        arsort($paymentMethodTotals);
+
+        /*
+    |--------------------------------------------------------------------------
+    | QR Лезговко
+    |--------------------------------------------------------------------------
+    | Эти деньги учитываются как погашение долга
+    | и поэтому дополнительно вычитаются из чистой прибыли.
+    |--------------------------------------------------------------------------
+    */
+
+        $qrLezgovkaPayments = $paymentMethodTotals['QR Лезговко'] ?? 0;
+
+        /*
+    |--------------------------------------------------------------------------
+    | Исходящие платежи / остальные расходы
+    |--------------------------------------------------------------------------
+    */
+
+        $outgoingPayments = OutgoingPayment::with('expenseType', 'pointOfSale')
+            ->whereBetween('payment_date', [$from, $to])
+            ->when($selectedPointOfSale, function ($query) use ($selectedPointOfSale) {
+                $query->where('point_of_sale_id', $selectedPointOfSale);
+            })
             ->orderByDesc('payment_date')
             ->orderByDesc('id')
             ->get();
@@ -94,23 +135,43 @@ class FinancialAnalyticsController extends Controller
         });
 
         /*
-        |--------------------------------------------------------------------------
-        | Чистая прибыль
-        |--------------------------------------------------------------------------
-        */
+    |--------------------------------------------------------------------------
+    | Чистая прибыль
+    |--------------------------------------------------------------------------
+    */
 
-        $netProfit = $salesProfit - $otherExpenses;
+        $netProfit = $salesProfit
+            - $otherExpenses
+            - $qrLezgovkaPayments;
 
         /*
-        |--------------------------------------------------------------------------
-        | Виды расходов
-        |--------------------------------------------------------------------------
-        */
+    |--------------------------------------------------------------------------
+    | Виды расходов
+    |--------------------------------------------------------------------------
+    */
 
         $expenseTypes = ExpenseType::withCount([
-            'outgoingPayments as outgoing_payments_count' => function ($query) use ($from, $to) {
-                $query->whereDate('payment_date', '>=', $from->toDateString())
-                    ->whereDate('payment_date', '<=', $to->toDateString());
+            'outgoingPayments as outgoing_payments_count' => function ($query) use (
+                $from,
+                $to,
+                $selectedPointOfSale
+            ) {
+                $query->whereDate(
+                    'payment_date',
+                    '>=',
+                    $from->toDateString()
+                )
+                    ->whereDate(
+                        'payment_date',
+                        '<=',
+                        $to->toDateString()
+                    )
+                    ->when($selectedPointOfSale, function ($query) use ($selectedPointOfSale) {
+                        $query->where(
+                            'point_of_sale_id',
+                            $selectedPointOfSale
+                        );
+                    });
             }
         ])
             ->orderBy('name')
@@ -124,10 +185,15 @@ class FinancialAnalyticsController extends Controller
             'salesProfit',
             'otherExpenses',
             'netProfit',
+            'qrLezgovkaPayments',
             'expenseTypes',
-            'outgoingPayments'
+            'outgoingPayments',
+            'pointsOfSale',
+            'selectedPointOfSale',
+            'paymentMethodTotals'
         ));
     }
+
 
     /*
     |--------------------------------------------------------------------------
@@ -137,7 +203,6 @@ class FinancialAnalyticsController extends Controller
 
     public function storeExpenseType(Request $request)
     {
-        // Проверка доступа к аналитике
         if (!Auth::check() || !Auth::user()->can_view_analytics) {
             abort(403, 'Доступ к аналитике запрещён');
         }
@@ -153,6 +218,7 @@ class FinancialAnalyticsController extends Controller
         return back()->with('success', 'Вид расхода добавлен.');
     }
 
+
     /*
     |--------------------------------------------------------------------------
     | Удалить вид расхода
@@ -161,7 +227,6 @@ class FinancialAnalyticsController extends Controller
 
     public function destroyExpenseType(ExpenseType $expenseType)
     {
-        // Проверка доступа к аналитике
         if (!Auth::check() || !Auth::user()->can_view_analytics) {
             abort(403, 'Доступ к аналитике запрещён');
         }
@@ -178,6 +243,7 @@ class FinancialAnalyticsController extends Controller
         return back()->with('success', 'Вид расхода удалён.');
     }
 
+
     /*
     |--------------------------------------------------------------------------
     | Добавить исходящий платёж
@@ -186,13 +252,13 @@ class FinancialAnalyticsController extends Controller
 
     public function storeOutgoingPayment(Request $request)
     {
-        // Проверка доступа к аналитике
         if (!Auth::check() || !Auth::user()->can_view_analytics) {
             abort(403, 'Доступ к аналитике запрещён');
         }
 
         $validated = $request->validate([
             'expense_type_id' => ['required', 'exists:expense_types,id'],
+            'point_of_sale_id' => ['nullable', 'integer', 'exists:points_of_sale,id'],
             'payment_date' => ['required', 'date'],
             'amount' => ['required', 'numeric', 'min:0.01'],
             'description' => ['nullable', 'string', 'max:1000'],
@@ -203,6 +269,7 @@ class FinancialAnalyticsController extends Controller
         return back()->with('success', 'Исходящий платёж добавлен.');
     }
 
+
     /*
     |--------------------------------------------------------------------------
     | Удалить исходящий платёж
@@ -211,7 +278,6 @@ class FinancialAnalyticsController extends Controller
 
     public function destroyOutgoingPayment(OutgoingPayment $outgoingPayment)
     {
-        // Проверка доступа к аналитике
         if (!Auth::check() || !Auth::user()->can_view_analytics) {
             abort(403, 'Доступ к аналитике запрещён');
         }
@@ -221,6 +287,7 @@ class FinancialAnalyticsController extends Controller
         return back()->with('success', 'Исходящий платёж удалён.');
     }
 
+
     /*
     |--------------------------------------------------------------------------
     | Платежи
@@ -229,7 +296,6 @@ class FinancialAnalyticsController extends Controller
 
     public function payments(Request $request)
     {
-        // Проверка доступа к аналитике
         if (!Auth::check() || !Auth::user()->can_view_analytics) {
             abort(403, 'Доступ к аналитике запрещён');
         }
@@ -242,17 +308,54 @@ class FinancialAnalyticsController extends Controller
             ? Carbon::parse($request->to)->endOfDay()
             : now()->endOfDay();
 
-        $outgoingPayments = OutgoingPayment::with('expenseType')
+        /*
+        |--------------------------------------------------------------------------
+        | Точки продаж
+        |--------------------------------------------------------------------------
+        */
+
+        $pointsOfSale = PointOfSale::orderBy('name')->get();
+
+        $selectedPointOfSale = $request->filled('point_of_sale_id')
+            ? (int) $request->point_of_sale_id
+            : null;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Исходящие платежи
+        |--------------------------------------------------------------------------
+        */
+
+        $outgoingPayments = OutgoingPayment::with([
+            'expenseType',
+            'pointOfSale'
+        ])
             ->whereDate('payment_date', '>=', $from->toDateString())
             ->whereDate('payment_date', '<=', $to->toDateString())
+            ->when($selectedPointOfSale, function ($query) use ($selectedPointOfSale) {
+                $query->where('point_of_sale_id', $selectedPointOfSale);
+            })
             ->orderByDesc('payment_date')
             ->orderByDesc('id')
             ->get();
 
+        /*
+        |--------------------------------------------------------------------------
+        | Виды расходов
+        |--------------------------------------------------------------------------
+        */
+
         $expenseTypes = ExpenseType::withCount([
-            'outgoingPayments as outgoing_payments_count' => function ($query) use ($from, $to) {
+            'outgoingPayments as outgoing_payments_count' => function ($query) use (
+                $from,
+                $to,
+                $selectedPointOfSale
+            ) {
                 $query->whereDate('payment_date', '>=', $from->toDateString())
-                    ->whereDate('payment_date', '<=', $to->toDateString());
+                    ->whereDate('payment_date', '<=', $to->toDateString())
+                    ->when($selectedPointOfSale, function ($query) use ($selectedPointOfSale) {
+                        $query->where('point_of_sale_id', $selectedPointOfSale);
+                    });
             }
         ])
             ->orderBy('name')
@@ -262,7 +365,9 @@ class FinancialAnalyticsController extends Controller
             'from',
             'to',
             'outgoingPayments',
-            'expenseTypes'
+            'expenseTypes',
+            'pointsOfSale',
+            'selectedPointOfSale'
         ));
     }
 }

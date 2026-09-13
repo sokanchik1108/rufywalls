@@ -11,6 +11,7 @@ class OutgoingPayment extends Model
         'payment_date',
         'amount',
         'description',
+        'point_of_sale_id',
     ];
 
     protected $casts = [
@@ -21,5 +22,10 @@ class OutgoingPayment extends Model
     public function expenseType()
     {
         return $this->belongsTo(ExpenseType::class);
+    }
+
+    public function pointOfSale()
+    {
+        return $this->belongsTo(\App\Models\PointOfSale::class);
     }
 }

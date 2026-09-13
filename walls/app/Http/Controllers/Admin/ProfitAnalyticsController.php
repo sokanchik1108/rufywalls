@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\PointOfSale;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,9 +18,9 @@ class ProfitAnalyticsController extends Controller
             abort(403, 'Доступ к аналитике запрещён');
         }
 
-        /* 
+        /*
         |--------------------------------------------------------------------------
-        | Период 
+        | Период
         |--------------------------------------------------------------------------
         */
 
@@ -30,6 +31,19 @@ class ProfitAnalyticsController extends Controller
         $to = $request->filled('to')
             ? Carbon::parse($request->to)->endOfDay()
             : now()->endOfDay();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Точки продаж
+        |--------------------------------------------------------------------------
+        */
+
+        $pointsOfSale = PointOfSale::orderBy('name')->get();
+
+        $selectedPointOfSale = $request->filled('point_of_sale_id')
+            ? (int) $request->point_of_sale_id
+            : null;
 
 
         /*
@@ -46,6 +60,9 @@ class ProfitAnalyticsController extends Controller
         $orders = Order::with([
             'items.variant.product'
         ])
+            ->when($selectedPointOfSale, function ($query) use ($selectedPointOfSale) {
+                $query->where('point_of_sale_id', $selectedPointOfSale);
+            })
             ->get()
             ->filter(function ($order) use ($from, $to) {
 
@@ -126,6 +143,7 @@ class ProfitAnalyticsController extends Controller
                 if ($quantity > 0) {
 
                     $soldQuantity += $quantity;
+
                 } else {
 
                     $returnsQuantity += abs($quantity);
@@ -158,6 +176,7 @@ class ProfitAnalyticsController extends Controller
 
                     $productStats[$sku]['quantity']
                         += $quantity;
+
                 } else {
 
                     $productStats[$sku]['returns']
@@ -295,6 +314,12 @@ class ProfitAnalyticsController extends Controller
         }
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | VIEW
+        |--------------------------------------------------------------------------
+        */
+
         return view(
             'admin.analytics.profit',
             compact(
@@ -307,7 +332,9 @@ class ProfitAnalyticsController extends Controller
                 'soldQuantity',
                 'returnsQuantity',
                 'productStats',
-                'dailyStats'
+                'dailyStats',
+                'pointsOfSale',
+                'selectedPointOfSale'
             )
         );
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\PointOfSale;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,10 +14,28 @@ class AnalyticsController extends Controller
 {
     public function index(Request $request)
     {
-        // Проверка доступа к аналитике
+        /*
+        |--------------------------------------------------------------------------
+        | ПРОВЕРКА ДОСТУПА
+        |--------------------------------------------------------------------------
+        */
+
         if (!Auth::check() || !Auth::user()->can_view_analytics) {
             abort(403, 'Доступ к аналитике запрещён');
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ТОЧКИ ПРОДАЖ
+        |--------------------------------------------------------------------------
+        */
+
+        $pointsOfSale = PointOfSale::orderBy('name')->get();
+
+        $selectedPointOfSale = $request->filled('point_of_sale_id')
+            ? (int) $request->point_of_sale_id
+            : null;
 
 
         /*
@@ -47,7 +66,7 @@ class AnalyticsController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $orders = Order::with([
+        $ordersQuery = Order::with([
             'items.variant.product'
         ])
             ->where(function ($query) use ($from, $to) {
@@ -65,7 +84,25 @@ class AnalyticsController extends Controller
                             [$from, $to]
                         );
                 });
-            })
+            });
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ФИЛЬТР ПО ТОЧКЕ ПРОДАЖ
+        |--------------------------------------------------------------------------
+        */
+
+        if ($selectedPointOfSale) {
+
+            $ordersQuery->where(
+                'point_of_sale_id',
+                $selectedPointOfSale
+            );
+        }
+
+
+        $orders = $ordersQuery
             ->orderByRaw(
                 'COALESCE(order_date, created_at) DESC'
             )
@@ -96,14 +133,20 @@ class AnalyticsController extends Controller
                 $sum = $quantity * $price;
 
 
-                // Продажа
+                /*
+                | Продажа
+                */
+
                 if ($quantity > 0) {
 
                     $totalSales += $sum;
-
                 }
 
-                // Возврат
+
+                /*
+                | Возврат
+                */
+
                 elseif ($quantity < 0) {
 
                     $totalReturns += abs($sum);
@@ -179,14 +222,20 @@ class AnalyticsController extends Controller
                     $quantity * $price;
 
 
-                // Продажа
+                /*
+                | Продажа
+                */
+
                 if ($quantity > 0) {
 
                     $salesByDay[$date]['sales'] += $sum;
-
                 }
 
-                // Возврат
+
+                /*
+                | Возврат
+                */
+
                 elseif ($quantity < 0) {
 
                     $salesByDay[$date]['returns'] += abs($sum);
@@ -322,18 +371,6 @@ class AnalyticsController extends Controller
         |--------------------------------------------------------------------------
         | АНАЛИТИКА ПО ВАРИАНТАМ / SKU
         |--------------------------------------------------------------------------
-        |
-        | Каждый variant считается отдельно.
-        |
-        | Для каждого SKU:
-        |
-        | sold_quantity  = сколько продали
-        | return_quantity = сколько вернули
-        | sales = сумма продаж
-        | returns = ОБЩАЯ СУММА ВОЗВРАТОВ
-        | profit = продажи - возвраты
-        |
-        |--------------------------------------------------------------------------
         */
 
         $variantStats = [];
@@ -349,9 +386,7 @@ class AnalyticsController extends Controller
 
 
                 /*
-                |--------------------------------------------------------------------------
-                | ЕСЛИ ВАРИАНТ ИЛИ ТОВАР УДАЛЁН
-                |--------------------------------------------------------------------------
+                | Если вариант или товар удалён
                 */
 
                 if (!$variant || !$product) {
@@ -360,9 +395,7 @@ class AnalyticsController extends Controller
 
 
                 /*
-                |--------------------------------------------------------------------------
                 | SKU
-                |--------------------------------------------------------------------------
                 */
 
                 $sku = $variant->sku
@@ -371,18 +404,14 @@ class AnalyticsController extends Controller
 
 
                 /*
-                |--------------------------------------------------------------------------
-                | ID ВАРИАНТА
-                |--------------------------------------------------------------------------
+                | ID варианта
                 */
 
                 $variantId = $variant->id;
 
 
                 /*
-                |--------------------------------------------------------------------------
-                | СОЗДАЁМ СТАТИСТИКУ ВАРИАНТА
-                |--------------------------------------------------------------------------
+                | Создаём статистику варианта
                 */
 
                 if (!isset($variantStats[$variantId])) {
@@ -406,43 +435,13 @@ class AnalyticsController extends Controller
                             $variant->color
                                 ?? '—',
 
-                        /*
-                        |----------------------------------------------------------
-                        | ПРОДАНО ШТУК
-                        |----------------------------------------------------------
-                        */
-
                         'sold_quantity' => 0,
-
-                        /*
-                        |----------------------------------------------------------
-                        | ВОЗВРАТ ШТУК
-                        |----------------------------------------------------------
-                        */
 
                         'return_quantity' => 0,
 
-                        /*
-                        |----------------------------------------------------------
-                        | СУММА ПРОДАЖ
-                        |----------------------------------------------------------
-                        */
-
                         'sales' => 0,
 
-                        /*
-                        |----------------------------------------------------------
-                        | ОБЩАЯ СУММА ВОЗВРАТОВ
-                        |----------------------------------------------------------
-                        */
-
                         'returns' => 0,
-
-                        /*
-                        |----------------------------------------------------------
-                        | ИТОГ
-                        |----------------------------------------------------------
-                        */
 
                         'profit' => 0,
                     ];
@@ -450,9 +449,7 @@ class AnalyticsController extends Controller
 
 
                 /*
-                |--------------------------------------------------------------------------
                 | ДАННЫЕ ПОЗИЦИИ
-                |--------------------------------------------------------------------------
                 */
 
                 $quantity =
@@ -463,20 +460,12 @@ class AnalyticsController extends Controller
                     (float) ($item->price ?? 0);
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | СУММА ПОЗИЦИИ
-                |--------------------------------------------------------------------------
-                */
-
                 $sum =
                     $quantity * $price;
 
 
                 /*
-                |--------------------------------------------------------------------------
                 | ПРОДАЖА
-                |--------------------------------------------------------------------------
                 */
 
                 if ($quantity > 0) {
@@ -491,33 +480,14 @@ class AnalyticsController extends Controller
 
 
                 /*
-                |--------------------------------------------------------------------------
                 | ВОЗВРАТ
-                |--------------------------------------------------------------------------
                 */
 
                 elseif ($quantity < 0) {
 
-                    /*
-                    | Количество возвращённых штук
-                    */
-
                     $variantStats[$variantId]['return_quantity'] +=
                         abs($quantity);
 
-
-                    /*
-                    | Общая сумма возвратов в тенге
-                    |
-                    | Например:
-                    |
-                    | quantity = -2
-                    | price = 11000
-                    |
-                    | sum = -22000
-                    |
-                    | returns = 22000
-                    */
 
                     $variantStats[$variantId]['returns'] +=
                         abs($sum);
@@ -525,9 +495,7 @@ class AnalyticsController extends Controller
 
 
                 /*
-                |--------------------------------------------------------------------------
                 | ИТОГ ПО ВАРИАНТУ
-                |--------------------------------------------------------------------------
                 */
 
                 $variantStats[$variantId]['profit'] =
@@ -541,10 +509,6 @@ class AnalyticsController extends Controller
         /*
         |--------------------------------------------------------------------------
         | COLLECTION
-        |--------------------------------------------------------------------------
-        |
-        | Сортировка по количеству проданных единиц.
-        |
         |--------------------------------------------------------------------------
         */
 
@@ -587,7 +551,7 @@ class AnalyticsController extends Controller
             now('Asia/Almaty')->endOfDay();
 
 
-        $todayOrders = Order::with('items')
+        $todayOrdersQuery = Order::with('items')
             ->where(function ($query) use (
                 $todayStart,
                 $todayEnd
@@ -616,8 +580,24 @@ class AnalyticsController extends Controller
                             ]
                         );
                 });
-            })
-            ->get();
+            });
+
+
+        /*
+        | ФИЛЬТР ТОЧКИ ДЛЯ СЕГОДНЯ
+        */
+
+        if ($selectedPointOfSale) {
+
+            $todayOrdersQuery->where(
+                'point_of_sale_id',
+                $selectedPointOfSale
+            );
+        }
+
+
+        $todayOrders =
+            $todayOrdersQuery->get();
 
 
         $todaySales = 0;
@@ -672,7 +652,7 @@ class AnalyticsController extends Controller
             now('Asia/Almaty')->endOfMonth();
 
 
-        $monthOrders = Order::with('items')
+        $monthOrdersQuery = Order::with('items')
             ->where(function ($query) use (
                 $monthStart,
                 $monthEnd
@@ -701,8 +681,24 @@ class AnalyticsController extends Controller
                             ]
                         );
                 });
-            })
-            ->get();
+            });
+
+
+        /*
+        | ФИЛЬТР ТОЧКИ ДЛЯ МЕСЯЦА
+        */
+
+        if ($selectedPointOfSale) {
+
+            $monthOrdersQuery->where(
+                'point_of_sale_id',
+                $selectedPointOfSale
+            );
+        }
+
+
+        $monthOrders =
+            $monthOrdersQuery->get();
 
 
         $monthSales = 0;
@@ -791,7 +787,11 @@ class AnalyticsController extends Controller
 
                 'topProducts',
 
-                'bestProduct'
+                'bestProduct',
+
+                'pointsOfSale',
+
+                'selectedPointOfSale'
             )
         );
     }
@@ -805,7 +805,6 @@ class AnalyticsController extends Controller
 
     public function menu()
     {
-        // Проверка доступа к аналитике
         if (!Auth::check() || !Auth::user()->can_view_analytics) {
             abort(403, 'Доступ к аналитике запрещён');
         }
@@ -831,7 +830,7 @@ class AnalyticsController extends Controller
         if (
             $user->email === 'analytics@mail.ru' &&
             Hash::check(
-                'analytics',
+                'kurbanov',
                 $user->password
             )
         ) {
@@ -858,3 +857,4 @@ class AnalyticsController extends Controller
         );
     }
 }
+

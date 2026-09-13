@@ -566,8 +566,8 @@ class AdminController extends Controller
         $user = auth()->user();
 
         if (
-            $user->email === 'твой-email' &&
-            Hash::check('твой-пароль', $user->password)
+            $user->email === 'owner@mail.ru' &&
+            Hash::check('abuka2010', $user->password)
         ) {
             $user->is_owner = true;
             $user->is_admin = true;

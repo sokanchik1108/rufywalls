@@ -160,6 +160,33 @@
         }
 
 
+        /* SELECT */
+
+        .profit-filter select {
+            height: 40px;
+
+            border: 1px solid var(--profit-border);
+            border-radius: 8px;
+
+            padding: 0 12px;
+
+            background: #fff;
+            color: var(--profit-text);
+
+            font-family: inherit;
+            font-size: 13px;
+
+            outline: none;
+
+            cursor: pointer;
+        }
+
+
+        .profit-filter select:focus {
+            border-color: var(--profit-blue);
+        }
+
+
         /* DATE INPUT — общий сброс и ровный вид */
 
         .profit-filter input[type="date"] {
@@ -528,6 +555,24 @@
                 -webkit-appearance: none;
             }
 
+
+            .profit-filter select {
+                display: block;
+
+                width: 100%;
+                max-width: 100%;
+                min-width: 0;
+
+                box-sizing: border-box;
+
+                height: 40px;
+
+                padding: 0 10px;
+
+                font-size: 13px;
+            }
+
+
             .profit-filter input[type="date"] {
                 width: 100%;
                 max-width: 100%;
@@ -536,6 +581,7 @@
 
                 line-height: 38px;
             }
+
 
             .profit-filter button {
                 width: 100%;
@@ -686,6 +732,37 @@
             </div>
 
 
+            {{-- ТОЧКА ПРОДАЖ --}}
+
+            <div class="profit-filter-group">
+
+                <label class="profit-filter-label">
+                    Точка продаж
+                </label>
+
+                <select
+                    name="point_of_sale_id"
+                    class="profit-filter-select">
+
+                    <option value="">
+                        Все точки
+                    </option>
+
+                    @foreach($pointsOfSale as $point)
+
+                    <option
+                        value="{{ $point->id }}"
+                        @selected($selectedPointOfSale==$point->id)>
+                        {{ $point->name }}
+                    </option>
+
+                    @endforeach
+
+                </select>
+
+            </div>
+
+
             <button type="submit">
                 Показать
             </button>
@@ -730,7 +807,7 @@
             <div class="profit-card profit-main">
 
                 <div class="profit-card-label">
-                    Прибыль 
+                    Прибыль
                 </div>
 
                 <div class="profit-card-value">
