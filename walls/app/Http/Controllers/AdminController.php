@@ -9,6 +9,7 @@ use App\Models\{Batch, Category, Product, Room, Variant};
 use Illuminate\Support\Facades\{DB, Storage};
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Models\PointOfSale;
 
 
 
@@ -118,30 +119,63 @@ class AdminController extends Controller
         }
 
         $sku = $request->get('sku');
+        $purchasePriceMin = $request->get('purchase_price_min');
+        $purchasePriceMax = $request->get('purchase_price_max');
 
-        // Список карточек вариантов (подгружаем product и companions, чтобы работали selected)
         $variants = Variant::with([
             'product.categories',
             'product.rooms',
-            'companions',        // чтобы selected работал без доп. запросов
+            'companions',
         ])
-            ->when($sku, fn($q) => $q->where('sku', 'like', "%{$sku}%"))
+            ->when($sku, function ($q) use ($sku) {
+                $q->where('sku', 'like', "%{$sku}%");
+            })
+            ->when($purchasePriceMin !== null && $purchasePriceMin !== '', function ($q) use ($purchasePriceMin) {
+                $q->whereHas('product', function ($query) use ($purchasePriceMin) {
+                    $query->where('purchase_price', '>=', $purchasePriceMin);
+                });
+            })
+            ->when($purchasePriceMax !== null && $purchasePriceMax !== '', function ($q) use ($purchasePriceMax) {
+                $q->whereHas('product', function ($query) use ($purchasePriceMax) {
+                    $query->where('purchase_price', '<=', $purchasePriceMax);
+                });
+            })
             ->orderByDesc('created_at')
-            ->paginate(20);
+            ->paginate(20)
+            ->withQueryString();
 
         $categories = Category::all();
-        $rooms      = Room::all();
+        $rooms = Room::all();
 
-        // Список всех вариантов для селекта (с продуктом для подписи)
         $allVariants = Variant::with('product')->get();
 
         if ($request->ajax()) {
-            $html = view('admin.partials.variant-cards', compact('variants', 'categories', 'rooms', 'allVariants'))->render();
+            $html = view(
+                'admin.partials.variant-cards',
+                compact(
+                    'variants',
+                    'categories',
+                    'rooms',
+                    'allVariants'
+                )
+            )->render();
+
             return response()->json(['html' => $html]);
         }
 
-        return view('admin.database', compact('variants', 'categories', 'rooms', 'allVariants'));
+        return view(
+            'admin.database',
+            compact(
+                'variants',
+                'categories',
+                'rooms',
+                'allVariants',
+                'purchasePriceMin',
+                'purchasePriceMax'
+            )
+        );
     }
+
 
     public function update(Request $request, $id)
     {
@@ -441,8 +475,6 @@ class AdminController extends Controller
 
         return back()->with('success', 'Пользователь успешно удалён.');
     }
-
-
 
     public function autocomplete(Request $request)
     {
