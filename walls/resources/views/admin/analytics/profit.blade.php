@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Аналитика прибыли</title>
-</head>
 
-<body>
+    <title>Аналитика прибыли</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,29 +18,22 @@
         :root {
             --profit-blue: #01142f;
             --profit-blue-hover: #02214b;
-
             --profit-bg: #f6f7f9;
             --profit-card: #ffffff;
-
             --profit-text: #111827;
             --profit-muted: #6b7280;
-
             --profit-border: #e5e7eb;
-
             --profit-green: #15803d;
             --profit-red: #dc2626;
         }
-
 
         .profit-page {
             max-width: 1100px;
             margin: 0 auto;
             padding: 28px 20px 50px;
-
             font-family: 'Inter', sans-serif;
             color: var(--profit-text);
         }
-
 
         /* НАВИГАЦИЯ */
 
@@ -50,29 +41,21 @@
             margin-bottom: 14px;
         }
 
-
         .menu-back-btn {
             display: inline-flex;
             align-items: center;
             gap: 7px;
-
             height: 34px;
             padding: 0 12px;
-
             border: 1px solid var(--profit-border);
             border-radius: 8px;
-
             background: #fff;
             color: var(--profit-muted);
-
             text-decoration: none;
-
             font-size: 12px;
             font-weight: 600;
-
             transition: .15s ease;
         }
-
 
         .menu-back-btn:hover {
             border-color: var(--profit-blue);
@@ -80,32 +63,24 @@
             background: #f8fafc;
         }
 
-
         .profit-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-
             margin-bottom: 24px;
         }
 
-
         .profit-title {
             margin: 0;
-
             font-size: 26px;
             font-weight: 700;
         }
 
-
         .profit-subtitle {
             margin-top: 5px;
-
             color: var(--profit-muted);
-
             font-size: 13px;
         }
-
 
         /* FILTER */
 
@@ -113,17 +88,13 @@
             display: flex;
             gap: 10px;
             align-items: end;
-
+            flex-wrap: nowrap;
             background: var(--profit-card);
-
             border: 1px solid var(--profit-border);
             border-radius: 14px;
-
             padding: 16px;
-
             margin-bottom: 20px;
         }
-
 
         .profit-filter-group {
             display: flex;
@@ -131,79 +102,65 @@
             gap: 6px;
         }
 
+        .profit-filter-group:nth-child(1),
+        .profit-filter-group:nth-child(2) {
+            flex: 0 0 170px;
+        }
+
+        .profit-filter-group:nth-child(3) {
+            flex: 0 0 220px;
+        }
 
         .profit-filter-label {
             font-size: 12px;
             font-weight: 600;
-
             color: var(--profit-muted);
         }
 
-
         .profit-filter input {
             height: 40px;
-
             border: 1px solid var(--profit-border);
             border-radius: 8px;
-
             padding: 0 12px;
-
             font-family: inherit;
             font-size: 13px;
-
             outline: none;
         }
-
 
         .profit-filter input:focus {
             border-color: var(--profit-blue);
         }
 
-
         /* SELECT */
 
         .profit-filter select {
             height: 40px;
-
             border: 1px solid var(--profit-border);
             border-radius: 8px;
-
             padding: 0 12px;
-
             background: #fff;
             color: var(--profit-text);
-
             font-family: inherit;
             font-size: 13px;
-
             outline: none;
-
             cursor: pointer;
         }
-
 
         .profit-filter select:focus {
             border-color: var(--profit-blue);
         }
 
-
-        /* DATE INPUT — общий сброс и ровный вид */
+        /* DATE INPUT */
 
         .profit-filter input[type="date"] {
             -webkit-appearance: none;
             appearance: none;
-
             box-sizing: border-box;
-
             line-height: 38px;
-
             padding: 0 10px;
-
             color: var(--profit-text);
-
             background: #fff;
         }
-
 
         .profit-filter input[type="date"]::-webkit-date-and-time-value {
             text-align: left;
@@ -211,204 +168,149 @@
             padding: 0;
         }
 
-
         .profit-filter input[type="date"]::-webkit-calendar-picker-indicator {
             margin-left: auto;
             padding: 0;
-
             width: 16px;
             height: 16px;
-
             opacity: .6;
-
             cursor: pointer;
         }
-
 
         .profit-filter input[type="date"]::-webkit-inner-spin-button {
             display: none;
         }
 
-
         .profit-filter button {
             height: 40px;
-
             border: none;
             border-radius: 8px;
-
             padding: 0 18px;
-
             background: var(--profit-blue);
             color: #fff;
-
             font-family: inherit;
             font-size: 13px;
             font-weight: 600;
-
             cursor: pointer;
         }
-
 
         .profit-filter button:hover {
             background: var(--profit-blue-hover);
         }
 
-
         /* MAIN CARDS */
 
         .profit-cards {
             display: grid;
-
             grid-template-columns:
                 repeat(4, minmax(0, 1fr));
-
             gap: 14px;
-
             margin-bottom: 14px;
         }
 
-
         .profit-card {
             background: var(--profit-card);
-
             border: 1px solid var(--profit-border);
             border-radius: 14px;
-
             padding: 18px;
         }
 
-
         .profit-card-label {
             color: var(--profit-muted);
-
             font-size: 12px;
             font-weight: 500;
-
             margin-bottom: 9px;
         }
-
 
         .profit-card-value {
             font-size: 22px;
             font-weight: 700;
-
             letter-spacing: -0.3px;
         }
 
-
         .profit-card-small {
             margin-top: 5px;
-
             color: var(--profit-muted);
-
             font-size: 11px;
         }
-
 
         .profit-card.profit-main {
             background: var(--profit-blue);
             border-color: var(--profit-blue);
-
             color: #fff;
         }
-
 
         .profit-card.profit-main .profit-card-label,
         .profit-card.profit-main .profit-card-small {
             color: rgba(255, 255, 255, .68);
         }
 
-
         .profit-green {
             color: var(--profit-green);
         }
-
 
         .profit-red {
             color: var(--profit-red);
         }
 
-
         /* SECONDARY */
 
         .profit-secondary {
             display: grid;
-
             grid-template-columns:
                 repeat(2, minmax(0, 1fr));
-
             gap: 14px;
-
             margin-bottom: 22px;
         }
 
-
         .profit-secondary-card {
             background: var(--profit-card);
-
             border: 1px solid var(--profit-border);
             border-radius: 14px;
-
             padding: 17px;
         }
 
-
         .profit-secondary-title {
             color: var(--profit-muted);
-
             font-size: 12px;
-
             margin-bottom: 8px;
         }
-
 
         .profit-secondary-value {
             font-size: 20px;
             font-weight: 700;
         }
 
-
         /* SECTION */
 
         .profit-section {
             background: var(--profit-card);
-
             border: 1px solid var(--profit-border);
             border-radius: 14px;
-
             padding: 18px;
-
             margin-bottom: 18px;
         }
-
 
         .profit-section-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-
             margin-bottom: 16px;
         }
 
-
         .profit-section-title {
             margin: 0;
-
             font-size: 15px;
             font-weight: 700;
         }
-
 
         /* CHART */
 
         .profit-chart-container {
             position: relative;
-
             height: 340px;
-
             width: 100%;
         }
-
 
         /* TABLE */
 
@@ -416,81 +318,59 @@
             overflow-x: auto;
         }
 
-
         .profit-table {
             width: 100%;
-
             border-collapse: collapse;
-
             font-size: 13px;
         }
 
-
         .profit-table th {
             text-align: left;
-
             padding: 11px 10px;
-
             color: var(--profit-muted);
-
             font-size: 11px;
             font-weight: 600;
-
             border-bottom: 1px solid var(--profit-border);
-
             white-space: nowrap;
         }
-
 
         .profit-table td {
             padding: 13px 10px;
-
             border-bottom: 1px solid #f0f1f3;
-
             white-space: nowrap;
         }
-
 
         .profit-table tbody tr:last-child td {
             border-bottom: none;
         }
 
-
         .profit-table .sku {
             font-weight: 600;
         }
-
 
         .profit-table .number {
             text-align: right;
         }
 
-
         .profit-table th.number {
             text-align: right;
         }
-
 
         .profit-positive {
             color: var(--profit-green);
             font-weight: 700;
         }
 
-
         .profit-negative {
             color: var(--profit-red);
             font-weight: 700;
         }
 
-
         .profit-empty {
             padding: 30px 10px;
-
             text-align: center;
-
             color: var(--profit-muted);
         }
-
 
         /* MOBILE */
 
@@ -500,9 +380,7 @@
                 grid-template-columns:
                     repeat(2, minmax(0, 1fr));
             }
-
         }
-
 
         @media (max-width: 600px) {
 
@@ -518,116 +396,120 @@
                 font-size: 22px;
             }
 
-            /* ФИЛЬТР НА ТЕЛЕФОНЕ */
+            /* ФИЛЬТР */
 
             .profit-filter {
                 width: 100%;
                 max-width: 100%;
                 box-sizing: border-box;
-
-                flex-direction: column;
-                align-items: stretch;
-
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: 10px;
+                align-items: end;
             }
 
-            .profit-filter-group {
+            /* ОТ */
+
+            .profit-filter-group:nth-child(1) {
                 width: 100%;
                 min-width: 0;
+                flex: none;
+                grid-column: 1;
+                grid-row: 1;
+            }
+
+            /* ПО */
+
+            .profit-filter-group:nth-child(2) {
+                width: 100%;
+                min-width: 0;
+                flex: none;
+                grid-column: 2;
+                grid-row: 1;
+            }
+
+            /* ТОЧКА ПРОДАЖ */
+
+            .profit-filter-group:nth-child(3) {
+                width: 100%;
+                min-width: 0;
+                flex: none;
+                grid-column: 1 / -1;
+                grid-row: 2;
+            }
+
+            /* КНОПКА */
+
+            .profit-filter button {
+                width: 100%;
+                box-sizing: border-box;
+                grid-column: 1 / -1;
+                grid-row: 3;
             }
 
             .profit-filter input {
                 display: block;
-
                 width: 100%;
                 max-width: 100%;
                 min-width: 0;
-
                 box-sizing: border-box;
-
                 height: 40px;
-
                 padding: 0 10px;
-
                 font-size: 13px;
-
                 appearance: none;
                 -webkit-appearance: none;
             }
 
-
             .profit-filter select {
                 display: block;
-
                 width: 100%;
                 max-width: 100%;
                 min-width: 0;
-
                 box-sizing: border-box;
-
                 height: 40px;
-
                 padding: 0 10px;
-
                 font-size: 13px;
             }
-
 
             .profit-filter input[type="date"] {
                 width: 100%;
                 max-width: 100%;
                 min-width: 0;
                 box-sizing: border-box;
-
                 line-height: 38px;
             }
-
-
-            .profit-filter button {
-                width: 100%;
-                box-sizing: border-box;
-            }
-
 
             /* КАРТОЧКИ */
 
             .profit-cards {
                 grid-template-columns:
                     repeat(2, minmax(0, 1fr));
-
                 gap: 10px;
             }
-
 
             .profit-card {
                 padding: 14px;
             }
 
-
             .profit-card-value {
                 font-size: 18px;
             }
-
 
             /* ВТОРИЧНЫЕ КАРТОЧКИ */
 
             .profit-secondary {
                 grid-template-columns:
                     repeat(2, minmax(0, 1fr));
-
                 gap: 10px;
             }
-
 
             .profit-secondary-card {
                 padding: 14px;
             }
 
-
             .profit-secondary-value {
                 font-size: 17px;
             }
-
 
             /* СЕКЦИИ */
 
@@ -636,13 +518,10 @@
                 border-radius: 12px;
             }
 
-
             .profit-chart-container {
                 height: 300px;
             }
-
         }
-
 
         /* ОЧЕНЬ МАЛЕНЬКИЕ ТЕЛЕФОНЫ */
 
@@ -651,13 +530,10 @@
             .profit-filter input[type="date"] {
                 padding-left: 8px;
                 padding-right: 8px;
-
                 font-size: 12px;
             }
-
         }
     </style>
-
 
     @section('content')
 
@@ -721,7 +597,7 @@
             <div class="profit-filter-group">
 
                 <label class="profit-filter-label">
-                    До
+                    По
                 </label>
 
                 <input
@@ -750,11 +626,13 @@
 
                     @foreach($pointsOfSale as $point)
 
-                    <option
-                        value="{{ $point->id }}"
-                        @selected($selectedPointOfSale==$point->id)>
-                        {{ $point->name }}
-                    </option>
+                        <option
+                            value="{{ $point->id }}"
+                            @selected($selectedPointOfSale == $point->id)>
+
+                            {{ $point->name }}
+
+                        </option>
 
                     @endforeach
 
@@ -847,8 +725,10 @@
                 </div>
 
                 <div class="profit-secondary-value">
+
                     {{ number_format($soldQuantity, 0, '.', ' ') }}
                     шт.
+
                 </div>
 
             </div>
@@ -861,8 +741,10 @@
                 </div>
 
                 <div class="profit-secondary-value">
+
                     {{ number_format($returnsQuantity, 0, '.', ' ') }}
                     шт.
+
                 </div>
 
             </div>
@@ -901,6 +783,14 @@
                 <h2 class="profit-section-title">
                     Прибыль по товарам
                 </h2>
+
+                <a
+                    href="/admin/analytics/sales"
+                    class="menu-back-btn">
+
+                    Подробнее →
+
+                </a>
 
             </div>
 
@@ -944,86 +834,103 @@
 
                     <tbody>
 
-                        @forelse($productStats as $product)
+                        @forelse(
+                            collect($productStats)
+                                ->sortByDesc('profit')
+                                ->take(5) as $product
+                        )
 
-                        <tr>
+                            <tr>
 
-                            <td class="sku">
-                                {{ $product['sku'] }}
-                            </td>
-
-
-                            <td class="number">
-                                {{ number_format(
-                                $product['quantity'],
-                                0,
-                                '.',
-                                ' '
-                            ) }}
-                            </td>
+                                <td class="sku">
+                                    {{ $product['sku'] }}
+                                </td>
 
 
-                            <td class="number">
-                                {{ number_format(
-                                $product['returns'],
-                                0,
-                                '.',
-                                ' '
-                            ) }}
-                            </td>
+                                <td class="number">
+
+                                    {{ number_format(
+                                        $product['quantity'],
+                                        0,
+                                        '.',
+                                        ' '
+                                    ) }}
+
+                                </td>
 
 
-                            <td class="number">
-                                {{ number_format(
-                                $product['revenue'],
-                                0,
-                                '.',
-                                ' '
-                            ) }}
-                                ₸
-                            </td>
+                                <td class="number">
+
+                                    {{ number_format(
+                                        $product['returns'],
+                                        0,
+                                        '.',
+                                        ' '
+                                    ) }}
+
+                                </td>
 
 
-                            <td class="number">
-                                {{ number_format(
-                                $product['cost'],
-                                0,
-                                '.',
-                                ' '
-                            ) }}
-                                ₸
-                            </td>
+                                <td class="number">
+
+                                    {{ number_format(
+                                        $product['revenue'],
+                                        0,
+                                        '.',
+                                        ' '
+                                    ) }}
+
+                                    ₸
+
+                                </td>
 
 
-                            <td class="number
-                            {{ $product['profit'] >= 0
-                                ? 'profit-positive'
-                                : 'profit-negative'
-                            }}">
+                                <td class="number">
 
-                                {{ number_format(
-                                $product['profit'],
-                                0,
-                                '.',
-                                ' '
-                            ) }}
-                                ₸
+                                    {{ number_format(
+                                        $product['cost'],
+                                        0,
+                                        '.',
+                                        ' '
+                                    ) }}
 
-                            </td>
+                                    ₸
 
-                        </tr>
+                                </td>
+
+
+                                <td class="number
+                                    {{ $product['profit'] >= 0
+                                        ? 'profit-positive'
+                                        : 'profit-negative'
+                                    }}">
+
+                                    {{ number_format(
+                                        $product['profit'],
+                                        0,
+                                        '.',
+                                        ' '
+                                    ) }}
+
+                                    ₸
+
+                                </td>
+
+                            </tr>
 
                         @empty
 
-                        <tr>
+                            <tr>
 
-                            <td
-                                colspan="6"
-                                class="profit-empty">
-                                За выбранный период продаж нет
-                            </td>
+                                <td
+                                    colspan="6"
+                                    class="profit-empty">
 
-                        </tr>
+                                    За выбранный период продаж нет
+
+                                </td>
+
+                            </tr>
 
                         @endforelse
 
@@ -1042,6 +949,7 @@
 
 
     <script>
+
         document.addEventListener(
             'DOMContentLoaded',
             function() {
@@ -1059,7 +967,8 @@
                             );
 
                         return date.toLocaleDateString(
-                            'ru-RU', {
+                            'ru-RU',
+                            {
                                 day: '2-digit',
                                 month: '2-digit'
                             }
@@ -1100,8 +1009,8 @@
 
                 const ctx =
                     document
-                    .getElementById('profitChart')
-                    .getContext('2d');
+                        .getElementById('profitChart')
+                        .getContext('2d');
 
 
                 new Chart(ctx, {
@@ -1116,37 +1025,25 @@
 
                             {
                                 label: 'Выручка',
-
                                 data: revenue,
-
                                 borderWidth: 2,
-
                                 tension: 0.35,
-
                                 pointRadius: 2
                             },
 
                             {
                                 label: 'Себестоимость',
-
                                 data: cost,
-
                                 borderWidth: 2,
-
                                 tension: 0.35,
-
                                 pointRadius: 2
                             },
 
                             {
                                 label: 'Прибыль',
-
                                 data: profit,
-
                                 borderWidth: 3,
-
                                 tension: 0.35,
-
                                 pointRadius: 2
                             }
 
@@ -1161,13 +1058,9 @@
 
                         maintainAspectRatio: false,
 
-
                         interaction: {
-
                             mode: 'index',
-
                             intersect: false
-
                         },
 
 
@@ -1184,9 +1077,7 @@
                                     padding: 18,
 
                                     font: {
-
                                         size: 11
-
                                     }
 
                                 }
@@ -1225,17 +1116,13 @@
                             x: {
 
                                 grid: {
-
                                     display: false
-
                                 },
 
                                 ticks: {
 
                                     font: {
-
                                         size: 10
-
                                     },
 
                                     autoSkip: true,
@@ -1254,9 +1141,7 @@
                                 ticks: {
 
                                     font: {
-
                                         size: 10
-
                                     },
 
                                     callback: function(value) {
@@ -1278,7 +1163,9 @@
                 });
 
             }
+
         );
+
     </script>
 
 </body>

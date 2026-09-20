@@ -119,63 +119,30 @@ class AdminController extends Controller
         }
 
         $sku = $request->get('sku');
-        $purchasePriceMin = $request->get('purchase_price_min');
-        $purchasePriceMax = $request->get('purchase_price_max');
 
+        // Список карточек вариантов (подгружаем product и companions, чтобы работали selected)
         $variants = Variant::with([
             'product.categories',
             'product.rooms',
-            'companions',
+            'companions',        // чтобы selected работал без доп. запросов
         ])
-            ->when($sku, function ($q) use ($sku) {
-                $q->where('sku', 'like', "%{$sku}%");
-            })
-            ->when($purchasePriceMin !== null && $purchasePriceMin !== '', function ($q) use ($purchasePriceMin) {
-                $q->whereHas('product', function ($query) use ($purchasePriceMin) {
-                    $query->where('purchase_price', '>=', $purchasePriceMin);
-                });
-            })
-            ->when($purchasePriceMax !== null && $purchasePriceMax !== '', function ($q) use ($purchasePriceMax) {
-                $q->whereHas('product', function ($query) use ($purchasePriceMax) {
-                    $query->where('purchase_price', '<=', $purchasePriceMax);
-                });
-            })
+            ->when($sku, fn($q) => $q->where('sku', 'like', "%{$sku}%"))
             ->orderByDesc('created_at')
-            ->paginate(20)
-            ->withQueryString();
+            ->paginate(20);
 
         $categories = Category::all();
-        $rooms = Room::all();
+        $rooms      = Room::all();
 
+        // Список всех вариантов для селекта (с продуктом для подписи)
         $allVariants = Variant::with('product')->get();
 
         if ($request->ajax()) {
-            $html = view(
-                'admin.partials.variant-cards',
-                compact(
-                    'variants',
-                    'categories',
-                    'rooms',
-                    'allVariants'
-                )
-            )->render();
-
+            $html = view('admin.partials.variant-cards', compact('variants', 'categories', 'rooms', 'allVariants'))->render();
             return response()->json(['html' => $html]);
         }
 
-        return view(
-            'admin.database',
-            compact(
-                'variants',
-                'categories',
-                'rooms',
-                'allVariants',
-                'purchasePriceMin',
-                'purchasePriceMax'
-            )
-        );
+        return view('admin.database', compact('variants', 'categories', 'rooms', 'allVariants'));
     }
-
 
     public function update(Request $request, $id)
     {
@@ -437,10 +404,18 @@ class AdminController extends Controller
             abort(403, 'Доступ запрещён.');
         }
 
-        $users = User::orderBy('id')->get();
+        $users = User::with('pointOfSale')
+            ->orderBy('id')
+            ->get();
 
-        return view('admin.users', compact('users'));
+        $pointsOfSale = PointOfSale::orderBy('name')->get();
+
+        return view(
+            'admin.users',
+            compact('users', 'pointsOfSale')
+        );
     }
+
 
     public function toggleAdmin(User $user)
     {
@@ -475,6 +450,36 @@ class AdminController extends Controller
 
         return back()->with('success', 'Пользователь успешно удалён.');
     }
+
+
+    public function updateUserPointOfSale(Request $request, User $user)
+    {
+        if (!Auth::check() || !Auth::user()->is_owner) {
+            abort(403, 'Доступ запрещён.');
+        }
+
+        $validated = $request->validate([
+            'point_of_sale_id' => [
+                'nullable',
+                'integer',
+                'exists:points_of_sale,id',
+            ],
+        ]);
+
+        $user->point_of_sale_id =
+            $validated['point_of_sale_id'] ?? null;
+
+        $user->save();
+
+        return redirect()
+            ->back()
+            ->with(
+                'success',
+                'Точка продаж пользователя успешно обновлена.'
+            );
+    }
+
+
 
     public function autocomplete(Request $request)
     {

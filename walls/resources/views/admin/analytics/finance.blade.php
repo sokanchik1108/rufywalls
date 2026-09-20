@@ -793,9 +793,6 @@
                             Сумма
                         </th>
 
-                        <th>
-                            Доля
-                        </th>
 
                     </tr>
 
@@ -827,11 +824,6 @@
 
                         </td>
 
-                        <td>
-
-                            {{ number_format($percentage, 1, ',', ' ') }}%
-
-                        </td>
 
                     </tr>
 
@@ -843,22 +835,6 @@
 
         </div>
 
-
-        <div class="payments-total">
-
-            <div class="payments-total-label">
-                Всего получено оплат
-            </div>
-
-            <div
-                class="payments-total-value"
-                style="color:#15803d;">
-
-                {{ number_format($totalPayments, 0, ',', ' ') }} ₸
-
-            </div>
-
-        </div>
 
 
         @else

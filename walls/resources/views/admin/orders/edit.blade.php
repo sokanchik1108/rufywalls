@@ -4,168 +4,730 @@
 
 @section('content')
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet">
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
 <style>
 
+    :root {
+        --page-bg: #f7f8fa;
+        --surface: #ffffff;
+
+        --text: #30353b;
+        --text-secondary: #737b85;
+        --text-muted: #a1a8b1;
+
+        --border: #e8ebef;
+        --border-light: #f0f2f4;
+
+        --blue: #2f6fed;
+        --blue-hover: #1f56d1;
+        --blue-light: #f1f6fd;
+        --blue-border: #dce8f7;
+
+        --red: #dc747b;
+        --red-light: #fff6f6;
+        --red-border: #f2dddd;
+
+        --green: #63a98c;
+        --green-light: #f0f8f4;
+
+        --radius: 9px;
+        --radius-small: 7px;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
     body {
-        background: #f4f6fb;
-        font-family: 'Segoe UI', sans-serif;
+        background: var(--page-bg);
+        color: var(--text);
+        font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        font-size: 13px;
+        -webkit-font-smoothing: antialiased;
     }
 
-    .container {
-        padding: 20px;
+    .edit-page {
+        max-width: 680px;
+        padding-top: 20px;
+        padding-bottom: 45px;
     }
 
-    #orderControls {
+    /* =========================================================
+       HEADER
+    ========================================================= */
+
+    .edit-header {
         display: flex;
+        align-items: center;
         justify-content: space-between;
-        font-weight: 600;
-        margin-bottom: 20px;
+        gap: 15px;
+        margin-bottom: 16px;
     }
 
-    #cancelOrder {
-        color: #ef4444;
+    .edit-heading {
+        min-width: 0;
+    }
+
+    .edit-title {
+        margin: 0;
+        color: var(--text);
+        font-size: 20px;
+        line-height: 1.2;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+    }
+
+    .edit-subtitle {
+        margin-top: 4px;
+        color: var(--text-muted);
+        font-size: 11px;
+    }
+
+    /* =========================================================
+       HEADER BUTTONS
+    ========================================================= */
+
+    .cancel-order {
+        height: 34px;
+        padding: 0 11px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+
+        background: var(--red-light);
+        border: 1px solid var(--red-border);
+        border-radius: var(--radius-small);
+
+        color: var(--red);
+        font-family: inherit;
+        font-size: 11px;
+        font-weight: 600;
+
         cursor: pointer;
+
+        transition:
+            background .15s ease,
+            border-color .15s ease,
+            color .15s ease;
     }
 
-    #finishOrder {
-        background: #3b82f6;
-        color: #fff;
-        border: none;
-        font-weight: 600;
-        padding: 8px 16px;
+    .cancel-order:hover {
+        background: #ffeded;
+        border-color: #efc5c8;
+        color: #d6535c;
     }
+
+    .finish-order {
+        height: 34px;
+        padding: 0 14px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+
+        background: var(--blue);
+        border: 1px solid var(--blue);
+        border-radius: var(--radius-small);
+
+        color: #fff;
+        font-family: inherit;
+        font-size: 11px;
+        font-weight: 600;
+
+        cursor: pointer;
+
+        transition:
+            background .15s ease,
+            border-color .15s ease;
+    }
+
+    .finish-order:hover {
+        background: var(--blue-hover);
+        border-color: var(--blue-hover);
+    }
+
+    .order-controls {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    /* =========================================================
+       SECTIONS
+    ========================================================= */
+
+    .edit-section {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 12px 13px;
+        margin-bottom: 8px;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        margin-bottom: 9px;
+
+        color: #858d97;
+        font-size: 10.5px;
+        font-weight: 600;
+
+        text-transform: uppercase;
+        letter-spacing: .025em;
+    }
+
+    .section-title i {
+        color: #aeb6bf;
+        font-size: 11px;
+    }
+
+    /* =========================================================
+       FORM
+    ========================================================= */
+
+    .form-label {
+        display: block;
+        margin-bottom: 4px;
+
+        color: #9299a2;
+        font-size: 10.5px;
+        font-weight: 500;
+    }
+
+    .form-control,
+    .form-select {
+        min-height: 35px;
+
+        border: 1px solid var(--border) !important;
+        border-radius: var(--radius-small) !important;
+
+        background: #fff !important;
+        color: #41474e !important;
+
+        font-family: inherit;
+        font-size: 12px;
+
+        box-shadow: none !important;
+    }
+
+    .form-control::placeholder {
+        color: #adb4bc;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #c8dbf1 !important;
+        box-shadow: 0 0 0 3px var(--blue-light) !important;
+    }
+
+    .form-control:hover,
+    .form-select:hover {
+        border-color: #dce1e6 !important;
+    }
+
+    .customer-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    /* =========================================================
+       COMMENT + POINT OF SALE
+    ========================================================= */
+
+    .customer-bottom-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 180px;
+        gap: 8px;
+        margin-top: 8px;
+    }
+
+    .comment-input {
+        resize: vertical;
+        min-height: 35px;
+        max-height: 120px;
+    }
+
+    /* =========================================================
+       PRODUCTS
+    ========================================================= */
 
     .order-item {
+        position: relative;
+
         background: #fff;
-        padding: 12px;
-        margin-bottom: 12px;
-        border-radius: 10px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, .05);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+
+        padding: 9px 10px;
+        margin-bottom: 6px;
+
+        transition: border-color .15s ease;
+    }
+
+    .order-item:hover {
+        border-color: #dce1e6;
+    }
+
+    .order-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .item-main {
+        min-width: 0;
+    }
+
+    .item-header {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+
+        min-width: 0;
+    }
+
+    .item-sku {
+        min-width: 0;
+
+        color: #3d444b;
+        font-size: 12px;
+        font-weight: 600;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .item-batch {
+        flex: 0 0 auto;
+
+        color: #a1a8b0;
+        font-size: 10px;
+
+        white-space: nowrap;
+    }
+
+    .item-edit-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        margin-top: 7px;
+    }
+
+    .item-quantity {
+        color: #7c848d;
+        font-size: 10.5px;
+        white-space: nowrap;
+    }
+
+    .price-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 4px;
     }
 
     .price-input {
-        border: none;
-        border-bottom: 1px solid #ef4444;
-        width: 100px;
+        width: 105px !important;
+        min-height: 31px !important;
+
+        padding: 4px 8px;
+
+        border: 1px solid var(--border) !important;
+        border-radius: 6px !important;
+
+        background: #fff;
+        color: #3e444b;
+
+        font-family: inherit;
+        font-size: 11.5px;
+        font-weight: 600;
+
+        text-align: right;
+
+        outline: none;
+        box-shadow: none !important;
+    }
+
+    .price-input:focus {
+        border-color: #c8dbf1 !important;
+        box-shadow: 0 0 0 3px var(--blue-light) !important;
+    }
+
+    .price-currency {
+        color: #a1a8b0;
+        font-size: 10px;
     }
 
     .item-total {
+        margin-left: auto;
+
+        color: #3e444b;
+        font-size: 11.5px;
+        font-weight: 700;
+
+        white-space: nowrap;
+    }
+
+    /* =========================================================
+       TOTAL + DISCOUNT INSIDE PRODUCTS
+    ========================================================= */
+
+    .order-total-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+
+        margin-top: 8px;
+        padding: 10px 12px;
+
+        background: #fafbfc;
+        border: 1px solid var(--border-light);
+        border-radius: 8px;
+    }
+
+    .order-total-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        min-width: 0;
+    }
+
+    .order-total-label {
+        color: #8b939c;
+        font-size: 11px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .discount-inline {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .discount-inline-label {
+        color: #9299a2;
+        font-size: 10.5px;
+        white-space: nowrap;
+    }
+
+    .discount-input {
+        width: 95px !important;
+        min-height: 31px !important;
+
+        text-align: right;
         font-weight: 600;
-        margin-left: 10px;
     }
 
-    .remove-item {
-        float: right;
-        border: none;
-        background: none;
-        color: #ef4444;
-        font-size: 20px;
+    .discount-currency {
+        color: #a1a8b0;
+        font-size: 10px;
     }
 
-    /* ========================= */
-    /* ОПЛАТА */
-    /* ========================= */
+    .order-total-right {
+        display: flex;
+        align-items: baseline;
+        gap: 5px;
+
+        white-space: nowrap;
+    }
+
+    .order-total-value {
+        color: #30353b;
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: -.015em;
+    }
+
+    .order-total-currency {
+        color: #9299a2;
+        font-size: 10.5px;
+        font-weight: 500;
+    }
+
+    /* =========================================================
+       PAYMENTS
+    ========================================================= */
 
     .payments-wrapper {
-        margin-top: 20px;
-        margin-bottom: 20px;
+        margin-top: 8px;
     }
 
     .payment-item {
         background: #fff;
-        padding: 12px;
-        margin-bottom: 10px;
-        border-radius: 10px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, .05);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+
+        padding: 8px;
+        margin-bottom: 6px;
+    }
+
+    .payment-item:last-child {
+        margin-bottom: 0;
     }
 
     .payment-row {
         display: flex;
-        gap: 10px;
         align-items: center;
+        gap: 7px;
     }
 
     .payment-method {
-        flex: 1;
+        flex: 1 1 auto;
+        min-width: 0;
     }
 
     .payment-amount {
-        width: 130px;
+        width: 125px !important;
+        flex: 0 0 125px;
+
+        text-align: right;
+        font-weight: 600;
     }
 
     .remove-payment {
-        border: none;
-        background: none;
-        color: #ef4444;
-        font-size: 22px;
+        width: 28px;
+        height: 32px;
+
+        flex: 0 0 28px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 0;
+
+        background: var(--red-light);
+        border: 1px solid var(--red-border);
+        border-radius: 6px;
+
+        color: var(--red);
+        font-size: 14px;
+
         cursor: pointer;
     }
 
-    .add-payment {
-        border: none;
-        background: #111827;
-        color: #fff;
-        padding: 8px 14px;
-        border-radius: 8px;
-        font-weight: 600;
-        margin-top: 5px;
+    .remove-payment:hover {
+        background: #ffeded;
+        border-color: #efc5c8;
+        color: #d6535c;
     }
 
+    .add-payment {
+        height: 32px;
+
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+
+        margin-top: 7px;
+        padding: 0 10px;
+
+        background: var(--blue-light);
+        border: 1px solid var(--blue-border);
+        border-radius: 6px;
+
+        color: var(--blue);
+        font-family: inherit;
+        font-size: 10.5px;
+        font-weight: 600;
+
+        cursor: pointer;
+
+        transition:
+            background .15s ease,
+            border-color .15s ease;
+    }
+
+    .add-payment:hover {
+        background: #eaf2ff;
+        border-color: #cbdcf0;
+    }
+
+    /* =========================================================
+       PAYMENT SUMMARY
+    ========================================================= */
+
     .payment-summary {
-        margin-top: 10px;
-        padding: 10px;
-        background: #f8fafc;
+        margin-top: 8px;
+
+        background: #fafbfc;
+        border: 1px solid var(--border-light);
         border-radius: 8px;
-        font-size: 14px;
+
+        padding: 9px 10px;
+    }
+
+    .payment-summary-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        min-height: 23px;
+
+        color: #858d97;
+        font-size: 10.5px;
+    }
+
+    .payment-summary-row strong {
+        color: #4a5159;
+        font-size: 11px;
+        font-weight: 600;
     }
 
     .payment-difference {
-        font-weight: 700;
+        font-weight: 700 !important;
+    }
+
+    .payment-error,
+    .payment-success {
+        display: none;
+
+        margin-top: 7px;
+        padding: 8px 9px;
+
+        border-radius: 6px;
+
+        font-size: 10.5px;
+        font-weight: 600;
     }
 
     .payment-error {
-        display: none;
-        margin-top: 10px;
-        padding: 10px 12px;
-        border-radius: 8px;
-        background: #fef2f2;
-        color: #dc2626;
-        font-weight: 600;
+        background: var(--red-light);
+        border: 1px solid var(--red-border);
+        color: #d65d65;
     }
 
     .payment-success {
-        display: none;
-        margin-top: 10px;
-        padding: 10px 12px;
-        border-radius: 8px;
-        background: #f0fdf4;
-        color: #16a34a;
-        font-weight: 600;
+        background: var(--green-light);
+        border: 1px solid #dcefe6;
+        color: var(--green);
     }
+
+    /* =========================================================
+       MOBILE
+    ========================================================= */
 
     @media (max-width: 600px) {
 
-        .payment-row {
-            align-items: stretch;
+        .edit-page {
+            padding: 14px 12px 35px;
         }
 
-        .payment-method {
-            width: 100%;
+        .edit-title {
+            font-size: 18px;
+        }
+
+        .edit-subtitle {
+            font-size: 10px;
+        }
+
+        .customer-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .customer-bottom-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .order-controls {
+            margin-bottom: 9px;
+        }
+
+        .cancel-order,
+        .finish-order {
+            height: 33px;
+        }
+
+        .edit-section {
+            padding: 10px;
+        }
+
+        .payment-row {
+            gap: 5px;
         }
 
         .payment-amount {
-            width: 120px;
+            width: 105px !important;
+            flex-basis: 105px;
         }
 
+        .item-edit-row {
+            gap: 6px;
+        }
+
+        .price-input {
+            width: 95px !important;
+        }
+
+        .order-total-box {
+            gap: 8px;
+        }
+
+        .discount-input {
+            width: 85px !important;
+        }
+    }
+
+    @media (max-width: 420px) {
+
+        .customer-bottom-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .order-total-box {
+            align-items: center;
+        }
+
+        .order-total-left {
+            gap: 5px;
+        }
+
+        .discount-inline-label {
+            font-size: 10px;
+        }
+
+        .discount-input {
+            width: 78px !important;
+        }
+
+        .order-total-value {
+            font-size: 15px;
+        }
     }
 
 </style>
 
-<div class="container">
+
+<div class="container edit-page">
 
 <form
     method="POST"
@@ -177,217 +739,335 @@
     @method('PUT')
 
 
-    {{-- ========================= --}}
-    {{-- КНОПКИ --}}
-    {{-- ========================= --}}
+    {{-- =====================================================
+         HEADER
+    ====================================================== --}}
 
-    <div id="orderControls">
+ 
 
-        <span id="cancelOrder">
+    {{-- =====================================================
+         CONTROLS
+    ====================================================== --}}
+
+    <div class="order-controls">
+
+        <button
+            type="button"
+            id="cancelOrder"
+            class="cancel-order"
+        >
+            <i class="bi bi-x-lg"></i>
             ОТМЕНА
-        </span>
+        </button>
+
+        <div class="edit-heading">
+
+            <h1 class="edit-title">
+                Заказ #{{ $order->id }}
+            </h1>
+
+            <div class="edit-subtitle">
+                Редактирование заказа
+            </div>
+
+        </div>
 
         <button
             type="submit"
             id="finishOrder"
+            class="finish-order"
         >
+            <i class="bi bi-check-lg"></i>
             СОХРАНИТЬ
         </button>
 
     </div>
 
 
-    {{-- ========================= --}}
-    {{-- ДАННЫЕ КЛИЕНТА --}}
-    {{-- ========================= --}}
+    {{-- =====================================================
+         CUSTOMER
+    ====================================================== --}}
 
-    <input
-        type="text"
-        name="name"
-        class="form-control mb-2"
-        value="{{ $order->name }}"
-        placeholder="Имя"
-    >
+    <div class="edit-section">
 
-    <input
-        type="text"
-        name="phone"
-        class="form-control mb-2"
-        value="{{ $order->phone }}"
-        placeholder="Телефон"
-    >
+        <div class="section-title">
 
-    <input
-        type="text"
-        name="comment"
-        class="form-control mb-2"
-        value="{{ $order->comment }}"
-        placeholder="Комментарий"
-    >
+            <i class="bi bi-person"></i>
+
+            Покупатель
+
+        </div>
 
 
-    {{-- ========================= --}}
-    {{-- ТОЧКА ПРОДАЖ --}}
-    {{-- ========================= --}}
+        <div class="customer-grid">
 
-    <label class="mb-1">
-        Точка продаж
-    </label>
+            <div>
 
-    <select
-        name="point_of_sale_id"
-        class="form-control mb-3"
-    >
-
-        <option value="">
-            Не выбрана
-        </option>
-
-        @foreach($pointsOfSale as $point)
-
-            <option
-                value="{{ $point->id }}"
-                {{ $order->point_of_sale_id == $point->id ? 'selected' : '' }}
-            >
-                {{ $point->name }}
-            </option>
-
-        @endforeach
-
-    </select>
-
-
-    {{-- ========================= --}}
-    {{-- СКИДКА --}}
-    {{-- ========================= --}}
-
-    <label>
-        Скидка
-    </label>
-
-    <input
-        type="text"
-        id="discountInput"
-        name="discount"
-        class="form-control mb-3"
-        value="{{ $order->discount ?? 0 }}"
-        inputmode="numeric"
-        autocomplete="off"
-    >
-
-
-    {{-- ========================= --}}
-    {{-- ТОВАРЫ --}}
-    {{-- ========================= --}}
-
-    <div id="itemsWrapper">
-
-        @foreach($order->items as $i => $item)
-
-            <div class="order-item">
-
-                <button
-                    type="button"
-                    class="remove-item"
-                >
-                    &times;
-                </button>
-
-
-                <div>
-
-                    <b>
-                        {{ $item->variant->sku }}
-                    </b>
-
-                    @if($item->batch_code)
-                        ({{ $item->batch_code }})
-                    @endif
-
-                </div>
-
-
-                <div style="margin-top:10px">
-
-                    {{ $item->quantity }} ×
-
-                    <input
-                        type="text"
-                        name="items[{{ $i }}][price]"
-                        class="price-input"
-                        value="{{ number_format((float) $item->price, 0, '.', '') }}"
-                        inputmode="numeric"
-                        autocomplete="off"
-                        placeholder="цена"
-                    >
-
-                    <span class="item-total"></span>
-
-                </div>
-
+                <label class="form-label">
+                    Имя
+                </label>
 
                 <input
-                    type="hidden"
-                    name="items[{{ $i }}][id]"
-                    value="{{ $item->id }}"
-                >
-
-
-                <input
-                    type="hidden"
-                    name="items[{{ $i }}][quantity]"
-                    value="{{ $item->quantity }}"
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    value="{{ $order->name }}"
+                    placeholder="Имя"
                 >
 
             </div>
 
-        @endforeach
+
+            <div>
+
+                <label class="form-label">
+                    Телефон
+                </label>
+
+                <input
+                    type="text"
+                    name="phone"
+                    class="form-control"
+                    value="{{ $order->phone }}"
+                    placeholder="Телефон"
+                >
+
+            </div>
+
+        </div>
+
+
+        {{-- КОММЕНТАРИЙ + ТОЧКА ПРОДАЖ В ОДНОЙ СТРОКЕ --}}
+
+        <div class="customer-bottom-grid">
+
+            <div>
+
+                <label class="form-label">
+                    Комментарий
+                </label>
+
+                <textarea
+                    name="comment"
+                    class="form-control comment-input"
+                    placeholder="Комментарий"
+                    rows="1"
+                >{{ $order->comment }}</textarea>
+
+            </div>
+
+
+            <div>
+
+                <label class="form-label">
+                    Точка продаж
+                </label>
+
+                <select
+                    name="point_of_sale_id"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        Не выбрана
+                    </option>
+
+                    @foreach($pointsOfSale as $point)
+
+                        <option
+                            value="{{ $point->id }}"
+                            {{ $order->point_of_sale_id == $point->id ? 'selected' : '' }}
+                        >
+                            {{ $point->name }}
+                        </option>
+
+                    @endforeach
+
+                </select>
+
+            </div>
+
+        </div>
 
     </div>
 
 
-    {{-- ========================= --}}
-    {{-- ИТОГО ЗАКАЗА --}}
-    {{-- ========================= --}}
+    {{-- =====================================================
+         PRODUCTS + TOTAL
+    ====================================================== --}}
 
-    <div
-        style="
-            text-align:right;
-            font-weight:700;
-            font-size:18px;
-            margin-top:15px;
-        "
-    >
+    <div class="edit-section">
 
-        ИТОГО:
+        <div class="section-title">
 
-        <span id="orderTotal">
-            0
-        </span>
+            <i class="bi bi-box-seam"></i>
 
-        ₸
+            Товары
+
+        </div>
+
+
+        <div id="itemsWrapper">
+
+            @foreach($order->items as $i => $item)
+
+                <div class="order-item">
+
+                    <div class="item-main">
+
+                        <div class="item-header">
+
+                            <div class="item-sku">
+                                {{ $item->variant->sku }}
+                            </div>
+
+
+                            @if($item->batch_code)
+
+                                <div class="item-batch">
+
+                                    Партия:
+                                    {{ $item->batch_code }}
+
+                                </div>
+
+                            @endif
+
+                        </div>
+
+
+                        <div class="item-edit-row">
+
+                            <div class="item-quantity">
+                                {{ $item->quantity }} ×
+                            </div>
+
+
+                            <div class="price-wrapper">
+
+                                <input
+                                    type="text"
+                                    name="items[{{ $i }}][price]"
+                                    class="price-input"
+                                    value="{{ number_format((float) $item->price, 0, '.', '') }}"
+                                    inputmode="numeric"
+                                    autocomplete="off"
+                                    placeholder="Цена"
+                                >
+
+                                <span class="price-currency">
+                                    ₸
+                                </span>
+
+                            </div>
+
+
+                            <span class="item-total">
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <input
+                        type="hidden"
+                        name="items[{{ $i }}][id]"
+                        value="{{ $item->id }}"
+                    >
+
+
+                    <input
+                        type="hidden"
+                        name="items[{{ $i }}][quantity]"
+                        value="{{ $item->quantity }}"
+                    >
+
+                </div>
+
+            @endforeach
+
+        </div>
+
+
+        {{-- =================================================
+             TOTAL + DISCOUNT
+        ================================================== --}}
+
+        <div class="order-total-box">
+
+            <div class="order-total-left">
+
+
+
+
+                <div class="discount-inline">
+
+                    <span class="discount-inline-label">
+                        Скидка
+                    </span>
+
+                    <input
+                        type="text"
+                        id="discountInput"
+                        name="discount"
+                        class="form-control discount-input"
+                        value="{{ $order->discount ?? 0 }}"
+                        inputmode="numeric"
+                        autocomplete="off"
+                    >
+
+                    <span class="discount-currency">
+                        ₸
+                    </span>
+
+                </div>
+
+                                <div class="order-total-label">
+                    Итого:
+                </div>
+
+            </div>
+
+
+            <div class="order-total-right">
+
+                <span
+                    class="order-total-value"
+                    id="orderTotal"
+                >
+                    0
+                </span>
+
+                <span class="order-total-currency">
+                    ₸
+                </span>
+
+            </div>
+
+        </div>
 
     </div>
 
 
-    {{-- ========================= --}}
-    {{-- ОПЛАТЫ --}}
-    {{-- ========================= --}}
+    {{-- =====================================================
+         PAYMENTS
+    ====================================================== --}}
 
-    <div class="payments-wrapper">
+    <div class="edit-section payments-wrapper">
 
-        <label
-            class="mb-2"
-            style="font-weight:600;"
-        >
+        <div class="section-title">
+
+            <i class="bi bi-credit-card"></i>
+
             Оплата
-        </label>
+
+        </div>
 
 
         <div id="paymentsWrapper">
 
             @if($order->payments->count())
-
 
                 @foreach($order->payments as $payment)
 
@@ -395,15 +1075,12 @@
 
                         <div class="payment-row">
 
-
-                            {{-- СПОСОБ ОПЛАТЫ --}}
+                            {{-- PAYMENT METHOD --}}
 
                             <select
                                 name="payments[{{ $loop->index }}][payment_method]"
-                                class="form-control payment-method"
+                                class="form-select payment-method"
                             >
-
-                                {{-- Если у существующей оплаты способ отсутствует --}}
 
                                 @if(empty($payment->payment_method))
 
@@ -416,16 +1093,12 @@
 
                                 @else
 
-                                    {{-- Пустой вариант --}}
-
                                     <option value="">
                                         Не указано
                                     </option>
 
                                 @endif
 
-
-                                {{-- Все способы оплаты из базы --}}
 
                                 @foreach($paymentMethods as $method)
 
@@ -441,7 +1114,7 @@
                             </select>
 
 
-                            {{-- СУММА --}}
+                            {{-- AMOUNT --}}
 
                             <input
                                 type="text"
@@ -454,13 +1127,14 @@
                             >
 
 
-                            {{-- УДАЛИТЬ --}}
+                            {{-- REMOVE PAYMENT --}}
 
                             <button
                                 type="button"
                                 class="remove-payment"
+                                title="Удалить оплату"
                             >
-                                &times;
+                                <i class="bi bi-trash3"></i>
                             </button>
 
                         </div>
@@ -469,20 +1143,15 @@
 
                 @endforeach
 
-
             @else
-
-
-                {{-- ЕСЛИ ОПЛАТ ЕЩЁ НЕТ --}}
 
                 <div class="payment-item">
 
                     <div class="payment-row">
 
-
                         <select
                             name="payments[0][payment_method]"
-                            class="form-control payment-method"
+                            class="form-select payment-method"
                         >
 
                             <option
@@ -491,7 +1160,6 @@
                             >
                                 Не указано
                             </option>
-
 
                             @foreach($paymentMethods as $method)
 
@@ -518,8 +1186,9 @@
                         <button
                             type="button"
                             class="remove-payment"
+                            title="Удалить оплату"
                         >
-                            &times;
+                            <i class="bi bi-trash3"></i>
                         </button>
 
                     </div>
@@ -531,51 +1200,68 @@
         </div>
 
 
-        {{-- ДОБАВИТЬ ОПЛАТУ --}}
+        {{-- ADD PAYMENT --}}
 
         <button
             type="button"
             class="add-payment"
             id="addPayment"
         >
-            + Добавить оплату
+            <i class="bi bi-plus-lg"></i>
+            Добавить оплату
         </button>
 
 
-        {{-- ========================= --}}
-        {{-- ИНФОРМАЦИЯ ПО ОПЛАТЕ --}}
-        {{-- ========================= --}}
+        {{-- PAYMENT SUMMARY --}}
 
         <div class="payment-summary">
 
-            <div>
+            <div class="payment-summary-row">
 
-                Сумма заказа:
+                <span>
+                    Сумма заказа
+                </span>
 
                 <strong>
-                    <span id="paymentOrderTotal">0</span> ₸
+                    <span id="paymentOrderTotal">
+                        0
+                    </span>
+                    ₸
                 </strong>
 
             </div>
 
 
-            <div>
+            <div class="payment-summary-row">
 
-                Сумма оплаты:
+                <span>
+                    Сумма оплаты
+                </span>
 
                 <strong>
-                    <span id="paymentTotal">0</span> ₸
+                    <span id="paymentTotal">
+                        0
+                    </span>
+                    ₸
                 </strong>
 
             </div>
 
 
-            <div>
+            <div class="payment-summary-row">
 
-                Разница:
+                <span>
+                    Разница
+                </span>
 
                 <strong class="payment-difference">
-                    <span id="paymentDifference">0</span> ₸
+
+                    <span id="paymentDifference">
+                        0
+                    </span>
+
+                    ₸
+
                 </strong>
 
             </div>
@@ -585,7 +1271,6 @@
                 id="paymentError"
                 class="payment-error"
             >
-                {{-- Текст устанавливается через JS --}}
             </div>
 
 
@@ -600,45 +1285,55 @@
 
     </div>
 
-
 </form>
-
 
 </div>
 
+
 <script>
 
-
-    /* ========================= */
-    /* СПОСОБЫ ОПЛАТЫ */
-    /* ========================= */
+    /* =========================================================
+       PAYMENT METHODS
+    ========================================================= */
 
     const paymentMethods = @json(
         $paymentMethods->pluck('name')->values()
     );
 
 
-    /* ========================= */
-    /* ФОРМАТИРОВАНИЕ */
-    /* ========================= */
+    /* =========================================================
+       FORMAT MONEY
+    ========================================================= */
 
-function formatAmount(amount) {
+    function formatAmount(amount) {
 
-    amount = Math.round(Number(amount) || 0);
+        amount = Math.round(
+            Number(amount) || 0
+        );
 
-    let isNegative = amount < 0;
+        let isNegative =
+            amount < 0;
 
-    amount = Math.abs(amount);
+        amount =
+            Math.abs(amount);
 
-    let formatted = amount
-        .toString()
-        .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        let formatted =
+            amount
+                .toString()
+                .replace(
+                    /\B(?=(\d{3})+(?!\d))/g,
+                    '.'
+                );
 
-    return isNegative
-        ? '-' + formatted
-        : formatted;
-}
+        return isNegative
+            ? '-' + formatted
+            : formatted;
+    }
 
+
+    /* =========================================================
+       PARSE MONEY
+    ========================================================= */
 
     function parseAmount(value) {
 
@@ -647,40 +1342,50 @@ function formatAmount(amount) {
                 .replace(/\./g, '')
                 .replace(',', '.')
         ) || 0;
-
     }
 
 
-function formatInputAmount(input) {
+    /* =========================================================
+       FORMAT INPUT
+    ========================================================= */
 
-    let value = String(input.val() || '').trim();
+    function formatInputAmount(input) {
 
-    let isNegative = value.startsWith('-');
+        let value =
+            String(input.val() || '')
+                .trim();
 
-    let raw = value.replace(/\D/g, '');
+        let isNegative =
+            value.startsWith('-');
 
-    if (raw === '') {
+        let raw =
+            value.replace(/\D/g, '');
 
-        input.val(isNegative ? '-' : '');
+        if (raw === '') {
 
-        return;
+            input.val(
+                isNegative ? '-' : ''
+            );
+
+            return;
+        }
+
+        let number =
+            parseInt(raw, 10);
+
+        if (isNegative) {
+            number = -number;
+        }
+
+        input.val(
+            formatAmount(number)
+        );
     }
 
-    let number = parseInt(raw, 10);
 
-    if (isNegative) {
-        number = -number;
-    }
-
-    input.val(
-        formatAmount(number)
-    );
-}
-
-
-    /* ========================= */
-    /* ПЕРЕСЧЁТ ЗАКАЗА */
-    /* ========================= */
+    /* =========================================================
+       RECALCULATE ORDER
+    ========================================================= */
 
     function recalc() {
 
@@ -714,7 +1419,8 @@ function formatInputAmount(input) {
             $(this)
                 .find('.item-total')
                 .text(
-                    formatAmount(total) + ' ₸'
+                    formatAmount(total) +
+                    ' ₸'
                 );
 
 
@@ -730,30 +1436,35 @@ function formatInputAmount(input) {
 
 
         let orderTotal =
-        sum - discount;
+            sum - discount;
+
 
         orderTotal =
-        Math.round(orderTotal);
+            Math.round(orderTotal);
 
 
-        $('#orderTotal').text(
-            formatAmount(orderTotal)
+        $('#orderTotal')
+            .text(
+                formatAmount(orderTotal)
+            );
+
+
+        $('#paymentOrderTotal')
+            .text(
+                formatAmount(orderTotal)
+            );
+
+
+        recalcPayments(
+            orderTotal
         );
-
-
-        $('#paymentOrderTotal').text(
-            formatAmount(orderTotal)
-        );
-
-
-        recalcPayments(orderTotal);
 
     }
 
 
-    /* ========================= */
-    /* ПЕРЕСЧЁТ ОПЛАТ */
-    /* ========================= */
+    /* =========================================================
+       RECALCULATE PAYMENTS
+    ========================================================= */
 
     function recalcPayments(orderTotal) {
 
@@ -774,56 +1485,61 @@ function formatInputAmount(input) {
             Math.round(paymentTotal);
 
 
-        $('#paymentTotal').text(
-            formatAmount(paymentTotal)
-        );
+        $('#paymentTotal')
+            .text(
+                formatAmount(paymentTotal)
+            );
 
 
         let difference =
             Math.round(
-                orderTotal - paymentTotal
+                orderTotal -
+                paymentTotal
             );
 
 
-        $('#paymentDifference').text(
-            formatAmount(difference)
-        );
+        $('#paymentDifference')
+            .text(
+                formatAmount(difference)
+            );
 
-
-        /* ========================= */
-        /* ПРОВЕРКА СУММ */
-        /* ========================= */
 
         if (difference === 0) {
 
-            $('#paymentSuccess').show();
+            $('#paymentSuccess')
+                .show();
 
-            $('#paymentError').hide();
+            $('#paymentError')
+                .hide();
 
         } else {
 
-            $('#paymentSuccess').hide();
+            $('#paymentSuccess')
+                .hide();
 
-            $('#paymentError').show();
+            $('#paymentError')
+                .show();
 
 
             if (difference > 0) {
 
-                $('#paymentError').text(
-                    'Не хватает ' +
-                    formatAmount(difference) +
-                    ' ₸ для полной оплаты заказа.'
-                );
+                $('#paymentError')
+                    .text(
+                        'Не хватает ' +
+                        formatAmount(difference) +
+                        ' ₸ для полной оплаты заказа.'
+                    );
 
             } else {
 
-                $('#paymentError').text(
-                    'Сумма оплаты больше суммы заказа на ' +
-                    formatAmount(
-                        Math.abs(difference)
-                    ) +
-                    ' ₸.'
-                );
+                $('#paymentError')
+                    .text(
+                        'Сумма оплаты больше суммы заказа на ' +
+                        formatAmount(
+                            Math.abs(difference)
+                        ) +
+                        ' ₸.'
+                    );
 
             }
 
@@ -832,9 +1548,9 @@ function formatInputAmount(input) {
     }
 
 
-    /* ========================= */
-    /* ИЗМЕНЕНИЕ ЦЕНЫ */
-    /* ========================= */
+    /* =========================================================
+       PRICE INPUT
+    ========================================================= */
 
     $(document).on(
         'input',
@@ -851,9 +1567,9 @@ function formatInputAmount(input) {
     );
 
 
-    /* ========================= */
-    /* ИЗМЕНЕНИЕ СКИДКИ */
-    /* ========================= */
+    /* =========================================================
+       DISCOUNT INPUT
+    ========================================================= */
 
     $(document).on(
         'input',
@@ -870,9 +1586,9 @@ function formatInputAmount(input) {
     );
 
 
-    /* ========================= */
-    /* ИЗМЕНЕНИЕ СУММЫ ОПЛАТЫ */
-    /* ========================= */
+    /* =========================================================
+       PAYMENT INPUT
+    ========================================================= */
 
     $(document).on(
         'input',
@@ -898,151 +1614,152 @@ function formatInputAmount(input) {
     );
 
 
-    /* ========================= */
-    /* ДОБАВЛЕНИЕ ОПЛАТЫ */
-    /* ========================= */
+    /* =========================================================
+       ADD PAYMENT
+    ========================================================= */
 
     let paymentIndex =
         {{ $order->payments->count() ?: 1 }};
 
 
-    $('#addPayment').click(function() {
+    $('#addPayment').click(
+        function() {
 
-        let orderTotal =
-            parseAmount(
-                $('#orderTotal').text()
-            );
-
-
-        let paymentTotal =
-            getPaymentsTotal();
+            let orderTotal =
+                parseAmount(
+                    $('#orderTotal').text()
+                );
 
 
-        let remaining =
-            orderTotal - paymentTotal;
+            let paymentTotal =
+                getPaymentsTotal();
 
 
-        if (remaining < 0) {
-            remaining = 0;
-        }
+            let remaining =
+                orderTotal -
+                paymentTotal;
 
 
-        let methodsHtml = '';
+            if (remaining < 0) {
+                remaining = 0;
+            }
 
 
-        /*
-         * Если способов оплаты нет,
-         * оставляем вариант "Не указано".
-         */
-
-        if (paymentMethods.length === 0) {
-
-            methodsHtml = `
-                <option value="" selected>
-                    Не указано
-                </option>
-            `;
-
-        } else {
-
-            /*
-             * При добавлении новой оплаты
-             * первым показываем "Не указано".
-             *
-             * Пользователь должен выбрать способ.
-             */
-
-            methodsHtml = `
-                <option value="" selected>
-                    Не указано
-                </option>
-            `;
+            let methodsHtml = '';
 
 
-            paymentMethods.forEach(function(method) {
+            if (paymentMethods.length === 0) {
 
-                methodsHtml += `
-                    <option value="${method}">
-                        ${method}
+                methodsHtml = `
+
+                    <option value="" selected>
+                        Не указано
                     </option>
+
                 `;
 
-            });
+            } else {
 
-        }
+                methodsHtml = `
 
+                    <option value="" selected>
+                        Не указано
+                    </option>
 
-        let html = `
-
-            <div class="payment-item">
-
-                <div class="payment-row">
-
-                    <select
-                        name="payments[${paymentIndex}][payment_method]"
-                        class="form-control payment-method"
-                    >
-
-                        ${methodsHtml}
-
-                    </select>
+                `;
 
 
-                    <input
-                        type="text"
-                        name="payments[${paymentIndex}][amount]"
-                        class="form-control payment-amount"
-                        value="${formatAmount(remaining)}"
-                        inputmode="numeric"
-                        autocomplete="off"
-                        placeholder="Сумма"
-                    >
+                paymentMethods.forEach(
+                    function(method) {
+
+                        methodsHtml += `
+
+                            <option value="${method}">
+                                ${method}
+                            </option>
+
+                        `;
+
+                    }
+                );
+
+            }
 
 
-                    <button
-                        type="button"
-                        class="remove-payment"
-                    >
-                        &times;
-                    </button>
+            let html = `
+
+                <div class="payment-item">
+
+                    <div class="payment-row">
+
+                        <select
+                            name="payments[${paymentIndex}][payment_method]"
+                            class="form-select payment-method"
+                        >
+
+                            ${methodsHtml}
+
+                        </select>
+
+
+                        <input
+                            type="text"
+                            name="payments[${paymentIndex}][amount]"
+                            class="form-control payment-amount"
+                            value="${formatAmount(remaining)}"
+                            inputmode="numeric"
+                            autocomplete="off"
+                            placeholder="Сумма"
+                        >
+
+
+                        <button
+                            type="button"
+                            class="remove-payment"
+                            title="Удалить оплату"
+                        >
+                            <i class="bi bi-trash3"></i>
+                        </button>
+
+                    </div>
 
                 </div>
 
-            </div>
-
-        `;
+            `;
 
 
-        $('#paymentsWrapper').append(
-            html
-        );
+            $('#paymentsWrapper')
+                .append(html);
 
 
-        paymentIndex++;
+            paymentIndex++;
 
 
-        recalc();
+            recalc();
 
-    });
+        }
+    );
 
 
-    /* ========================= */
-    /* ПОЛУЧИТЬ СУММУ ОПЛАТ */
-    /* ========================= */
+    /* =========================================================
+       GET PAYMENTS TOTAL
+    ========================================================= */
 
     function getPaymentsTotal() {
 
         let total = 0;
 
 
-        $('.payment-amount').each(function() {
+        $('.payment-amount').each(
+            function() {
 
-            total +=
-                parseAmount(
-                    $(this).val()
-                );
+                total +=
+                    parseAmount(
+                        $(this).val()
+                    );
 
-        });
+            }
+        );
 
 
         return Math.round(total);
@@ -1050,9 +1767,9 @@ function formatInputAmount(input) {
     }
 
 
-    /* ========================= */
-    /* УДАЛЕНИЕ ОПЛАТЫ */
-    /* ========================= */
+    /* =========================================================
+       REMOVE PAYMENT
+    ========================================================= */
 
     $(document).on(
         'click',
@@ -1070,61 +1787,42 @@ function formatInputAmount(input) {
     );
 
 
-    /* ========================= */
-    /* УДАЛЕНИЕ ТОВАРА */
-    /* ========================= */
-
-    $(document).on(
-        'click',
-        '.remove-item',
-        function() {
-
-            $(this)
-                .closest('.order-item')
-                .remove();
-
-
-            recalc();
-
-        }
-    );
-
-
-    /* ========================= */
-    /* ПРОВЕРКА ПЕРЕД СОХРАНЕНИЕМ */
-    /* ========================= */
+    /* =========================================================
+       SUBMIT VALIDATION
+    ========================================================= */
 
     $('#orderForm').on(
         'submit',
         function(e) {
 
-
-            /* ========================= */
-            /* 1. ПРОВЕРЯЕМ СПОСОБ ОПЛАТЫ */
-            /* ========================= */
+            /* =================================================
+               1. PAYMENT METHOD
+            ================================================= */
 
             let paymentMethodMissing = false;
 
             let firstEmptyPayment = null;
 
 
-            $('.payment-method').each(function() {
+            $('.payment-method').each(
+                function() {
 
-                if (!$(this).val()) {
+                    if (!$(this).val()) {
 
-                    paymentMethodMissing = true;
+                        paymentMethodMissing = true;
 
 
-                    if (!firstEmptyPayment) {
+                        if (!firstEmptyPayment) {
 
-                        firstEmptyPayment =
-                            $(this);
+                            firstEmptyPayment =
+                                $(this);
+
+                        }
 
                     }
 
                 }
-
-            });
+            );
 
 
             if (paymentMethodMissing) {
@@ -1139,7 +1837,8 @@ function formatInputAmount(input) {
                     .show();
 
 
-                $('#paymentSuccess').hide();
+                $('#paymentSuccess')
+                    .hide();
 
 
                 alert(
@@ -1155,9 +1854,9 @@ function formatInputAmount(input) {
             }
 
 
-            /* ========================= */
-            /* 2. ПРОВЕРЯЕМ СУММЫ */
-            /* ========================= */
+            /* =================================================
+               2. CHECK SUMS
+            ================================================= */
 
             let orderTotal =
                 parseAmount(
@@ -1178,7 +1877,8 @@ function formatInputAmount(input) {
 
 
             let difference =
-                orderTotal - paymentTotal;
+                orderTotal -
+                paymentTotal;
 
 
             if (difference !== 0) {
@@ -1186,7 +1886,9 @@ function formatInputAmount(input) {
                 e.preventDefault();
 
 
-                $('#paymentSuccess').hide();
+                $('#paymentSuccess')
+                    .hide();
+
 
                 $('#paymentError')
                     .show();
@@ -1194,11 +1896,12 @@ function formatInputAmount(input) {
 
                 if (difference > 0) {
 
-                    $('#paymentError').text(
-                        'Нельзя сохранить заказ. Не хватает ' +
-                        formatAmount(difference) +
-                        ' ₸ для полной оплаты.'
-                    );
+                    $('#paymentError')
+                        .text(
+                            'Нельзя сохранить заказ. Не хватает ' +
+                            formatAmount(difference) +
+                            ' ₸ для полной оплаты.'
+                        );
 
 
                     alert(
@@ -1209,13 +1912,14 @@ function formatInputAmount(input) {
 
                 } else {
 
-                    $('#paymentError').text(
-                        'Нельзя сохранить заказ. Сумма оплаты больше суммы заказа на ' +
-                        formatAmount(
-                            Math.abs(difference)
-                        ) +
-                        ' ₸.'
-                    );
+                    $('#paymentError')
+                        .text(
+                            'Нельзя сохранить заказ. Сумма оплаты больше суммы заказа на ' +
+                            formatAmount(
+                                Math.abs(difference)
+                            ) +
+                            ' ₸.'
+                        );
 
 
                     alert(
@@ -1234,24 +1938,26 @@ function formatInputAmount(input) {
             }
 
 
-            /* ========================= */
-            /* 3. НОРМАЛИЗАЦИЯ ЦЕН */
-            /* ========================= */
+            /* =================================================
+               3. NORMALIZE PRICES
+            ================================================= */
 
-            $('.price-input').each(function() {
+            $('.price-input').each(
+                function() {
 
-                $(this).val(
-                    parseAmount(
-                        $(this).val()
-                    )
-                );
+                    $(this).val(
+                        parseAmount(
+                            $(this).val()
+                        )
+                    );
 
-            });
+                }
+            );
 
 
-            /* ========================= */
-            /* 4. НОРМАЛИЗАЦИЯ СКИДКИ */
-            /* ========================= */
+            /* =================================================
+               4. NORMALIZE DISCOUNT
+            ================================================= */
 
             $('#discountInput').val(
                 parseAmount(
@@ -1260,35 +1966,39 @@ function formatInputAmount(input) {
             );
 
 
-            /* ========================= */
-            /* 5. НОРМАЛИЗАЦИЯ ОПЛАТ */
-            /* ========================= */
+            /* =================================================
+               5. NORMALIZE PAYMENTS
+            ================================================= */
 
-            $('.payment-amount').each(function() {
+            $('.payment-amount').each(
+                function() {
 
-                $(this).val(
-                    parseAmount(
-                        $(this).val()
-                    )
-                );
+                    $(this).val(
+                        parseAmount(
+                            $(this).val()
+                        )
+                    );
 
-            });
+                }
+            );
 
         }
     );
 
 
-    /* ========================= */
-    /* НАЧАЛЬНОЕ ФОРМАТИРОВАНИЕ */
-    /* ========================= */
+    /* =========================================================
+       INITIAL FORMATTING
+    ========================================================= */
 
-    $('.price-input').each(function() {
+    $('.price-input').each(
+        function() {
 
-        formatInputAmount(
-            $(this)
-        );
+            formatInputAmount(
+                $(this)
+            );
 
-    });
+        }
+    );
 
 
     formatInputAmount(
@@ -1296,28 +2006,34 @@ function formatInputAmount(input) {
     );
 
 
-    $('.payment-amount').each(function() {
+    $('.payment-amount').each(
+        function() {
 
-        formatInputAmount(
-            $(this)
-        );
+            formatInputAmount(
+                $(this)
+            );
 
-    });
+        }
+    );
 
 
-    /* ========================= */
-    /* ПЕРВИЧНЫЙ РАСЧЁТ */
-    /* ========================= */
+    /* =========================================================
+       INITIAL CALCULATION
+    ========================================================= */
 
     recalc();
 
 
-    /* ========================= */
-    /* ОТМЕНА */
-    /* ========================= */
+    /* =========================================================
+       CANCEL
+    ========================================================= */
 
     $('#cancelOrder').click(
-        () => history.back()
+        function() {
+
+            history.back();
+
+        }
     );
 
 </script>

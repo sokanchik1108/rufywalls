@@ -12,6 +12,9 @@ use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\ProfitAnalyticsController;
 use App\Http\Controllers\Admin\FinancialAnalyticsController;
+use App\Http\Controllers\ReceiptController;
+use App\Http\Controllers\WriteOffController;
+use App\Http\Controllers\Admin\PointOfSaleController;
 
 
 Route::get('/address', function () {
@@ -90,6 +93,10 @@ Route::get('/admin/warehouses', [WarehouseController::class, 'listWarehouses'])-
 Route::get('/admin/stocks/view-all', [WarehouseController::class, 'viewAllBatches'])->middleware('auth')->name('admin.stocks.view_all');
 
 Route::post('/admin/batches/add', [WarehouseController::class, 'addBatchToWarehouse'])->middleware('auth')->name('admin.batches.add');
+
+Route::post('/admin/batches/create', [WarehouseController::class, 'createBatch'])
+    ->middleware('auth')
+    ->name('admin.batches.create');
 
 Route::post('/admin/batches/delete', [WarehouseController::class, 'removeBatch'])->middleware('auth')->name('admin.batches.remove');
 
@@ -204,4 +211,173 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::delete('/payment-methods/{id}', [OrderController::class, 'destroyPaymentMethod'])
         ->name('payment-methods.destroy');
+
+
+    Route::get(
+        'points-of-sale',
+        [PointOfSaleController::class, 'index']
+    )->name('points-of-sale.index');
+
+    Route::post(
+        'points-of-sale',
+        [PointOfSaleController::class, 'store']
+    )->name('points-of-sale.store');
+
+    Route::delete(
+        'points-of-sale/{pointOfSale}',
+        [PointOfSaleController::class, 'destroy']
+    )->name('points-of-sale.destroy');
 });
+
+Route::prefix('admin/receipts')
+    ->name('admin.receipts.')
+    ->group(function () {
+        Route::get('/', [\App\Http\Controllers\ReceiptController::class, 'index'])
+            ->name('index');
+
+        Route::get('/create', [\App\Http\Controllers\ReceiptController::class, 'create'])
+            ->name('create');
+
+        Route::post('/', [\App\Http\Controllers\ReceiptController::class, 'store'])
+            ->name('store');
+
+        Route::get('/{receipt}/edit', [\App\Http\Controllers\ReceiptController::class, 'edit'])
+            ->name('edit');
+
+        Route::put('/{receipt}', [\App\Http\Controllers\ReceiptController::class, 'update'])
+            ->name('update');
+
+        Route::delete('/{receipt}', [\App\Http\Controllers\ReceiptController::class, 'destroy'])
+            ->name('destroy');
+    });
+
+
+Route::prefix('admin/receipts')
+    ->name('admin.receipts.')
+    ->group(function () {
+
+        Route::get('/', [
+            ReceiptController::class,
+            'index'
+        ])->name('index');
+
+        Route::get('/create', [
+            ReceiptController::class,
+            'create'
+        ])->name('create');
+
+        Route::post('/', [
+            ReceiptController::class,
+            'store'
+        ])->name('store');
+
+        Route::get('/{receipt}/edit', [
+            ReceiptController::class,
+            'edit'
+        ])->name('edit');
+
+        Route::put('/{receipt}', [
+            ReceiptController::class,
+            'update'
+        ])->name('update');
+
+        Route::delete('/{receipt}', [
+            ReceiptController::class,
+            'destroy'
+        ])->name('destroy');
+
+        Route::get('/{receipt}', [ReceiptController::class, 'show'])->name('show');
+    });
+
+
+Route::prefix('admin/writeoffs')
+    ->name('admin.writeoffs.')
+    ->group(function () {
+
+        Route::get(
+            '/',
+            [WriteOffController::class, 'index']
+        )->name('index');
+
+        Route::get(
+            '/create',
+            [WriteOffController::class, 'create']
+        )->name('create');
+
+        Route::post(
+            '/',
+            [WriteOffController::class, 'store']
+        )->name('store');
+
+        Route::get(
+            '/search-variants',
+            [WriteOffController::class, 'searchVariants']
+        )->name('search-variants');
+
+        Route::get(
+            '/{writeOff}',
+            [WriteOffController::class, 'show']
+        )->name('show');
+
+        Route::delete(
+            '/{writeOff}',
+            [WriteOffController::class, 'destroy']
+        )->name('destroy');
+    });
+
+use App\Http\Controllers\Admin\ReceiptsAnalyticsController;
+use App\Http\Controllers\Admin\SalesAnalyticsController;
+
+Route::prefix('admin/analytics')
+    ->name('admin.analytics.')
+    ->group(function () {
+
+        Route::get(
+            '/sales',
+            [SalesAnalyticsController::class, 'index']
+        )->name('sales');
+
+        // AJAX таблица продаж
+        Route::get(
+            '/sales/product-table',
+            [SalesAnalyticsController::class, 'productTable']
+        )->name('sales.product.table');
+
+        // Конкретный товар / SKU
+        Route::get(
+            '/sales/{sku}',
+            [SalesAnalyticsController::class, 'index']
+        )->name('sales.product');
+
+        // Аналитика приёмок
+        Route::get(
+            '/receipts',
+            [ReceiptsAnalyticsController::class, 'index']
+        )->name('receipts');
+    });
+
+Route::get(
+    '/admin/analytics/receipts/product',
+    [\App\Http\Controllers\Admin\ReceiptsAnalyticsController::class, 'product']
+)->name('admin.analytics.receipts.product');
+
+Route::get(
+    '/admin/analytics/receipts/product/table',
+    [ReceiptsAnalyticsController::class, 'productTable']
+)->name('admin.analytics.receipts.product.table');
+
+
+
+Route::post(
+    '/admin/users/{user}/point-of-sale',
+    [AdminController::class, 'updateUserPointOfSale']
+)->name('admin.users.pointOfSale');
+
+
+Route::delete(
+    '/admin/receipts/{receipt}/items/{receiptItem}',
+    [ReceiptController::class, 'destroyItem']
+)->name('admin.receipts.items.destroy');
+
+
+

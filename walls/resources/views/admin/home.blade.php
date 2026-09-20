@@ -23,6 +23,7 @@
     }
 
     /* ---------- Header card ---------- */
+
     .ap-card {
         background: var(--ap-surface);
         border: 1px solid var(--ap-border);
@@ -80,6 +81,7 @@
     }
 
     /* ---------- Alert ---------- */
+
     .ap-alert {
         display: flex;
         align-items: center;
@@ -120,6 +122,7 @@
     }
 
     /* ---------- Section label ---------- */
+
     .ap-section-label {
         font-size: 12px;
         font-weight: 600;
@@ -134,6 +137,7 @@
     }
 
     /* ---------- Tile grid ---------- */
+
     .ap-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -154,7 +158,10 @@
         text-decoration: none;
         color: var(--ap-ink);
 
-        transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+        transition:
+            border-color .15s ease,
+            box-shadow .15s ease,
+            transform .15s ease;
     }
 
     .ap-tile:hover {
@@ -195,7 +202,8 @@
         color: var(--ap-ink-faint);
     }
 
-    /* accent variants */
+    /* ---------- Accent variants ---------- */
+
     .ap-tile.accent-warning {
         --ap-tile-accent: #d97706;
         --ap-tile-accent-soft: #fef3e2;
@@ -227,13 +235,17 @@
     }
 
     /* ---------- Mobile ---------- */
+
     @media (max-width: 720px) {
+
         .ap-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
+
     }
 
     @media (max-width: 480px) {
+
         .ap-header {
             padding: 18px;
         }
@@ -249,6 +261,7 @@
         .ap-tile {
             padding: 13px;
         }
+
     }
 </style>
 
@@ -257,23 +270,57 @@
     <div class="ap-card">
 
         <div class="ap-header">
-            <h1>{{ __('Панель администратора') }}</h1>
+
+            <h1>
+                {{ __('Панель администратора') }}
+            </h1>
+
         </div>
 
         <div class="ap-body">
 
             @if (session('status'))
-            <div class="ap-alert" role="alert">
-                <span>{{ session('status') }}</span>
-                <button type="button" class="ap-alert-close" onclick="this.closest('.ap-alert').remove()" aria-label="Закрыть">&times;</button>
+
+            <div
+                class="ap-alert"
+                role="alert">
+
+                <span>
+                    {{ session('status') }}
+                </span>
+
+                <button
+                    type="button"
+                    class="ap-alert-close"
+                    onclick="this.closest('.ap-alert').remove()"
+                    aria-label="Закрыть">
+                    &times;
+                </button>
+
             </div>
+
             @endif
 
+
             <div class="ap-user-line">
-                <span class="ap-user-avatar">{{ strtoupper(substr(Auth::user()->email, 0, 1)) }}</span>
-                <span>Вы вошли как <strong>{{ Auth::user()->name }}</strong></span>
+
+                <span class="ap-user-avatar">
+                    {{ strtoupper(substr(Auth::user()->email, 0, 1)) }}
+                </span>
+
+                <span>
+                    Вы вошли как
+                    <strong>
+                        {{ Auth::user()->name }}
+                    </strong>
+                </span>
+
             </div>
 
+
+            {{-- ===================================================== --}}
+            {{-- ПОЛУЧИТЬ ДОСТУП --}}
+            {{-- ===================================================== --}}
 
             @if(
             !auth()->user()->is_owner &&
@@ -281,32 +328,78 @@
             !auth()->user()->can_view_analytics
             )
 
-            <div class="ap-section-label">Получить доступ</div>
+            <div class="ap-section-label">
+                Получить доступ
+            </div>
 
             <div class="ap-grid">
 
-                <a href="{{ route('admin.make.me.owner') }}" class="ap-tile accent-warning">
-                    <span class="ap-tile-icon">👑</span>
-                    <span class="ap-tile-text">
-                        <div class="ap-tile-title">Стать владельцем</div>
-                        <div class="ap-tile-sub">Полный доступ ко всем разделам</div>
+                <a
+                    href="{{ route('admin.make.me.owner') }}"
+                    class="ap-tile accent-warning">
+
+                    <span class="ap-tile-icon">
+                        👑
                     </span>
+
+                    <span class="ap-tile-text">
+
+                        <div class="ap-tile-title">
+                            Стать владельцем
+                        </div>
+
+                        <div class="ap-tile-sub">
+                            Полный доступ ко всем разделам
+                        </div>
+
+                    </span>
+
                 </a>
 
-                <a href="{{ route('admin.make.me.admin') }}" class="ap-tile accent-success">
-                    <span class="ap-tile-icon">🛡️</span>
-                    <span class="ap-tile-text">
-                        <div class="ap-tile-title">Стать администратором</div>
-                        <div class="ap-tile-sub">Управление заказами и товарами</div>
+
+                <a
+                    href="{{ route('admin.make.me.admin') }}"
+                    class="ap-tile accent-success">
+
+                    <span class="ap-tile-icon">
+                        🛡️
                     </span>
+
+                    <span class="ap-tile-text">
+
+                        <div class="ap-tile-title">
+                            Стать администратором
+                        </div>
+
+                        <div class="ap-tile-sub">
+                            Управление заказами и товарами
+                        </div>
+
+                    </span>
+
                 </a>
 
-                <a href="{{ route('admin.make.me.can.view.analytics') }}" class="ap-tile accent-primary">
-                    <span class="ap-tile-icon">📊</span>
-                    <span class="ap-tile-text">
-                        <div class="ap-tile-title">Стать аналитиком</div>
-                        <div class="ap-tile-sub">Доступ к отчётам и аналитике</div>
+
+                <a
+                    href="{{ route('admin.make.me.can.view.analytics') }}"
+                    class="ap-tile accent-primary">
+
+                    <span class="ap-tile-icon">
+                        📊
                     </span>
+
+                    <span class="ap-tile-text">
+
+                        <div class="ap-tile-title">
+                            Стать аналитиком
+                        </div>
+
+                        <div class="ap-tile-sub">
+                            Доступ к отчётам и аналитике
+                        </div>
+
+                    </span>
+
                 </a>
 
             </div>
@@ -314,64 +407,187 @@
             @endif
 
 
+            {{-- ===================================================== --}}
+            {{-- ОСНОВНЫЕ ФУНКЦИИ --}}
+            {{-- ===================================================== --}}
+
             @if(auth()->user()->is_admin)
 
-            <div class="ap-section-label">Основные функции</div>
+            <div class="ap-section-label">
+                Основные функции
+            </div>
 
             <div class="ap-grid">
 
-                <a href="{{ route('admin.orders') }}" class="ap-tile accent-primary">
-                    <span class="ap-tile-icon">📦</span>
-                    <span class="ap-tile-text">
-                        <div class="ap-tile-title">Заказы</div>
+                {{-- Заказы --}}
+
+                <a
+                    href="{{ route('admin.orders') }}"
+                    class="ap-tile accent-primary">
+
+                    <span class="ap-tile-icon">
+                        📦
                     </span>
+
+                    <span class="ap-tile-text">
+
+                        <div class="ap-tile-title">
+                            Заказы
+                        </div>
+
+                    </span>
+
                 </a>
 
-                <a href="{{ route('admin.database') }}" class="ap-tile accent-secondary">
-                    <span class="ap-tile-icon">📋</span>
-                    <span class="ap-tile-text">
-                        <div class="ap-tile-title">База товаров</div>
+
+                {{-- База товаров --}}
+
+                <a
+                    href="{{ route('admin.database') }}"
+                    class="ap-tile accent-secondary">
+
+                    <span class="ap-tile-icon">
+                        📋
                     </span>
+
+                    <span class="ap-tile-text">
+
+                        <div class="ap-tile-title">
+                            База товаров
+                        </div>
+
+                    </span>
+
                 </a>
 
-                <a href="{{ route('admin.products.selectCreateForm') }}" class="ap-tile accent-success">
-                    <span class="ap-tile-icon">➕</span>
-                    <span class="ap-tile-text">
-                        <div class="ap-tile-title">Добавить товар</div>
+
+                {{-- Добавить товар --}}
+
+                <a
+                    href="{{ route('admin.products.selectCreateForm') }}"
+                    class="ap-tile accent-success">
+
+                    <span class="ap-tile-icon">
+                        ➕
                     </span>
+
+                    <span class="ap-tile-text">
+
+                        <div class="ap-tile-title">
+                            Добавить товар
+                        </div>
+
+                    </span>
+
                 </a>
+
+
+                {{-- Пользователи — только владелец --}}
 
                 @if(auth()->user()->is_owner)
-                <a href="{{ route('admin.users') }}" class="ap-tile accent-dark">
-                    <span class="ap-tile-icon">👥</span>
-                    <span class="ap-tile-text">
-                        <div class="ap-tile-title">Пользователи</div>
+
+                <a
+                    href="{{ route('admin.users') }}"
+                    class="ap-tile accent-dark">
+
+                    <span class="ap-tile-icon">
+                        👥
                     </span>
+
+                    <span class="ap-tile-text">
+
+                        <div class="ap-tile-title">
+                            Пользователи
+                        </div>
+
+                    </span>
+
                 </a>
+
                 @endif
 
-                <a href="{{ route('admin.stocks.warehouses') }}" class="ap-tile accent-info">
-                    <span class="ap-tile-icon">🏬</span>
-                    <span class="ap-tile-text">
-                        <div class="ap-tile-title">Добавить товар на склад</div>
-                    </span>
-                </a>
 
-                <a href="{{ route('admin.warehouses.overview') }}" class="ap-tile accent-secondary">
-                    <span class="ap-tile-icon">📂</span>
-                    <span class="ap-tile-text">
-                        <div class="ap-tile-title">Остатки товаров</div>
-                    </span>
-                </a>
+                {{-- Общая аналитика — только владелец --}}
 
                 @if(auth()->user()->is_owner)
-                <a href="{{ route('admin.analytics.menu') }}" class="ap-tile accent-primary">
-                    <span class="ap-tile-icon">📊</span>
-                    <span class="ap-tile-text">
-                        <div class="ap-tile-title">Аналитика</div>
+
+                <a
+                    href="{{ route('admin.analytics.menu') }}"
+                    class="ap-tile accent-primary">
+
+                    <span class="ap-tile-icon">
+                        📊
                     </span>
+
+                    <span class="ap-tile-text">
+
+                        <div class="ap-tile-title">
+                            Аналитика
+                        </div>
+
+                    </span>
+
                 </a>
+
                 @endif
+
+
+                {{-- Точки продаж — только владелец --}}
+
+                @if(auth()->user()->is_owner)
+
+                <a
+                    href="{{ route('admin.points-of-sale.index') }}"
+                    class="ap-tile accent-info">
+
+                    <span class="ap-tile-icon">
+                        🏪
+                    </span>
+
+                    <span class="ap-tile-text">
+
+                        <div class="ap-tile-title">
+                            Точки продаж
+                        </div>
+
+                        <div class="ap-tile-sub">
+                            Управление точками продаж
+                        </div>
+
+                    </span>
+
+                </a>
+
+                @endif
+
+
+                {{-- Способы оплаты — только владелец --}}
+
+                @if(auth()->user()->is_owner)
+
+                <a
+                    href="{{ route('admin.payment-methods') }}"
+                    class="ap-tile accent-success">
+
+                    <span class="ap-tile-icon">
+                        💳
+                    </span>
+
+                    <span class="ap-tile-text">
+
+                        <div class="ap-tile-title">
+                            Способы оплаты
+                        </div>
+
+                        <div class="ap-tile-sub">
+                            Управление способами оплаты
+                        </div>
+
+                    </span>
+
+                </a>
+
+                 @endif
 
             </div>
 
@@ -383,7 +599,116 @@
 
             @endif
 
+
+            {{-- ===================================================== --}}
+            {{-- СКЛАД --}}
+            {{-- ДОСТУП ВЛАДЕЛЬЦУ И АДМИНИСТРАТОРУ --}}
+            {{-- ===================================================== --}}
+
+            @if(auth()->user()->is_owner || auth()->user()->is_admin)
+
+            <div class="ap-section-label">
+                Склад
+            </div>
+
+            <div class="ap-grid">
+
+                {{-- Приёмки --}}
+
+                <a
+                    href="/admin/receipts"
+                    class="ap-tile accent-success">
+
+                    <span class="ap-tile-icon">
+                        📥
+                    </span>
+
+                    <span class="ap-tile-text">
+
+                        <div class="ap-tile-title">
+                            Приёмки
+                        </div>
+
+                    </span>
+
+                </a>
+
+
+                {{-- Списания --}}
+
+                <a
+                    href="{{ route('admin.writeoffs.index') }}"
+                    class="ap-tile accent-warning">
+
+                    <span class="ap-tile-icon">
+                        📤
+                    </span>
+
+                    <span class="ap-tile-text">
+
+                        <div class="ap-tile-title">
+                            Списания
+                        </div>
+
+                    </span>
+
+                </a>
+
+
+                {{-- Остатки --}}
+
+                <a
+                    href="{{ route('admin.warehouses.overview') }}"
+                    class="ap-tile accent-secondary">
+
+                    <span class="ap-tile-icon">
+                        📂
+                    </span>
+
+                    <span class="ap-tile-text">
+
+                        <div class="ap-tile-title">
+                            Остатки товаров
+                        </div>
+
+                    </span>
+
+                </a>
+
+
+                {{-- ================================================= --}}
+                {{-- АНАЛИТИКА ПРИЁМОК --}}
+                {{-- ДОСТУП АДМИНУ И ВЛАДЕЛЬЦУ --}}
+                {{-- ================================================= --}}
+
+                <a
+                    href="{{ route('admin.analytics.receipts') }}"
+                    class="ap-tile accent-info">
+
+                    <span class="ap-tile-icon">
+                        📊
+                    </span>
+
+                    <span class="ap-tile-text">
+
+                        <div class="ap-tile-title">
+                            Аналитика приёмок
+                        </div>
+
+                        <div class="ap-tile-sub">
+                            Статистика поступлений товара
+                        </div>
+
+                    </span>
+
+                </a>
+
+            </div>
+
+            @endif
+
         </div>
+
     </div>
 
 </div>

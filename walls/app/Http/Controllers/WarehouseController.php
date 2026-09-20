@@ -7,93 +7,149 @@ use App\Models\Warehouse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\{Batch, Category, Product, Room, Variant};
 
-
 class WarehouseController extends Controller
 {
     public function editWarehouse(Request $request, Warehouse $warehouse)
     {
-        $variants = Variant::with(['product', 'batches' => function ($q) use ($warehouse) {
-            $q->whereHas('warehouses', fn($q) => $q->where('warehouse_id', $warehouse->id));
-        }, 'batches.warehouses'])
-            ->when($request->filled('sku'), fn($q) => $q->where('sku', 'like', '%' . $request->sku . '%'))
+        $variants = Variant::with([
+            'product',
+            'batches' => function ($q) use ($warehouse) {
+                $q->whereHas(
+                    'warehouses',
+                    fn($q) => $q->where('warehouse_id', $warehouse->id)
+                );
+            },
+            'batches.warehouses'
+        ])
+            ->when(
+                $request->filled('sku'),
+                fn($q) => $q->where(
+                    'sku',
+                    'like',
+                    '%' . $request->sku . '%'
+                )
+            )
             ->paginate(25);
 
-        return view('admin.stocks.edit-warehouse', compact('warehouse', 'variants'));
+        return view(
+            'admin.stocks.edit-warehouse',
+            compact('warehouse', 'variants')
+        );
     }
 
-    public function updateWarehouse(Request $request, Warehouse $warehouse)
-    {
+    public function updateWarehouse(
+        Request $request,
+        Warehouse $warehouse
+    ) {
         $errors = [];
 
-        // 🟡 Обновление существующих партий
+        /*
+         * Обновление существующих партий
+         */
         if ($request->has('batch')) {
             foreach ($request->batch as $batchId => $quantity) {
                 $batch = Batch::find($batchId);
+
                 if ($batch) {
                     $batch->warehouses()->syncWithoutDetaching([
-                        $warehouse->id => ['quantity' => $quantity]
+                        $warehouse->id => [
+                            'quantity' => $quantity
+                        ]
                     ]);
                 }
             }
         }
 
-        // 🟢 Добавление новых партий
+        /*
+         * Добавление новых партий
+         */
         if ($request->has('new_batch')) {
             foreach ($request->new_batch as $variantId => $data) {
-                $code = isset($data['code']) ? trim($data['code']) : null;
-                $quantity = isset($data['quantity']) ? intval($data['quantity']) : 0;
+                $code = isset($data['code'])
+                    ? trim($data['code'])
+                    : null;
+
+                $quantity = isset($data['quantity'])
+                    ? intval($data['quantity'])
+                    : 0;
 
                 if ($code && $quantity > 0) {
-                    $exists = \App\Models\Batch::where('variant_id', $variantId)
-                        ->where('batch_code', $code)
+                    $exists = Batch::where(
+                        'variant_id',
+                        $variantId
+                    )
+                        ->where(
+                            'batch_code',
+                            $code
+                        )
                         ->exists();
 
                     if ($exists) {
-                        $errors[] = 'Партия «' . e($code) . '» уже существует и не была добавлена.';
+                        $errors[] =
+                            'Партия «' .
+                            e($code) .
+                            '» уже существует и не была добавлена.';
                     } else {
-                        $batch = \App\Models\Batch::create([
+                        $batch = Batch::create([
                             'variant_id' => $variantId,
                             'batch_code' => $code,
+                            'stock' => 0,
                         ]);
-                        $batch->warehouses()->attach($warehouse->id, ['quantity' => $quantity]);
+
+                        $batch->warehouses()->attach(
+                            $warehouse->id,
+                            [
+                                'quantity' => $quantity
+                            ]
+                        );
                     }
                 }
             }
         }
 
-
         if (!empty($errors)) {
-            return redirect()->back()->with('error_list', $errors);
+            return redirect()
+                ->back()
+                ->with('error_list', $errors);
         }
 
-        return redirect()->back()->with('success', 'Остатки обновлены');
+        return redirect()
+            ->back()
+            ->with(
+                'success',
+                'Остатки обновлены'
+            );
     }
-
-
 
     public function listWarehouses()
     {
         $warehouses = Warehouse::all();
-        return view('admin.stocks.warehouses', compact('warehouses'));
-    }
 
+        return view(
+            'admin.stocks.warehouses',
+            compact('warehouses')
+        );
+    }
 
     public function viewAllBatches(Request $request)
     {
-        // Склады
         $warehouses = Warehouse::orderBy('name')->get();
 
-        // Загружаем варианты с партиями и складами
-        $query = Variant::with(['product', 'batches.warehouses']);
+        $query = Variant::with([
+            'product',
+            'batches.warehouses'
+        ]);
 
         if ($request->filled('sku')) {
-            $query->where('sku', 'like', '%' . $request->sku . '%');
+            $query->where(
+                'sku',
+                'like',
+                '%' . $request->sku . '%'
+            );
         }
 
-        // Сначала получаем без пагинации, чтобы посчитать stock_balance
         $variants = $query->get();
 
-        // Считаем остатки
         $variants->transform(function ($variant) {
             $total = 0;
             $warehouseTotals = [];
@@ -101,11 +157,14 @@ class WarehouseController extends Controller
             foreach ($variant->batches as $batch) {
                 foreach ($batch->warehouses as $warehouse) {
                     $qty = $warehouse->pivot->quantity ?? 0;
+
                     $total += $qty;
 
                     $warehouseTotals[$warehouse->id] = [
                         'name' => $warehouse->name,
-                        'quantity' => ($warehouseTotals[$warehouse->id]['quantity'] ?? 0) + $qty,
+                        'quantity' =>
+                            ($warehouseTotals[$warehouse->id]['quantity'] ?? 0)
+                            + $qty,
                     ];
                 }
             }
@@ -116,44 +175,53 @@ class WarehouseController extends Controller
             return $variant;
         });
 
-        // ✅ Если поиска нет — убираем только варианты без партий
         if (!$request->filled('sku')) {
-            $variants = $variants->filter(function ($variant) {
-                return $variant->batches->isNotEmpty(); // есть хотя бы одна партия
-            })->values();
+            $variants = $variants
+                ->filter(function ($variant) {
+                    return $variant->batches->isNotEmpty();
+                })
+                ->values();
         }
 
-
-        // Сортировка по количеству
         if ($request->filled('sort')) {
-            $direction = strtolower($request->sort) === 'asc' ? 'asc' : 'desc';
-            $variants = $direction === 'asc'
-                ? $variants->sortBy('stock_balance')->values()
-                : $variants->sortByDesc('stock_balance')->values();
+            $direction =
+                strtolower($request->sort) === 'asc'
+                    ? 'asc'
+                    : 'desc';
+
+            $variants =
+                $direction === 'asc'
+                    ? $variants->sortBy('stock_balance')->values()
+                    : $variants->sortByDesc('stock_balance')->values();
         }
 
-        // Ручная пагинация после сортировки
         $perPage = 25;
+
         $page = $request->input('page', 1);
-        $paginated = new \Illuminate\Pagination\LengthAwarePaginator(
+
+        $paginated = new LengthAwarePaginator(
             $variants->forPage($page, $perPage),
             $variants->count(),
             $perPage,
             $page,
-            ['path' => url()->current(), 'query' => $request->query()]
+            [
+                'path' => url()->current(),
+                'query' => $request->query()
+            ]
         );
 
-        return view('admin.stocks.view_all_batches', [
-            'variants' => $paginated,
-            'warehouses' => $warehouses,
-        ]);
+        return view(
+            'admin.stocks.view_all_batches',
+            [
+                'variants' => $paginated,
+                'warehouses' => $warehouses,
+            ]
+        );
     }
 
-
-
-
-
-
+    /*
+     * Старое добавление партии непосредственно на склад.
+     */
     public function addBatchToWarehouse(Request $request)
     {
         $data = $request->validate([
@@ -163,13 +231,22 @@ class WarehouseController extends Controller
             'quantity' => 'required|integer|min:1',
         ]);
 
-        $batch = Batch::firstOrCreate([
-            'variant_id' => $data['variant_id'],
-            'batch_code' => $data['code'],
-        ]);
+        $code = trim($data['code']);
+
+        $batch = Batch::firstOrCreate(
+            [
+                'variant_id' => $data['variant_id'],
+                'batch_code' => $code,
+            ],
+            [
+                'stock' => 0,
+            ]
+        );
 
         $batch->warehouses()->syncWithoutDetaching([
-            $data['warehouse_id'] => ['quantity' => $data['quantity']]
+            $data['warehouse_id'] => [
+                'quantity' => $data['quantity']
+            ]
         ]);
 
         return response()->json([
@@ -180,7 +257,89 @@ class WarehouseController extends Controller
         ]);
     }
 
+    /*
+     * ============================================================
+     * СОЗДАНИЕ НОВОЙ ПАРТИИ ИЗ ФОРМЫ ПРИЁМКИ
+     * ============================================================
+     *
+     * Здесь партия только создаётся.
+     *
+     * Остаток на склад НЕ добавляется.
+     *
+     * Количество будет добавлено ReceiptController
+     * после фактического сохранения приёмки.
+     */
+    public function createBatch(Request $request)
+    {
+        $data = $request->validate([
+            'variant_id' => [
+                'required',
+                'exists:variants,id',
+            ],
 
+            'code' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+        ]);
+
+        $code = trim($data['code']);
+
+        if ($code === '') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Введите номер партии.'
+            ], 422);
+        }
+
+        /*
+         * Проверяем, что такая партия для этого SKU
+         * ещё не существует.
+         */
+        $exists = Batch::where(
+            'variant_id',
+            $data['variant_id']
+        )
+            ->where(
+                'batch_code',
+                $code
+            )
+            ->exists();
+
+        if ($exists) {
+            return response()->json([
+                'success' => false,
+                'message' =>
+                    'Партия «' . $code . '» для этого SKU уже существует.'
+            ], 422);
+        }
+
+        /*
+         * Создаём пустую партию.
+         *
+         * stock = 0, потому что фактическое количество
+         * будет добавлено через ReceiptController
+         * после создания приёмки.
+         */
+        $batch = Batch::create([
+            'variant_id' => $data['variant_id'],
+            'batch_code' => $code,
+            'stock' => 0,
+        ]);
+
+        return response()->json([
+            'success' => true,
+
+            'batch' => [
+                'id' => $batch->id,
+                'code' => $batch->batch_code,
+            ],
+
+            'message' =>
+                'Партия «' . $batch->batch_code . '» создана.'
+        ]);
+    }
 
     public function updateQuantity(Request $request)
     {
@@ -190,12 +349,20 @@ class WarehouseController extends Controller
             'quantity' => 'required|integer|min:0',
         ]);
 
-        $batch = Batch::findOrFail($request->batch_id);
-        $batch->warehouses()->updateExistingPivot($request->warehouse_id, [
-            'quantity' => $request->quantity
-        ]);
+        $batch = Batch::findOrFail(
+            $request->batch_id
+        );
 
-        return response()->json(['success' => true]);
+        $batch->warehouses()->updateExistingPivot(
+            $request->warehouse_id,
+            [
+                'quantity' => $request->quantity
+            ]
+        );
+
+        return response()->json([
+            'success' => true
+        ]);
     }
 
     public function removeBatch(Request $request)
@@ -205,19 +372,22 @@ class WarehouseController extends Controller
             'warehouse_id' => 'required|exists:warehouses,id',
         ]);
 
-        $batch = Batch::findOrFail($request->batch_id);
+        $batch = Batch::findOrFail(
+            $request->batch_id
+        );
 
-        // Удаляем связь партия-склад
-        $batch->warehouses()->detach($request->warehouse_id);
+        $batch->warehouses()->detach(
+            $request->warehouse_id
+        );
 
-        // Если партия больше не связана ни с одним складом — удаляем полностью
         if ($batch->warehouses()->count() === 0) {
             $batch->delete();
         }
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true
+        ]);
     }
-
 
     public function storeWarehouse(Request $request)
     {
@@ -225,81 +395,153 @@ class WarehouseController extends Controller
             'name' => 'required|string|max:255',
         ]);
 
-        Warehouse::create(['name' => $request->name]);
+        Warehouse::create([
+            'name' => $request->name
+        ]);
 
-        return redirect()->route('admin.stocks.warehouses')->with('success', 'Склад успешно добавлен!');
+        return redirect()
+            ->route('admin.stocks.warehouses')
+            ->with(
+                'success',
+                'Склад успешно добавлен!'
+            );
     }
 
     public function destroyWarehouse($id)
     {
         try {
             $warehouse = Warehouse::findOrFail($id);
+
             $warehouse->delete();
 
-            return redirect()->route('admin.stocks.warehouses')->with('success', 'Склад удалён');
+            return redirect()
+                ->route('admin.stocks.warehouses')
+                ->with(
+                    'success',
+                    'Склад удалён'
+                );
         } catch (\Exception $e) {
-            return redirect()->route('admin.stocks.warehouses')->with('error', 'Ошибка при удалении');
+            return redirect()
+                ->route('admin.stocks.warehouses')
+                ->with(
+                    'error',
+                    'Ошибка при удалении'
+                );
         }
     }
 
-    public function batchOverview(Request $request, $warehouseId)
-    {
-        $warehouse = Warehouse::findOrFail($warehouseId);
+    public function batchOverview(
+        Request $request,
+        $warehouseId
+    ) {
+        $warehouse = Warehouse::findOrFail(
+            $warehouseId
+        );
 
-        $query = \App\Models\Batch::whereHas('warehouses', function ($q) use ($warehouseId) {
-            $q->where('warehouse_id', $warehouseId);
-        })
+        $query = Batch::whereHas(
+            'warehouses',
+            function ($q) use ($warehouseId) {
+                $q->where(
+                    'warehouse_id',
+                    $warehouseId
+                );
+            }
+        )
             ->with([
                 'variant.product',
                 'warehouses' => function ($q) use ($warehouseId) {
-                    $q->where('warehouse_id', $warehouseId);
+                    $q->where(
+                        'warehouse_id',
+                        $warehouseId
+                    );
                 }
             ]);
 
-        // Eager-load все партии, потом вручную сгруппируем
         $batches = $query->get();
 
-        // Группируем по variant_id
-        $grouped = $batches->groupBy('variant_id');
+        $grouped = $batches->groupBy(
+            'variant_id'
+        );
 
-        // Фильтрация
         if ($request->filled('search')) {
-            $grouped = $grouped->filter(function ($group) use ($request) {
-                return str_contains(strtolower($group->first()->variant->sku), strtolower($request->search));
-            });
+            $grouped = $grouped->filter(
+                function ($group) use ($request) {
+                    return str_contains(
+                        strtolower(
+                            $group->first()->variant->sku
+                        ),
+                        strtolower(
+                            $request->search
+                        )
+                    );
+                }
+            );
         }
 
-        // Сортировка
-        if ($request->filled('sort') && in_array($request->sort, ['asc', 'desc'])) {
-            $grouped = $grouped->sortBy(function ($group) use ($warehouseId) {
-                return $group->sum(function ($batch) use ($warehouseId) {
-                    return optional($batch->warehouses->firstWhere('id', $warehouseId)?->pivot)->quantity ?? 0;
-                });
-            }, SORT_REGULAR, $request->sort === 'desc');
+        if (
+            $request->filled('sort') &&
+            in_array(
+                $request->sort,
+                ['asc', 'desc']
+            )
+        ) {
+            $grouped = $grouped->sortBy(
+                function ($group) use ($warehouseId) {
+                    return $group->sum(
+                        function ($batch) use ($warehouseId) {
+                            return optional(
+                                $batch
+                                    ->warehouses
+                                    ->firstWhere(
+                                        'id',
+                                        $warehouseId
+                                    )?->pivot
+                            )->quantity ?? 0;
+                        }
+                    );
+                },
+                SORT_REGULAR,
+                $request->sort === 'desc'
+            );
         }
 
-        // Пагинация вручную
         $perPage = 25;
+
         $page = LengthAwarePaginator::resolveCurrentPage();
-        $items = $grouped->values(); // переиндексация
+
+        $items = $grouped->values();
+
         $paginated = new LengthAwarePaginator(
-            $items->forPage($page, $perPage),
+            $items->forPage(
+                $page,
+                $perPage
+            ),
             $items->count(),
             $perPage,
             $page,
-            ['path' => $request->url(), 'query' => $request->query()]
+            [
+                'path' => $request->url(),
+                'query' => $request->query()
+            ]
         );
 
-        return view('admin.stocks.batch_overview', [
-            'warehouse' => $warehouse,
-            'batches' => $batches, // если где-то ещё нужен полный список
-            'grouped' => $paginated,
-        ]);
+        return view(
+            'admin.stocks.batch_overview',
+            [
+                'warehouse' => $warehouse,
+                'batches' => $batches,
+                'grouped' => $paginated,
+            ]
+        );
     }
 
     public function stockWarehousesPage()
     {
-        $warehouses = \App\Models\Warehouse::all();
-        return view('admin.stocks.warehouse_list', compact('warehouses'));
+        $warehouses = Warehouse::all();
+
+        return view(
+            'admin.stocks.warehouse_list',
+            compact('warehouses')
+        );
     }
 }

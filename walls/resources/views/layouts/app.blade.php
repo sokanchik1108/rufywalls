@@ -363,14 +363,6 @@
                     <hr class="my-1">
 
 
-                    <a
-                        class="nav-link"
-                        href="{{ route('admin.stocks.warehouses') }}">
-                        Добавить товар на склад
-                    </a>
-
-                    <hr class="my-1">
-
 
                     <a
                         class="nav-link"
@@ -380,14 +372,6 @@
 
                     <hr class="my-1">
 
-
-                    <a
-                        class="nav-link"
-                        href="{{ route('admin.sales.returns') }}">
-                        Поиск в истории продаж
-                    </a>
-
-                    <hr class="my-1">
 
 
                     @if(auth()->user()->is_owner)

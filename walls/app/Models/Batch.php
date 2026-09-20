@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Batch extends Model
 {
-    protected $fillable = ['variant_id', 'stock', 'batch_code'];
+    protected $fillable = [
+        'variant_id',
+        'batch_code',
+    ];
 
     public function variant()
     {
@@ -24,6 +27,4 @@ class Batch extends Model
     {
         return $this->warehouses()->sum('quantity');
     }
-
-    
 }

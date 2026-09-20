@@ -1311,7 +1311,7 @@
                 <div class="filter-group">
 
                     <label class="filter-label">
-                        До
+                        По
                     </label>
 
                     <input
