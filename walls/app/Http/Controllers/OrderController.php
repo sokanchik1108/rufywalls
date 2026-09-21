@@ -13,7 +13,6 @@ use App\Models\StockMovement;
 use App\Services\FifoService;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 
@@ -62,10 +61,10 @@ class OrderController extends Controller
                     'quantity' => $item['quantity'],
                     'price' => $item['price'],
                     'total' =>
-                    $item['price'] *
+                        $item['price'] *
                         $item['quantity'],
                     'image' =>
-                    $item['image']
+                        $item['image']
                         ?? (
                             json_decode(
                                 $variant->images
@@ -117,13 +116,13 @@ class OrderController extends Controller
             ],
         ], [
             'name.regex' =>
-            'Имя должно содержать только буквы, пробелы и дефисы.',
+                'Имя должно содержать только буквы, пробелы и дефисы.',
 
             'phone.regex' =>
-            'Телефон может содержать только цифры, пробелы, скобки, тире и может начинаться с +.',
+                'Телефон может содержать только цифры, пробелы, скобки, тире и может начинаться с +.',
 
             'phone.min' =>
-            'Телефон слишком короткий. Укажите не менее 10 символов.',
+                'Телефон слишком короткий. Укажите не менее 10 символов.',
         ]);
 
         $cart = json_decode(
@@ -161,11 +160,11 @@ class OrderController extends Controller
                 'order_id' => $order->id,
                 'variant_id' => $variantId,
                 'quantity' =>
-                $item['quantity'] ?? 1,
+                    $item['quantity'] ?? 1,
                 'price' =>
-                $item['price'] ?? 0,
+                    $item['price'] ?? 0,
                 'image' =>
-                $item['image']
+                    $item['image']
                     ?? (
                         json_decode(
                             $variant->images
@@ -269,14 +268,10 @@ class OrderController extends Controller
     ) {
 
         /*
-    |--------------------------------------------------------------------------
-    | ТОЧКА ПРОДАЖ ПО УМОЛЧАНИЮ ПОЛЬЗОВАТЕЛЯ
-    |--------------------------------------------------------------------------
-    |
-    | Если пользователь не выбрал точку вручную,
-    | автоматически используем назначенную ему точку продаж.
-    |
-    */
+        |--------------------------------------------------------------------------
+        | ТОЧКА ПРОДАЖ ПО УМОЛЧАНИЮ ПОЛЬЗОВАТЕЛЯ
+        |--------------------------------------------------------------------------
+        */
 
         if (
             !$request->filled('point_of_sale_id') &&
@@ -285,20 +280,15 @@ class OrderController extends Controller
         ) {
             $request->merge([
                 'point_of_sale_id' =>
-                auth()->user()->point_of_sale_id,
+                    auth()->user()->point_of_sale_id,
             ]);
         }
 
         /*
-    |--------------------------------------------------------------------------
-    | НОРМАЛИЗАЦИЯ ОПЛАТ
-    |--------------------------------------------------------------------------
-    |
-    | Например:
-    | -20.000 -> -20000
-    | 20.000  -> 20000
-    |
-    */
+        |--------------------------------------------------------------------------
+        | НОРМАЛИЗАЦИЯ ОПЛАТ
+        |--------------------------------------------------------------------------
+        */
 
         if ($request->has('payments')) {
 
@@ -353,7 +343,6 @@ class OrderController extends Controller
                         );
 
                     if ($negative) {
-
                         $amount =
                             '-' . $amount;
                     }
@@ -369,63 +358,56 @@ class OrderController extends Controller
         }
 
         /*
-    |--------------------------------------------------------------------------
-    | ВАЛИДАЦИЯ
-    |--------------------------------------------------------------------------
-    */
-
-        $request->validate([
-            'name' =>
-            'required|string|max:255',
-
-            'phone' =>
-            'required|string|max:20',
-
-            'comment' =>
-            'nullable|string',
-
-            'discount' =>
-            'nullable|numeric|min:0',
-
-            'order_date' =>
-            'required|date',
-
-            'point_of_sale_id' =>
-            'required|exists:points_of_sale,id',
-
-            'items' =>
-            'required|array|min:1',
-
-            'items.*.sku' =>
-            'required|exists:variants,sku',
-
-            'items.*.batch_id' =>
-            'required|integer|exists:batches,id',
-
-            'items.*.warehouse_id' =>
-            'required|integer|exists:warehouses,id',
-
-            /*
         |--------------------------------------------------------------------------
-        | ВАЖНО:
-        | теперь разрешены отрицательные количества.
+        | ВАЛИДАЦИЯ
         |--------------------------------------------------------------------------
         */
 
+        $request->validate([
+            'name' =>
+                'required|string|max:255',
+
+            'phone' =>
+                'required|string|max:20',
+
+            'comment' =>
+                'nullable|string',
+
+            'discount' =>
+                'nullable|numeric|min:0',
+
+            'order_date' =>
+                'required|date',
+
+            'point_of_sale_id' =>
+                'required|exists:points_of_sale,id',
+
+            'items' =>
+                'required|array|min:1',
+
+            'items.*.sku' =>
+                'required|exists:variants,sku',
+
+            'items.*.batch_id' =>
+                'required|integer|exists:batches,id',
+
+            'items.*.warehouse_id' =>
+                'required|integer|exists:warehouses,id',
+
             'items.*.quantity' =>
-            'required|integer|not_in:0',
+                'required|integer|not_in:0',
 
             'items.*.price' =>
-            'required|numeric|min:0',
+                'required|numeric|min:0',
 
             'items.*.batch_code' =>
-            'required|string',
+                'required|string',
 
             'items.*.warehouse_name' =>
-            'nullable|string',
+                'nullable|string',
 
             'payments' =>
-            'nullable|array',
+                'nullable|array',
 
             'payments.*.payment_method' => [
                 'required',
@@ -441,20 +423,20 @@ class OrderController extends Controller
         ], [
 
             'payments.*.payment_method.required' =>
-            'Выберите способ оплаты.',
+                'Выберите способ оплаты.',
 
             'payments.*.amount.required' =>
-            'Введите сумму оплаты.',
+                'Введите сумму оплаты.',
 
             'items.*.quantity.not_in' =>
-            'Количество товара не может быть равно нулю.',
+                'Количество товара не может быть равно нулю.',
         ]);
 
         /*
-    |--------------------------------------------------------------------------
-    | СУММА ЗАКАЗА
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | СУММА ЗАКАЗА
+        |--------------------------------------------------------------------------
+        */
 
         $itemsTotal = 0;
 
@@ -465,13 +447,6 @@ class OrderController extends Controller
 
             $price =
                 (float) $item['price'];
-
-            /*
-        |--------------------------------------------------------------------------
-        | Отрицательное количество автоматически
-        | делает сумму отрицательной.
-        |--------------------------------------------------------------------------
-        */
 
             $itemsTotal +=
                 $quantity * $price;
@@ -486,10 +461,10 @@ class OrderController extends Controller
             $itemsTotal - $discount;
 
         /*
-    |--------------------------------------------------------------------------
-    | СУММА ОПЛАТ
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | СУММА ОПЛАТ
+        |--------------------------------------------------------------------------
+        */
 
         $paymentsTotal =
             collect(
@@ -505,22 +480,15 @@ class OrderController extends Controller
             });
 
         /*
-    |--------------------------------------------------------------------------
-    | ПРОВЕРКА ОПЛАТ
-    |--------------------------------------------------------------------------
-    |
-    | Для продажи:
-    | 100000 = 100000
-    |
-    | Для возврата:
-    | -20000 = -20000
-    |
-    */
+        |--------------------------------------------------------------------------
+        | ПРОВЕРКА ОПЛАТ
+        |--------------------------------------------------------------------------
+        */
 
         if (
             abs(
                 $paymentsTotal -
-                    $orderTotal
+                $orderTotal
             ) > 0.01
         ) {
 
@@ -541,28 +509,28 @@ class OrderController extends Controller
                 ->with(
                     'error',
                     'Сумма оплат (' .
-                        number_format(
-                            $paymentsTotal,
-                            2,
-                            '.',
-                            ' '
-                        ) .
-                        ' ₸) не соответствует сумме заказа (' .
-                        number_format(
-                            $orderTotal,
-                            2,
-                            '.',
-                            ' '
-                        ) .
-                        ' ₸).'
+                    number_format(
+                        $paymentsTotal,
+                        2,
+                        '.',
+                        ' '
+                    ) .
+                    ' ₸) не соответствует сумме заказа (' .
+                    number_format(
+                        $orderTotal,
+                        2,
+                        '.',
+                        ' '
+                    ) .
+                    ' ₸).'
                 );
         }
 
         /*
-    |--------------------------------------------------------------------------
-    | СОЗДАНИЕ ЗАКАЗА
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | СОЗДАНИЕ ЗАКАЗА
+        |--------------------------------------------------------------------------
+        */
 
         try {
 
@@ -574,37 +542,28 @@ class OrderController extends Controller
 
                     $order = Order::create([
                         'name' =>
-                        $request->name,
+                            $request->name,
 
                         'phone' =>
-                        $request->phone,
+                            $request->phone,
 
                         'comment' =>
-                        $request->comment,
+                            $request->comment,
 
                         'discount' =>
-                        $request->discount ?? 0,
+                            $request->discount ?? 0,
 
                         'status' =>
-                        'Новый',
+                            'Новый',
 
                         'is_website' =>
-                        false,
-
-                        /*
-                    |--------------------------------------------------------------------------
-                    | Здесь уже будет:
-                    | - выбранная вручную точка
-                    | ИЛИ
-                    | - точка, назначенная пользователю
-                    |--------------------------------------------------------------------------
-                    */
+                            false,
 
                         'point_of_sale_id' =>
-                        $request->point_of_sale_id,
+                            $request->point_of_sale_id,
 
                         'order_date' =>
-                        $request->order_date
+                            $request->order_date
                             ? Carbon::parse(
                                 $request->order_date,
                                 'Asia/Almaty'
@@ -613,10 +572,25 @@ class OrderController extends Controller
                     ]);
 
                     /*
-                |--------------------------------------------------------------------------
-                | ПОЗИЦИИ
-                |--------------------------------------------------------------------------
-                */
+                    |--------------------------------------------------------------------------
+                    | ПОЗИЦИИ
+                    |--------------------------------------------------------------------------
+                    |
+                    | ВАЖНО:
+                    | OrderItem создаём ДО FIFO.
+                    |
+                    | Благодаря этому мы получаем:
+                    |
+                    | $orderItem->id
+                    |
+                    | и именно его передаём в StockMovement.source_id.
+                    |
+                    | Аналитика затем ищет:
+                    |
+                    | StockMovement.source_id = OrderItem.id
+                    |
+                    |--------------------------------------------------------------------------
+                    */
 
                     foreach (
                         $request->items
@@ -624,10 +598,12 @@ class OrderController extends Controller
                     ) {
 
                         $variant =
-                            Variant::where(
+                            Variant::with('product')
+                            ->where(
                                 'sku',
                                 $item['sku']
-                            )->firstOrFail();
+                            )
+                            ->firstOrFail();
 
                         $batch =
                             Batch::findOrFail(
@@ -635,11 +611,10 @@ class OrderController extends Controller
                             );
 
                         /*
-                    |--------------------------------------------------------------------------
-                    | Проверяем, что партия принадлежит
-                    | выбранному варианту.
-                    |--------------------------------------------------------------------------
-                    */
+                        |--------------------------------------------------------------------------
+                        | Проверяем принадлежность партии
+                        |--------------------------------------------------------------------------
+                        */
 
                         if (
                             $batch->variant_id !==
@@ -648,7 +623,7 @@ class OrderController extends Controller
 
                             throw new RuntimeException(
                                 "Партия {$batch->batch_code} " .
-                                    "не принадлежит артикулу {$variant->sku}."
+                                "не принадлежит артикулу {$variant->sku}."
                             );
                         }
 
@@ -656,88 +631,10 @@ class OrderController extends Controller
                             (int) $item['quantity'];
 
                         /*
-                    |--------------------------------------------------------------------------
-                    | ОБЫЧНАЯ ПРОДАЖА
-                    |--------------------------------------------------------------------------
-                    */
-
-                        if ($quantity > 0) {
-
-                            /*
                         |--------------------------------------------------------------------------
-                        | Сначала проверяем FIFO.
+                        | ИЗОБРАЖЕНИЕ
                         |--------------------------------------------------------------------------
                         */
-
-                            $fifoService->calculateFifo(
-                                (int) $item['warehouse_id'],
-                                (int) $variant->id,
-                                $quantity
-                            );
-
-                            /*
-                        |--------------------------------------------------------------------------
-                        | Реально списываем товар.
-                        |--------------------------------------------------------------------------
-                        */
-
-                            $fifoService->consume(
-                                (int) $item['warehouse_id'],
-                                (int) $variant->id,
-                                $quantity,
-                                'sale',
-                                $order->id,
-                                Carbon::parse(
-                                    $request->order_date,
-                                    'Asia/Almaty'
-                                )
-                            );
-                        }
-
-                        /*
-                    |--------------------------------------------------------------------------
-                    | ВОЗВРАТ
-                    |--------------------------------------------------------------------------
-                    */
-
-                        if ($quantity < 0) {
-
-                            /*
-                        |--------------------------------------------------------------------------
-                        | Превращаем -1 в 1,
-                        | потому что returnToWarehouse()
-                        | принимает положительное количество.
-                        |--------------------------------------------------------------------------
-                        */
-
-                            $returnQuantity =
-                                abs($quantity);
-
-                            /*
-                        |--------------------------------------------------------------------------
-                        | Возвращаем товар именно
-                        | в выбранную партию.
-                        |--------------------------------------------------------------------------
-                        */
-
-                            $fifoService->returnToWarehouse(
-                                (int) $item['warehouse_id'],
-                                (int) $variant->id,
-                                $returnQuantity,
-                                (int) $item['batch_id'],
-                                $order->id,
-                                Carbon::parse(
-                                    $request->order_date,
-                                    'Asia/Almaty'
-                                )
-                            );
-                        }
-
-                        /*
-                    |--------------------------------------------------------------------------
-                    | ИЗОБРАЖЕНИЕ
-                    |--------------------------------------------------------------------------
-                    */
 
                         $image = '';
 
@@ -762,38 +659,124 @@ class OrderController extends Controller
                         }
 
                         /*
-                    |--------------------------------------------------------------------------
-                    | СОХРАНЯЕМ ПОЗИЦИЮ
-                    |--------------------------------------------------------------------------
-                    */
+                        |--------------------------------------------------------------------------
+                        | СНАЧАЛА СОЗДАЁМ ORDER ITEM
+                        |--------------------------------------------------------------------------
+                        |
+                        | Теперь у позиции уже есть собственный ID.
+                        |--------------------------------------------------------------------------
+                        */
 
-                        $order->items()->create([
-                            'variant_id' =>
-                            $variant->id,
+                        $orderItem =
+                            $order->items()->create([
+                                'variant_id' =>
+                                    $variant->id,
 
-                            'quantity' =>
-                            $quantity,
+                                'quantity' =>
+                                    $quantity,
 
-                            'price' =>
-                            (float) $item['price'],
+                                'price' =>
+                                    (float) $item['price'],
 
-                            'image' =>
-                            $image,
+                                'image' =>
+                                    $image,
 
-                            'batch_code' =>
-                            $item['batch_code'],
+                                'batch_code' =>
+                                    $item['batch_code'],
 
-                            'warehouse_name' =>
-                            $item['warehouse_name']
-                                ?? '',
-                        ]);
+                                'warehouse_name' =>
+                                    $item['warehouse_name']
+                                    ?? '',
+                            ]);
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | ОБЫЧНАЯ ПРОДАЖА
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if ($quantity > 0) {
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | Сначала проверяем FIFO
+                            |--------------------------------------------------------------------------
+                            */
+
+                            $fifoService->calculateFifo(
+                                (int) $item['warehouse_id'],
+                                (int) $variant->id,
+                                $quantity
+                            );
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | Списываем товар
+                            |--------------------------------------------------------------------------
+                            |
+                            | КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ:
+                            |
+                            | БЫЛО:
+                            | $order->id
+                            |
+                            | СТАЛО:
+                            | $orderItem->id
+                            |
+                            */
+
+                            $fifoService->consume(
+                                (int) $item['warehouse_id'],
+                                (int) $variant->id,
+                                $quantity,
+                                'sale',
+                                $orderItem->id,
+                                Carbon::parse(
+                                    $request->order_date,
+                                    'Asia/Almaty'
+                                )
+                            );
+                        }
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | ВОЗВРАТ
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if ($quantity < 0) {
+
+                            $returnQuantity =
+                                abs($quantity);
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | Возвращаем товар.
+                            |
+                            | Также передаём ID позиции заказа,
+                            | чтобы источник движения был привязан
+                            | к конкретной OrderItem.
+                            |--------------------------------------------------------------------------
+                            */
+
+                            $fifoService->returnToWarehouse(
+                                (int) $item['warehouse_id'],
+                                (int) $variant->id,
+                                $returnQuantity,
+                                (int) $item['batch_id'],
+                                $orderItem->id,
+                                Carbon::parse(
+                                    $request->order_date,
+                                    'Asia/Almaty'
+                                )
+                            );
+                        }
                     }
 
                     /*
-                |--------------------------------------------------------------------------
-                | ОПЛАТЫ
-                |--------------------------------------------------------------------------
-                */
+                    |--------------------------------------------------------------------------
+                    | ОПЛАТЫ
+                    |--------------------------------------------------------------------------
+                    */
 
                     foreach (
                         $request->input(
@@ -804,16 +787,17 @@ class OrderController extends Controller
 
                         $order->payments()->create([
                             'payment_method' =>
-                            trim(
-                                $payment['payment_method']
-                            ),
+                                trim(
+                                    $payment['payment_method']
+                                ),
 
                             'amount' =>
-                            $payment['amount'],
+                                $payment['amount'],
                         ]);
                     }
                 }
             );
+
         } catch (RuntimeException $e) {
 
             return back()
@@ -825,17 +809,17 @@ class OrderController extends Controller
         }
 
         /*
-    |--------------------------------------------------------------------------
-    | ПОСЛЕ СОЗДАНИЯ
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | ПОСЛЕ СОЗДАНИЯ
+        |--------------------------------------------------------------------------
+        */
 
         return redirect()
             ->route(
                 'admin.orders.seller',
                 [
                     'date' =>
-                    $request->order_date
+                        $request->order_date
                 ]
             )
             ->with(
@@ -861,6 +845,7 @@ class OrderController extends Controller
 
             $date =
                 now('Asia/Almaty');
+
         } else {
 
             $date =
@@ -1048,22 +1033,6 @@ class OrderController extends Controller
     |--------------------------------------------------------------------------
     | ОБНОВЛЕНИЕ
     |--------------------------------------------------------------------------
-    |
-    | Сейчас:
-    |
-    | - имя можно менять
-    | - телефон можно менять
-    | - комментарий можно менять
-    | - скидку можно менять
-    | - точку продаж можно менять
-    | - цену товара можно менять
-    | - оплаты можно менять
-    |
-    | Количество FIFO-продажи менять нельзя.
-    |
-    | Это временная защита от рассинхронизации склада.
-    | Позже добавим полноценный пересчёт движений.
-    |--------------------------------------------------------------------------
     */
 
     public function update(
@@ -1079,10 +1048,11 @@ class OrderController extends Controller
             ->findOrFail($id);
 
         /*
-         * Такое же исправление для редактирования заказа,
-         * чтобы отрицательная сумма вида -20.000
-         * нормально проходила валидацию.
-         */
+        |--------------------------------------------------------------------------
+        | НОРМАЛИЗАЦИЯ ОПЛАТ
+        |--------------------------------------------------------------------------
+        */
+
         if ($request->has('payments')) {
 
             $payments = $request->input(
@@ -1129,6 +1099,7 @@ class OrderController extends Controller
                         );
 
                     if ($negative) {
+
                         $amount =
                             '-' . ltrim(
                                 $amount,
@@ -1146,36 +1117,42 @@ class OrderController extends Controller
             ]);
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | ВАЛИДАЦИЯ
+        |--------------------------------------------------------------------------
+        */
+
         $request->validate([
             'name' =>
-            'required|string|max:255',
+                'required|string|max:255',
 
             'phone' =>
-            'required|string|max:20',
+                'required|string|max:20',
 
             'comment' =>
-            'nullable|string',
+                'nullable|string',
 
             'discount' =>
-            'nullable|numeric|min:0',
+                'nullable|numeric|min:0',
 
             'point_of_sale_id' =>
-            'nullable|integer|exists:points_of_sale,id',
+                'nullable|integer|exists:points_of_sale,id',
 
             'items' =>
-            'required|array|min:1',
+                'required|array|min:1',
 
             'items.*.id' =>
-            'required|integer|exists:order_items,id',
+                'required|integer|exists:order_items,id',
 
             'items.*.quantity' =>
-            'required|integer|min:1',
+                'required|integer|min:1',
 
             'items.*.price' =>
-            'required|numeric|min:0',
+                'required|numeric|min:0',
 
             'payments' =>
-            'nullable|array',
+                'nullable|array',
 
             'payments.*.payment_method' => [
                 'nullable',
@@ -1187,14 +1164,16 @@ class OrderController extends Controller
                 'required',
                 'numeric',
             ],
+
         ], [
+
             'payments.*.amount.required' =>
-            'Введите сумму оплаты.',
+                'Введите сумму оплаты.',
         ]);
 
         /*
         |--------------------------------------------------------------------------
-        | ПРОВЕРЯЕМ FIFO-МОТИВАЦИЮ
+        | ПРОВЕРЯЕМ FIFO-ДВИЖЕНИЯ
         |--------------------------------------------------------------------------
         */
 
@@ -1215,13 +1194,22 @@ class OrderController extends Controller
 
             /*
              * Если количество изменилось,
-             * проверяем, есть ли FIFO-движение.
+             * проверяем наличие FIFO-продажи.
              */
 
             if (
                 (int) $orderItem->quantity !==
                 (int) $itemData['quantity']
             ) {
+
+                /*
+                |--------------------------------------------------------------------------
+                | КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ:
+                |
+                | Ищем движение по ID OrderItem,
+                | а не по ID Order.
+                |--------------------------------------------------------------------------
+                */
 
                 $movementExists =
                     StockMovement::where(
@@ -1230,7 +1218,7 @@ class OrderController extends Controller
                     )
                     ->where(
                         'source_id',
-                        $order->id
+                        $orderItem->id
                     )
                     ->where(
                         'variant_id',
@@ -1264,27 +1252,27 @@ class OrderController extends Controller
 
                 $order->update([
                     'name' =>
-                    $request->name,
+                        $request->name,
 
                     'phone' =>
-                    $request->phone,
+                        $request->phone,
 
                     'comment' =>
-                    $request->comment,
+                        $request->comment,
 
                     'discount' =>
-                    $request->discount ?? 0,
+                        $request->discount ?? 0,
 
                     'point_of_sale_id' =>
-                    $request->point_of_sale_id
+                        $request->point_of_sale_id
                         ?: null,
                 ]);
 
                 /*
-                 * Обновляем позиции.
-                 *
-                 * Количество уже проверено выше.
-                 */
+                |--------------------------------------------------------------------------
+                | ОБНОВЛЯЕМ ПОЗИЦИИ
+                |--------------------------------------------------------------------------
+                */
 
                 foreach (
                     $request->items
@@ -1301,10 +1289,10 @@ class OrderController extends Controller
 
                         $orderItem->update([
                             'quantity' =>
-                            $itemData['quantity'],
+                                $itemData['quantity'],
 
                             'price' =>
-                            $itemData['price'],
+                                $itemData['price'],
                         ]);
                     }
                 }
@@ -1334,14 +1322,16 @@ class OrderController extends Controller
                         $order->payments()
                             ->create([
                                 'payment_method' =>
-                                !empty($payment['payment_method'])
+                                    !empty(
+                                        $payment['payment_method']
+                                    )
                                     ? trim(
                                         $payment['payment_method']
                                     )
                                     : '',
 
                                 'amount' =>
-                                $payment['amount'],
+                                    $payment['amount'],
                             ]);
                     }
                 }
@@ -1353,7 +1343,7 @@ class OrderController extends Controller
                 'admin.orders.seller',
                 [
                     'date' =>
-                    $order->order_date
+                        $order->order_date
                         ? Carbon::parse(
                             $order->order_date,
                             'Asia/Almaty'
@@ -1396,23 +1386,24 @@ class OrderController extends Controller
 
         $request->validate([
             'name' =>
-            'required|string|max:255|unique:payment_methods,name',
+                'required|string|max:255|unique:payment_methods,name',
         ], [
+
             'name.required' =>
-            'Введите название способа оплаты.',
+                'Введите название способа оплаты.',
 
             'name.unique' =>
-            'Такой способ оплаты уже существует.',
+                'Такой способ оплаты уже существует.',
 
             'name.max' =>
-            'Название слишком длинное.',
+                'Название слишком длинное.',
         ]);
 
         PaymentMethod::create([
             'name' =>
-            trim(
-                $request->name
-            ),
+                trim(
+                    $request->name
+                ),
         ]);
 
         return redirect()
