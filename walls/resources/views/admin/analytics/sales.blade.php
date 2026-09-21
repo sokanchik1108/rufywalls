@@ -8,13 +8,11 @@
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    >
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <title>Продажи по товарам</title>
 
     <style>
-
         * {
             box-sizing: border-box;
         }
@@ -113,11 +111,7 @@
         .filters {
             display: grid;
             grid-template-columns:
-                minmax(150px, 180px)
-                minmax(150px, 180px)
-                minmax(200px, 260px)
-                minmax(220px, 1fr)
-                auto;
+                minmax(150px, 180px) minmax(150px, 180px) minmax(200px, 260px) minmax(220px, 1fr) auto;
             align-items: end;
             gap: 12px;
             padding: 16px;
@@ -159,22 +153,41 @@
                 box-shadow .15s ease;
         }
 
-        /* Дата: убираем "распирание" инпута нативным пикером,
-           чтобы он всегда помещался в свою колонку грида */
-        .filter-group input[type="date"] {
+        /* ==========================================================
+           ДАТЫ — ОТ / ПО
+        ========================================================== */
+
+        .filters>.filter-group:nth-child(1),
+        .filters>.filter-group:nth-child(2) {
+            min-width: 0;
+            width: 100%;
+        }
+
+        .filters>.filter-group:nth-child(1) input[type="date"],
+        .filters>.filter-group:nth-child(2) input[type="date"] {
             display: block;
             width: 100%;
             min-width: 0;
-            max-width: 100%;
-            padding-right: 6px;
+            max-width: none;
+            height: 42px;
             box-sizing: border-box;
-            -webkit-appearance: auto;
-            appearance: auto;
+            padding: 0 10px;
+            border: 1px solid #d7dce4;
+            border-radius: 8px;
+            background: #fff;
+            color: #111827;
+            font-size: 14px;
+            line-height: 42px;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
-        .filter-group input[type="date"]::-webkit-calendar-picker-indicator {
-            margin-left: 2px;
+        .filters>.filter-group:nth-child(1) input[type="date"]::-webkit-calendar-picker-indicator,
+        .filters>.filter-group:nth-child(2) input[type="date"]::-webkit-calendar-picker-indicator {
+            margin: 0;
             padding: 0;
+            width: 18px;
+            height: 18px;
         }
 
         .filter-group input:focus,
@@ -502,10 +515,7 @@
 
             .filters {
                 grid-template-columns:
-                    minmax(140px, 180px)
-                    minmax(140px, 180px)
-                    minmax(200px, 260px)
-                    1fr;
+                    minmax(140px, 180px) minmax(140px, 180px) minmax(200px, 260px) 1fr;
             }
 
             .filter-button {
@@ -580,38 +590,32 @@
                 min-width: 0;
             }
 
-            .filters > .filter-group {
+            .filters>.filter-group {
                 width: 100%;
                 min-width: 0;
                 max-width: 100%;
             }
 
-            .filters > .filter-group:nth-child(1),
-            .filters > .filter-group:nth-child(2) {
+            .filters>.filter-group:nth-child(1),
+            .filters>.filter-group:nth-child(2) {
                 grid-column: span 1;
             }
 
-            .filters > .filter-group:nth-child(1) input[type="date"],
-            .filters > .filter-group:nth-child(2) input[type="date"] {
-                width: 100%;
-                min-width: 0;
-                max-width: 100%;
-            }
-
-            .filter-group:nth-child(3),
-            .filter-group:nth-child(4) {
-                grid-column: 1 / -1;
-            }
-
-            .filter-group input[type="date"] {
-                display: block;
+            .filters>.filter-group:nth-child(1) input[type="date"],
+            .filters>.filter-group:nth-child(2) input[type="date"] {
                 width: 100%;
                 min-width: 0;
                 max-width: 100%;
                 height: 40px;
-                padding: 0 4px;
+                padding: 0 7px;
                 font-size: 12px;
                 line-height: 40px;
+            }
+
+            .filters>.filter-group:nth-child(1),
+            .filters>.filter-group:nth-child(2) {
+                width: 100%;
+                min-width: 0;
             }
 
             .filter-group {
@@ -739,8 +743,8 @@
                 gap: 7px;
             }
 
-            .filters > .filter-group,
-            .filters > .filter-group input[type="date"] {
+            .filters>.filter-group,
+            .filters>.filter-group input[type="date"] {
                 min-width: 0;
                 max-width: 100%;
                 width: 100%;
@@ -784,34 +788,33 @@
                 font-size: 13px;
             }
         }
-
     </style>
 
 </head>
 
 <body>
 
-<div class="page">
+    <div class="page">
 
-    {{-- ==========================================================
+        {{-- ==========================================================
          HEADER
     ========================================================== --}}
 
-    <div class="page-header">
+        <div class="page-header">
 
-        <div>
+            <div>
 
-            <h1 class="page-title">
-                Продажи по товарам
-            </h1>
+                <h1 class="page-title">
+                    Продажи по товарам
+                </h1>
 
-            <div class="page-subtitle">
-                Аналитика продаж и прибыли
+                <div class="page-subtitle">
+                    Аналитика продаж и прибыли
+                </div>
+
             </div>
 
-        </div>
-
-        @if(isset($sku) && $sku !== null)
+            @if(isset($sku) && $sku !== null)
 
             <a
                 href="{{ route('admin.analytics.sales', [
@@ -819,163 +822,148 @@
                     'to' => $to->format('Y-m-d'),
                     'point_of_sale_id' => $pointOfSaleId ?? null,
                 ]) }}"
-                class="back-button"
-            >
+                class="back-button">
                 ← Все товары
             </a>
 
-        @else
+            @else
 
             <a
                 href="{{ route('admin.analytics.profit') }}"
-                class="back-button"
-            >
+                class="back-button">
                 ← Назад
             </a>
 
-        @endif
+            @endif
 
-    </div>
+        </div>
 
-
-    {{-- ==========================================================
+        {{-- ==========================================================
          FILTERS
     ========================================================== --}}
 
-    <form
-        action="{{ isset($sku) && $sku !== null
+        <form
+            action="{{ isset($sku) && $sku !== null
             ? route('admin.analytics.sales.product', ['sku' => $sku])
             : route('admin.analytics.sales') }}"
-        method="GET"
-        class="filters"
-        id="sales-filters"
-    >
+            method="GET"
+            class="filters"
+            id="sales-filters">
 
-        {{-- ОТ --}}
+            {{-- ОТ --}}
 
-        <div class="filter-group">
+            <div class="filter-group">
 
-            <label for="from">
-                От
-            </label>
+                <label for="from">
+                    От
+                </label>
 
-            <input
-                type="date"
-                name="from"
-                id="from"
-                value="{{ $from->format('Y-m-d') }}"
-            >
+                <input
+                    type="date"
+                    name="from"
+                    id="from"
+                    value="{{ $from->format('Y-m-d') }}">
 
-        </div>
+            </div>
 
+            {{-- ПО --}}
 
-        {{-- ПО --}}
+            <div class="filter-group">
 
-        <div class="filter-group">
+                <label for="to">
+                    По
+                </label>
 
-            <label for="to">
-                По
-            </label>
+                <input
+                    type="date"
+                    name="to"
+                    id="to"
+                    value="{{ $to->format('Y-m-d') }}">
 
-            <input
-                type="date"
-                name="to"
-                id="to"
-                value="{{ $to->format('Y-m-d') }}"
-            >
+            </div>
 
-        </div>
+            {{-- ТОЧКА ПРОДАЖ --}}
 
+            <div class="filter-group">
 
-        {{-- ТОЧКА ПРОДАЖ --}}
+                <label for="point_of_sale_id">
+                    Точка продаж
+                </label>
 
-        <div class="filter-group">
+                <select
+                    name="point_of_sale_id"
+                    id="point_of_sale_id">
 
-            <label for="point_of_sale_id">
-                Точка продаж
-            </label>
+                    <option value="">
+                        Все точки продаж
+                    </option>
 
-            <select
-                name="point_of_sale_id"
-                id="point_of_sale_id"
-            >
-
-                <option value="">
-                    Все точки продаж
-                </option>
-
-                @foreach($pointsOfSale ?? [] as $point)
+                    @foreach($pointsOfSale ?? [] as $point)
 
                     <option
                         value="{{ $point->id }}"
                         @selected(
-                            (int) ($pointOfSaleId ?? 0) === (int) $point->id
+                        (int) ($pointOfSaleId ?? 0)===(int) $point->id
                         )
-                    >
+                        >
                         {{ $point->name }}
                     </option>
 
-                @endforeach
+                    @endforeach
 
-            </select>
-
-        </div>
-
-
-        {{-- ======================================================
-             ПОИСК ПО АРТИКУЛУ
-        ======================================================= --}}
-
-        <div class="filter-group">
-
-            <label for="sku">
-                Поиск по артикулу
-            </label>
-
-            <div class="sku-search-wrapper">
-
-                <input
-                    type="text"
-                    id="sku"
-                    value=""
-                    placeholder="Например: 11526"
-                    autocomplete="off"
-                >
-
-                <button
-                    type="button"
-                    id="clearSkuSearch"
-                    class="clear-sku-button"
-                    aria-label="Очистить поиск"
-                    title="Очистить поиск"
-                >
-                    ×
-                </button>
+                </select>
 
             </div>
 
-        </div>
+            {{-- ======================================================
+             ПОИСК ПО АРТИКУЛУ
+        ======================================================= --}}
 
+            <div class="filter-group">
 
-        {{-- ======================================================
+                <label for="sku">
+                    Поиск по артикулу
+                </label>
+
+                <div class="sku-search-wrapper">
+
+                    <input
+                        type="text"
+                        id="sku"
+                        value=""
+                        placeholder="Например: 11526"
+                        autocomplete="off">
+
+                    <button
+                        type="button"
+                        id="clearSkuSearch"
+                        class="clear-sku-button"
+                        aria-label="Очистить поиск"
+                        title="Очистить поиск">
+                        ×
+                    </button>
+
+                </div>
+
+            </div>
+
+            {{-- ======================================================
              ПРИМЕНИТЬ
         ======================================================= --}}
 
-        <button
-            type="submit"
-            class="filter-button"
-        >
-            Применить
-        </button>
+            <button
+                type="submit"
+                class="filter-button">
+                Применить
+            </button>
 
-    </form>
+        </form>
 
-
-    {{-- ==========================================================
+        {{-- ==========================================================
          PRODUCT DETAIL
     ========================================================== --}}
 
-    @if(isset($sku) && $sku !== null)
+        @if(isset($sku) && $sku !== null)
 
         <div class="card">
 
@@ -990,7 +978,6 @@
                 </div>
 
             </div>
-
 
             <div class="detail-grid">
 
@@ -1013,7 +1000,6 @@
 
                 </div>
 
-
                 <div class="stat">
 
                     <div class="stat-label">
@@ -1032,7 +1018,6 @@
                     </div>
 
                 </div>
-
 
                 <div class="stat">
 
@@ -1053,7 +1038,6 @@
 
                 </div>
 
-
                 <div class="stat">
 
                     <div class="stat-label">
@@ -1072,7 +1056,6 @@
                     </div>
 
                 </div>
-
 
                 <div class="stat">
 
@@ -1093,7 +1076,6 @@
 
                 </div>
 
-
                 <div class="stat">
 
                     <div class="stat-label">
@@ -1101,8 +1083,7 @@
                     </div>
 
                     <div
-                        class="stat-value {{ $profit >= 0 ? 'positive' : 'negative' }}"
-                    >
+                        class="stat-value {{ $profit >= 0 ? 'positive' : 'negative' }}">
 
                         {{ number_format(
                             $profit,
@@ -1116,7 +1097,6 @@
                 </div>
 
             </div>
-
 
             <div class="table-wrapper">
 
@@ -1166,109 +1146,106 @@
 
                     </thead>
 
-
                     <tbody>
 
                         @forelse($rows as $row)
 
-                            <tr>
+                        <tr>
 
-                                <td>
-                                    #{{ $row['order_id'] }}
-                                </td>
+                            <td>
+                                #{{ $row['order_id'] }}
+                            </td>
 
-                                <td>
-                                    {{ $row['date'] }}
-                                </td>
+                            <td>
+                                {{ $row['date'] }}
+                            </td>
 
-                                <td>
-                                    {{ $row['time'] }}
-                                </td>
+                            <td>
+                                {{ $row['time'] }}
+                            </td>
 
-                                <td class="number">
+                            <td class="number">
 
-                                    {{ number_format(
+                                {{ number_format(
                                         $row['quantity'],
                                         0,
                                         ',',
                                         ' '
                                     ) }}
 
-                                </td>
+                            </td>
 
-                                <td class="number">
+                            <td class="number">
 
-                                    {{ number_format(
+                                {{ number_format(
                                         $row['sale_price'],
                                         2,
                                         ',',
                                         ' '
                                     ) }} ₸
 
-                                </td>
+                            </td>
 
-                                <td class="number">
+                            <td class="number">
 
-                                    {{ number_format(
+                                {{ number_format(
                                         $row['average_cost'],
                                         2,
                                         ',',
                                         ' '
                                     ) }} ₸
 
-                                </td>
+                            </td>
 
-                                <td class="number">
+                            <td class="number">
 
-                                    {{ number_format(
+                                {{ number_format(
                                         $row['sales_amount'],
                                         2,
                                         ',',
                                         ' '
                                     ) }} ₸
 
-                                </td>
+                            </td>
 
-                                <td class="number">
+                            <td class="number">
 
-                                    {{ number_format(
+                                {{ number_format(
                                         $row['cost_amount'],
                                         2,
                                         ',',
                                         ' '
                                     ) }} ₸
 
-                                </td>
+                            </td>
 
-                                <td
-                                    class="number {{ $row['profit'] >= 0
+                            <td
+                                class="number {{ $row['profit'] >= 0
                                         ? 'positive'
-                                        : 'negative' }}"
-                                >
+                                        : 'negative' }}">
 
-                                    {{ number_format(
+                                {{ number_format(
                                         $row['profit'],
                                         2,
                                         ',',
                                         ' '
                                     ) }} ₸
 
-                                </td>
+                            </td>
 
-                            </tr>
+                        </tr>
 
                         @empty
 
-                            <tr>
+                        <tr>
 
-                                <td
-                                    colspan="9"
-                                    class="empty"
-                                >
-                                    Продаж за выбранный период нет
-                                </td>
+                            <td
+                                colspan="9"
+                                class="empty">
+                                Продаж за выбранный период нет
+                            </td>
 
-                            </tr>
+                        </tr>
 
                         @endforelse
 
@@ -1280,9 +1257,7 @@
 
         </div>
 
-
-    @else
-
+        @else
 
         {{-- ======================================================
              ALL PRODUCTS
@@ -1309,11 +1284,7 @@
 
                 </div>
 
-
-
-
             </div>
-
 
             {{-- ==================================================
                  AJAX TABLE
@@ -1321,522 +1292,478 @@
 
             <div
                 id="sales-products-table"
-                class="table-wrapper"
-            >
+                class="table-wrapper">
 
                 @include(
-                    'admin.analytics.partials.sales-products-table',
-                    [
-                        'products' => $products,
-                        'sortBy' => 'sales',
-                        'sortDirection' => 'desc',
-                    ]
+                'admin.analytics.partials.sales-products-table',
+                [
+                'products' => $products,
+                'sortBy' => 'sales',
+                'sortDirection' => 'desc',
+                ]
                 )
 
             </div>
 
         </div>
 
-    @endif
+        @endif
 
-</div>
+    </div>
 
-
-{{-- ==============================================================
+    {{-- ==============================================================
      AJAX SORTING + SEARCH
 ================================================================= --}}
 
-@if(!isset($sku) || $sku === null)
+    @if(!isset($sku) || $sku === null)
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
-    const tableContainer =
-        document.getElementById('sales-products-table');
+            const tableContainer =
+                document.getElementById('sales-products-table');
 
-    if (!tableContainer) {
-        return;
-    }
+            if (!tableContainer) {
+                return;
+            }
 
+            /*
+            |--------------------------------------------------------------------------
+            | СОСТОЯНИЕ СОРТИРОВКИ
+            |--------------------------------------------------------------------------
+            */
 
-    /*
-    |--------------------------------------------------------------------------
-    | СОСТОЯНИЕ СОРТИРОВКИ
-    |--------------------------------------------------------------------------
-    */
+            let currentSort = 'sales';
+            let currentDirection = 'desc';
 
-    let currentSort = 'sales';
-    let currentDirection = 'desc';
+            /*
+            |--------------------------------------------------------------------------
+            | ЭЛЕМЕНТЫ
+            |--------------------------------------------------------------------------
+            */
 
+            const skuInput =
+                document.getElementById('sku');
 
-    /*
-    |--------------------------------------------------------------------------
-    | ЭЛЕМЕНТЫ
-    |--------------------------------------------------------------------------
-    */
+            const clearSkuButton =
+                document.getElementById('clearSkuSearch');
 
-    const skuInput =
-        document.getElementById('sku');
+            const filters =
+                document.getElementById('sales-filters');
 
-    const clearSkuButton =
-        document.getElementById('clearSkuSearch');
+            const fromInput =
+                document.getElementById('from');
 
-    const filters =
-        document.getElementById('sales-filters');
+            const toInput =
+                document.getElementById('to');
 
-    const fromInput =
-        document.getElementById('from');
+            const pointOfSaleInput =
+                document.getElementById('point_of_sale_id');
 
-    const toInput =
-        document.getElementById('to');
+            /*
+            |--------------------------------------------------------------------------
+            | TIMER ПОИСКА
+            |--------------------------------------------------------------------------
+            */
 
-    const pointOfSaleInput =
-        document.getElementById('point_of_sale_id');
+            let skuSearchTimer = null;
 
+            /*
+            |--------------------------------------------------------------------------
+            | ПОКАЗАТЬ / СКРЫТЬ КРЕСТИК
+            |--------------------------------------------------------------------------
+            */
 
-    /*
-    |--------------------------------------------------------------------------
-    | TIMER ПОИСКА
-    |--------------------------------------------------------------------------
-    */
+            function updateClearSkuButton() {
 
-    let skuSearchTimer = null;
+                if (!skuInput || !clearSkuButton) {
+                    return;
+                }
 
+                clearSkuButton.classList.toggle(
+                    'visible',
+                    skuInput.value.trim() !== ''
+                );
+            }
 
-    /*
-    |--------------------------------------------------------------------------
-    | ПОКАЗАТЬ / СКРЫТЬ КРЕСТИК
-    |--------------------------------------------------------------------------
-    */
+            /*
+            |--------------------------------------------------------------------------
+            | AJAX ЗАГРУЗКА ТАБЛИЦЫ
+            |--------------------------------------------------------------------------
+            */
 
-    function updateClearSkuButton() {
+            async function loadProductsTable(
+                sortBy = currentSort,
+                sortDirection = currentDirection
+            ) {
 
-        if (!skuInput || !clearSkuButton) {
-            return;
-        }
+                const params =
+                    new URLSearchParams();
 
-        clearSkuButton.classList.toggle(
-            'visible',
-            skuInput.value.trim() !== ''
-        );
-    }
+                /*
+                |--------------------------------------------------------------------------
+                | ДАТА ОТ
+                |--------------------------------------------------------------------------
+                */
 
+                if (
+                    fromInput &&
+                    fromInput.value
+                ) {
 
-    /*
-    |--------------------------------------------------------------------------
-    | AJAX ЗАГРУЗКА ТАБЛИЦЫ
-    |--------------------------------------------------------------------------
-    */
+                    params.set(
+                        'from',
+                        fromInput.value
+                    );
+                }
 
-    async function loadProductsTable(
-        sortBy = currentSort,
-        sortDirection = currentDirection
-    ) {
+                /*
+                |--------------------------------------------------------------------------
+                | ДАТА ДО
+                |--------------------------------------------------------------------------
+                */
 
-        const params =
-            new URLSearchParams();
+                if (
+                    toInput &&
+                    toInput.value
+                ) {
 
+                    params.set(
+                        'to',
+                        toInput.value
+                    );
+                }
 
-        /*
-        |--------------------------------------------------------------------------
-        | ДАТА ОТ
-        |--------------------------------------------------------------------------
-        */
+                /*
+                |--------------------------------------------------------------------------
+                | ТОЧКА ПРОДАЖ
+                |--------------------------------------------------------------------------
+                */
 
-        if (
-            fromInput &&
-            fromInput.value
-        ) {
+                if (
+                    pointOfSaleInput &&
+                    pointOfSaleInput.value
+                ) {
 
-            params.set(
-                'from',
-                fromInput.value
-            );
-        }
+                    params.set(
+                        'point_of_sale_id',
+                        pointOfSaleInput.value
+                    );
+                }
 
+                /*
+                |--------------------------------------------------------------------------
+                | ПОИСК ПО АРТИКУЛУ
+                |--------------------------------------------------------------------------
+                */
 
-        /*
-        |--------------------------------------------------------------------------
-        | ДАТА ДО
-        |--------------------------------------------------------------------------
-        */
+                if (
+                    skuInput &&
+                    skuInput.value.trim() !== ''
+                ) {
 
-        if (
-            toInput &&
-            toInput.value
-        ) {
+                    params.set(
+                        'sku',
+                        skuInput.value.trim()
+                    );
+                }
 
-            params.set(
-                'to',
-                toInput.value
-            );
-        }
+                /*
+                |--------------------------------------------------------------------------
+                | СОРТИРОВКА
+                |--------------------------------------------------------------------------
+                */
 
+                params.set(
+                    'sort_by',
+                    sortBy
+                );
 
-        /*
-        |--------------------------------------------------------------------------
-        | ТОЧКА ПРОДАЖ
-        |--------------------------------------------------------------------------
-        */
+                params.set(
+                    'sort_direction',
+                    sortDirection
+                );
 
-        if (
-            pointOfSaleInput &&
-            pointOfSaleInput.value
-        ) {
+                /*
+                |--------------------------------------------------------------------------
+                | LOADING
+                |--------------------------------------------------------------------------
+                */
 
-            params.set(
-                'point_of_sale_id',
-                pointOfSaleInput.value
-            );
-        }
+                tableContainer.classList.add(
+                    'ajax-loading'
+                );
 
+                try {
 
-        /*
-        |--------------------------------------------------------------------------
-        | ПОИСК ПО АРТИКУЛУ
-        |--------------------------------------------------------------------------
-        */
+                    const url =
+                        '{{ route("admin.analytics.sales.product.table") }}' +
+                        '?' +
+                        params.toString();
 
-        if (
-            skuInput &&
-            skuInput.value.trim() !== ''
-        ) {
+                    const response =
+                        await fetch(
+                            url, {
+                                method: 'GET',
 
-            params.set(
-                'sku',
-                skuInput.value.trim()
-            );
-        }
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
 
+                                    'Accept': 'text/html'
+                                }
+                            }
+                        );
 
-        /*
-        |--------------------------------------------------------------------------
-        | СОРТИРОВКА
-        |--------------------------------------------------------------------------
-        */
+                    if (!response.ok) {
 
-        params.set(
-            'sort_by',
-            sortBy
-        );
+                        throw new Error(
+                            'HTTP ' +
+                            response.status
+                        );
+                    }
 
-        params.set(
-            'sort_direction',
-            sortDirection
-        );
+                    const html =
+                        await response.text();
 
+                    /*
+                    |--------------------------------------------------------------------------
+                    | ЗАМЕНЯЕМ ТАБЛИЦУ
+                    |--------------------------------------------------------------------------
+                    */
 
-        /*
-        |--------------------------------------------------------------------------
-        | LOADING
-        |--------------------------------------------------------------------------
-        */
+                    tableContainer.innerHTML =
+                        html;
 
-        tableContainer.classList.add(
-            'ajax-loading'
-        );
+                    /*
+                    |--------------------------------------------------------------------------
+                    | СОХРАНЯЕМ СОРТИРОВКУ
+                    |--------------------------------------------------------------------------
+                    */
 
+                    currentSort =
+                        sortBy;
 
-        try {
+                    currentDirection =
+                        sortDirection;
 
-            const url =
-                '{{ route("admin.analytics.sales.product.table") }}'
-                + '?'
-                + params.toString();
+                } catch (error) {
 
+                    console.error(
+                        'AJAX ошибка:',
+                        error
+                    );
 
-            const response =
-                await fetch(
-                    url,
-                    {
-                        method: 'GET',
+                    alert(
+                        'Не удалось обновить таблицу.\n\n' +
+                        error.message
+                    );
 
-                        headers: {
-                            'X-Requested-With':
-                                'XMLHttpRequest',
+                } finally {
 
-                            'Accept':
-                                'text/html'
-                        }
+                    tableContainer.classList.remove(
+                        'ajax-loading'
+                    );
+                }
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | ПОИСК ПО АРТИКУЛУ
+            |--------------------------------------------------------------------------
+            |
+            | При вводе SKU таблица обновляется автоматически.
+            | Кнопка "Применить" здесь не нужна.
+            |
+            */
+
+            if (skuInput) {
+
+                skuInput.addEventListener(
+                    'input',
+                    function() {
+
+                        updateClearSkuButton();
+
+                        clearTimeout(
+                            skuSearchTimer
+                        );
+
+                        skuSearchTimer =
+                            setTimeout(
+                                function() {
+
+                                    loadProductsTable(
+                                        currentSort,
+                                        currentDirection
+                                    );
+
+                                },
+                                300
+                            );
                     }
                 );
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    'HTTP ' +
-                    response.status
-                );
             }
-
-
-            const html =
-                await response.text();
-
 
             /*
             |--------------------------------------------------------------------------
-            | ЗАМЕНЯЕМ ТАБЛИЦУ
-            |--------------------------------------------------------------------------
-            */
-
-            tableContainer.innerHTML =
-                html;
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | СОХРАНЯЕМ СОРТИРОВКУ
-            |--------------------------------------------------------------------------
-            */
-
-            currentSort =
-                sortBy;
-
-            currentDirection =
-                sortDirection;
-
-
-        } catch (error) {
-
-            console.error(
-                'AJAX ошибка:',
-                error
-            );
-
-            alert(
-                'Не удалось обновить таблицу.\n\n' +
-                error.message
-            );
-
-
-        } finally {
-
-            tableContainer.classList.remove(
-                'ajax-loading'
-            );
-        }
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | ПОИСК ПО АРТИКУЛУ
-    |--------------------------------------------------------------------------
-    |
-    | При вводе SKU таблица обновляется автоматически.
-    | Кнопка "Применить" здесь не нужна.
-    |
-    */
-
-    if (skuInput) {
-
-        skuInput.addEventListener(
-            'input',
-            function () {
-
-                updateClearSkuButton();
-
-
-                clearTimeout(
-                    skuSearchTimer
-                );
-
-
-                skuSearchTimer =
-                    setTimeout(
-                        function () {
-
-                            loadProductsTable(
-                                currentSort,
-                                currentDirection
-                            );
-
-                        },
-                        300
-                    );
-            }
-        );
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | КРЕСТИК — ОЧИСТИТЬ ПОИСК
-    |--------------------------------------------------------------------------
-    */
-
-    if (
-        skuInput &&
-        clearSkuButton
-    ) {
-
-        clearSkuButton.addEventListener(
-            'click',
-            function (event) {
-
-                event.preventDefault();
-                event.stopPropagation();
-
-
-                clearTimeout(
-                    skuSearchTimer
-                );
-
-
-                skuInput.value = '';
-
-
-                updateClearSkuButton();
-
-
-                loadProductsTable(
-                    currentSort,
-                    currentDirection
-                );
-
-
-                skuInput.focus();
-            }
-        );
-
-
-        updateClearSkuButton();
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | КНОПКА "ПРИМЕНИТЬ"
-    |--------------------------------------------------------------------------
-    |
-    | ВАЖНО:
-    |
-    | Здесь теперь event.preventDefault().
-    |
-    | Поэтому обычная GET-форма НЕ отправляется.
-    | Страница НЕ перезагружается.
-    | URL НЕ меняется.
-    |
-    | AJAX получает:
-    |
-    | from
-    | to
-    | point_of_sale_id
-    | sku
-    | sort_by
-    | sort_direction
-    |
-    */
-
-    if (filters) {
-
-        filters.addEventListener(
-            'submit',
-            function (event) {
-
-                event.preventDefault();
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | Если пользователь быстро печатал SKU,
-                | отменяем отложенный поиск.
-                |--------------------------------------------------------------------------
-                */
-
-                clearTimeout(
-                    skuSearchTimer
-                );
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | Применяем период + точку продаж
-                | через AJAX.
-                |
-                | Текущий SKU тоже сохраняется.
-                |--------------------------------------------------------------------------
-                */
-
-                loadProductsTable(
-                    currentSort,
-                    currentDirection
-                );
-            }
-        );
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | СОРТИРОВКА ПО ЗАГОЛОВКУ
-    |--------------------------------------------------------------------------
-    */
-
-    tableContainer.addEventListener(
-        'click',
-        function (event) {
-
-            const header =
-                event.target.closest(
-                    '.sortable'
-                );
-
-
-            if (!header) {
-                return;
-            }
-
-
-            const sortBy =
-                header.dataset.sort;
-
-
-            if (!sortBy) {
-                return;
-            }
-
-
-            let direction =
-                'desc';
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Если нажали на ту же колонку —
-            | меняем направление
+            | КРЕСТИК — ОЧИСТИТЬ ПОИСК
             |--------------------------------------------------------------------------
             */
 
             if (
-                currentSort === sortBy
+                skuInput &&
+                clearSkuButton
             ) {
 
-                direction =
-                    currentDirection === 'asc'
-                        ? 'desc'
-                        : 'asc';
-            }
+                clearSkuButton.addEventListener(
+                    'click',
+                    function(event) {
 
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        clearTimeout(
+                            skuSearchTimer
+                        );
+
+                        skuInput.value = '';
+
+                        updateClearSkuButton();
+
+                        loadProductsTable(
+                            currentSort,
+                            currentDirection
+                        );
+
+                        skuInput.focus();
+                    }
+                );
+
+                updateClearSkuButton();
+            }
 
             /*
             |--------------------------------------------------------------------------
-            | Сортировка AJAX
+            | КНОПКА "ПРИМЕНИТЬ"
+            |--------------------------------------------------------------------------
+            |
+            | ВАЖНО:
+            |
+            | Здесь теперь event.preventDefault().
+            |
+            | Поэтому обычная GET-форма НЕ отправляется.
+            | Страница НЕ перезагружается.
+            | URL НЕ меняется.
+            |
+            | AJAX получает:
+            |
+            | from
+            | to
+            | point_of_sale_id
+            | sku
+            | sort_by
+            | sort_direction
+            |
+            */
+
+            if (filters) {
+
+                filters.addEventListener(
+                    'submit',
+                    function(event) {
+
+                        event.preventDefault();
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Если пользователь быстро печатал SKU,
+                        | отменяем отложенный поиск.
+                        |--------------------------------------------------------------------------
+                        */
+
+                        clearTimeout(
+                            skuSearchTimer
+                        );
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Применяем период + точку продаж
+                        | через AJAX.
+                        |
+                        | Текущий SKU тоже сохраняется.
+                        |--------------------------------------------------------------------------
+                        */
+
+                        loadProductsTable(
+                            currentSort,
+                            currentDirection
+                        );
+                    }
+                );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | СОРТИРОВКА ПО ЗАГОЛОВКУ
             |--------------------------------------------------------------------------
             */
 
-            loadProductsTable(
-                sortBy,
-                direction
-            );
-        }
-    );
+            tableContainer.addEventListener(
+                'click',
+                function(event) {
 
-});
-</script>
-@endif
+                    const header =
+                        event.target.closest(
+                            '.sortable'
+                        );
+
+                    if (!header) {
+                        return;
+                    }
+
+                    const sortBy =
+                        header.dataset.sort;
+
+                    if (!sortBy) {
+                        return;
+                    }
+
+                    let direction =
+                        'desc';
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Если нажали на ту же колонку —
+                    | меняем направление
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        currentSort === sortBy
+                    ) {
+
+                        direction =
+                            currentDirection === 'asc' ?
+                            'desc' :
+                            'asc';
+                    }
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Сортировка AJAX
+                    |--------------------------------------------------------------------------
+                    */
+
+                    loadProductsTable(
+                        sortBy,
+                        direction
+                    );
+                }
+            );
+
+        });
+    </script>
+    @endif
 
 </body>
 
