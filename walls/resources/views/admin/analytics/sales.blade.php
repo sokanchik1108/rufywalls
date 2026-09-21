@@ -566,15 +566,21 @@
             }
 
             .filters {
-                grid-template-columns: 1fr;
-                gap: 9px;
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+                gap: 8px;
                 padding: 11px;
                 margin-bottom: 12px;
                 border-radius: 11px;
             }
 
-            .filter-group {
+            .filter-group:nth-child(3),
+            .filter-group:nth-child(4) {
                 grid-column: 1 / -1;
+            }
+
+            .filter-group input[type="date"] {
+                padding: 0 5px;
+                font-size: 12.5px;
             }
 
             .filter-group {
