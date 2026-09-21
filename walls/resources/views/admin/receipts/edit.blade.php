@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 <html lang="ru">
@@ -1629,6 +1628,7 @@
                     id="save-button">
 
                     Сохранить
+
                 </button>
 
             </div>
@@ -1742,9 +1742,14 @@
                         <div class="info-item">
 
                             <span class="info-label">
-                                Склад: <strong style="color: black;">{{ $receipt->warehouse->name }}</strong>
-                            </span>
 
+                                Склад:
+
+                                <strong style="color: black;">
+                                    {{ $receipt->warehouse->name }}
+                                </strong>
+
+                            </span>
 
                         </div>
 
@@ -1754,7 +1759,13 @@
                         <div class="info-item">
 
                             <span class="info-label">
-                                Дата приёмки: <strong style="color: black;">{{ $receipt->receipt_date->format('d.m.Y') }}</strong>
+
+                                Дата приёмки:
+
+                                <strong style="color: black;">
+                                    {{ $receipt->receipt_date->format('d.m.Y') }}
+                                </strong>
+
                             </span>
 
                         </div>
@@ -2082,12 +2093,216 @@
 
     <script>
         /* =====================================================
-       VARIANTS
-    ====================================================== */
+           VARIANTS
+        ====================================================== */
 
         const variants = @json($variants);
 
         let newItemIndex = 0;
+
+
+
+        /* =====================================================
+           IOS / IPHONE ZOOM PROTECTION
+           
+           ВАЖНО:
+           Твои размеры шрифтов в CSS НЕ МЕНЯЮТСЯ.
+
+           Safari на iPhone может автоматически увеличивать
+           страницу, если размер шрифта элемента при фокусе
+           меньше 16px.
+
+           Перед фокусом временно ставим 16px,
+           после blur возвращаем исходный CSS-размер.
+        ====================================================== */
+
+        (function () {
+
+            const isIOS =
+                /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                (
+                    navigator.platform === 'MacIntel' &&
+                    navigator.maxTouchPoints > 1
+                );
+
+            if (!isIOS) {
+                return;
+            }
+
+
+            function prepareForFocus(element) {
+
+                if (!element) {
+                    return;
+                }
+
+                if (
+                    element.tagName !== 'INPUT' &&
+                    element.tagName !== 'TEXTAREA' &&
+                    element.tagName !== 'SELECT'
+                ) {
+                    return;
+                }
+
+
+                /*
+                 * Сохраняем именно inline-стиль.
+                 *
+                 * Если его нет — после blur значение снова
+                 * возьмётся из твоего CSS, например 10px.
+                 */
+                if (
+                    !element.dataset.iosOriginalFontSizeSaved
+                ) {
+
+                    element.dataset.iosOriginalFontSize =
+                        element.style.fontSize || '';
+
+                    element.dataset.iosOriginalFontSizeSaved =
+                        '1';
+
+                }
+
+
+                /*
+                 * Safari должен увидеть 16px ДО фактического
+                 * открытия клавиатуры.
+                 */
+                element.style.fontSize = '16px';
+
+            }
+
+
+            function restoreAfterBlur(element) {
+
+                if (!element) {
+                    return;
+                }
+
+
+                if (
+                    element.dataset.iosOriginalFontSizeSaved !== '1'
+                ) {
+                    return;
+                }
+
+
+                element.style.fontSize =
+                    element.dataset.iosOriginalFontSize || '';
+
+
+                delete element.dataset.iosOriginalFontSize;
+
+                delete element.dataset.iosOriginalFontSizeSaved;
+
+            }
+
+
+            /*
+             * pointerdown срабатывает до focus.
+             */
+            document.addEventListener(
+                'pointerdown',
+                function (event) {
+
+                    const element =
+                        event.target.closest(
+                            'input, textarea, select'
+                        );
+
+                    if (element) {
+                        prepareForFocus(element);
+                    }
+
+                },
+                true
+            );
+
+
+            /*
+             * Для старых версий iOS.
+             */
+            document.addEventListener(
+                'touchstart',
+                function (event) {
+
+                    const element =
+                        event.target.closest(
+                            'input, textarea, select'
+                        );
+
+                    if (element) {
+                        prepareForFocus(element);
+                    }
+
+                },
+                true
+            );
+
+
+            /*
+             * Дополнительная страховка перед focus.
+             */
+            document.addEventListener(
+                'focusin',
+                function (event) {
+
+                    const element =
+                        event.target;
+
+                    if (
+                        element &&
+                        (
+                            element.tagName === 'INPUT' ||
+                            element.tagName === 'TEXTAREA' ||
+                            element.tagName === 'SELECT'
+                        )
+                    ) {
+                        prepareForFocus(element);
+                    }
+
+                },
+                true
+            );
+
+
+            /*
+             * После ухода с поля возвращаем твой размер.
+             */
+            document.addEventListener(
+                'focusout',
+                function (event) {
+
+                    const element =
+                        event.target;
+
+                    if (
+                        element &&
+                        (
+                            element.tagName === 'INPUT' ||
+                            element.tagName === 'TEXTAREA' ||
+                            element.tagName === 'SELECT'
+                        )
+                    ) {
+
+                        /*
+                         * Небольшая задержка нужна Safari,
+                         * чтобы не вернуть размер слишком рано.
+                         */
+                        setTimeout(
+                            function () {
+                                restoreAfterBlur(element);
+                            },
+                            50
+                        );
+
+                    }
+
+                },
+                true
+            );
+
+        })();
 
 
 
@@ -2280,6 +2495,10 @@
 
                 setTimeout(() => {
 
+                    /*
+                     * Для iPhone защитный обработчик выше
+                     * уже подготовит поле до focus.
+                     */
                     input.focus();
 
                 }, 50);

@@ -1706,6 +1706,220 @@
 
 
         /* =========================================================
+           iPHONE SAFARI — ЗАЩИТА ОТ ZOOM ПРИ ФОКУСЕ
+           
+           ВАЖНО:
+           Размеры CSS НЕ МЕНЯЕМ.
+           
+           Safari получает 16px непосредственно перед фокусом,
+           чтобы не запускать автоматический zoom.
+           
+           После blur возвращается исходный размер элемента.
+        ========================================================= */
+
+        (function preventIOSInputZoom() {
+
+            const isIOS =
+                /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                (
+                    navigator.platform === 'MacIntel' &&
+                    navigator.maxTouchPoints > 1
+                );
+
+            if (!isIOS) {
+                return;
+            }
+
+
+            const selector =
+                'input:not([type="hidden"]), select, textarea';
+
+
+            const originalFontSizes =
+                new WeakMap();
+
+
+            function prepareForFocus(element) {
+
+                if (!element.matches(selector)) {
+                    return;
+                }
+
+
+                if (!originalFontSizes.has(element)) {
+
+                    originalFontSizes.set(
+                        element,
+                        getComputedStyle(element).fontSize
+                    );
+
+                }
+
+
+                /*
+                 * 16px ставим ДО того, как Safari
+                 * успевает открыть клавиатуру.
+                 */
+
+                element.style.setProperty(
+                    'font-size',
+                    '16px',
+                    'important'
+                );
+
+            }
+
+
+            function restoreFontSize(element) {
+
+                if (!element.matches(selector)) {
+                    return;
+                }
+
+
+                const original =
+                    originalFontSizes.get(element);
+
+
+                if (original) {
+
+                    element.style.setProperty(
+                        'font-size',
+                        original,
+                        'important'
+                    );
+
+                } else {
+
+                    element.style.removeProperty(
+                        'font-size'
+                    );
+
+                }
+
+            }
+
+
+            /*
+             * touchstart срабатывает раньше focus.
+             * Поэтому Safari уже видит 16px к моменту
+             * открытия клавиатуры.
+             */
+
+            document.addEventListener(
+                'touchstart',
+                function(e) {
+
+                    const element =
+                        e.target.closest(selector);
+
+
+                    if (element) {
+                        prepareForFocus(element);
+                    }
+
+                },
+                {
+                    capture: true,
+                    passive: true
+                }
+            );
+
+
+            /*
+             * Для мыши / трекпада / клавиатуры.
+             */
+
+            document.addEventListener(
+                'pointerdown',
+                function(e) {
+
+                    const element =
+                        e.target.closest(selector);
+
+
+                    if (element) {
+                        prepareForFocus(element);
+                    }
+
+                },
+                {
+                    capture: true
+                }
+            );
+
+
+            /*
+             * Если focus произошёл другим способом.
+             */
+
+            document.addEventListener(
+                'focusin',
+                function(e) {
+
+                    const element =
+                        e.target.closest(selector);
+
+
+                    if (element) {
+
+                        prepareForFocus(element);
+
+                    }
+
+                }
+            );
+
+
+            /*
+             * После ухода из поля возвращаем
+             * первоначальный размер.
+             */
+
+            document.addEventListener(
+                'focusout',
+                function(e) {
+
+                    const element =
+                        e.target.closest(selector);
+
+
+                    if (!element) {
+                        return;
+                    }
+
+
+                    /*
+                     * Небольшая задержка нужна для Safari,
+                     * чтобы не мешать переходу фокуса
+                     * с одного поля на другое.
+                     */
+
+                    setTimeout(
+                        function() {
+
+                            if (
+                                document.activeElement !==
+                                element
+                            ) {
+
+                                restoreFontSize(
+                                    element
+                                );
+
+                            }
+
+                        },
+                        100
+                    );
+
+                }
+            );
+
+        })();
+
+
+        /* =========================================================
            ADD ITEM
         ========================================================= */
 
@@ -1763,10 +1977,6 @@
 
             </button>
 
-
-            {{-- =================================================
-                 VARIANT / ARTICLE
-            ================================================= --}}
 
             <div class="variant-field">
 
@@ -1829,10 +2039,6 @@
             </div>
 
 
-            {{-- =================================================
-                 BATCH
-            ================================================= --}}
-
             <div class="batch-field">
 
                 <label class="item-field-label">
@@ -1855,10 +2061,6 @@
             </div>
 
 
-            {{-- =================================================
-                 QUANTITY
-            ================================================= --}}
-
             <div class="quantity-field">
 
                 <label class="item-field-label">
@@ -1877,10 +2079,6 @@
 
             </div>
 
-
-            {{-- =================================================
-                 PRICE
-            ================================================= --}}
 
             <div class="price-field">
 

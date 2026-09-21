@@ -5,14 +5,17 @@
 @section('content')
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
+
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <link
@@ -50,6 +53,10 @@
         padding: 0;
         font-size: 14px;
         -webkit-font-smoothing: antialiased;
+
+        /* Защита от автоматического изменения масштаба текста iOS */
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
     }
 
     .container {
@@ -120,7 +127,7 @@
     }
 
     /* =========================================================
-       SECTIONS (flat list, edge to edge)
+       SECTIONS
     ========================================================= */
 
     .section {
@@ -152,7 +159,7 @@
     }
 
     /* =========================================================
-       FIELDS (flat, underline style like the screenshot)
+       FIELDS
     ========================================================= */
 
     .field {
@@ -197,6 +204,9 @@
         font-weight: 600;
         line-height: 26px;
         outline: none;
+
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
     }
 
     input.form-control::placeholder {
@@ -380,6 +390,9 @@
         font-weight: 700;
         color: var(--ink);
         text-align: right;
+
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
     }
 
     .price-input:focus {
@@ -507,6 +520,9 @@
         text-align: right;
         font-weight: 700;
         border-bottom: 1px solid var(--border) !important;
+
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
     }
 
     .remove-payment {
@@ -636,6 +652,9 @@
         border-radius: var(--radius-sm) !important;
         padding: 0 10px !important;
         background: var(--surface) !important;
+
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
     }
 
     .batch-card {
@@ -718,6 +737,9 @@
         font-weight: 700;
         font-family: inherit;
         background: var(--group-bg);
+
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
     }
 
     .qty-input:focus {
@@ -773,6 +795,7 @@
     ========================================================= */
 
     @media (max-width: 600px) {
+
         .section {
             padding: 9px 14px 11px;
         }
@@ -823,9 +846,74 @@
         .payment-summary-row .value {
             font-size: 11px;
         }
+
+        /*
+         * =====================================================
+         * FIX MOBILE INPUT ZOOM
+         * =====================================================
+         *
+         * iOS Safari увеличивает страницу, если input имеет
+         * маленький размер шрифта.
+         *
+         * Остальной дизайн и размеры текста НЕ меняем.
+         */
+
+        input,
+        select,
+        textarea,
+        button {
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        input.form-control,
+        select.form-select,
+        input[type="datetime-local"],
+        input[type="date"],
+        input[type="tel"],
+        input[type="text"],
+        input[type="number"],
+        .price-input,
+        .payment-amount,
+        #discountInput,
+        #modalSkuInput,
+        .qty-input {
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        /*
+         * Оставляем исходные размеры шрифтов полей.
+         */
+
+        input.form-control,
+        select.form-select {
+            font-size: 15px;
+        }
+
+        .price-input {
+            font-size: 14px !important;
+        }
+
+        .payment-amount {
+            font-size: 15px !important;
+        }
+
+        #discountInput {
+            font-size: 15px !important;
+        }
+
+        #modalSkuInput {
+            font-size: 15px !important;
+        }
+
+        .qty-input {
+            font-size: 14px !important;
+        }
     }
 
     @media (max-width: 400px) {
+
         .total-label {
             display: none;
         }
@@ -850,6 +938,7 @@
         method="POST"
         action="{{ route('admin.orders.store') }}"
         id="orderForm">
+
         @csrf
 
         {{-- =====================================================
@@ -857,6 +946,7 @@
         ====================================================== --}}
 
         <div id="orderControls">
+
             <span id="cancelOrder">
                 &times;
             </span>
@@ -873,15 +963,18 @@
                     viewBox="0 0 17 13"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg">
+
                     <path
                         d="M1 6.5L6 11.5L16 1.5"
                         stroke="white"
                         stroke-width="2"
                         stroke-linecap="round"
                         stroke-linejoin="round" />
+
                 </svg>
 
             </button>
+
         </div>
 
         {{-- =====================================================
@@ -893,6 +986,7 @@
             <div class="field-row">
 
                 <div class="field">
+
                     <label class="field-label">
                         Дата и время
                     </label>
@@ -901,11 +995,13 @@
                         type="datetime-local"
                         name="order_date"
                         class="form-control"
-                        value="{{ old('order_date', now('Asia/Almaty')->format('Y-m-d\TH:i')) }}"
+                        value="{{ old('order_date', now('Asia/Almaty')->format('Y-m-d\TH\:i')) }}"
                         required>
+
                 </div>
 
                 <div class="field">
+
                     <label class="field-label">
                         Точка продаж
                     </label>
@@ -915,6 +1011,7 @@
                         id="pointOfSaleSelect"
                         class="form-select"
                         required>
+
                         <option value="">
                             Выберите точку
                         </option>
@@ -927,12 +1024,15 @@
                                     'point_of_sale_id',
                                     $defaultPointOfSaleId ?? null
                                 ) === (int) $point->id ? 'selected' : '' }}>
+
                             {{ $point->name }}
+
                         </option>
 
                         @endforeach
 
                     </select>
+
                 </div>
 
             </div>
@@ -964,17 +1064,27 @@
                     value="{{ old('name') }}"
                     placeholder="Введите имя клиента"
                     required>
-            </div>
 
+            </div>
 
             {{-- Телефон --}}
+
             <div class="field">
-                <label class="field-label"> Телефон </label>
-                <input type="tel" name="phone" class="form-control" value="{{ old('phone') }}" placeholder="+7 700 000 00 00" autocomplete="tel" required>
+
+                <label class="field-label">
+                    Телефон
+                </label>
+
+                <input
+                    type="tel"
+                    name="phone"
+                    class="form-control"
+                    value="{{ old('phone') }}"
+                    placeholder="+7 700 000 00 00"
+                    autocomplete="tel"
+                    required>
+
             </div>
-
-
-
 
             {{-- Склад --}}
 
@@ -987,6 +1097,7 @@
                 <select
                     id="warehouseSelect"
                     class="form-select">
+
                     <option value="">
                         Все склады
                     </option>
@@ -1020,7 +1131,9 @@
                 <span
                     class="count"
                     id="positionsCount">
+
                     (0)
+
                 </span>
 
             </div>
@@ -1037,11 +1150,13 @@
                     viewBox="0 0 16 16"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg">
+
                     <path
                         d="M8 2.5V13.5M2.5 8H13.5"
                         stroke="currentColor"
                         stroke-width="1.7"
                         stroke-linecap="round" />
+
                 </svg>
 
                 Добавить позицию
@@ -1063,7 +1178,9 @@
                     <label
                         class="field-label"
                         for="discountInput">
+
                         Скидка
+
                     </label>
 
                     <input
@@ -1114,7 +1231,9 @@
                         <option
                             value=""
                             selected>
+
                             Не указано
+
                         </option>
 
                         @foreach($paymentMethods as $method)
@@ -1140,7 +1259,9 @@
                         type="button"
                         class="remove-payment"
                         title="Удалить">
+
                         &times;
+
                     </button>
 
                 </div>
@@ -1150,7 +1271,9 @@
             <button
                 type="button"
                 id="addPayment">
+
                 + Добавить оплату
+
             </button>
 
             <div class="payment-summary">
@@ -1164,7 +1287,9 @@
                     <span
                         class="value"
                         id="paymentOrderTotal">
+
                         0 тг
+
                     </span>
 
                 </div>
@@ -1178,7 +1303,9 @@
                     <span
                         class="value"
                         id="paymentPaidTotal">
+
                         0 тг
+
                     </span>
 
                 </div>
@@ -1192,7 +1319,9 @@
                     <span
                         class="value"
                         id="paymentRemaining">
+
                         0 тг
+
                     </span>
 
                 </div>
@@ -1212,6 +1341,7 @@
 <div
     class="modal fade modal-fullscreen"
     id="productModal">
+
     <div class="modal-dialog modal-dialog-centered modal-fullscreen">
 
         <div class="modal-content">
@@ -1224,7 +1354,8 @@
 
                 <button
                     class="btn-close"
-                    data-bs-dismiss="modal"></button>
+                    data-bs-dismiss="modal">
+                </button>
 
             </div>
 
@@ -1243,6 +1374,7 @@
         </div>
 
     </div>
+
 </div>
 
 {{-- =========================================================
@@ -1265,7 +1397,8 @@
 
                 <button
                     class="btn-close"
-                    data-bs-dismiss="modal"></button>
+                    data-bs-dismiss="modal">
+                </button>
 
             </div>
 
@@ -1292,7 +1425,9 @@
                 <button
                     class="btn w-100"
                     id="addBatchToOrder">
+
                     Добавить
+
                 </button>
 
             </div>
@@ -1314,6 +1449,7 @@
     ========================================================= */
 
     function formatAmount(amount) {
+
         amount = Math.round(Number(amount) || 0);
 
         return amount
@@ -1326,6 +1462,7 @@
     ========================================================= */
 
     function parseAmount(value) {
+
         return parseFloat(
             String(value || '')
             .replace(/\./g, '')
@@ -1443,7 +1580,6 @@
             loadBatchesSimple(
                 ui.item.value
             );
-
         }
 
     });
@@ -1475,6 +1611,7 @@
                                 w.pivot.quantity;
 
                         });
+
                     }
 
                     const totalQty =
@@ -1486,30 +1623,30 @@
                         );
 
                     $list.append(`
-                    <div
-                        class="batch-card batch-select"
-                        data-batch='${JSON.stringify(batch)}'
-                        data-sku="${sku}"
-                    >
+                        <div
+                            class="batch-card batch-select"
+                            data-batch='${JSON.stringify(batch)}'
+                            data-sku="${sku}"
+                        >
 
-                        <div class="batch-info">
+                            <div class="batch-info">
 
-                            <div class="batch-sku">
-                                ${sku}
+                                <div class="batch-sku">
+                                    ${sku}
+                                </div>
+
+                                <div class="batch-code">
+                                    ( Партия ${batch.batch_code} )
+                                </div>
+
                             </div>
 
-                            <div class="batch-code">
-                                ( Партия ${batch.batch_code} )
+                            <div class="batch-qty">
+                                Доступно ${totalQty}
                             </div>
 
                         </div>
-
-                        <div class="batch-qty">
-                            Доступно ${totalQty}
-                        </div>
-
-                    </div>
-                `);
+                    `);
 
                 });
 
@@ -1555,31 +1692,31 @@
                     ][w.id];
 
                 $tbody.append(`
-                <tr>
+                    <tr>
 
-                    <td>
-                        ${w.name}
-                    </td>
+                        <td>
+                            ${w.name}
+                        </td>
 
-                    <td>
-                        ${available}
-                    </td>
+                        <td>
+                            ${available}
+                        </td>
 
-                    <td>
+                        <td>
 
-                        <input
-                            type="number"
-                            class="form-control qty-input"
-                            data-warehouse="${w.id}"
-                            min="-${available}"
-                            max="${available}"
-                            placeholder="Кол-во"
-                        >
+                            <input
+                                type="number"
+                                class="form-control qty-input"
+                                data-warehouse="${w.id}"
+                                min="-${available}"
+                                max="${available}"
+                                placeholder="Кол-во"
+                            >
 
-                    </td>
+                        </td>
 
-                </tr>
-            `);
+                    </tr>
+                `);
 
             });
 
@@ -1637,6 +1774,7 @@
                     );
 
                     hasError = true;
+
                     return;
                 }
 
@@ -1655,112 +1793,112 @@
 
                 $('#itemsWrapper').append(`
 
-                <div class="order-item">
+                    <div class="order-item">
 
-                    <div class="item-head">
+                        <div class="item-head">
 
-                        <div>
+                            <div>
 
-                            <div class="item-title">
+                                <div class="item-title">
 
-                                ${currentBatch.sku}
+                                    ${currentBatch.sku}
 
-                                <span class="meta">
-                                    · Партия
-                                    ${currentBatch.batch_code}
+                                    <span class="meta">
+                                        · Партия
+                                        ${currentBatch.batch_code}
+                                    </span>
+
+                                    ${label}
+
+                                </div>
+
+                                <span class="warehouse">
+                                    ${warehouseName}
                                 </span>
-
-                                ${label}
 
                             </div>
 
-                            <span class="warehouse">
-                                ${warehouseName}
+                            <button
+                                type="button"
+                                class="remove-item"
+                            >
+                                &times;
+                            </button>
+
+                        </div>
+
+                        <div class="order-item-bottom">
+
+                            <span class="qty-times">
+
+                                ${qty} ×
+
+                                <span class="price-field">
+
+                                    <input
+                                        type="text"
+                                        name="items[${itemIndex}][price]"
+                                        class="price-input"
+                                        inputmode="numeric"
+                                        autocomplete="off"
+                                        placeholder="цена"
+                                    >
+
+                                </span>
+
+                            </span>
+
+                            <span>
+
+                                Сумма:
+
+                                <span class="item-total">
+                                    0 тг
+                                </span>
+
                             </span>
 
                         </div>
 
-                        <button
-                            type="button"
-                            class="remove-item"
+                        <input
+                            type="hidden"
+                            name="items[${itemIndex}][sku]"
+                            value="${currentBatch.sku}"
                         >
-                            &times;
-                        </button>
+
+                        <input
+                            type="hidden"
+                            name="items[${itemIndex}][batch_id]"
+                            value="${currentBatch.id}"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="items[${itemIndex}][warehouse_id]"
+                            value="${warehouseId}"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="items[${itemIndex}][quantity]"
+                            value="${qty}"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="items[${itemIndex}][warehouse_name]"
+                            value="${warehouseName}"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="items[${itemIndex}][batch_code]"
+                            value="${currentBatch.batch_code}"
+                        >
 
                     </div>
 
-                    <div class="order-item-bottom">
-
-                        <span class="qty-times">
-
-                            ${qty} ×
-
-                            <span class="price-field">
-
-                                <input
-                                    type="text"
-                                    name="items[${itemIndex}][price]"
-                                    class="price-input"
-                                    inputmode="numeric"
-                                    autocomplete="off"
-                                    placeholder="цена"
-                                >
-
-                            </span>
-
-                        </span>
-
-                        <span>
-
-                            Сумма:
-
-                            <span class="item-total">
-                                0 тг
-                            </span>
-
-                        </span>
-
-                    </div>
-
-                    <input
-                        type="hidden"
-                        name="items[${itemIndex}][sku]"
-                        value="${currentBatch.sku}"
-                    >
-
-                    <input
-                        type="hidden"
-                        name="items[${itemIndex}][batch_id]"
-                        value="${currentBatch.id}"
-                    >
-
-                    <input
-                        type="hidden"
-                        name="items[${itemIndex}][warehouse_id]"
-                        value="${warehouseId}"
-                    >
-
-                    <input
-                        type="hidden"
-                        name="items[${itemIndex}][quantity]"
-                        value="${qty}"
-                    >
-
-                    <input
-                        type="hidden"
-                        name="items[${itemIndex}][warehouse_name]"
-                        value="${warehouseName}"
-                    >
-
-                    <input
-                        type="hidden"
-                        name="items[${itemIndex}][batch_code]"
-                        value="${currentBatch.batch_code}"
-                    >
-
-                </div>
-
-            `);
+                `);
 
                 if (qty > 0) {
 
@@ -2121,49 +2259,49 @@
 
         $('#paymentsWrapper').append(`
 
-        <div class="payment-row">
+            <div class="payment-row">
 
-            <select
-                name="payments[${paymentIndex}][payment_method]"
-                class="form-select payment-method"
-            >
+                <select
+                    name="payments[${paymentIndex}][payment_method]"
+                    class="form-select payment-method"
+                >
 
-                <option value="" selected>
-                    Не указано
-                </option>
-
-                ${paymentMethods.map(method => `
-
-                    <option value="${method.name}">
-                        ${method.name}
+                    <option value="" selected>
+                        Не указано
                     </option>
 
-                `).join('')}
+                    ${paymentMethods.map(method => `
 
-            </select>
+                        <option value="${method.name}">
+                            ${method.name}
+                        </option>
 
-            <input
-                type="text"
-                name="payments[${paymentIndex}][amount]"
-                class="form-control payment-amount"
-                inputmode="numeric"
-                autocomplete="off"
-                value="${formatAmount(remaining)}"
-                placeholder="Сумма"
-                data-auto="1"
-            >
+                    `).join('')}
 
-            <button
-                type="button"
-                class="remove-payment"
-                title="Удалить"
-            >
-                &times;
-            </button>
+                </select>
 
-        </div>
+                <input
+                    type="text"
+                    name="payments[${paymentIndex}][amount]"
+                    class="form-control payment-amount"
+                    inputmode="numeric"
+                    autocomplete="off"
+                    value="${formatAmount(remaining)}"
+                    placeholder="Сумма"
+                    data-auto="1"
+                >
 
-    `);
+                <button
+                    type="button"
+                    class="remove-payment"
+                    title="Удалить"
+                >
+                    &times;
+                </button>
+
+            </div>
+
+        `);
 
         paymentIndex++;
 
@@ -2333,12 +2471,15 @@
 
                 alert(
                     'Сумма оплат должна полностью совпадать с итогом заказа.\n\n' +
+
                     'Итого: ' +
                     formatAmount(orderTotal) +
                     ' тг\n' +
+
                     'Оплачено: ' +
                     formatAmount(paidTotal) +
                     ' тг\n' +
+
                     'Осталось: ' +
                     formatAmount(
                         orderTotal -
@@ -2391,7 +2532,9 @@
 
     $('#cancelOrder').click(
         function() {
+
             window.history.back();
+
         }
     );
 

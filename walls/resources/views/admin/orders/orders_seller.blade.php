@@ -5,6 +5,7 @@
 @section('content')
 
 @php
+
 $selectedDate = request()->get('date')
 ? \Carbon\Carbon::parse(request()->get('date'))->format('Y-m-d')
 : now()->format('Y-m-d');
@@ -20,6 +21,7 @@ $methodNames = [
 'transfer' => 'Перевод',
 'card' => 'Карта',
 ];
+
 @endphp
 
 <link
@@ -119,14 +121,19 @@ $methodNames = [
         justify-content: center;
         gap: 7px;
         padding: 0 15px;
+
         background: var(--blue);
         color: #fff;
+
         border: 1px solid var(--blue);
         border-radius: var(--radius-small);
+
         font-family: inherit;
         font-size: 13px;
         font-weight: 600;
+
         text-decoration: none;
+
         transition:
             background .15s ease,
             border-color .15s ease,
@@ -160,14 +167,18 @@ $methodNames = [
         width: 35px;
         height: 35px;
         flex: 0 0 35px;
+
         display: flex;
         align-items: center;
         justify-content: center;
+
         background: #fff;
         border: 1px solid var(--border);
         border-radius: var(--radius-small);
+
         color: #89919b;
         text-decoration: none;
+
         transition:
             background .15s ease,
             border-color .15s ease,
@@ -183,13 +194,17 @@ $methodNames = [
     .date-input {
         width: 100%;
         height: 35px;
+
         background: #fff;
         border: 1px solid var(--border) !important;
         border-radius: var(--radius-small) !important;
+
         color: var(--text);
         text-align: center;
+
         font-family: inherit;
         font-size: 13px;
+
         box-shadow: none !important;
         outline: none;
     }
@@ -213,21 +228,28 @@ $methodNames = [
         left: 13px;
         top: 50%;
         transform: translateY(-50%);
+
         color: #adb4bc;
         font-size: 13px;
+
         pointer-events: none;
     }
 
     #searchInput {
         width: 100%;
         height: 39px;
+
         padding-left: 36px;
+
         background: #fff;
         border: 1px solid var(--border) !important;
         border-radius: var(--radius) !important;
+
         color: var(--text);
+
         font-family: inherit;
         font-size: 13px;
+
         box-shadow: none !important;
         outline: none;
     }
@@ -249,6 +271,7 @@ $methodNames = [
         background: #fff;
         border: 1px solid var(--border);
         border-radius: var(--radius);
+
         margin-bottom: 13px;
         overflow: hidden;
     }
@@ -257,6 +280,7 @@ $methodNames = [
         display: flex;
         align-items: center;
         justify-content: space-between;
+
         padding: 13px 15px;
     }
 
@@ -286,7 +310,9 @@ $methodNames = [
         display: flex;
         flex-wrap: wrap;
         gap: 6px;
+
         padding: 9px 15px;
+
         border-top: 1px solid var(--border-light);
         background: #fcfcfd;
     }
@@ -295,11 +321,15 @@ $methodNames = [
         display: inline-flex;
         align-items: center;
         gap: 5px;
+
         padding: 5px 8px;
+
         border: 1px solid #e9edf1;
         border-radius: 6px;
+
         background: #fff;
         color: var(--text-secondary);
+
         font-size: 11px;
     }
 
@@ -324,9 +354,12 @@ $methodNames = [
 
     .order-card {
         background: #fff;
+
         border: 1px solid var(--border);
         border-radius: var(--radius);
+
         padding: 13px 14px;
+
         transition:
             border-color .15s ease,
             box-shadow .15s ease;
@@ -343,9 +376,11 @@ $methodNames = [
 
     .order-top {
         width: 100%;
+
         display: flex;
         align-items: center;
         justify-content: space-between;
+
         gap: 12px;
         margin-bottom: 9px;
     }
@@ -354,9 +389,11 @@ $methodNames = [
         display: inline-flex;
         align-items: center;
         gap: 5px;
+
         color: #424951;
         font-size: 13px;
         font-weight: 700;
+
         min-width: 0;
     }
 
@@ -367,8 +404,10 @@ $methodNames = [
 
     .order-date {
         flex: 0 0 auto;
+
         color: var(--text-muted);
         font-size: 11px;
+
         text-align: right;
         white-space: nowrap;
     }
@@ -379,9 +418,11 @@ $methodNames = [
 
     .customer-row {
         width: 100%;
+
         display: flex;
         align-items: flex-start;
         justify-content: space-between;
+
         gap: 12px;
     }
 
@@ -394,6 +435,7 @@ $methodNames = [
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+
         color: #343940;
         font-size: 13.5px;
         font-weight: 600;
@@ -401,6 +443,7 @@ $methodNames = [
 
     .customer-phone {
         margin-top: 3px;
+
         color: var(--text-secondary);
         font-size: 11.5px;
     }
@@ -409,21 +452,27 @@ $methodNames = [
         display: flex;
         flex-wrap: wrap;
         gap: 5px;
+
         margin-top: 6px;
     }
 
     .order-point {
         flex: 0 0 auto;
         max-width: 48%;
+
         display: flex;
         align-items: center;
         justify-content: flex-end;
+
         gap: 5px;
+
         color: #8a929c;
         font-size: 10.5px;
         line-height: 1.3;
+
         text-align: right;
         white-space: nowrap;
+
         overflow: hidden;
         text-overflow: ellipsis;
     }
@@ -442,12 +491,17 @@ $methodNames = [
         display: inline-flex;
         align-items: center;
         gap: 4px;
+
         padding: 4px 7px;
+
         border-radius: 6px;
+
         background: var(--green-light);
         color: var(--green);
+
         font-size: 10.5px;
         font-weight: 500;
+
         white-space: nowrap;
     }
 
@@ -468,8 +522,10 @@ $methodNames = [
         display: flex;
         align-items: center;
         justify-content: space-between;
+
         margin-top: 12px;
         padding-top: 10px;
+
         border-top: 1px solid var(--border-light);
     }
 
@@ -479,6 +535,7 @@ $methodNames = [
 
     .discount-line {
         margin-bottom: 2px;
+
         color: #a4aab1;
         font-size: 10.5px;
     }
@@ -503,15 +560,20 @@ $methodNames = [
     .action-btn {
         width: 25px;
         height: 25px;
+
         display: flex;
         align-items: center;
         justify-content: center;
+
         border-radius: 7px;
         border: 1px solid var(--blue);
+
         background: #fff;
         color: var(--blue);
+
         text-decoration: none;
         font-size: 11px;
+
         transition:
             background .15s ease,
             border-color .15s ease,
@@ -528,6 +590,7 @@ $methodNames = [
         background: var(--red-light);
         border-color: var(--red-border);
         color: var(--red);
+
         cursor: pointer;
     }
 
@@ -549,15 +612,21 @@ $methodNames = [
     .details-btn {
         width: 100%;
         height: 33px;
+
         margin-top: 9px;
+
         border: 1px solid var(--blue);
         border-radius: 7px;
+
         background: var(--blue);
         color: #fff;
+
         font-family: inherit;
         font-size: 12px;
         font-weight: 500;
+
         cursor: pointer;
+
         transition:
             background .15s ease,
             border-color .15s ease,
@@ -577,13 +646,17 @@ $methodNames = [
     .modal-content {
         border: none;
         border-radius: 0;
+
         background: var(--page-bg);
+
         font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
     }
 
     .modal-header {
         padding: 12px 16px;
+
         background: #fff;
+
         border-bottom: 1px solid var(--border);
     }
 
@@ -612,17 +685,21 @@ $methodNames = [
 
     .modal-section {
         background: #fff;
+
         border: 1px solid var(--border);
         border-radius: 8px;
+
         padding: 10px 12px;
         margin-bottom: 7px;
     }
 
     .modal-section-title {
         margin-bottom: 6px;
+
         color: #9299a2;
         font-size: 10px;
         font-weight: 600;
+
         text-transform: uppercase;
         letter-spacing: .02em;
     }
@@ -635,9 +712,12 @@ $methodNames = [
         display: flex;
         align-items: center;
         justify-content: space-between;
+
         gap: 15px;
+
         min-height: 27px;
         padding: 4px 0;
+
         border-bottom: 1px solid #f2f3f5;
     }
 
@@ -647,15 +727,18 @@ $methodNames = [
 
     .info-label {
         flex: 0 0 auto;
+
         color: #9ba2aa;
         font-size: 10.5px;
     }
 
     .info-value {
         min-width: 0;
+
         color: #3e444b;
         font-size: 11.5px;
         font-weight: 600;
+
         text-align: right;
         overflow-wrap: anywhere;
     }
@@ -668,15 +751,18 @@ $methodNames = [
         display: flex;
         align-items: center;
         justify-content: space-between;
+
         gap: 15px;
         min-width: 0;
     }
 
     .customer-info-name {
         min-width: 0;
+
         color: #3e444b;
         font-size: 11.5px;
         font-weight: 600;
+
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -684,8 +770,10 @@ $methodNames = [
 
     .customer-info-phone {
         flex: 0 0 auto;
+
         color: #737b85;
         font-size: 11px;
+
         white-space: nowrap;
     }
 
@@ -697,6 +785,7 @@ $methodNames = [
         display: flex;
         align-items: center;
         justify-content: flex-end;
+
         gap: 14px;
         min-width: 0;
     }
@@ -705,12 +794,14 @@ $methodNames = [
         color: #3e444b;
         font-size: 11.5px;
         font-weight: 600;
+
         white-space: nowrap;
     }
 
     .order-info-date {
         color: #737b85;
         font-size: 11px;
+
         white-space: nowrap;
     }
 
@@ -722,6 +813,7 @@ $methodNames = [
         display: flex;
         align-items: center;
         justify-content: flex-end;
+
         gap: 15px;
     }
 
@@ -729,6 +821,7 @@ $methodNames = [
         color: var(--red);
         font-size: 11px;
         font-weight: 500;
+
         white-space: nowrap;
     }
 
@@ -736,6 +829,7 @@ $methodNames = [
         color: #30353b;
         font-size: 12px;
         font-weight: 700;
+
         white-space: nowrap;
     }
 
@@ -747,6 +841,7 @@ $methodNames = [
         color: #555d66;
         font-size: 11.5px;
         font-weight: 500;
+
         text-align: right;
         white-space: pre-wrap;
     }
@@ -759,6 +854,7 @@ $methodNames = [
         display: flex;
         flex-wrap: wrap;
         justify-content: flex-end;
+
         gap: 5px;
     }
 
@@ -766,12 +862,17 @@ $methodNames = [
         display: inline-flex;
         align-items: center;
         gap: 4px;
+
         padding: 4px 7px;
+
         border-radius: 5px;
+
         background: var(--green-light);
         color: var(--green);
+
         font-size: 10.5px;
         font-weight: 500;
+
         white-space: nowrap;
     }
 
@@ -792,8 +893,11 @@ $methodNames = [
         display: flex;
         align-items: center;
         justify-content: space-between;
+
         gap: 12px;
+
         padding: 7px 0;
+
         border-bottom: 1px solid #f1f2f4;
     }
 
@@ -809,15 +913,18 @@ $methodNames = [
     .item-main-line {
         display: flex;
         align-items: center;
+
         gap: 7px;
         min-width: 0;
     }
 
     .item-sku {
         min-width: 0;
+
         color: #41474e;
         font-size: 11.5px;
         font-weight: 600;
+
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -825,22 +932,27 @@ $methodNames = [
 
     .item-batch-inline {
         flex: 0 0 auto;
+
         color: #a1a8b0;
         font-size: 10px;
+
         white-space: nowrap;
     }
 
     .item-qty {
         margin-top: 3px;
+
         color: #7c848d;
         font-size: 10.5px;
     }
 
     .item-sum {
         flex: 0 0 auto;
+
         color: #3e444b;
         font-size: 11.5px;
         font-weight: 700;
+
         white-space: nowrap;
     }
 
@@ -850,10 +962,14 @@ $methodNames = [
 
     .orders-empty {
         padding: 36px 20px;
+
         text-align: center;
+
         background: #fff;
+
         border: 1px solid var(--border);
         border-radius: var(--radius);
+
         color: var(--text-muted);
         font-size: 12.5px;
     }
@@ -870,6 +986,7 @@ $methodNames = [
 
         .container {
             max-width: 100%;
+
             padding-left: 12px;
             padding-right: 12px;
         }
@@ -888,7 +1005,9 @@ $methodNames = [
 
         .btn-create {
             height: 34px;
+
             padding: 0 11px;
+
             font-size: 12px;
         }
 
@@ -900,6 +1019,25 @@ $methodNames = [
 
         .date-input {
             height: 34px;
+
+            /*
+             * iOS Safari не увеличивает страницу
+             * при фокусе на input с font-size >= 16px.
+             *
+             * Остальной размер самого поля
+             * остаётся прежним.
+             */
+            font-size: 16px !important;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        /*
+         * Убираем автоматический zoom Safari
+         * при нажатии на поиск.
+         */
+        #searchInput {
+            font-size: 16px !important;
+            -webkit-text-size-adjust: 100%;
         }
 
         .order-card {
@@ -975,42 +1113,48 @@ $methodNames = [
     }
 </style>
 
-
 <div class="container orders-page">
 
     {{-- =====================================================
-         HEADER
-    ====================================================== --}}
+     HEADER
+====================================================== --}}
 
     <div class="orders-header">
+
         <div>
             <h1 class="orders-title">
                 Заказы
             </h1>
-
         </div>
 
         <a
             href="{{ route('admin.orders.create') }}"
             class="btn-create">
+
             <i class="bi bi-plus-lg"></i>
+
             Создать
+
         </a>
+
     </div>
 
 
     {{-- =====================================================
-         DATE
-    ====================================================== --}}
+     DATE
+====================================================== --}}
 
     <div class="orders-toolbar">
+
         <div class="date-picker">
 
             <a
                 href="{{ route('admin.orders.seller', ['date' => $prevDate]) }}"
                 class="date-arrow"
                 title="Предыдущий день">
+
                 <i class="bi bi-chevron-left"></i>
+
             </a>
 
             <form method="GET" style="flex:1">
@@ -1028,16 +1172,19 @@ $methodNames = [
                 href="{{ route('admin.orders.seller', ['date' => $nextDate]) }}"
                 class="date-arrow"
                 title="Следующий день">
+
                 <i class="bi bi-chevron-right"></i>
+
             </a>
 
         </div>
+
     </div>
 
 
     {{-- =====================================================
-         SEARCH
-    ====================================================== --}}
+     SEARCH
+====================================================== --}}
 
     <div class="search-wrapper">
 
@@ -1054,12 +1201,13 @@ $methodNames = [
 
 
     {{-- =====================================================
-         DAY TOTAL
-    ====================================================== --}}
+     DAY TOTAL
+====================================================== --}}
 
     @foreach($orders as $order)
 
     @php
+
     $totalDaySum +=
     $order->items->sum(
     fn($i) =>
@@ -1067,6 +1215,7 @@ $methodNames = [
     )
     -
     ($order->discount ?? 0);
+
     @endphp
 
     @endforeach
@@ -1127,8 +1276,8 @@ $methodNames = [
 
 
     {{-- =====================================================
-         ORDERS
-    ====================================================== --}}
+     ORDERS
+====================================================== --}}
 
     <div
         id="mobileOrders"
@@ -1158,18 +1307,11 @@ $methodNames = [
             <div class="order-top">
 
                 <div class="order-number">
-
-                    
-
                     #{{ $order->id }}
-
                 </div>
 
-
                 <div class="order-date">
-
                     {{ $order->order_date?->format('d.m.Y H:i') ?? '—' }}
-
                 </div>
 
             </div>
@@ -1214,16 +1356,14 @@ $methodNames = [
                             <div
                             class="payment-badge {{ $isNegative ? 'negative' : '' }}">
 
-                            
-
                             {{ $methodName }}
 
                             {{ number_format(
-                                            $payment->amount,
-                                            0,
-                                            '.',
-                                            ' '
-                                        ) }} ₸
+                                        $payment->amount,
+                                        0,
+                                        '.',
+                                        ' '
+                                    ) }} ₸
 
                     </div>
 
@@ -1248,8 +1388,6 @@ $methodNames = [
 
             <div class="order-point">
 
-                
-
                 {{ $order->pointOfSale->name ?? 'Точка не указана' }}
 
             </div>
@@ -1270,11 +1408,11 @@ $methodNames = [
                     Скидка:
 
                     {{ number_format(
-                                    $order->discount,
-                                    0,
-                                    '.',
-                                    ' '
-                                ) }} ₸
+                                $order->discount,
+                                0,
+                                '.',
+                                ' '
+                            ) }} ₸
 
                 </div>
 
@@ -1284,11 +1422,11 @@ $methodNames = [
                 <div class="order-total">
 
                     {{ number_format(
-                                $finalSum,
-                                0,
-                                '.',
-                                ' '
-                            ) }} ₸
+                            $finalSum,
+                            0,
+                            '.',
+                            ' '
+                        ) }} ₸
 
                 </div>
 
@@ -1357,10 +1495,10 @@ $methodNames = [
         <i
             class="bi bi-receipt"
             style="
-                        font-size:24px;
-                        display:block;
-                        margin-bottom:8px;
-                    ">
+                    font-size:24px;
+                    display:block;
+                    margin-bottom:8px;
+                ">
         </i>
 
         За этот день заказов нет
@@ -1370,16 +1508,17 @@ $methodNames = [
     @endforelse
 
 </div>
+```
 
 </div>
 
-
 {{-- =====================================================
-     NORMAL MODALS
+NORMAL MODALS
 ====================================================== --}}
 
 @foreach($orders as $order)
 
+```
 @php
 
 $orderSum =
@@ -1440,15 +1579,11 @@ $orderSum -
                         <div class="customer-info-inline">
 
                             <div class="customer-info-name">
-
                                 {{ $order->name ?: 'Без имени' }}
-
                             </div>
 
                             <div class="customer-info-phone">
-
                                 {{ $order->phone ?: 'Телефон не указан' }}
-
                             </div>
 
                         </div>
@@ -1486,6 +1621,7 @@ $orderSum -
 
                             </div>
 
+
                             <div class="order-info-date">
 
                                 {{ $order->order_date?->format('d.m.Y H:i') ?? '—' }}
@@ -1506,9 +1642,7 @@ $orderSum -
                         </div>
 
                         <div class="comment-value">
-
                             {{ $order->comment }}
-
                         </div>
 
                     </div>
@@ -1540,25 +1674,27 @@ $orderSum -
                             <div class="finance-discount">
 
                                 Скидка:
+
                                 {{ number_format(
-                                            $order->discount,
-                                            0,
-                                            '.',
-                                            ' '
-                                        ) }} ₸
+                                        $order->discount,
+                                        0,
+                                        '.',
+                                        ' '
+                                    ) }} ₸
 
                             </div>
 
                             @endif
 
+
                             <div class="finance-total">
 
                                 {{ number_format(
-                                        $finalSum,
-                                        0,
-                                        '.',
-                                        ' '
-                                    ) }} ₸
+                                    $finalSum,
+                                    0,
+                                    '.',
+                                    ' '
+                                ) }} ₸
 
                             </div>
 
@@ -1598,16 +1734,14 @@ $orderSum -
                                 <div
                                 class="modal-payment {{ $isNegative ? 'negative' : '' }}">
 
-                                
-
                                 {{ $methodName }}
 
                                 {{ number_format(
-                                                $payment->amount,
-                                                0,
-                                                '.',
-                                                ' '
-                                            ) }} ₸
+                                            $payment->amount,
+                                            0,
+                                            '.',
+                                            ' '
+                                        ) }} ₸
 
                         </div>
 
@@ -1646,9 +1780,7 @@ $orderSum -
                         <div class="item-main-line">
 
                             <div class="item-sku">
-
                                 {{ $item->variant->sku ?? '—' }}
-
                             </div>
 
                             <div class="item-batch-inline">
@@ -1668,11 +1800,11 @@ $orderSum -
                             ×
 
                             {{ number_format(
-                                            $item->price ?? 0,
-                                            0,
-                                            '.',
-                                            ' '
-                                        ) }} ₸
+                                        $item->price ?? 0,
+                                        0,
+                                        '.',
+                                        ' '
+                                    ) }} ₸
 
                         </div>
 
@@ -1682,12 +1814,12 @@ $orderSum -
                     <div class="item-sum">
 
                         {{ number_format(
-                                        ($item->price ?? 0) *
-                                        $item->quantity,
-                                        0,
-                                        '.',
-                                        ' '
-                                    ) }} ₸
+                                    ($item->price ?? 0) *
+                                    $item->quantity,
+                                    0,
+                                    '.',
+                                    ' '
+                                ) }} ₸
 
                     </div>
 
@@ -1697,10 +1829,10 @@ $orderSum -
 
                 <div
                     style="
-                                    color:var(--text-muted);
-                                    font-size:11px;
-                                    padding:7px 0;
-                                ">
+                                color:var(--text-muted);
+                                font-size:11px;
+                                padding:7px 0;
+                            ">
 
                     Товаров нет
 
@@ -1717,19 +1849,22 @@ $orderSum -
 </div>
 
 </div>
+```
 
 @endforeach
 
-
 {{-- =========================================================
-     SEARCH JAVASCRIPT
+SEARCH JAVASCRIPT
 ========================================================= --}}
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
 
-        const search = document.getElementById('searchInput');
-        const container = document.getElementById('mobileOrders');
+        const search =
+            document.getElementById('searchInput');
+
+        const container =
+            document.getElementById('mobileOrders');
 
         if (!search || !container) {
             return;
@@ -1754,6 +1889,7 @@ $orderSum -
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#039;');
+
         }
 
 
@@ -1763,9 +1899,11 @@ $orderSum -
 
         function formatMoney(value) {
 
-            const number = Number(value) || 0;
+            const number =
+                Number(value) || 0;
 
             return number.toLocaleString('ru-RU');
+
         }
 
 
@@ -1795,10 +1933,14 @@ $orderSum -
             const month = match[2];
             const day = match[3];
 
-            const hours = match[4] || '00';
-            const minutes = match[5] || '00';
+            const hours =
+                match[4] || '00';
+
+            const minutes =
+                match[5] || '00';
 
             return `${day}.${month}.${year} ${hours}:${minutes}`;
+
         }
 
 
@@ -1812,18 +1954,24 @@ $orderSum -
 
                 return `
                 <div class="payment-badge negative">
+
                     <i class="bi bi-exclamation-circle"></i>
+
                     Оплата не указана
+
                 </div>
             `;
+
             }
 
 
             const paymentNames = {
+
                 cash: 'Наличные',
                 qr: 'QR',
                 transfer: 'Перевод',
                 card: 'Карта'
+
             };
 
 
@@ -1844,8 +1992,6 @@ $orderSum -
                 return `
                 <div class="payment-badge ${negative ? 'negative' : ''}">
 
-                    
-
                     ${escapeHtml(methodName)}
 
                     ${formatMoney(amount)} ₸
@@ -1854,6 +2000,7 @@ $orderSum -
             `;
 
             }).join('');
+
         }
 
 
@@ -1876,6 +2023,7 @@ $orderSum -
                     Товаров нет
                 </div>
             `;
+
             }
 
 
@@ -1913,11 +2061,17 @@ $orderSum -
                         <div class="item-main-line">
 
                             <div class="item-sku">
+
                                 ${escapeHtml(sku)}
+
                             </div>
 
+
                             <div class="item-batch-inline">
-                                Партия: ${escapeHtml(batch)}
+
+                                Партия:
+                                ${escapeHtml(batch)}
+
                             </div>
 
                         </div>
@@ -1926,7 +2080,9 @@ $orderSum -
                         <div class="item-qty">
 
                             ${quantity}
+
                             ×
+
                             ${formatMoney(price)} ₸
 
                         </div>
@@ -1935,13 +2091,16 @@ $orderSum -
 
 
                     <div class="item-sum">
+
                         ${formatMoney(itemTotal)} ₸
+
                     </div>
 
                 </div>
             `;
 
             }).join('');
+
         }
 
 
@@ -1956,15 +2115,19 @@ $orderSum -
 
             if (Array.isArray(order.items)) {
 
-                orderSum = order.items.reduce(function(sum, item) {
+                orderSum =
+                    order.items.reduce(
+                        function(sum, item) {
 
-                    return sum +
-                        (
-                            (Number(item.price) || 0) *
-                            (Number(item.quantity) || 0)
-                        );
+                            return sum +
+                                (
+                                    (Number(item.price) || 0) *
+                                    (Number(item.quantity) || 0)
+                                );
 
-                }, 0);
+                        },
+                        0
+                    );
 
             }
 
@@ -2017,8 +2180,6 @@ $orderSum -
 
                     <div class="order-number">
 
-                        
-
                         #${escapeHtml(order.id)}
 
                     </div>
@@ -2061,8 +2222,6 @@ $orderSum -
 
 
                     <div class="order-point">
-
-                        
 
                         ${pointOfSale}
 
@@ -2121,10 +2280,12 @@ $orderSum -
                                 name="_token"
                                 value="{{ csrf_token() }}">
 
+
                             <input
                                 type="hidden"
                                 name="_method"
                                 value="DELETE">
+
 
                             <button
                                 type="submit"
@@ -2154,6 +2315,7 @@ $orderSum -
 
             </div>
         `;
+
         }
 
 
@@ -2165,15 +2327,18 @@ $orderSum -
 
             const orderSum =
                 Array.isArray(order.items) ?
-                order.items.reduce(function(sum, item) {
+                order.items.reduce(
+                    function(sum, item) {
 
-                    return sum +
-                        (
-                            (Number(item.price) || 0) *
-                            (Number(item.quantity) || 0)
-                        );
+                        return sum +
+                            (
+                                (Number(item.price) || 0) *
+                                (Number(item.quantity) || 0)
+                            );
 
-                }, 0) :
+                    },
+                    0
+                ) :
                 0;
 
 
@@ -2220,8 +2385,7 @@ $orderSum -
 
             const payments =
                 Array.isArray(order.payments) ?
-                order.payments :
-                [];
+                order.payments : [];
 
 
             let paymentsModalHtml = '';
@@ -2230,10 +2394,12 @@ $orderSum -
             if (payments.length) {
 
                 const paymentNames = {
+
                     cash: 'Наличные',
                     qr: 'QR',
                     transfer: 'Перевод',
                     card: 'Карта'
+
                 };
 
 
@@ -2256,8 +2422,6 @@ $orderSum -
 
                         return `
                         <div class="modal-payment ${negative ? 'negative' : ''}">
-
-                            
 
                             ${escapeHtml(methodName)}
 
@@ -2288,8 +2452,7 @@ $orderSum -
                 class="modal fade search-order-modal"
                 id="searchOrderModal${escapeHtml(order.id)}"
                 tabindex="-1"
-                aria-hidden="true"
-            >
+                aria-hidden="true">
 
                 <div class="modal-dialog modal-fullscreen">
 
@@ -2317,8 +2480,6 @@ $orderSum -
                         <div class="modal-body">
 
 
-                            {{-- CUSTOMER --}}
-
                             <div class="modal-section">
 
                                 <div class="modal-section-title">
@@ -2336,6 +2497,7 @@ $orderSum -
 
                                         </div>
 
+
                                         <div class="customer-info-phone">
 
                                             ${customerPhone}
@@ -2348,8 +2510,6 @@ $orderSum -
 
                             </div>
 
-
-                            {{-- ORDER INFO --}}
 
                             <div class="modal-section">
 
@@ -2400,7 +2560,9 @@ $orderSum -
                                                 </div>
 
                                                 <div class="comment-value">
+
                                                     ${comment}
+
                                                 </div>
 
                                             </div>
@@ -2410,8 +2572,6 @@ $orderSum -
 
                             </div>
 
-
-                            {{-- FINANCE --}}
 
                             <div class="modal-section">
 
@@ -2472,8 +2632,6 @@ $orderSum -
                             </div>
 
 
-                            {{-- PRODUCTS --}}
-
                             <div class="modal-section">
 
                                 <div class="modal-section-title">
@@ -2494,6 +2652,7 @@ $orderSum -
 
             </div>
         `;
+
         }
 
 
@@ -2583,8 +2742,8 @@ $orderSum -
                                     font-size:22px;
                                     display:block;
                                     margin-bottom:8px;
-                                "
-                            ></i>
+                                ">
+                            </i>
 
                             Заказы не найдены
 
@@ -2600,7 +2759,6 @@ $orderSum -
                         /* Создаём результаты */
 
                         data.forEach(function(order) {
-
 
                             container.insertAdjacentHTML(
                                 'beforeend',
@@ -2636,8 +2794,8 @@ $orderSum -
                                 font-size:22px;
                                 display:block;
                                 margin-bottom:8px;
-                            "
-                        ></i>
+                            ">
+                        </i>
 
                         Ошибка поиска
 
@@ -2646,6 +2804,7 @@ $orderSum -
                 `;
 
                     });
+
 
             }, 300);
 

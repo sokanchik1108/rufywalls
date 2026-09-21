@@ -22,30 +22,23 @@
     rel="stylesheet">
 
 <style>
-
     :root {
         --page-bg: #f7f8fa;
         --surface: #ffffff;
-
         --text: #30353b;
         --text-secondary: #737b85;
         --text-muted: #a1a8b1;
-
         --border: #e8ebef;
         --border-light: #f0f2f4;
-
         --blue: #2f6fed;
         --blue-hover: #1f56d1;
         --blue-light: #f1f6fd;
         --blue-border: #dce8f7;
-
         --red: #dc747b;
         --red-light: #fff6f6;
         --red-border: #f2dddd;
-
         --green: #63a98c;
         --green-light: #f0f8f4;
-
         --radius: 9px;
         --radius-small: 7px;
     }
@@ -106,23 +99,18 @@
     .cancel-order {
         height: 34px;
         padding: 0 11px;
-
         display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 5px;
-
         background: var(--red-light);
         border: 1px solid var(--red-border);
         border-radius: var(--radius-small);
-
         color: var(--red);
         font-family: inherit;
         font-size: 11px;
         font-weight: 600;
-
         cursor: pointer;
-
         transition:
             background .15s ease,
             border-color .15s ease,
@@ -138,23 +126,18 @@
     .finish-order {
         height: 34px;
         padding: 0 14px;
-
         display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 6px;
-
         background: var(--blue);
         border: 1px solid var(--blue);
         border-radius: var(--radius-small);
-
         color: #fff;
         font-family: inherit;
         font-size: 11px;
         font-weight: 600;
-
         cursor: pointer;
-
         transition:
             background .15s ease,
             border-color .15s ease;
@@ -189,13 +172,10 @@
         display: flex;
         align-items: center;
         gap: 6px;
-
         margin-bottom: 9px;
-
         color: #858d97;
         font-size: 10.5px;
         font-weight: 600;
-
         text-transform: uppercase;
         letter-spacing: .025em;
     }
@@ -212,7 +192,6 @@
     .form-label {
         display: block;
         margin-bottom: 4px;
-
         color: #9299a2;
         font-size: 10.5px;
         font-weight: 500;
@@ -221,16 +200,12 @@
     .form-control,
     .form-select {
         min-height: 35px;
-
         border: 1px solid var(--border) !important;
         border-radius: var(--radius-small) !important;
-
         background: #fff !important;
         color: #41474e !important;
-
         font-family: inherit;
         font-size: 12px;
-
         box-shadow: none !important;
     }
 
@@ -278,14 +253,11 @@
 
     .order-item {
         position: relative;
-
         background: #fff;
         border: 1px solid var(--border);
         border-radius: 8px;
-
         padding: 9px 10px;
         margin-bottom: 6px;
-
         transition: border-color .15s ease;
     }
 
@@ -305,17 +277,14 @@
         display: flex;
         align-items: center;
         gap: 7px;
-
         min-width: 0;
     }
 
     .item-sku {
         min-width: 0;
-
         color: #3d444b;
         font-size: 12px;
         font-weight: 600;
-
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -323,10 +292,8 @@
 
     .item-batch {
         flex: 0 0 auto;
-
         color: #a1a8b0;
         font-size: 10px;
-
         white-space: nowrap;
     }
 
@@ -334,7 +301,6 @@
         display: flex;
         align-items: center;
         gap: 8px;
-
         margin-top: 7px;
     }
 
@@ -353,21 +319,15 @@
     .price-input {
         width: 105px !important;
         min-height: 31px !important;
-
         padding: 4px 8px;
-
         border: 1px solid var(--border) !important;
         border-radius: 6px !important;
-
         background: #fff;
         color: #3e444b;
-
         font-family: inherit;
         font-size: 11.5px;
         font-weight: 600;
-
         text-align: right;
-
         outline: none;
         box-shadow: none !important;
     }
@@ -384,11 +344,9 @@
 
     .item-total {
         margin-left: auto;
-
         color: #3e444b;
         font-size: 11.5px;
         font-weight: 700;
-
         white-space: nowrap;
     }
 
@@ -401,10 +359,8 @@
         align-items: center;
         justify-content: space-between;
         gap: 12px;
-
         margin-top: 8px;
         padding: 10px 12px;
-
         background: #fafbfc;
         border: 1px solid var(--border-light);
         border-radius: 8px;
@@ -414,7 +370,6 @@
         display: flex;
         align-items: center;
         gap: 8px;
-
         min-width: 0;
     }
 
@@ -440,7 +395,6 @@
     .discount-input {
         width: 95px !important;
         min-height: 31px !important;
-
         text-align: right;
         font-weight: 600;
     }
@@ -454,7 +408,6 @@
         display: flex;
         align-items: baseline;
         gap: 5px;
-
         white-space: nowrap;
     }
 
@@ -483,7 +436,6 @@
         background: #fff;
         border: 1px solid var(--border);
         border-radius: 8px;
-
         padding: 8px;
         margin-bottom: 6px;
     }
@@ -506,7 +458,6 @@
     .payment-amount {
         width: 125px !important;
         flex: 0 0 125px;
-
         text-align: right;
         font-weight: 600;
     }
@@ -514,22 +465,16 @@
     .remove-payment {
         width: 28px;
         height: 32px;
-
         flex: 0 0 28px;
-
         display: flex;
         align-items: center;
         justify-content: center;
-
         padding: 0;
-
         background: var(--red-light);
         border: 1px solid var(--red-border);
         border-radius: 6px;
-
         color: var(--red);
         font-size: 14px;
-
         cursor: pointer;
     }
 
@@ -541,25 +486,19 @@
 
     .add-payment {
         height: 32px;
-
         display: inline-flex;
         align-items: center;
         gap: 5px;
-
         margin-top: 7px;
         padding: 0 10px;
-
         background: var(--blue-light);
         border: 1px solid var(--blue-border);
         border-radius: 6px;
-
         color: var(--blue);
         font-family: inherit;
         font-size: 10.5px;
         font-weight: 600;
-
         cursor: pointer;
-
         transition:
             background .15s ease,
             border-color .15s ease;
@@ -576,11 +515,9 @@
 
     .payment-summary {
         margin-top: 8px;
-
         background: #fafbfc;
         border: 1px solid var(--border-light);
         border-radius: 8px;
-
         padding: 9px 10px;
     }
 
@@ -588,9 +525,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-
         min-height: 23px;
-
         color: #858d97;
         font-size: 10.5px;
     }
@@ -608,12 +543,9 @@
     .payment-error,
     .payment-success {
         display: none;
-
         margin-top: 7px;
         padding: 8px 9px;
-
         border-radius: 6px;
-
         font-size: 10.5px;
         font-weight: 600;
     }
@@ -695,6 +627,36 @@
         .discount-input {
             width: 85px !important;
         }
+
+        /*
+         * iPhone / iOS Safari:
+         * 16px prevents automatic zoom when a field receives focus.
+         * Остальные размеры интерфейса не изменяются.
+         */
+        input.form-control,
+        select.form-select,
+        textarea.form-control {
+            font-size: 16px !important;
+        }
+
+        input.form-control,
+        select.form-select,
+        textarea.form-control {
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        .price-input {
+            font-size: 16px !important;
+        }
+
+        .payment-amount {
+            font-size: 16px !important;
+        }
+
+        .discount-input {
+            font-size: 16px !important;
+        }
     }
 
     @media (max-width: 420px) {
@@ -723,9 +685,7 @@
             font-size: 15px;
         }
     }
-
 </style>
-
 
 <div class="container edit-page">
 
@@ -734,16 +694,8 @@
     action="{{ route('admin.orders.update', $order->id) }}"
     id="orderForm"
 >
-
     @csrf
     @method('PUT')
-
-
-    {{-- =====================================================
-         HEADER
-    ====================================================== --}}
-
- 
 
     {{-- =====================================================
          CONTROLS
@@ -783,7 +735,6 @@
 
     </div>
 
-
     {{-- =====================================================
          CUSTOMER
     ====================================================== --}}
@@ -791,13 +742,9 @@
     <div class="edit-section">
 
         <div class="section-title">
-
             <i class="bi bi-person"></i>
-
             Покупатель
-
         </div>
-
 
         <div class="customer-grid">
 
@@ -817,7 +764,6 @@
 
             </div>
 
-
             <div>
 
                 <label class="form-label">
@@ -836,8 +782,7 @@
 
         </div>
 
-
-        {{-- КОММЕНТАРИЙ + ТОЧКА ПРОДАЖ В ОДНОЙ СТРОКЕ --}}
+        {{-- КОММЕНТАРИЙ + ТОЧКА ПРОДАЖ --}}
 
         <div class="customer-bottom-grid">
 
@@ -855,7 +800,6 @@
                 >{{ $order->comment }}</textarea>
 
             </div>
-
 
             <div>
 
@@ -891,7 +835,6 @@
 
     </div>
 
-
     {{-- =====================================================
          PRODUCTS + TOTAL
     ====================================================== --}}
@@ -899,13 +842,9 @@
     <div class="edit-section">
 
         <div class="section-title">
-
             <i class="bi bi-box-seam"></i>
-
             Товары
-
         </div>
-
 
         <div id="itemsWrapper">
 
@@ -921,27 +860,22 @@
                                 {{ $item->variant->sku }}
                             </div>
 
-
                             @if($item->batch_code)
 
                                 <div class="item-batch">
-
                                     Партия:
                                     {{ $item->batch_code }}
-
                                 </div>
 
                             @endif
 
                         </div>
 
-
                         <div class="item-edit-row">
 
                             <div class="item-quantity">
                                 {{ $item->quantity }} ×
                             </div>
-
 
                             <div class="price-wrapper">
 
@@ -961,21 +895,17 @@
 
                             </div>
 
-
-                            <span class="item-total">
-                            </span>
+                            <span class="item-total"></span>
 
                         </div>
 
                     </div>
-
 
                     <input
                         type="hidden"
                         name="items[{{ $i }}][id]"
                         value="{{ $item->id }}"
                     >
-
 
                     <input
                         type="hidden"
@@ -989,7 +919,6 @@
 
         </div>
 
-
         {{-- =================================================
              TOTAL + DISCOUNT
         ================================================== --}}
@@ -997,9 +926,6 @@
         <div class="order-total-box">
 
             <div class="order-total-left">
-
-
-
 
                 <div class="discount-inline">
 
@@ -1023,12 +949,11 @@
 
                 </div>
 
-                                <div class="order-total-label">
+                <div class="order-total-label">
                     Итого:
                 </div>
 
             </div>
-
 
             <div class="order-total-right">
 
@@ -1049,7 +974,6 @@
 
     </div>
 
-
     {{-- =====================================================
          PAYMENTS
     ====================================================== --}}
@@ -1057,13 +981,9 @@
     <div class="edit-section payments-wrapper">
 
         <div class="section-title">
-
             <i class="bi bi-credit-card"></i>
-
             Оплата
-
         </div>
-
 
         <div id="paymentsWrapper">
 
@@ -1099,7 +1019,6 @@
 
                                 @endif
 
-
                                 @foreach($paymentMethods as $method)
 
                                     <option
@@ -1113,7 +1032,6 @@
 
                             </select>
 
-
                             {{-- AMOUNT --}}
 
                             <input
@@ -1125,7 +1043,6 @@
                                 autocomplete="off"
                                 placeholder="Сумма"
                             >
-
 
                             {{-- REMOVE PAYMENT --}}
 
@@ -1171,7 +1088,6 @@
 
                         </select>
 
-
                         <input
                             type="text"
                             name="payments[0][amount]"
@@ -1181,7 +1097,6 @@
                             autocomplete="off"
                             placeholder="Сумма"
                         >
-
 
                         <button
                             type="button"
@@ -1199,7 +1114,6 @@
 
         </div>
 
-
         {{-- ADD PAYMENT --}}
 
         <button
@@ -1210,7 +1124,6 @@
             <i class="bi bi-plus-lg"></i>
             Добавить оплату
         </button>
-
 
         {{-- PAYMENT SUMMARY --}}
 
@@ -1223,14 +1136,16 @@
                 </span>
 
                 <strong>
+
                     <span id="paymentOrderTotal">
                         0
                     </span>
+
                     ₸
+
                 </strong>
 
             </div>
-
 
             <div class="payment-summary-row">
 
@@ -1239,14 +1154,16 @@
                 </span>
 
                 <strong>
+
                     <span id="paymentTotal">
                         0
                     </span>
+
                     ₸
+
                 </strong>
 
             </div>
-
 
             <div class="payment-summary-row">
 
@@ -1266,13 +1183,11 @@
 
             </div>
 
-
             <div
                 id="paymentError"
                 class="payment-error"
             >
             </div>
-
 
             <div
                 id="paymentSuccess"
@@ -1289,9 +1204,7 @@
 
 </div>
 
-
 <script>
-
     /* =========================================================
        PAYMENT METHODS
     ========================================================= */
@@ -1299,7 +1212,6 @@
     const paymentMethods = @json(
         $paymentMethods->pluck('name')->values()
     );
-
 
     /* =========================================================
        FORMAT MONEY
@@ -1311,25 +1223,21 @@
             Number(amount) || 0
         );
 
-        let isNegative =
-            amount < 0;
+        let isNegative = amount < 0;
 
-        amount =
-            Math.abs(amount);
+        amount = Math.abs(amount);
 
-        let formatted =
-            amount
-                .toString()
-                .replace(
-                    /\B(?=(\d{3})+(?!\d))/g,
-                    '.'
-                );
+        let formatted = amount
+            .toString()
+            .replace(
+                /\B(?=(\d{3})+(?!\d))/g,
+                '.'
+            );
 
         return isNegative
             ? '-' + formatted
             : formatted;
     }
-
 
     /* =========================================================
        PARSE MONEY
@@ -1344,16 +1252,15 @@
         ) || 0;
     }
 
-
     /* =========================================================
        FORMAT INPUT
     ========================================================= */
 
     function formatInputAmount(input) {
 
-        let value =
-            String(input.val() || '')
-                .trim();
+        let value = String(
+            input.val() || ''
+        ).trim();
 
         let isNegative =
             value.startsWith('-');
@@ -1382,7 +1289,6 @@
         );
     }
 
-
     /* =========================================================
        RECALCULATE ORDER
     ========================================================= */
@@ -1390,7 +1296,6 @@
     function recalc() {
 
         let sum = 0;
-
 
         $('.order-item').each(function() {
 
@@ -1403,7 +1308,6 @@
                         .val()
                 ) || 0;
 
-
             let price =
                 parseAmount(
                     $(this)
@@ -1411,10 +1315,8 @@
                         .val()
                 );
 
-
             let total =
                 qty * price;
-
 
             $(this)
                 .find('.item-total')
@@ -1423,44 +1325,33 @@
                     ' ₸'
                 );
 
-
             sum += total;
 
         });
-
 
         let discount =
             parseAmount(
                 $('#discountInput').val()
             );
 
-
         let orderTotal =
             sum - discount;
 
-
         orderTotal =
             Math.round(orderTotal);
-
 
         $('#orderTotal')
             .text(
                 formatAmount(orderTotal)
             );
 
-
         $('#paymentOrderTotal')
             .text(
                 formatAmount(orderTotal)
             );
 
-
-        recalcPayments(
-            orderTotal
-        );
-
+        recalcPayments(orderTotal);
     }
-
 
     /* =========================================================
        RECALCULATE PAYMENTS
@@ -1469,7 +1360,6 @@
     function recalcPayments(orderTotal) {
 
         let paymentTotal = 0;
-
 
         $('.payment-amount').each(function() {
 
@@ -1480,16 +1370,13 @@
 
         });
 
-
         paymentTotal =
             Math.round(paymentTotal);
-
 
         $('#paymentTotal')
             .text(
                 formatAmount(paymentTotal)
             );
-
 
         let difference =
             Math.round(
@@ -1497,12 +1384,10 @@
                 paymentTotal
             );
 
-
         $('#paymentDifference')
             .text(
                 formatAmount(difference)
             );
-
 
         if (difference === 0) {
 
@@ -1519,7 +1404,6 @@
 
             $('#paymentError')
                 .show();
-
 
             if (difference > 0) {
 
@@ -1544,9 +1428,7 @@
             }
 
         }
-
     }
-
 
     /* =========================================================
        PRICE INPUT
@@ -1562,10 +1444,8 @@
             );
 
             recalc();
-
         }
     );
-
 
     /* =========================================================
        DISCOUNT INPUT
@@ -1581,10 +1461,8 @@
             );
 
             recalc();
-
         }
     );
-
 
     /* =========================================================
        PAYMENT INPUT
@@ -1599,20 +1477,16 @@
                 $(this)
             );
 
-
             let orderTotal =
                 parseAmount(
                     $('#orderTotal').text()
                 );
 
-
             recalcPayments(
                 orderTotal
             );
-
         }
     );
-
 
     /* =========================================================
        ADD PAYMENT
@@ -1620,7 +1494,6 @@
 
     let paymentIndex =
         {{ $order->payments->count() ?: 1 }};
-
 
     $('#addPayment').click(
         function() {
@@ -1630,61 +1503,48 @@
                     $('#orderTotal').text()
                 );
 
-
             let paymentTotal =
                 getPaymentsTotal();
-
 
             let remaining =
                 orderTotal -
                 paymentTotal;
 
-
             if (remaining < 0) {
                 remaining = 0;
             }
 
-
             let methodsHtml = '';
-
 
             if (paymentMethods.length === 0) {
 
                 methodsHtml = `
-
                     <option value="" selected>
                         Не указано
                     </option>
-
                 `;
 
             } else {
 
                 methodsHtml = `
-
                     <option value="" selected>
                         Не указано
                     </option>
-
                 `;
-
 
                 paymentMethods.forEach(
                     function(method) {
 
                         methodsHtml += `
-
                             <option value="${method}">
                                 ${method}
                             </option>
-
                         `;
 
                     }
                 );
 
             }
-
 
             let html = `
 
@@ -1696,11 +1556,8 @@
                             name="payments[${paymentIndex}][payment_method]"
                             class="form-select payment-method"
                         >
-
                             ${methodsHtml}
-
                         </select>
-
 
                         <input
                             type="text"
@@ -1711,7 +1568,6 @@
                             autocomplete="off"
                             placeholder="Сумма"
                         >
-
 
                         <button
                             type="button"
@@ -1727,19 +1583,14 @@
 
             `;
 
-
             $('#paymentsWrapper')
                 .append(html);
 
-
             paymentIndex++;
 
-
             recalc();
-
         }
     );
-
 
     /* =========================================================
        GET PAYMENTS TOTAL
@@ -1748,7 +1599,6 @@
     function getPaymentsTotal() {
 
         let total = 0;
-
 
         $('.payment-amount').each(
             function() {
@@ -1761,11 +1611,8 @@
             }
         );
 
-
         return Math.round(total);
-
     }
-
 
     /* =========================================================
        REMOVE PAYMENT
@@ -1780,12 +1627,9 @@
                 .closest('.payment-item')
                 .remove();
 
-
             recalc();
-
         }
     );
-
 
     /* =========================================================
        SUBMIT VALIDATION
@@ -1800,9 +1644,7 @@
             ================================================= */
 
             let paymentMethodMissing = false;
-
             let firstEmptyPayment = null;
-
 
             $('.payment-method').each(
                 function() {
@@ -1811,12 +1653,9 @@
 
                         paymentMethodMissing = true;
 
-
                         if (!firstEmptyPayment) {
-
                             firstEmptyPayment =
                                 $(this);
-
                         }
 
                     }
@@ -1824,11 +1663,9 @@
                 }
             );
 
-
             if (paymentMethodMissing) {
 
                 e.preventDefault();
-
 
                 $('#paymentError')
                     .text(
@@ -1836,23 +1673,17 @@
                     )
                     .show();
 
-
                 $('#paymentSuccess')
                     .hide();
-
 
                 alert(
                     'Выберите способ оплаты перед сохранением заказа.'
                 );
 
-
                 firstEmptyPayment.focus();
 
-
                 return false;
-
             }
-
 
             /* =================================================
                2. CHECK SUMS
@@ -1863,36 +1694,28 @@
                     $('#orderTotal').text()
                 );
 
-
             let paymentTotal =
                 getPaymentsTotal();
-
 
             orderTotal =
                 Math.round(orderTotal);
 
-
             paymentTotal =
                 Math.round(paymentTotal);
-
 
             let difference =
                 orderTotal -
                 paymentTotal;
 
-
             if (difference !== 0) {
 
                 e.preventDefault();
 
-
                 $('#paymentSuccess')
                     .hide();
 
-
                 $('#paymentError')
                     .show();
-
 
                 if (difference > 0) {
 
@@ -1902,7 +1725,6 @@
                             formatAmount(difference) +
                             ' ₸ для полной оплаты.'
                         );
-
 
                     alert(
                         'Сумма оплаты меньше суммы заказа на ' +
@@ -1921,7 +1743,6 @@
                             ' ₸.'
                         );
 
-
                     alert(
                         'Сумма оплаты больше суммы заказа на ' +
                         formatAmount(
@@ -1932,11 +1753,8 @@
 
                 }
 
-
                 return false;
-
             }
-
 
             /* =================================================
                3. NORMALIZE PRICES
@@ -1954,7 +1772,6 @@
                 }
             );
 
-
             /* =================================================
                4. NORMALIZE DISCOUNT
             ================================================= */
@@ -1964,7 +1781,6 @@
                     $('#discountInput').val()
                 )
             );
-
 
             /* =================================================
                5. NORMALIZE PAYMENTS
@@ -1985,7 +1801,6 @@
         }
     );
 
-
     /* =========================================================
        INITIAL FORMATTING
     ========================================================= */
@@ -2000,11 +1815,9 @@
         }
     );
 
-
     formatInputAmount(
         $('#discountInput')
     );
-
 
     $('.payment-amount').each(
         function() {
@@ -2016,13 +1829,11 @@
         }
     );
 
-
     /* =========================================================
        INITIAL CALCULATION
     ========================================================= */
 
     recalc();
-
 
     /* =========================================================
        CANCEL
@@ -2030,12 +1841,9 @@
 
     $('#cancelOrder').click(
         function() {
-
-            history.back();
-
+            window.history.back();
         }
     );
-
 </script>
 
 @endsection
