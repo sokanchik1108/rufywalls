@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
+
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
     <title>Списания</title>
 
     <style>
         * {
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         html,
@@ -32,9 +35,9 @@
             padding: 24px;
         }
 
-        /* =========================================================
-           HEADER
-        ========================================================= */
+        /* =========================
+           TOP
+        ========================= */
 
         .top {
             display: grid;
@@ -63,19 +66,28 @@
             justify-self: end;
         }
 
+        /* =========================
+           BUTTONS
+        ========================= */
+
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
+
             height: 40px;
             padding: 0 15px;
+
             border-radius: 9px;
             border: 0;
+
             text-decoration: none;
             cursor: pointer;
+
             font-size: 13px;
             font-weight: 600;
             white-space: nowrap;
+
             transition: .15s ease;
         }
 
@@ -98,9 +110,9 @@
             background: #f8f9fa;
         }
 
-        /* =========================================================
-           ALERTS
-        ========================================================= */
+        /* =========================
+           MESSAGES
+        ========================= */
 
         .success,
         .error {
@@ -122,9 +134,9 @@
             color: #991b1b;
         }
 
-        /* =========================================================
+        /* =========================
            CARD
-        ========================================================= */
+        ========================= */
 
         .card {
             background: #fff;
@@ -134,13 +146,17 @@
             margin-bottom: 15px;
         }
 
-        /* =========================================================
+        /* =========================
            FILTERS
-        ========================================================= */
+        ========================= */
 
         .filters {
             display: grid;
-            grid-template-columns: minmax(180px, 1fr) minmax(0, 1fr) auto;
+            grid-template-columns:
+                minmax(180px, 1fr)
+                minmax(0, 1fr)
+                auto;
+
             gap: 10px;
             align-items: end;
         }
@@ -162,12 +178,18 @@
         select {
             width: 100%;
             height: 39px;
+
             padding: 0 10px;
+
             border: 1px solid #d7dbe0;
             border-radius: 8px;
+
             background: #fff;
             color: #111827;
+
             font-size: 13px;
+            font-family: Arial, sans-serif;
+
             outline: none;
         }
 
@@ -176,15 +198,19 @@
             border-color: #111827;
         }
 
-        /* =========================================================
+        /* =========================
            DATE FIELDS
-        ========================================================= */
+        ========================= */
 
         .date-fields {
             width: 100%;
             min-width: 0;
+
             display: grid;
-            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            grid-template-columns:
+                minmax(0, 1fr)
+                minmax(0, 1fr);
+
             gap: 10px;
             align-items: end;
         }
@@ -195,20 +221,89 @@
             max-width: none;
         }
 
+        /*
+         * Главная правка для даты.
+         * Убираем стандартное вертикальное
+         * позиционирование Chrome/Safari.
+         */
+
         .date-fields input[type="date"] {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
             width: 100%;
             min-width: 0;
             max-width: 100%;
+
             height: 39px;
+            min-height: 39px;
+
+            padding: 0 8px;
+
             box-sizing: border-box;
+
             -webkit-appearance: none;
             appearance: none;
+
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 400;
+
+            line-height: normal;
+            text-align: center;
+
+            vertical-align: middle;
         }
 
-        /* =========================================================
+        /* Chrome / Edge / Safari */
+
+        .date-fields input[type="date"]::-webkit-datetime-edit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            height: 100%;
+
+            padding: 0;
+            margin: 0;
+
+            line-height: normal;
+        }
+
+        .date-fields input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            height: 100%;
+
+            padding: 0;
+            margin: 0;
+
+            line-height: normal;
+        }
+
+        .date-fields input[type="date"]::-webkit-datetime-edit-text,
+        .date-fields input[type="date"]::-webkit-datetime-edit-month-field,
+        .date-fields input[type="date"]::-webkit-datetime-edit-day-field,
+        .date-fields input[type="date"]::-webkit-datetime-edit-year-field {
+            padding: 0;
+            margin: 0;
+
+            line-height: normal;
+        }
+
+        .date-fields input[type="date"]::-webkit-calendar-picker-indicator {
+            margin-left: 4px;
+            padding: 0;
+
+            cursor: pointer;
+        }
+
+        /* =========================
            TABLE
-        ========================================================= */
+        ========================= */
 
         .table-wrap {
             width: 100%;
@@ -225,17 +320,22 @@
         th,
         td {
             padding: 10px 11px;
+
             border-bottom: 1px solid #edf0f2;
+
             text-align: left;
             vertical-align: middle;
+
             font-size: 13px;
         }
 
         th {
             background: #f8f9fa;
             color: #4b5563;
+
             font-weight: 700;
             white-space: nowrap;
+
             font-size: 12px;
         }
 
@@ -281,9 +381,9 @@
             word-break: break-word;
         }
 
-        /* =========================================================
+        /* =========================
            ACTIONS
-        ========================================================= */
+        ========================= */
 
         .actions {
             display: flex;
@@ -296,14 +396,19 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
+
             height: 32px;
             padding: 0 9px;
+
             border-radius: 7px;
             border: 0;
+
             font-size: 12px;
             font-weight: 600;
+
             text-decoration: none;
             cursor: pointer;
+
             transition: .15s ease;
         }
 
@@ -325,20 +430,18 @@
             background: #fecaca;
         }
 
-        /* =========================================================
-           EMPTY
-        ========================================================= */
+        /* =========================
+           EMPTY / PAGINATION
+        ========================= */
 
         .empty {
             padding: 45px 20px;
+
             text-align: center;
+
             color: #777;
             font-size: 13px;
         }
-
-        /* =========================================================
-           PAGINATION
-        ========================================================= */
 
         .pagination {
             margin-top: 15px;
@@ -348,9 +451,9 @@
             width: 100%;
         }
 
-        /* =========================================================
-           MOBILE
-        ========================================================= */
+        /* =========================
+           TABLET / MOBILE
+        ========================= */
 
         @media (max-width: 800px) {
 
@@ -379,8 +482,6 @@
                 justify-self: end;
             }
 
-            /* Стрелка */
-
             .top-left .btn {
                 width: 40px;
                 height: 40px;
@@ -393,8 +494,6 @@
                 font-size: 19px;
                 line-height: 1;
             }
-
-            /* Плюс */
 
             .top-right .btn {
                 width: 40px;
@@ -416,22 +515,24 @@
                 margin-bottom: 12px;
             }
 
-            /* Склад отдельно */
-
             .filters {
                 display: grid;
                 grid-template-columns: 1fr;
                 gap: 9px;
             }
 
-            /* От и По всегда одинаковой ширины */
-
             .date-fields {
                 width: 100%;
                 min-width: 0;
+
                 display: grid;
-                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+
+                grid-template-columns:
+                    minmax(0, 1fr)
+                    minmax(0, 1fr);
+
                 gap: 8px;
+
                 align-items: end;
             }
 
@@ -442,17 +543,60 @@
             }
 
             .date-fields input[type="date"] {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
                 width: 100%;
                 min-width: 0;
                 max-width: 100%;
+
                 height: 39px;
-                box-sizing: border-box;
-                display: block;
-                -webkit-appearance: none;
-                appearance: none;
+                min-height: 39px;
+
+                padding: 0 7px;
+
+                font-size: 13px;
+                line-height: normal;
             }
 
-            .filters>.btn {
+            .date-fields input[type="date"]::-webkit-datetime-edit {
+                height: 100%;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                padding: 0;
+                margin: 0;
+
+                line-height: normal;
+            }
+
+            .date-fields input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+                height: 100%;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                padding: 0;
+                margin: 0;
+
+                line-height: normal;
+            }
+
+            .date-fields input[type="date"]::-webkit-datetime-edit-text,
+            .date-fields input[type="date"]::-webkit-datetime-edit-month-field,
+            .date-fields input[type="date"]::-webkit-datetime-edit-day-field,
+            .date-fields input[type="date"]::-webkit-datetime-edit-year-field {
+                padding: 0;
+                margin: 0;
+
+                line-height: normal;
+            }
+
+            .filters > .btn {
                 width: 100%;
             }
 
@@ -476,6 +620,10 @@
                 font-size: 11px;
             }
         }
+
+        /* =========================
+           SMALL MOBILE
+        ========================= */
 
         @media (max-width: 500px) {
 
@@ -510,12 +658,14 @@
                 padding: 10px;
             }
 
-            /* От / По строго одинаковые по ширине */
-
             .date-fields {
                 width: 100%;
                 min-width: 0;
-                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+
+                grid-template-columns:
+                    minmax(0, 1fr)
+                    minmax(0, 1fr);
+
                 gap: 7px;
             }
 
@@ -526,16 +676,64 @@
             }
 
             .date-fields input[type="date"] {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
                 width: 100%;
                 min-width: 0;
                 max-width: 100%;
+
                 height: 38px;
+                min-height: 38px;
+
                 padding: 0 7px;
+
                 font-size: 12px;
-                box-sizing: border-box;
-                display: block;
-                -webkit-appearance: none;
-                appearance: none;
+                line-height: normal;
+
+                text-align: center;
+            }
+
+            .date-fields input[type="date"]::-webkit-datetime-edit {
+                height: 100%;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                padding: 0;
+                margin: 0;
+
+                line-height: normal;
+            }
+
+            .date-fields input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+                height: 100%;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                padding: 0;
+                margin: 0;
+
+                line-height: normal;
+            }
+
+            .date-fields input[type="date"]::-webkit-datetime-edit-text,
+            .date-fields input[type="date"]::-webkit-datetime-edit-month-field,
+            .date-fields input[type="date"]::-webkit-datetime-edit-day-field,
+            .date-fields input[type="date"]::-webkit-datetime-edit-year-field {
+                padding: 0;
+                margin: 0;
+
+                line-height: normal;
+            }
+
+            .date-fields input[type="date"]::-webkit-calendar-picker-indicator {
+                margin-left: 3px;
+                padding: 0;
             }
 
             .field label {
@@ -556,188 +754,167 @@
 
 <body>
 
-    <div class="page">
+<div class="page">
 
-        <!-- =========================================================
-         HEADER
-    ========================================================= -->
+    <div class="top">
 
-        <div class="top">
-
-            <div class="top-left">
-
-                <a
-                    href="{{ url('/admin') }}"
-                    class="btn btn-light"
-                    title="Назад">
-                    ← Назад
-                </a>
-
-            </div>
-
-            <h1 class="title">
-                Списания
-            </h1>
-
-            <div class="top-right">
-
-                <a
-                    href="{{ route('admin.writeoffs.create') }}"
-                    class="btn btn-dark"
-                    title="Новое списание">
-                    + Новое списание
-                </a>
-
-            </div>
-
+        <div class="top-left">
+            <a
+                href="{{ url('/admin') }}"
+                class="btn btn-light"
+                title="Назад"
+            >
+                ← Назад
+            </a>
         </div>
 
+        <h1 class="title">
+            Списания
+        </h1>
 
-        <!-- =========================================================
-         SUCCESS
-    ========================================================= -->
+        <div class="top-right">
+            <a
+                href="{{ route('admin.writeoffs.create') }}"
+                class="btn btn-dark"
+                title="Новое списание"
+            >
+                + Новое списание
+            </a>
+        </div>
 
-        @if(session('success'))
+    </div>
 
+
+    {{-- SUCCESS --}}
+
+    @if(session('success'))
         <div class="success">
             {{ session('success') }}
         </div>
+    @endif
 
-        @endif
 
+    {{-- ERROR --}}
 
-        <!-- =========================================================
-         ERROR
-    ========================================================= -->
-
-        @if(session('error'))
-
+    @if(session('error'))
         <div class="error">
             {{ session('error') }}
         </div>
+    @endif
 
-        @endif
 
+    {{-- WRITE OFF ERROR --}}
 
-        @if(session('writeoff_error'))
-
+    @if(session('writeoff_error'))
         <div class="error">
             {{ session('writeoff_error') }}
         </div>
+    @endif
 
-        @endif
 
+    {{-- FILTERS --}}
 
-        <!-- =========================================================
-         FILTERS
-    ========================================================= -->
+    <div class="card">
 
-        <div class="card">
+        <form
+            method="GET"
+            action="{{ route('admin.writeoffs.index') }}"
+        >
 
-            <form
-                method="GET"
-                action="{{ route('admin.writeoffs.index') }}">
+            <div class="filters">
 
-                <div class="filters">
+                {{-- WAREHOUSE --}}
 
-                    <!-- СКЛАД -->
+                <div class="field">
 
-                    <div class="field">
+                    <label for="warehouse_id">
+                        Склад
+                    </label>
 
-                        <label for="warehouse_id">
-                            Склад
-                        </label>
+                    <select
+                        name="warehouse_id"
+                        id="warehouse_id"
+                    >
 
-                        <select
-                            name="warehouse_id"
-                            id="warehouse_id">
+                        <option value="">
+                            Все склады
+                        </option>
 
-                            <option value="">
-                                Все склады
-                            </option>
-
-                            @foreach($warehouses as $warehouse)
+                        @foreach($warehouses as $warehouse)
 
                             <option
                                 value="{{ $warehouse->id }}"
-                                @selected(
-                                request('warehouse_id')==$warehouse->id
-                                )
-                                >
+                                @selected(request('warehouse_id') == $warehouse->id)
+                            >
                                 {{ $warehouse->name }}
                             </option>
 
-                            @endforeach
+                        @endforeach
 
-                        </select>
-
-                    </div>
-
-
-                    <!-- =================================================
-                     ДАТЫ
-                ================================================== -->
-
-                    <div class="date-fields">
-
-                        <!-- ОТ -->
-
-                        <div class="field">
-
-                            <label for="from">
-                                От
-                            </label>
-
-                            <input
-                                type="date"
-                                name="from"
-                                id="from"
-                                value="{{ request('from', now()->startOfMonth()->format('Y-m-d')) }}">
-
-                        </div>
-
-
-                        <!-- ПО -->
-
-                        <div class="field">
-
-                            <label for="to">
-                                По
-                            </label>
-
-                            <input
-                                type="date"
-                                name="to"
-                                id="to"
-                                value="{{ request('to', now()->format('Y-m-d')) }}">
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- ФИЛЬТР -->
-
-                    <button
-                        type="submit"
-                        class="btn btn-dark">
-                        Фильтр
-                    </button>
+                    </select>
 
                 </div>
 
-            </form>
 
-        </div>
+                {{-- DATES --}}
+
+                <div class="date-fields">
+
+                    <div class="field">
+
+                        <label for="from">
+                            От
+                        </label>
+
+                        <input
+                            type="date"
+                            name="from"
+                            id="from"
+                            value="{{ request('from', now()->startOfMonth()->format('Y-m-d')) }}"
+                        >
+
+                    </div>
 
 
-        <!-- =========================================================
-         LIST
-    ========================================================= -->
+                    <div class="field">
 
-        <div class="card">
+                        <label for="to">
+                            По
+                        </label>
 
-            @if($writeOffs->count())
+                        <input
+                            type="date"
+                            name="to"
+                            id="to"
+                            value="{{ request('to', now()->format('Y-m-d')) }}"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                {{-- FILTER BUTTON --}}
+
+                <button
+                    type="submit"
+                    class="btn btn-dark"
+                >
+                    Фильтр
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    {{-- TABLE --}}
+
+    <div class="card">
+
+        @if($writeOffs->count())
 
             <div class="table-wrap">
 
@@ -746,115 +923,77 @@
                     <thead>
 
                         <tr>
-
-                            <th>
-                                #
-                            </th>
-
-                            <th>
-                                Дата
-                            </th>
-
-                            <th>
-                                Склад
-                            </th>
-
-                            <th>
-                                Количество
-                            </th>
-
-                            <th>
-                                Комментарий
-                            </th>
-
-                            <th>
-                                Действия
-                            </th>
-
+                            <th>#</th>
+                            <th>Дата</th>
+                            <th>Склад</th>
+                            <th>Количество</th>
+                            <th>Комментарий</th>
+                            <th>Действия</th>
                         </tr>
 
                     </thead>
-
 
                     <tbody>
 
                         @foreach($writeOffs as $writeOff)
 
-                        <tr>
+                            <tr>
 
-                            <!-- ID -->
+                                <td class="number">
+                                    #{{ $writeOff->id }}
+                                </td>
 
-                            <td class="number">
-                                #{{ $writeOff->id }}
-                            </td>
+                                <td class="date">
+                                    {{ $writeOff->writeoff_date?->format('d.m.Y') }}
+                                </td>
 
+                                <td class="warehouse">
+                                    {{ $writeOff->warehouse?->name ?? '—' }}
+                                </td>
 
-                            <!-- DATE -->
+                                <td class="quantity">
+                                    {{ $writeOff->items->sum('quantity') }} шт.
+                                </td>
 
-                            <td class="date">
-                                {{ $writeOff->writeoff_date?->format('d.m.Y') }}
-                            </td>
+                                <td class="comment">
+                                    {{ $writeOff->comment ?: '—' }}
+                                </td>
 
+                                <td>
 
-                            <!-- WAREHOUSE -->
+                                    <div class="actions">
 
-                            <td class="warehouse">
-                                {{ $writeOff->warehouse?->name ?? '—' }}
-                            </td>
+                                        <a
+                                            href="{{ route('admin.writeoffs.show', $writeOff) }}"
+                                            class="action action-view"
+                                        >
+                                            Открыть
+                                        </a>
 
+                                        <form
+                                            action="{{ route('admin.writeoffs.destroy', $writeOff) }}"
+                                            method="POST"
+                                            onsubmit="return confirm('Удалить это списание? Товар будет возвращён на склад.')"
+                                        >
 
-                            <!-- QUANTITY -->
+                                            @csrf
 
-                            <td class="quantity">
-                                {{ $writeOff->items->sum('quantity') }} шт.
-                            </td>
+                                            @method('DELETE')
 
+                                            <button
+                                                type="submit"
+                                                class="action action-delete"
+                                            >
+                                                Удалить
+                                            </button>
 
-                            <!-- COMMENT -->
+                                        </form>
 
-                            <td class="comment">
-                                {{ $writeOff->comment ?: '—' }}
-                            </td>
+                                    </div>
 
+                                </td>
 
-                            <!-- ACTIONS -->
-
-                            <td>
-
-                                <div class="actions">
-
-                                    <!-- VIEW -->
-
-                                    <a
-                                        href="{{ route('admin.writeoffs.show', $writeOff) }}"
-                                        class="action action-view">
-                                        Открыть
-                                    </a>
-
-
-                                    <!-- DELETE -->
-
-                                    <form
-                                        action="{{ route('admin.writeoffs.destroy', $writeOff) }}"
-                                        method="POST"
-                                        onsubmit="return confirm('Удалить это списание? Товар будет возвращён на склад.')">
-
-                                        @csrf
-                                        @method('DELETE')
-
-                                        <button
-                                            type="submit"
-                                            class="action action-delete">
-                                            Удалить
-                                        </button>
-
-                                    </form>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
+                            </tr>
 
                         @endforeach
 
@@ -865,26 +1004,21 @@
             </div>
 
 
-            <!-- =====================================================
-                 PAGINATION
-            ====================================================== -->
-
             <div class="pagination">
                 {{ $writeOffs->links() }}
             </div>
 
-            @else
+        @else
 
             <div class="empty">
                 Списаний за выбранный период нет.
             </div>
 
-            @endif
-
-        </div>
+        @endif
 
     </div>
 
-</body>
+</div>
 
+</body>
 </html>

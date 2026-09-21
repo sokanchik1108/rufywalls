@@ -1,7 +1,9 @@
 <!DOCTYPE html>
+
 <html lang="ru">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -89,44 +91,31 @@
 
         .filters {
             display: grid;
-
             grid-template-columns:
                 minmax(200px, 1.4fr)
                 minmax(200px, 1.2fr)
                 minmax(160px, 1fr)
                 auto;
-
             gap: 8px;
-
             padding: 10px;
-
             background: #ffffff;
-
             border: 1px solid #e3e5e8;
-
             border-radius: 10px;
-
             margin-bottom: 12px;
         }
 
 
-        /*
-         * ОТ / ПО
-         *
-         * Всегда два равных столбца.
-         */
+        /* =========================================================
+           ОТ / ПО
+        ========================================================= */
 
         .date-row {
             display: grid;
-
             grid-template-columns:
                 minmax(0, 1fr)
                 minmax(0, 1fr);
-
             gap: 8px;
-
             width: 100%;
-
             min-width: 0;
         }
 
@@ -147,7 +136,6 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
-
             min-width: 0;
         }
 
@@ -162,21 +150,13 @@
             width: 100%;
             min-width: 0;
             max-width: 100%;
-
             height: 34px;
-
             padding: 0 8px;
-
             border: 1px solid #d9dde2;
-
             border-radius: 7px;
-
             background: #ffffff;
-
             color: #17191c;
-
             outline: none;
-
             font-size: 12px;
         }
 
@@ -187,23 +167,14 @@
 
         .filter-btn {
             align-self: end;
-
             height: 34px;
-
             padding: 0 14px;
-
             border: 0;
-
             border-radius: 7px;
-
             background: #01142f;
-
             color: #ffffff;
-
             cursor: pointer;
-
             font-size: 12px;
-
             font-weight: 600;
         }
 
@@ -218,37 +189,27 @@
 
         .card {
             background: #ffffff;
-
             border: 1px solid #e3e5e8;
-
             border-radius: 10px;
-
             overflow: hidden;
         }
 
         .card-header {
             display: flex;
-
             align-items: center;
-
             justify-content: space-between;
-
             padding: 12px 14px;
-
             border-bottom: 1px solid #e9ebee;
         }
 
         .card-header h2 {
             margin: 0;
-
             font-size: 14px;
-
             font-weight: 700;
         }
 
         .card-header span {
             color: #777e87;
-
             font-size: 11px;
         }
 
@@ -259,57 +220,41 @@
 
         #products-table-container {
             width: 100%;
-
             transition: opacity 0.15s ease;
         }
 
         .table-loading {
             opacity: 0.45;
-
             pointer-events: none;
         }
 
         .table-wrapper {
             width: 100%;
-
             overflow-x: auto;
         }
 
         .products-table {
             width: 100%;
-
             border-collapse: collapse;
-
             min-width: 600px;
         }
 
         .products-table th {
             height: 36px;
-
             padding: 6px 10px;
-
             background: #fafafa;
-
             border-bottom: 1px solid #e5e7ea;
-
             color: #727881;
-
             font-size: 10px;
-
             font-weight: 700;
-
             text-align: left;
-
             white-space: nowrap;
         }
 
         .products-table td {
             padding: 9px 10px;
-
             border-bottom: 1px solid #edf0f2;
-
             font-size: 12px;
-
             vertical-align: middle;
         }
 
@@ -320,21 +265,13 @@
         .products-table th:first-child,
         .products-table td:first-child {
             width: 40px;
-
             text-align: center;
         }
 
 
-        /*
-         * Убираем колонку "Товар".
-         *
-         * 1 — №
-         * 2 — SKU
-         * 3 — Товар
-         * 4 — Приёмок
-         * 5 — Количество
-         * 6 — Средний завоз
-         */
+        /* =========================================================
+           Убираем колонку "Товар"
+        ========================================================= */
 
         .products-table th:nth-child(3),
         .products-table td:nth-child(3) {
@@ -357,49 +294,31 @@
 
         .th-sort {
             display: inline-flex;
-
             align-items: center;
-
             gap: 6px;
         }
 
         .sort-arrows {
             display: flex;
-
             flex-direction: column;
-
             align-items: center;
-
             justify-content: center;
-
             line-height: 8px;
-
             gap: 1px;
         }
 
         .sort-arrow {
             display: block;
-
             width: 12px;
-
             height: 8px;
-
             margin: 0;
-
             padding: 0;
-
             border: 0;
-
             background: transparent;
-
             color: #cfd3d8;
-
             cursor: pointer;
-
             font-size: 7px;
-
             line-height: 8px;
-
             transition:
                 color 0.15s ease,
                 transform 0.15s ease;
@@ -411,7 +330,6 @@
 
         .sort-arrow.active {
             color: #111827;
-
             font-weight: 900;
         }
 
@@ -426,9 +344,7 @@
 
         .sku-link {
             color: #111827;
-
             text-decoration: none;
-
             font-weight: 700;
         }
 
@@ -443,11 +359,8 @@
 
         .empty-row {
             padding: 24px !important;
-
             text-align: center !important;
-
             color: #858b93;
-
             font-size: 12px !important;
         }
 
@@ -458,71 +371,46 @@
 
         .product-detail-card {
             margin-top: 0;
-
             background: #ffffff;
-
             border: 1px solid #e3e5e8;
-
             border-radius: 10px;
-
             overflow: hidden;
         }
 
         .product-detail-header {
             display: flex;
-
             align-items: center;
-
             justify-content: space-between;
-
             gap: 10px;
-
             padding: 12px 14px;
-
             border-bottom: 1px solid #e8eaed;
         }
 
         .product-detail-title {
             font-size: 15px;
-
             font-weight: 700;
-
             color: #17191c;
         }
 
         .product-detail-sku {
             margin-top: 3px;
-
             color: #777e87;
-
             font-size: 11px;
         }
 
         .back-to-products {
             display: inline-flex;
-
             align-items: center;
-
             justify-content: center;
-
             min-height: 30px;
-
             padding: 0 10px;
-
             border-radius: 7px;
-
             background: #f3f4f6;
-
             color: #17191c;
-
             text-decoration: none;
-
             font-size: 11px;
-
             font-weight: 600;
-
             white-space: nowrap;
-
             transition: 0.15s;
         }
 
@@ -537,36 +425,27 @@
 
         .product-detail-stats {
             display: grid;
-
             grid-template-columns:
                 repeat(5, minmax(0, 1fr));
-
             gap: 1px;
-
             background: #e5e7ea;
-
             border-bottom: 1px solid #e5e7ea;
         }
 
         .detail-stat {
             background: #ffffff;
-
             padding: 10px;
         }
 
         .detail-stat-label {
             color: #777e87;
-
             font-size: 10px;
-
             margin-bottom: 4px;
         }
 
         .detail-stat-value {
             color: #17191c;
-
             font-size: 14px;
-
             font-weight: 700;
         }
 
@@ -577,43 +456,30 @@
 
         .detail-table-wrapper {
             width: 100%;
-
             overflow-x: auto;
         }
 
         .detail-table {
             width: 100%;
-
             min-width: 750px;
-
             border-collapse: collapse;
         }
 
         .detail-table th {
             padding: 8px 10px;
-
             background: #fafafa;
-
             border-bottom: 1px solid #e5e7ea;
-
             color: #727881;
-
             font-size: 10px;
-
             font-weight: 700;
-
             text-align: left;
-
             white-space: nowrap;
         }
 
         .detail-table td {
             padding: 8px 10px;
-
             border-bottom: 1px solid #edf0f2;
-
             font-size: 12px;
-
             white-space: nowrap;
         }
 
@@ -667,9 +533,7 @@
 
             .filters {
                 grid-template-columns: 1fr;
-
                 padding: 10px;
-
                 gap: 8px;
             }
 
@@ -678,18 +542,13 @@
             }
 
 
-            /*
-             * ВАЖНО:
-             *
-             * От и По остаются в одной строке.
-             *
-             * Каждая колонка занимает ровно 50%
-             * доступной ширины.
-             */
+            /* =====================================================
+               ОТ / ПО
+               Строго одинаковая ширина на телефоне
+            ===================================================== */
 
             .date-row {
                 display: grid;
-
                 grid-template-columns:
                     minmax(0, 1fr)
                     minmax(0, 1fr);
@@ -697,46 +556,92 @@
                 gap: 8px;
 
                 width: 100%;
-
                 min-width: 0;
+
+                align-items: start;
             }
 
             .date-row .field {
                 width: 100%;
                 min-width: 0;
+                max-width: 100%;
             }
 
             .date-row input[type="date"] {
+                display: block;
+
                 width: 100%;
                 min-width: 0;
                 max-width: 100%;
 
-                /*
-                 * Убираем лишнее внутреннее пространство
-                 * браузера на маленьком экране.
-                 */
+                height: 38px;
 
-                padding-left: 7px;
-                padding-right: 4px;
+                padding: 0 8px;
+
+                /*
+                 * Вертикальное выравнивание
+                 */
+                line-height: 38px;
+
+                /*
+                 * Одинаковый внешний вид
+                 * на мобильных браузерах
+                 */
+                -webkit-appearance: none;
+                appearance: none;
+
+                font-size: 12px;
+
+                /*
+                 * Дата по центру
+                 */
+                text-align: center;
+
+                border: 1px solid #d9dde2;
+                border-radius: 7px;
+
+                background: #ffffff;
+                color: #17191c;
+
+                outline: none;
             }
 
+            /*
+             * Иконка календаря справа
+             */
+            .date-row input[type="date"]::-webkit-calendar-picker-indicator {
+                margin-left: 4px;
+                padding: 0;
+            }
+
+            /*
+             * Фокус поля даты
+             */
+            .date-row input[type="date"]:focus {
+                border-color: #9ba2aa;
+            }
+
+
+            /* =====================================================
+               Остальные поля
+            ===================================================== */
 
             .field input,
             .field select {
                 width: 100%;
-
                 min-width: 0;
-
                 max-width: 100%;
-
                 height: 38px;
             }
-
 
             .filter-btn {
                 width: 100%;
             }
 
+
+            /* =====================================================
+               Карточки
+            ===================================================== */
 
             .card-header {
                 padding: 10px 12px;
@@ -747,35 +652,40 @@
             }
 
 
+            /* =====================================================
+               Таблица
+            ===================================================== */
+
             .products-table th,
             .products-table td {
                 padding: 8px 8px;
             }
 
 
+            /* =====================================================
+               Детальная карточка
+            ===================================================== */
+
             .product-detail-header {
                 padding: 10px 12px;
             }
-
 
             .product-detail-stats {
                 grid-template-columns:
                     1fr 1fr;
             }
 
-
             .detail-stat {
                 padding: 8px;
             }
 
-
             .detail-stat-value {
                 font-size: 13px;
             }
-
         }
 
     </style>
+
 </head>
 
 
@@ -1061,7 +971,9 @@
                     </div>
 
                     <div class="detail-stat-value">
+
                         {{ $totalReceiptCount }}
+
                     </div>
 
                 </div>
@@ -1133,7 +1045,6 @@
                     </div>
 
                 </div>
-
 
             </div>
 
@@ -1272,8 +1183,10 @@
                                     colspan="6"
                                     class="empty-row"
                                 >
+
                                     По этому товару приёмок
                                     за выбранный период нет
+
                                 </td>
 
                             </tr>
@@ -1337,7 +1250,6 @@ document.addEventListener(
 
 
         let currentRequest = null;
-
         let searchTimer = null;
 
 
@@ -1430,7 +1342,6 @@ document.addEventListener(
 
 
             return params;
-
         }
 
 
