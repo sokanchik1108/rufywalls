@@ -4,6 +4,8 @@
 
 @section('content')
 
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -45,6 +47,11 @@
         box-sizing: border-box;
     }
 
+    html {
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+    }
+
     body {
         background: var(--bg);
         font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
@@ -53,8 +60,6 @@
         padding: 0;
         font-size: 14px;
         -webkit-font-smoothing: antialiased;
-
-        /* Защита от автоматического изменения масштаба текста iOS */
         -webkit-text-size-adjust: 100%;
         text-size-adjust: 100%;
     }
@@ -847,17 +852,6 @@
             font-size: 11px;
         }
 
-        /*
-         * =====================================================
-         * FIX MOBILE INPUT ZOOM
-         * =====================================================
-         *
-         * iOS Safari увеличивает страницу, если input имеет
-         * маленький размер шрифта.
-         *
-         * Остальной дизайн и размеры текста НЕ меняем.
-         */
-
         input,
         select,
         textarea,
@@ -883,7 +877,7 @@
         }
 
         /*
-         * Оставляем исходные размеры шрифтов полей.
+         * Размеры шрифтов оставлены БЕЗ изменений.
          */
 
         input.form-control,
@@ -941,10 +935,6 @@
 
         @csrf
 
-        {{-- =====================================================
-             ВЕРХНЯЯ ПАНЕЛЬ
-        ====================================================== --}}
-
         <div id="orderControls">
 
             <span id="cancelOrder">
@@ -976,10 +966,6 @@
             </button>
 
         </div>
-
-        {{-- =====================================================
-             ДАТА + ТОЧКА ПРОДАЖ
-        ====================================================== --}}
 
         <div class="section">
 
@@ -1039,17 +1025,11 @@
 
         </div>
 
-        {{-- =====================================================
-             ОСНОВНАЯ ИНФОРМАЦИЯ
-        ====================================================== --}}
-
         <div class="section">
 
             <div class="section-label">
                 Покупатель
             </div>
-
-            {{-- Имя клиента --}}
 
             <div class="field">
 
@@ -1067,8 +1047,6 @@
 
             </div>
 
-            {{-- Телефон --}}
-
             <div class="field">
 
                 <label class="field-label">
@@ -1085,8 +1063,6 @@
                     required>
 
             </div>
-
-            {{-- Склад --}}
 
             <div class="field">
 
@@ -1115,10 +1091,6 @@
             </div>
 
         </div>
-
-        {{-- =====================================================
-             ПОЗИЦИИ
-        ====================================================== --}}
 
         <div class="section">
 
@@ -1165,10 +1137,6 @@
 
         </div>
 
-        {{-- =====================================================
-             ИТОГ
-        ====================================================== --}}
-
         <div class="section">
 
             <div class="total-line">
@@ -1209,10 +1177,6 @@
             </div>
 
         </div>
-
-        {{-- =====================================================
-             ОПЛАТА
-        ====================================================== --}}
 
         <div class="section">
 
@@ -1334,10 +1298,6 @@
 
 </div>
 
-{{-- =========================================================
-     МОДАЛЬНОЕ ОКНО ТОВАРОВ
-========================================================= --}}
-
 <div
     class="modal fade modal-fullscreen"
     id="productModal">
@@ -1376,10 +1336,6 @@
     </div>
 
 </div>
-
-{{-- =========================================================
-     МОДАЛЬНОЕ ОКНО ПАРТИИ
-========================================================= --}}
 
 <div
     class="modal fade modal-fullscreen"
@@ -1439,6 +1395,38 @@
 </div>
 
 <script>
+
+    /*
+     * =========================================================
+     * ЗАЩИТА ОТ GESTURE ZOOM НА iOS
+     * =========================================================
+     */
+
+    document.addEventListener(
+        'gesturestart',
+        function(e) {
+            e.preventDefault();
+        },
+        { passive: false }
+    );
+
+    document.addEventListener(
+        'gesturechange',
+        function(e) {
+            e.preventDefault();
+        },
+        { passive: false }
+    );
+
+    document.addEventListener(
+        'gestureend',
+        function(e) {
+            e.preventDefault();
+        },
+        { passive: false }
+    );
+
+
     let itemIndex = 0;
     let paymentIndex = 1;
     let currentBatch = {};
@@ -2543,6 +2531,7 @@
     ========================================================= */
 
     recalcOrderTotal();
+
 </script>
 
 @endsection
