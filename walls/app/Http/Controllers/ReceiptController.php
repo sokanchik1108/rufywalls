@@ -39,7 +39,10 @@ class ReceiptController extends Controller
             ->when(
                 $request->filled('warehouse_id'),
                 function ($query) use ($request) {
-                    $query->where('warehouse_id', $request->warehouse_id);
+                    $query->where(
+                        'warehouse_id',
+                        $request->warehouse_id
+                    );
                 }
             )
             ->whereDate('receipt_date', '>=', $from)
@@ -53,12 +56,25 @@ class ReceiptController extends Controller
 
         return view(
             'admin.receipts.index',
-            compact('receipts', 'warehouses', 'from', 'to')
+            compact(
+                'receipts',
+                'warehouses',
+                'from',
+                'to'
+            )
         );
     }
 
     /**
      * Страница создания приёмки.
+     *
+     * Показываем ВСЕ товары:
+     * - скрытые и обычные;
+     * - с партией и без партии;
+     * - с остатком и без остатка.
+     *
+     * Если у товара нет партии, её можно создать
+     * через кнопку в интерфейсе.
      */
     public function create()
     {
@@ -68,14 +84,11 @@ class ReceiptController extends Controller
             'product',
             'batches',
         ])
-            ->whereHas('product', function ($query) {
-                $query->where('is_hidden', false);
-            })
             ->orderBy('sku')
             ->get()
             ->map(function ($variant) {
-                // Последняя закупочная цена из приёмки.
-                // Если приёмок ещё не было — purchase_price товара.
+
+                // Последняя цена прихода по этому варианту.
                 $lastReceiptItem = ReceiptItem::query()
                     ->where('variant_id', $variant->id)
                     ->whereHas('receipt')
@@ -90,15 +103,23 @@ class ReceiptController extends Controller
                     ->orderByDesc('id')
                     ->first();
 
+                // Если товар уже приходил —
+                // берём последнюю цену прихода.
+                //
+                // Если товар ещё ни разу не приходил —
+                // берём purchase_price товара.
                 $purchasePrice = $lastReceiptItem
                     ? (float) $lastReceiptItem->purchase_price
-                    : (float) ($variant->product->purchase_price ?? 0);
+                    : (float) (
+                        $variant->product->purchase_price ?? 0
+                    );
 
                 return [
                     'id' => $variant->id,
                     'sku' => $variant->sku,
                     'name' => $variant->product->name ?? '',
                     'purchase_price' => $purchasePrice,
+
                     'batches' => $variant->batches
                         ->map(function ($batch) {
                             return [
@@ -115,27 +136,67 @@ class ReceiptController extends Controller
 
         return view(
             'admin.receipts.create',
-            compact('warehouses', 'variants')
+            compact(
+                'warehouses',
+                'variants'
+            )
         );
     }
 
     /**
      * Создание приёмки.
      *
-     * batch_id необязателен.
-     * Если партия не выбрана — она создаётся автоматически.
+     * Партия ОБЯЗАТЕЛЬНА.
+     *
+     * Если партии нет, пользователь должен
+     * сначала создать её через интерфейс.
      */
     public function store(Request $request)
     {
         $data = $request->validate([
-            'warehouse_id' => ['required', 'exists:warehouses,id'],
-            'receipt_date' => ['required', 'date'],
-            'comment' => ['nullable', 'string', 'max:5000'],
-            'items' => ['required', 'array', 'min:1'],
-            'items.*.variant_id' => ['required', 'exists:variants,id'],
-            'items.*.batch_id' => ['nullable', 'exists:batches,id'],
-            'items.*.quantity' => ['required', 'integer', 'min:1'],
-            'items.*.purchase_price' => ['required', 'numeric', 'min:0'],
+            'warehouse_id' => [
+                'required',
+                'exists:warehouses,id',
+            ],
+
+            'receipt_date' => [
+                'required',
+                'date',
+            ],
+
+            'comment' => [
+                'nullable',
+                'string',
+                'max:5000',
+            ],
+
+            'items' => [
+                'required',
+                'array',
+                'min:1',
+            ],
+
+            'items.*.variant_id' => [
+                'required',
+                'exists:variants,id',
+            ],
+
+            'items.*.batch_id' => [
+                'required',
+                'exists:batches,id',
+            ],
+
+            'items.*.quantity' => [
+                'required',
+                'integer',
+                'min:1',
+            ],
+
+            'items.*.purchase_price' => [
+                'required',
+                'numeric',
+                'min:0',
+            ],
         ]);
 
         DB::beginTransaction();
@@ -143,31 +204,46 @@ class ReceiptController extends Controller
         try {
             $receipt = Receipt::create([
                 'warehouse_id' => $data['warehouse_id'],
-                'receipt_date' => Carbon::parse($data['receipt_date']),
+                'receipt_date' => Carbon::parse(
+                    $data['receipt_date']
+                ),
                 'comment' => $data['comment'] ?? null,
             ]);
 
             foreach ($data['items'] as $item) {
-                $variant = Variant::findOrFail($item['variant_id']);
 
-                if (!empty($item['batch_id'])) {
-                    $batch = Batch::findOrFail($item['batch_id']);
+                $variant = Variant::findOrFail(
+                    $item['variant_id']
+                );
 
-                    if ((int) $batch->variant_id !== (int) $variant->id) {
-                        throw new RuntimeException(
-                            "Партия {$batch->id} не принадлежит товару {$variant->id}."
-                        );
-                    }
-                } else {
-                    $batch = Batch::create([
-                        'variant_id' => $variant->id,
-                        'batch_code' => 'AUTO-' .
-                            ($variant->sku ?: $variant->id) .
-                            '-' .
-                            now('Asia/Almaty')->format('YmdHisv'),
-                    ]);
+                /*
+                 * Партия теперь обязательна.
+                 *
+                 * Автоматического создания партии здесь нет.
+                 */
+                $batch = Batch::findOrFail(
+                    $item['batch_id']
+                );
+
+                /*
+                 * Защита от ситуации, когда
+                 * пользователь отправил партию
+                 * другого артикула.
+                 */
+                if (
+                    (int) $batch->variant_id
+                    !==
+                    (int) $variant->id
+                ) {
+                    throw new RuntimeException(
+                        "Партия {$batch->batch_code} " .
+                            "не принадлежит товару {$variant->sku}."
+                    );
                 }
 
+                /*
+                 * Создаём позицию приёмки.
+                 */
                 $receiptItem = ReceiptItem::create([
                     'receipt_id' => $receipt->id,
                     'variant_id' => $variant->id,
@@ -176,6 +252,9 @@ class ReceiptController extends Controller
                     'purchase_price' => $item['purchase_price'],
                 ]);
 
+                /*
+                 * Создаём FIFO-слой.
+                 */
                 InventoryLayer::create([
                     'warehouse_id' => $receipt->warehouse_id,
                     'variant_id' => $variant->id,
@@ -184,9 +263,15 @@ class ReceiptController extends Controller
                     'source_id' => $receiptItem->id,
                     'quantity' => $item['quantity'],
                     'unit_cost' => $item['purchase_price'],
-                    'layer_date' => $receipt->receipt_date->copy()->startOfDay(),
+                    'layer_date' => $receipt->receipt_date
+                        ->copy()
+                        ->startOfDay(),
                 ]);
 
+                /*
+                 * Добавляем количество партии
+                 * на выбранный склад.
+                 */
                 $this->changeWarehouseQuantity(
                     $batch,
                     $receipt->warehouse_id,
@@ -198,8 +283,12 @@ class ReceiptController extends Controller
 
             return redirect()
                 ->route('admin.receipts.index')
-                ->with('success', 'Приёмка успешно создана.');
+                ->with(
+                    'success',
+                    'Приёмка успешно создана.'
+                );
         } catch (\Throwable $e) {
+
             DB::rollBack();
 
             report($e);
@@ -207,7 +296,9 @@ class ReceiptController extends Controller
             return back()
                 ->withInput()
                 ->withErrors([
-                    'error' => 'Не удалось создать приёмку: ' . $e->getMessage(),
+                    'error' =>
+                    'Не удалось создать приёмку: '
+                        . $e->getMessage(),
                 ]);
         }
     }
@@ -224,18 +315,24 @@ class ReceiptController extends Controller
             'items.inventoryLayer',
         ]);
 
+        /*
+         * Показываем ВСЕ товары.
+         *
+         * В том числе скрытые товары.
+         */
         $variants = Variant::with([
             'product',
             'batches',
         ])
-            ->whereHas('product', function ($query) {
-                $query->where('is_hidden', false);
-            })
             ->orderBy('sku')
             ->get()
             ->map(function ($variant) {
+
                 $lastReceiptItem = ReceiptItem::query()
-                    ->where('variant_id', $variant->id)
+                    ->where(
+                        'variant_id',
+                        $variant->id
+                    )
                     ->whereHas('receipt')
                     ->with('receipt')
                     ->orderByDesc(
@@ -250,13 +347,16 @@ class ReceiptController extends Controller
 
                 $purchasePrice = $lastReceiptItem
                     ? (float) $lastReceiptItem->purchase_price
-                    : (float) ($variant->product->purchase_price ?? 0);
+                    : (float) (
+                        $variant->product->purchase_price ?? 0
+                    );
 
                 return [
                     'id' => $variant->id,
                     'sku' => $variant->sku,
                     'name' => $variant->product->name ?? '',
                     'purchase_price' => $purchasePrice,
+
                     'batches' => $variant->batches
                         ->map(function ($batch) {
                             return [
@@ -273,12 +373,16 @@ class ReceiptController extends Controller
 
         return view(
             'admin.receipts.edit',
-            compact('receipt', 'variants')
+            compact(
+                'receipt',
+                'variants'
+            )
         );
     }
 
     /**
      * Обновление приёмки.
+     *
      * Дата и склад не изменяются.
      */
     public function update(
@@ -287,141 +391,337 @@ class ReceiptController extends Controller
         FifoService $fifoService
     ) {
         $data = $request->validate([
-            'comment' => ['nullable', 'string', 'max:5000'],
+            'comment' => [
+                'nullable',
+                'string',
+                'max:5000',
+            ],
 
-            'items' => ['nullable', 'array'],
-            'items.*.id' => ['required', 'integer', 'exists:receipt_items,id'],
-            'items.*.quantity' => ['required', 'integer', 'min:1'],
-            'items.*.purchase_price' => ['required', 'numeric', 'min:0'],
+            /*
+             * Уже существующие позиции.
+             */
+            'items' => [
+                'nullable',
+                'array',
+            ],
 
-            'new_items' => ['nullable', 'array'],
-            'new_items.*.variant_id' => ['required', 'exists:variants,id'],
-            'new_items.*.batch_id' => ['nullable', 'exists:batches,id'],
-            'new_items.*.quantity' => ['required', 'integer', 'min:1'],
-            'new_items.*.purchase_price' => ['required', 'numeric', 'min:0'],
+            'items.*.id' => [
+                'required',
+                'integer',
+                'exists:receipt_items,id',
+            ],
+
+            'items.*.quantity' => [
+                'required',
+                'integer',
+                'min:1',
+            ],
+
+            'items.*.purchase_price' => [
+                'required',
+                'numeric',
+                'min:0',
+            ],
+
+            /*
+             * Новые позиции.
+             *
+             * Партия ОБЯЗАТЕЛЬНА.
+             */
+            'new_items' => [
+                'nullable',
+                'array',
+            ],
+
+            'new_items.*.variant_id' => [
+                'required',
+                'exists:variants,id',
+            ],
+
+            'new_items.*.batch_id' => [
+                'required',
+                'exists:batches,id',
+            ],
+
+            'new_items.*.quantity' => [
+                'required',
+                'integer',
+                'min:1',
+            ],
+
+            'new_items.*.purchase_price' => [
+                'required',
+                'numeric',
+                'min:0',
+            ],
         ]);
 
         try {
-            DB::transaction(function () use ($data, $receipt, $fifoService) {
-                $receipt->update([
-                    'comment' => $data['comment'] ?? null,
-                ]);
 
-                foreach ($data['items'] ?? [] as $itemData) {
-                    $receiptItem = ReceiptItem::where(
-                        'receipt_id',
-                        $receipt->id
-                    )->findOrFail($itemData['id']);
+            DB::transaction(
+                function () use (
+                    $data,
+                    $receipt,
+                    $fifoService
+                ) {
 
-                    $layer = InventoryLayer::where('source_type', 'receipt')
-                        ->where('source_id', $receiptItem->id)
-                        ->first();
-
-                    $oldQuantity = (int) $receiptItem->quantity;
-                    $newQuantity = (int) $itemData['quantity'];
-
-                    $consumed = $layer
-                        ? $fifoService->getConsumedQuantity($layer)
-                        : 0;
-
-                    if ($newQuantity < $consumed) {
-                        throw new RuntimeException(
-                            "Нельзя уменьшить количество товара «{$receiptItem->variant->sku}» " .
-                            "ниже {$consumed} шт., потому что это количество уже используется в продажах."
-                        );
-                    }
-
-                    $difference = $newQuantity - $oldQuantity;
-
-                    if ($difference !== 0) {
-                        $this->changeWarehouseQuantity(
-                            $receiptItem->batch,
-                            $receipt->warehouse_id,
-                            $difference
-                        );
-                    }
-
-                    $receiptItem->update([
-                        'quantity' => $newQuantity,
-                        'purchase_price' => $itemData['purchase_price'],
+                    /*
+                     * Обновляем комментарий.
+                     */
+                    $receipt->update([
+                        'comment' =>
+                        $data['comment'] ?? null,
                     ]);
 
-                    if ($layer) {
-                        $layer->update([
-                            'quantity' => $newQuantity,
-                            'unit_cost' => $itemData['purchase_price'],
-                        ]);
-                    } else {
-                        InventoryLayer::create([
-                            'warehouse_id' => $receipt->warehouse_id,
-                            'variant_id' => $receiptItem->variant_id,
-                            'batch_id' => $receiptItem->batch_id,
-                            'source_type' => 'receipt',
-                            'source_id' => $receiptItem->id,
-                            'quantity' => $newQuantity,
-                            'unit_cost' => $itemData['purchase_price'],
-                            'layer_date' => $receipt->receipt_date->copy()->startOfDay(),
-                        ]);
-                    }
-                }
+                    /*
+                     * Обновляем существующие позиции.
+                     */
+                    foreach (
+                        $data['items'] ?? []
+                        as $itemData
+                    ) {
 
-                foreach ($data['new_items'] ?? [] as $newItem) {
-                    $variant = Variant::findOrFail($newItem['variant_id']);
+                        $receiptItem =
+                            ReceiptItem::where(
+                                'receipt_id',
+                                $receipt->id
+                            )->findOrFail(
+                                $itemData['id']
+                            );
 
-                    if (!empty($newItem['batch_id'])) {
-                        $batch = Batch::findOrFail($newItem['batch_id']);
+                        $layer =
+                            InventoryLayer::where(
+                                'source_type',
+                                'receipt'
+                            )
+                            ->where(
+                                'source_id',
+                                $receiptItem->id
+                            )
+                            ->first();
 
-                        if ((int) $batch->variant_id !== (int) $variant->id) {
+                        $oldQuantity =
+                            (int) $receiptItem->quantity;
+
+                        $newQuantity =
+                            (int) $itemData['quantity'];
+
+                        /*
+                         * Сколько уже было продано
+                         * из этого FIFO-слоя.
+                         */
+                        $consumed = $layer
+                            ? $fifoService
+                            ->getConsumedQuantity(
+                                $layer
+                            )
+                            : 0;
+
+                        /*
+                         * Нельзя уменьшить приход
+                         * ниже уже проданного количества.
+                         */
+                        if ($newQuantity < $consumed) {
+
                             throw new RuntimeException(
-                                "Партия {$batch->batch_code} не принадлежит SKU {$variant->sku}."
+                                "Нельзя уменьшить количество товара " .
+                                    "«{$receiptItem->variant->sku}» " .
+                                    "ниже {$consumed} шт., " .
+                                    "потому что это количество " .
+                                    "уже используется в продажах."
                             );
                         }
-                    } else {
-                        $batch = Batch::create([
-                            'variant_id' => $variant->id,
-                            'batch_code' => 'AUTO-' .
-                                ($variant->sku ?: $variant->id) .
-                                '-' .
-                                now('Asia/Almaty')->format('YmdHisv'),
+
+                        $difference =
+                            $newQuantity - $oldQuantity;
+
+                        /*
+                         * Меняем остаток на складе.
+                         */
+                        if ($difference !== 0) {
+
+                            $this->changeWarehouseQuantity(
+                                $receiptItem->batch,
+                                $receipt->warehouse_id,
+                                $difference
+                            );
+                        }
+
+                        /*
+                         * Обновляем позицию приёмки.
+                         */
+                        $receiptItem->update([
+                            'quantity' => $newQuantity,
+                            'purchase_price' =>
+                            $itemData['purchase_price'],
                         ]);
+
+                        /*
+                         * Обновляем FIFO-слой.
+                         */
+                        if ($layer) {
+
+                            $layer->update([
+                                'quantity' => $newQuantity,
+                                'unit_cost' =>
+                                $itemData['purchase_price'],
+                            ]);
+                        } else {
+
+                            /*
+                             * Если слоя почему-то нет —
+                             * создаём его.
+                             */
+                            InventoryLayer::create([
+                                'warehouse_id' =>
+                                $receipt->warehouse_id,
+
+                                'variant_id' =>
+                                $receiptItem->variant_id,
+
+                                'batch_id' =>
+                                $receiptItem->batch_id,
+
+                                'source_type' => 'receipt',
+
+                                'source_id' =>
+                                $receiptItem->id,
+
+                                'quantity' =>
+                                $newQuantity,
+
+                                'unit_cost' =>
+                                $itemData['purchase_price'],
+
+                                'layer_date' =>
+                                $receipt->receipt_date
+                                    ->copy()
+                                    ->startOfDay(),
+                            ]);
+                        }
                     }
 
-                    $receiptItem = ReceiptItem::create([
-                        'receipt_id' => $receipt->id,
-                        'variant_id' => $variant->id,
-                        'batch_id' => $batch->id,
-                        'quantity' => $newItem['quantity'],
-                        'purchase_price' => $newItem['purchase_price'],
-                    ]);
+                    /*
+                     * Добавляем новые позиции.
+                     */
+                    foreach (
+                        $data['new_items'] ?? []
+                        as $newItem
+                    ) {
 
-                    $this->changeWarehouseQuantity(
-                        $batch,
-                        $receipt->warehouse_id,
-                        (int) $newItem['quantity']
-                    );
+                        $variant = Variant::findOrFail(
+                            $newItem['variant_id']
+                        );
 
-                    InventoryLayer::create([
-                        'warehouse_id' => $receipt->warehouse_id,
-                        'variant_id' => $variant->id,
-                        'batch_id' => $batch->id,
-                        'source_type' => 'receipt',
-                        'source_id' => $receiptItem->id,
-                        'quantity' => $newItem['quantity'],
-                        'unit_cost' => $newItem['purchase_price'],
-                        'layer_date' => $receipt->receipt_date->copy()->startOfDay(),
-                    ]);
+                        /*
+                         * Партия ОБЯЗАТЕЛЬНА.
+                         *
+                         * Никакого AUTO создания.
+                         */
+                        $batch = Batch::findOrFail(
+                            $newItem['batch_id']
+                        );
+
+                        /*
+                         * Проверяем принадлежность
+                         * партии к выбранному SKU.
+                         */
+                        if (
+                            (int) $batch->variant_id
+                            !==
+                            (int) $variant->id
+                        ) {
+
+                            throw new RuntimeException(
+                                "Партия {$batch->batch_code} " .
+                                    "не принадлежит SKU " .
+                                    "{$variant->sku}."
+                            );
+                        }
+
+                        /*
+                         * Создаём позицию.
+                         */
+                        $receiptItem =
+                            ReceiptItem::create([
+                                'receipt_id' =>
+                                $receipt->id,
+
+                                'variant_id' =>
+                                $variant->id,
+
+                                'batch_id' =>
+                                $batch->id,
+
+                                'quantity' =>
+                                $newItem['quantity'],
+
+                                'purchase_price' =>
+                                $newItem['purchase_price'],
+                            ]);
+
+                        /*
+                         * Добавляем количество на склад.
+                         */
+                        $this->changeWarehouseQuantity(
+                            $batch,
+                            $receipt->warehouse_id,
+                            (int) $newItem['quantity']
+                        );
+
+                        /*
+                         * Создаём FIFO-слой.
+                         */
+                        InventoryLayer::create([
+                            'warehouse_id' =>
+                            $receipt->warehouse_id,
+
+                            'variant_id' =>
+                            $variant->id,
+
+                            'batch_id' =>
+                            $batch->id,
+
+                            'source_type' =>
+                            'receipt',
+
+                            'source_id' =>
+                            $receiptItem->id,
+
+                            'quantity' =>
+                            $newItem['quantity'],
+
+                            'unit_cost' =>
+                            $newItem['purchase_price'],
+
+                            'layer_date' =>
+                            $receipt->receipt_date
+                                ->copy()
+                                ->startOfDay(),
+                        ]);
+                    }
                 }
-            });
+            );
         } catch (RuntimeException $e) {
+
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('receipt_error', $e->getMessage());
+                ->with(
+                    'receipt_error',
+                    $e->getMessage()
+                );
         }
 
         return redirect()
-            ->route('admin.receipts.edit', $receipt)
-            ->with('success', 'Приёмка успешно обновлена.');
+            ->route(
+                'admin.receipts.edit',
+                $receipt
+            )
+            ->with(
+                'success',
+                'Приёмка успешно обновлена.'
+            );
     }
 
     /**
@@ -431,26 +731,53 @@ class ReceiptController extends Controller
         Receipt $receipt,
         FifoService $fifoService
     ) {
-        DB::transaction(function () use ($receipt, $fifoService) {
-            $receipt->load(['items.batch']);
+        DB::transaction(function () use (
+            $receipt,
+            $fifoService
+        ) {
+
+            $receipt->load([
+                'items.batch',
+            ]);
 
             foreach ($receipt->items as $receiptItem) {
-                $layer = InventoryLayer::where('source_type', 'receipt')
-                    ->where('source_id', $receiptItem->id)
+
+                $layer =
+                    InventoryLayer::where(
+                        'source_type',
+                        'receipt'
+                    )
+                    ->where(
+                        'source_id',
+                        $receiptItem->id
+                    )
                     ->first();
 
                 if (!$layer) {
                     continue;
                 }
 
-                $consumed = $fifoService->getConsumedQuantity($layer);
+                /*
+                 * Сколько уже использовано
+                 * в продажах.
+                 */
+                $consumed =
+                    $fifoService->getConsumedQuantity(
+                        $layer
+                    );
 
+                /*
+                 * Остаток, который можно вернуть
+                 * со склада.
+                 */
                 $remaining = max(
                     0,
-                    (int) $layer->quantity - $consumed
+                    (int) $layer->quantity
+                        - $consumed
                 );
 
                 if ($remaining > 0) {
+
                     $this->changeWarehouseQuantity(
                         $receiptItem->batch,
                         $receipt->warehouse_id,
@@ -458,20 +785,32 @@ class ReceiptController extends Controller
                     );
                 }
 
+                /*
+                 * Удаляем FIFO-распределения.
+                 */
                 \App\Models\FifoAllocation::where(
                     'inventory_layer_id',
                     $layer->id
                 )->delete();
 
+                /*
+                 * Удаляем FIFO-слой.
+                 */
                 $layer->delete();
             }
 
+            /*
+             * Удаляем саму приёмку.
+             */
             $receipt->delete();
         });
 
         return redirect()
             ->route('admin.receipts.index')
-            ->with('success', 'Приёмка удалена.');
+            ->with(
+                'success',
+                'Приёмка удалена.'
+            );
     }
 
     /**
@@ -482,38 +821,68 @@ class ReceiptController extends Controller
         int $warehouseId,
         int $difference
     ): void {
+
         $pivot = $batch->warehouses()
-            ->where('warehouse_id', $warehouseId)
+            ->where(
+                'warehouse_id',
+                $warehouseId
+            )
             ->first();
 
         $current = $pivot
-            ? (int) ($pivot->pivot->quantity ?? 0)
+            ? (int) (
+                $pivot->pivot->quantity ?? 0
+            )
             : 0;
 
-        $newQuantity = $current + $difference;
+        $newQuantity =
+            $current + $difference;
 
+        /*
+         * Нельзя получить отрицательный остаток.
+         */
         if ($newQuantity < 0) {
+
             throw new RuntimeException(
-                "Невозможно изменить остаток партии {$batch->batch_code}. " .
-                "Остаток на складе недостаточен."
+                "Невозможно изменить остаток партии " .
+                    "{$batch->batch_code}. " .
+                    "Остаток на складе недостаточен."
             );
         }
 
         if ($pivot) {
-            $batch->warehouses()->updateExistingPivot(
-                $warehouseId,
-                ['quantity' => $newQuantity]
-            );
+
+            $batch->warehouses()
+                ->updateExistingPivot(
+                    $warehouseId,
+                    [
+                        'quantity' =>
+                        $newQuantity,
+                    ]
+                );
         } else {
+
+            /*
+             * Если записи на складе ещё нет,
+             * нельзя списывать из неё.
+             */
             if ($difference < 0) {
+
                 throw new RuntimeException(
                     'Партия отсутствует на выбранном складе.'
                 );
             }
 
+            /*
+             * Если это приход — создаём
+             * запись в pivot.
+             */
             $batch->warehouses()->attach(
                 $warehouseId,
-                ['quantity' => $difference]
+                [
+                    'quantity' =>
+                    $difference,
+                ]
             );
         }
     }
@@ -543,42 +912,84 @@ class ReceiptController extends Controller
         ReceiptItem $receiptItem,
         FifoService $fifoService
     ) {
+
         try {
+
             DB::transaction(function () use (
                 $receipt,
                 $receiptItem,
                 $fifoService
             ) {
-                if ((int) $receiptItem->receipt_id !== (int) $receipt->id) {
+
+                /*
+                 * Проверяем, что позиция принадлежит
+                 * именно этой приёмке.
+                 */
+                if (
+                    (int) $receiptItem->receipt_id
+                    !==
+                    (int) $receipt->id
+                ) {
+
                     throw new RuntimeException(
-                        'Эта позиция не принадлежит выбранной приёмке.'
+                        'Эта позиция не принадлежит ' .
+                            'выбранной приёмке.'
                     );
                 }
 
-                $layer = InventoryLayer::where('source_type', 'receipt')
-                    ->where('source_id', $receiptItem->id)
+                /*
+                 * Находим FIFO-слой.
+                 */
+                $layer =
+                    InventoryLayer::where(
+                        'source_type',
+                        'receipt'
+                    )
+                    ->where(
+                        'source_id',
+                        $receiptItem->id
+                    )
                     ->first();
 
+                /*
+                 * Проверяем, использовался ли товар
+                 * в продажах.
+                 */
                 $consumed = $layer
-                    ? $fifoService->getConsumedQuantity($layer)
+                    ? $fifoService
+                    ->getConsumedQuantity(
+                        $layer
+                    )
                     : 0;
 
                 if ($consumed > 0) {
+
                     $sku = $receiptItem->variant
                         ? $receiptItem->variant->sku
                         : $receiptItem->variant_id;
 
                     throw new RuntimeException(
                         "Нельзя удалить SKU {$sku}. " .
-                        "Из этой позиции уже использовано {$consumed} шт. в продажах."
+                            "Из этой позиции уже использовано " .
+                            "{$consumed} шт. в продажах."
                     );
                 }
 
-                $quantity = (int) $receiptItem->quantity;
+                $quantity =
+                    (int) $receiptItem->quantity;
 
-                $batch = Batch::findOrFail($receiptItem->batch_id);
+                /*
+                 * Получаем партию.
+                 */
+                $batch = Batch::findOrFail(
+                    $receiptItem->batch_id
+                );
 
+                /*
+                 * Списываем количество со склада.
+                 */
                 if ($quantity > 0) {
+
                     $this->changeWarehouseQuantity(
                         $batch,
                         $receipt->warehouse_id,
@@ -586,7 +997,11 @@ class ReceiptController extends Controller
                     );
                 }
 
+                /*
+                 * Удаляем FIFO allocation и слой.
+                 */
                 if ($layer) {
+
                     \App\Models\FifoAllocation::where(
                         'inventory_layer_id',
                         $layer->id
@@ -595,19 +1010,33 @@ class ReceiptController extends Controller
                     $layer->delete();
                 }
 
+                /*
+                 * Удаляем позицию приёмки.
+                 */
                 $receiptItem->delete();
             });
         } catch (RuntimeException $e) {
+
             return redirect()
-                ->route('admin.receipts.edit', $receipt)
-                ->with('receipt_error', $e->getMessage());
+                ->route(
+                    'admin.receipts.edit',
+                    $receipt
+                )
+                ->with(
+                    'receipt_error',
+                    $e->getMessage()
+                );
         }
 
         return redirect()
-            ->route('admin.receipts.edit', $receipt)
+            ->route(
+                'admin.receipts.edit',
+                $receipt
+            )
             ->with(
                 'success',
-                'Артикул удалён из приёмки, остаток списан со склада.'
+                'Артикул удалён из приёмки, ' .
+                    'остаток списан со склада.'
             );
     }
 }

@@ -6,18 +6,15 @@
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+        content="width=device-width, initial-scale=1.0">
 
     <meta
         name="csrf-token"
-        content="{{ csrf_token() }}"
-    >
+        content="{{ csrf_token() }}">
 
     <title>Новая приёмка</title>
 
     <style>
-
         * {
             box-sizing: border-box;
         }
@@ -265,8 +262,7 @@
             display: grid;
 
             grid-template-columns:
-                minmax(0, 1fr)
-                minmax(170px, 220px);
+                minmax(0, 1fr) minmax(170px, 220px);
 
             gap: 10px;
         }
@@ -325,8 +321,7 @@
             border-color: #9ca3af;
 
             box-shadow:
-                0 0 0 3px
-                rgba(17, 24, 39, .06);
+                0 0 0 3px rgba(17, 24, 39, .06);
         }
 
         .comment-field {
@@ -382,10 +377,7 @@
             display: grid;
 
             grid-template-columns:
-                1fr
-                .75fr
-                75px
-                100px;
+                1fr .75fr 75px 100px;
 
             gap: 6px;
 
@@ -394,10 +386,7 @@
             margin-bottom: 5px;
 
             padding:
-                6px
-                6px
-                6px
-                30px;
+                6px 6px 6px 30px;
 
             background: #fafafa;
 
@@ -485,10 +474,7 @@
             height: 30px;
 
             padding:
-                0
-                24px
-                0
-                7px;
+                0 24px 0 7px;
 
             border: 1px solid var(--border);
             border-radius: 6px;
@@ -507,8 +493,7 @@
             border-color: #9ca3af;
 
             box-shadow:
-                0 0 0 2px
-                rgba(17, 24, 39, .06);
+                0 0 0 2px rgba(17, 24, 39, .06);
         }
 
         .autocomplete-arrow {
@@ -553,8 +538,7 @@
             border-radius: 8px;
 
             box-shadow:
-                0 12px 30px
-                rgba(0, 0, 0, .10);
+                0 12px 30px rgba(0, 0, 0, .10);
         }
 
         .autocomplete-list.open {
@@ -667,8 +651,7 @@
             border-color: #9ca3af;
 
             box-shadow:
-                0 0 0 2px
-                rgba(17, 24, 39, .05);
+                0 0 0 2px rgba(17, 24, 39, .05);
         }
 
         .quantity-field .item-input {
@@ -689,9 +672,7 @@
         .items-footer {
 
             padding:
-                4px
-                12px
-                12px;
+                4px 12px 12px;
         }
 
         .add-item-btn {
@@ -841,8 +822,7 @@
             border-radius: 16px;
 
             box-shadow:
-                0 25px 60px
-                rgba(0, 0, 0, .18);
+                0 25px 60px rgba(0, 0, 0, .18);
 
             overflow: hidden;
         }
@@ -876,8 +856,7 @@
             gap: 8px;
 
             padding:
-                12px
-                16px;
+                12px 16px;
 
             border-top:
                 1px solid #f0f1f3;
@@ -905,18 +884,12 @@
             .item {
 
                 grid-template-columns:
-                    minmax(0, 1fr)
-                    minmax(0, .75fr)
-                    70px
-                    90px;
+                    minmax(0, 1fr) minmax(0, .75fr) 70px 90px;
 
                 gap: 5px;
 
                 padding:
-                    6px
-                    5px
-                    6px
-                    29px;
+                    6px 5px 6px 29px;
             }
 
         }
@@ -936,9 +909,7 @@
             .page {
 
                 padding:
-                    7px
-                    5px
-                    18px;
+                    7px 5px 18px;
             }
 
 
@@ -983,8 +954,7 @@
                 height: 33px;
 
                 padding:
-                    0
-                    9px;
+                    0 9px;
 
                 gap: 4px;
 
@@ -1014,8 +984,7 @@
             .card-head {
 
                 padding:
-                    7px
-                    8px;
+                    7px 8px;
             }
 
             .card-body {
@@ -1050,8 +1019,7 @@
             .info-grid {
 
                 grid-template-columns:
-                    minmax(0, 1fr)
-                    minmax(100px, .55fr);
+                    minmax(0, 1fr) minmax(100px, .55fr);
 
                 gap: 5px;
             }
@@ -1070,8 +1038,7 @@
                 height: 33px;
 
                 padding:
-                    0
-                    7px;
+                    0 7px;
 
                 border-radius: 6px;
 
@@ -1084,8 +1051,7 @@
                 min-height: 48px;
 
                 padding:
-                    6px
-                    7px;
+                    6px 7px;
 
                 font-size: 12px !important;
             }
@@ -1102,28 +1068,20 @@
             #items {
 
                 padding:
-                    5px
-                    5px
-                    0;
+                    5px 5px 0;
             }
 
             .item {
 
                 grid-template-columns:
-                    minmax(0, 1.15fr)
-                    minmax(65px, .75fr)
-                    48px
-                    65px;
+                    minmax(0, 1.15fr) minmax(65px, .75fr) 48px 65px;
 
                 gap: 3px;
 
                 align-items: end;
 
                 padding:
-                    5px
-                    4px
-                    5px
-                    26px;
+                    5px 4px 5px 26px;
 
                 margin-bottom: 4px;
 
@@ -1175,8 +1133,7 @@
                 min-height: 28px;
 
                 padding:
-                    0
-                    5px;
+                    0 5px;
 
                 border-radius: 5px;
 
@@ -1208,8 +1165,7 @@
             .autocomplete-option {
 
                 padding:
-                    7px
-                    8px;
+                    7px 8px;
 
                 font-size: 10px;
             }
@@ -1250,9 +1206,7 @@
             .items-footer {
 
                 padding:
-                    3px
-                    5px
-                    7px;
+                    3px 5px 7px;
             }
 
             .add-item-btn {
@@ -1276,8 +1230,7 @@
             .empty-state {
 
                 padding:
-                    10px
-                    4px;
+                    10px 4px;
 
                 font-size: 9px;
             }
@@ -1296,8 +1249,7 @@
                 height: 34px;
 
                 padding:
-                    0
-                    10px;
+                    0 10px;
 
                 border-radius: 6px;
 
@@ -1318,8 +1270,7 @@
             .modal-head {
 
                 padding:
-                    9px
-                    10px;
+                    9px 10px;
             }
 
             .modal-title {
@@ -1333,8 +1284,7 @@
             .modal-actions {
 
                 padding:
-                    7px
-                    10px;
+                    7px 10px;
             }
 
             #newBatchCode {
@@ -1370,10 +1320,7 @@
             .item {
 
                 grid-template-columns:
-                    minmax(0, 1.1fr)
-                    minmax(55px, .7fr)
-                    44px
-                    60px;
+                    minmax(0, 1.1fr) minmax(55px, .7fr) 44px 60px;
 
                 padding-left: 25px;
 
@@ -1403,7 +1350,6 @@
             }
 
         }
-
     </style>
 
 </head>
@@ -1412,80 +1358,76 @@
 <body>
 
 
-<div class="page">
+    <div class="page">
 
 
-    {{-- =====================================================
+        {{-- =====================================================
          HEADER
     ===================================================== --}}
 
-    <div class="top">
+        <div class="top">
 
-        <a
-            href="{{ route('admin.receipts.index') }}"
-            class="back-btn"
-            aria-label="Назад"
-        >
+            <a
+                href="{{ route('admin.receipts.index') }}"
+                class="back-btn"
+                aria-label="Назад">
 
-            <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-            >
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2">
 
-                <path d="M15 18l-6-6 6-6"/>
+                    <path d="M15 18l-6-6 6-6" />
 
-            </svg>
+                </svg>
 
-        </a>
+            </a>
 
 
-        <div class="title-block">
+            <div class="title-block">
 
-            <h1 class="page-title">
-                Новая приёмка
-            </h1>
+                <h1 class="page-title">
+                    Новая приёмка
+                </h1>
 
-            <div class="page-subtitle">
-                Добавление товара на склад
+                <div class="page-subtitle">
+                    Добавление товара на склад
+                </div>
+
             </div>
+
+
+            <button
+                type="submit"
+                form="receiptForm"
+                class="top-create-btn">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2">
+
+                    <path d="M12 5v14" />
+                    <path d="M5 12h14" />
+
+                </svg>
+
+                <span class="create-text">
+                    Создать
+                </span>
+
+            </button>
 
         </div>
 
 
-        <button
-            type="submit"
-            form="receiptForm"
-            class="top-create-btn"
-        >
-
-            <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-            >
-
-                <path d="M12 5v14"/>
-                <path d="M5 12h14"/>
-
-            </svg>
-
-            <span class="create-text">
-                Создать
-            </span>
-
-        </button>
-
-    </div>
-
-
-    {{-- =====================================================
+        {{-- =====================================================
          ERRORS
     ===================================================== --}}
 
-    @if($errors->any())
+        @if($errors->any())
 
         <div class="errors">
 
@@ -1493,9 +1435,9 @@
 
                 @foreach($errors->all() as $error)
 
-                    <li>
-                        {{ $error }}
-                    </li>
+                <li>
+                    {{ $error }}
+                </li>
 
                 @endforeach
 
@@ -1503,303 +1445,287 @@
 
         </div>
 
-    @endif
+        @endif
 
 
-    {{-- =====================================================
+        {{-- =====================================================
          FORM
     ===================================================== --}}
 
-    <form
-        method="POST"
-        action="{{ route('admin.receipts.store') }}"
-        id="receiptForm"
-    >
+        <form
+            method="POST"
+            action="{{ route('admin.receipts.store') }}"
+            id="receiptForm">
 
-        @csrf
+            @csrf
 
 
-        {{-- =================================================
+            {{-- =================================================
              RECEIPT INFO
         ================================================= --}}
 
-        <div class="card">
+            <div class="card">
 
-            <div class="card-body">
+                <div class="card-body">
 
-                <div class="info-grid">
+                    <div class="info-grid">
 
-                    <div class="field">
+                        <div class="field">
 
-                        <label class="field-label">
-                            Склад
-                        </label>
+                            <label class="field-label">
+                                Склад
+                            </label>
 
-                        <select
-                            name="warehouse_id"
-                            class="field-select"
-                            required
-                        >
+                            <select
+                                name="warehouse_id"
+                                class="field-select"
+                                required>
 
-                            <option value="">
-                                Выберите склад
-                            </option>
+                                <option value="">
+                                    Выберите склад
+                                </option>
 
-                            @foreach($warehouses as $warehouse)
+                                @foreach($warehouses as $warehouse)
 
                                 <option
                                     value="{{ $warehouse->id }}"
-                                    {{ old('warehouse_id') == $warehouse->id ? 'selected' : '' }}
-                                >
+                                    {{ old('warehouse_id') == $warehouse->id ? 'selected' : '' }}>
                                     {{ $warehouse->name }}
                                 </option>
 
-                            @endforeach
+                                @endforeach
 
-                        </select>
+                            </select>
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label class="field-label">
+                                Дата
+                            </label>
+
+                            <input
+                                type="date"
+                                name="receipt_date"
+                                class="field-input"
+                                value="{{ old('receipt_date', now('Asia/Almaty')->format('Y-m-d')) }}"
+                                required>
+
+                        </div>
 
                     </div>
 
 
-                    <div class="field">
+                    <div class="field comment-field">
 
                         <label class="field-label">
-                            Дата
+                            Комментарий
                         </label>
 
-                        <input
-                            type="date"
-                            name="receipt_date"
-                            class="field-input"
-                            value="{{ old('receipt_date', now('Asia/Almaty')->format('Y-m-d')) }}"
-                            required
-                        >
+                        <textarea
+                            name="comment"
+                            class="field-textarea"
+                            placeholder="Необязательно">{{ old('comment') }}</textarea>
 
                     </div>
-
-                </div>
-
-
-                <div class="field comment-field">
-
-                    <label class="field-label">
-                        Комментарий
-                    </label>
-
-                    <textarea
-                        name="comment"
-                        class="field-textarea"
-                        placeholder="Необязательно"
-                    >{{ old('comment') }}</textarea>
 
                 </div>
 
             </div>
 
-        </div>
 
-
-        {{-- =================================================
+            {{-- =================================================
              PRODUCTS
         ================================================= --}}
 
-        <div class="card">
+            <div class="card">
 
-            <div class="card-head">
+                <div class="card-head">
 
-                <div class="items-head">
+                    <div class="items-head">
 
-                    <div>
+                        <div>
 
-                        <div class="section-title">
-                            Товары
+                            <div class="section-title">
+                                Товары
+                            </div>
+
+                            <div class="section-description">
+                                Артикул, партия, количество и цена
+                            </div>
+
                         </div>
 
-                        <div class="section-description">
-                            Артикул, партия, количество и цена
-                        </div>
+                    </div>
 
+
+                    <div
+                        class="items-count"
+                        id="itemsCount">
+                        0
                     </div>
 
                 </div>
 
 
+                <div id="items"></div>
+
+
                 <div
-                    class="items-count"
-                    id="itemsCount"
-                >
-                    0
+                    class="empty-state"
+                    id="emptyState"
+                    style="display:none;">
+                    Добавьте хотя бы один товар
+                </div>
+
+
+                <div class="items-footer">
+
+                    <button
+                        type="button"
+                        class="add-item-btn"
+                        onclick="addItem()">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2">
+
+                            <path d="M12 5v14" />
+                            <path d="M5 12h14" />
+
+                        </svg>
+
+                        Добавить товар
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    {{-- =========================================================
+     BATCH MODAL
+========================================================= --}}
+
+    <div
+        class="modal-overlay"
+        id="batchModal">
+
+        <div class="modal">
+
+            <div class="modal-head">
+
+                <h2 class="modal-title">
+                    Новая партия
+                </h2>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <div class="field">
+
+                    <label class="field-label">
+                        Код партии
+                    </label>
+
+                    <input
+                        type="text"
+                        id="newBatchCode"
+                        class="field-input"
+                        placeholder="Введите код партии"
+                        autocomplete="off">
+
+                    <div
+                        id="batchModalError"
+                        class="modal-error"></div>
+
                 </div>
 
             </div>
 
 
-            <div id="items"></div>
-
-
-            <div
-                class="empty-state"
-                id="emptyState"
-                style="display:none;"
-            >
-                Добавьте хотя бы один товар
-            </div>
-
-
-            <div class="items-footer">
+            <div class="modal-actions">
 
                 <button
                     type="button"
-                    class="add-item-btn"
-                    onclick="addItem()"
-                >
+                    class="btn btn-secondary"
+                    onclick="closeBatchModal()">
+                    Отмена
+                </button>
 
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                    >
-
-                        <path d="M12 5v14"/>
-                        <path d="M5 12h14"/>
-
-                    </svg>
-
-                    Добавить товар
-
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    onclick="createNewBatch()">
+                    Создать
                 </button>
 
             </div>
 
         </div>
 
-    </form>
-
-</div>
-
-
-{{-- =========================================================
-     BATCH MODAL
-========================================================= --}}
-
-<div
-    class="modal-overlay"
-    id="batchModal"
->
-
-    <div class="modal">
-
-        <div class="modal-head">
-
-            <h2 class="modal-title">
-                Новая партия
-            </h2>
-
-        </div>
-
-
-        <div class="modal-body">
-
-            <div class="field">
-
-                <label class="field-label">
-                    Код партии
-                </label>
-
-                <input
-                    type="text"
-                    id="newBatchCode"
-                    class="field-input"
-                    placeholder="Введите код партии"
-                    autocomplete="off"
-                >
-
-                <div
-                    id="batchModalError"
-                    class="modal-error"
-                ></div>
-
-            </div>
-
-        </div>
-
-
-        <div class="modal-actions">
-
-            <button
-                type="button"
-                class="btn btn-secondary"
-                onclick="closeBatchModal()"
-            >
-                Отмена
-            </button>
-
-            <button
-                type="button"
-                class="btn btn-primary"
-                onclick="createNewBatch()"
-            >
-                Создать
-            </button>
-
-        </div>
-
     </div>
 
-</div>
+
+    <script>
+        const variants = @json($variants);
 
 
-<script>
-
-    const variants = @json($variants);
-
-
-    const csrfToken =
-        document
+        const csrfToken =
+            document
             .querySelector(
                 'meta[name="csrf-token"]'
             )
-            ?.getAttribute('content')
-        ||
-        @json(csrf_token());
+            ?.getAttribute('content') ||
+            @json(csrf_token());
 
 
-    const createBatchUrl =
-        @json(route('admin.batches.create'));
+        const createBatchUrl =
+            @json(route('admin.batches.create'));
 
 
-    let itemIndex = 0;
+        let itemIndex = 0;
 
-    let currentBatchSelect = null;
+        let currentBatchSelect = null;
 
-    let currentVariantId = null;
+        let currentVariantId = null;
 
-    let previousBatchValues =
-        new WeakMap();
-
-
-    /* =========================================================
-       ADD ITEM
-    ========================================================= */
-
-    function addItem() {
-
-        const index =
-            itemIndex++;
+        let previousBatchValues =
+            new WeakMap();
 
 
-        const item =
-            document.createElement(
-                'div'
-            );
+        /* =========================================================
+           ADD ITEM
+        ========================================================= */
+
+        function addItem() {
+
+            const index =
+                itemIndex++;
 
 
-        item.className =
-            'item';
+            const item =
+                document.createElement(
+                    'div'
+                );
 
 
-        item.innerHTML = `
+            item.className =
+                'item';
+
+
+            item.innerHTML = `
 
             <div class="item-number">
                 #${index + 1}
@@ -1917,6 +1843,7 @@
                     name="items[${index}][batch_id]"
                     class="item-select batch-select"
                     onchange="batchChanged(this)"
+                    required
                 >
 
                     <option value="">
@@ -1976,131 +1903,131 @@
         `;
 
 
-        document
-            .getElementById('items')
-            .appendChild(item);
+            document
+                .getElementById('items')
+                .appendChild(item);
 
 
-        const autocompleteInput =
-            item.querySelector(
-                '.variant-autocomplete'
+            const autocompleteInput =
+                item.querySelector(
+                    '.variant-autocomplete'
+                );
+
+
+            const autocompleteList =
+                item.querySelector(
+                    '.autocomplete-list'
+                );
+
+
+            const variantSelect =
+                item.querySelector(
+                    '.variant-hidden-select'
+                );
+
+
+            setupAutocomplete(
+                autocompleteInput,
+                autocompleteList,
+                variantSelect
             );
 
 
-        const autocompleteList =
-            item.querySelector(
-                '.autocomplete-list'
-            );
+            updateItemsCount();
 
+            updateEmptyState();
 
-        const variantSelect =
-            item.querySelector(
-                '.variant-hidden-select'
-            );
-
-
-        setupAutocomplete(
-            autocompleteInput,
-            autocompleteList,
-            variantSelect
-        );
-
-
-        updateItemsCount();
-
-        updateEmptyState();
-
-        updateItemNumbers();
-
-    }
-
-
-    /* =========================================================
-       AUTOCOMPLETE
-    ========================================================= */
-
-    function setupAutocomplete(
-        input,
-        list,
-        select
-    ) {
-
-        let activeIndex = -1;
-
-
-        function getVariantSku(
-            variant
-        ) {
-
-            return String(
-                variant.sku ??
-                variant.code ??
-                variant.article ??
-                ''
-            );
+            updateItemNumbers();
 
         }
 
 
-        function getVariantName(
-            variant
+        /* =========================================================
+           AUTOCOMPLETE
+        ========================================================= */
+
+        function setupAutocomplete(
+            input,
+            list,
+            select
         ) {
 
-            return String(
-                variant.name ??
-                variant.product_name ??
-                ''
-            );
-
-        }
+            let activeIndex = -1;
 
 
-        function render(
-            query = ''
-        ) {
+            function getVariantSku(
+                variant
+            ) {
 
-            const search =
-                query
+                return String(
+                    variant.sku ??
+                    variant.code ??
+                    variant.article ??
+                    ''
+                );
+
+            }
+
+
+            function getVariantName(
+                variant
+            ) {
+
+                return String(
+                    variant.name ??
+                    variant.product_name ??
+                    ''
+                );
+
+            }
+
+
+            function render(
+                query = ''
+            ) {
+
+                const search =
+                    query
                     .trim()
                     .toLowerCase();
 
 
-            const filtered =
-                variants.filter(
-                    variant => {
+                const filtered =
+                    variants.filter(
+                        variant => {
 
-                        const sku =
-                            getVariantSku(
-                                variant
-                            )
-                            .toLowerCase();
-
-
-                        const name =
-                            getVariantName(
-                                variant
-                            )
-                            .toLowerCase();
+                            const sku =
+                                getVariantSku(
+                                    variant
+                                )
+                                .toLowerCase();
 
 
-                        return !search ||
-                            sku.includes(
-                                search
-                            ) ||
-                            name.includes(
-                                search
-                            );
-
-                    }
-                );
+                            const name =
+                                getVariantName(
+                                    variant
+                                )
+                                .toLowerCase();
 
 
-            list.innerHTML = '';
+                            return !search ||
+                                sku.includes(
+                                    search
+                                ) ||
+                                name.includes(
+                                    search
+                                );
+
+                        }
+                    );
 
 
-            if (!filtered.length) {
+                list.innerHTML = '';
 
-                list.innerHTML = `
+
+                if (!filtered.length) {
+
+                    list.innerHTML = `
 
                     <div
                         class="autocomplete-empty"
@@ -2111,48 +2038,48 @@
                 `;
 
 
-                list.classList.add(
-                    'open'
-                );
+                    list.classList.add(
+                        'open'
+                    );
 
 
-                return;
-            }
+                    return;
+                }
 
 
-            filtered
-                .slice(0, 80)
-                .forEach(
-                    variant => {
+                filtered
+                    .slice(0, 80)
+                    .forEach(
+                        variant => {
 
-                        const option =
-                            document
+                            const option =
+                                document
                                 .createElement(
                                     'div'
                                 );
 
 
-                        option.className =
-                            'autocomplete-option';
+                            option.className =
+                                'autocomplete-option';
 
 
-                        option.dataset.variantId =
-                            variant.id;
+                            option.dataset.variantId =
+                                variant.id;
 
 
-                        const sku =
-                            getVariantSku(
-                                variant
-                            );
+                            const sku =
+                                getVariantSku(
+                                    variant
+                                );
 
 
-                        const name =
-                            getVariantName(
-                                variant
-                            );
+                            const name =
+                                getVariantName(
+                                    variant
+                                );
 
 
-                        option.innerHTML = `
+                            option.innerHTML = `
 
                             <strong>
                                 ${escapeHtml(sku)}
@@ -2171,12 +2098,172 @@
                         `;
 
 
-                        option.addEventListener(
-                            'mousedown',
-                            function(e) {
+                            option.addEventListener(
+                                'mousedown',
+                                function(e) {
 
-                                e.preventDefault();
+                                    e.preventDefault();
 
+
+                                    selectVariant(
+                                        variant,
+                                        input,
+                                        select,
+                                        list
+                                    );
+
+                                }
+                            );
+
+
+                            list.appendChild(
+                                option
+                            );
+
+                        }
+                    );
+
+
+                activeIndex = -1;
+
+
+                list.classList.add(
+                    'open'
+                );
+
+            }
+
+
+            input.addEventListener(
+                'focus',
+                function() {
+
+                    render(
+                        input.value
+                    );
+
+                }
+            );
+
+
+            input.addEventListener(
+                'input',
+                function() {
+
+                    select.value = '';
+
+
+                    select.dispatchEvent(
+                        new Event(
+                            'change', {
+                                bubbles: true
+                            }
+                        )
+                    );
+
+
+                    render(
+                        input.value
+                    );
+
+                }
+            );
+
+
+            input.addEventListener(
+                'keydown',
+                function(e) {
+
+                    const options =
+                        list.querySelectorAll(
+                            '.autocomplete-option'
+                        );
+
+
+                    if (
+                        !list.classList.contains(
+                            'open'
+                        )
+                    ) {
+
+                        return;
+                    }
+
+
+                    if (
+                        e.key ===
+                        'ArrowDown'
+                    ) {
+
+                        e.preventDefault();
+
+
+                        activeIndex =
+                            Math.min(
+                                activeIndex + 1,
+                                options.length - 1
+                            );
+
+
+                        setActiveOption(
+                            options,
+                            activeIndex
+                        );
+
+                    }
+
+
+                    if (
+                        e.key ===
+                        'ArrowUp'
+                    ) {
+
+                        e.preventDefault();
+
+
+                        activeIndex =
+                            Math.max(
+                                activeIndex - 1,
+                                0
+                            );
+
+
+                        setActiveOption(
+                            options,
+                            activeIndex
+                        );
+
+                    }
+
+
+                    if (
+                        e.key ===
+                        'Enter'
+                    ) {
+
+                        if (
+                            activeIndex >= 0 &&
+                            options[activeIndex]
+                        ) {
+
+                            e.preventDefault();
+
+
+                            const variant =
+                                variants.find(
+                                    v =>
+                                    String(v.id) ===
+                                    String(
+                                        options[
+                                            activeIndex
+                                        ]
+                                        .dataset
+                                        .variantId
+                                    )
+                                );
+
+
+                            if (variant) {
 
                                 selectVariant(
                                     variant,
@@ -2186,336 +2273,167 @@
                                 );
 
                             }
-                        );
 
-
-                        list.appendChild(
-                            option
-                        );
+                        }
 
                     }
-                );
 
-
-            activeIndex = -1;
-
-
-            list.classList.add(
-                'open'
-            );
-
-        }
-
-
-        input.addEventListener(
-            'focus',
-            function() {
-
-                render(
-                    input.value
-                );
-
-            }
-        );
-
-
-        input.addEventListener(
-            'input',
-            function() {
-
-                select.value = '';
-
-
-                select.dispatchEvent(
-                    new Event(
-                        'change',
-                        {
-                            bubbles: true
-                        }
-                    )
-                );
-
-
-                render(
-                    input.value
-                );
-
-            }
-        );
-
-
-        input.addEventListener(
-            'keydown',
-            function(e) {
-
-                const options =
-                    list.querySelectorAll(
-                        '.autocomplete-option'
-                    );
-
-
-                if (
-                    !list.classList.contains(
-                        'open'
-                    )
-                ) {
-
-                    return;
-                }
-
-
-                if (
-                    e.key ===
-                    'ArrowDown'
-                ) {
-
-                    e.preventDefault();
-
-
-                    activeIndex =
-                        Math.min(
-                            activeIndex + 1,
-                            options.length - 1
-                        );
-
-
-                    setActiveOption(
-                        options,
-                        activeIndex
-                    );
-
-                }
-
-
-                if (
-                    e.key ===
-                    'ArrowUp'
-                ) {
-
-                    e.preventDefault();
-
-
-                    activeIndex =
-                        Math.max(
-                            activeIndex - 1,
-                            0
-                        );
-
-
-                    setActiveOption(
-                        options,
-                        activeIndex
-                    );
-
-                }
-
-
-                if (
-                    e.key ===
-                    'Enter'
-                ) {
 
                     if (
-                        activeIndex >= 0 &&
-                        options[activeIndex]
+                        e.key ===
+                        'Escape'
                     ) {
-
-                        e.preventDefault();
-
-
-                        const variant =
-                            variants.find(
-                                v =>
-                                    String(v.id) ===
-                                    String(
-                                        options[
-                                            activeIndex
-                                        ]
-                                        .dataset
-                                        .variantId
-                                    )
-                            );
-
-
-                        if (variant) {
-
-                            selectVariant(
-                                variant,
-                                input,
-                                select,
-                                list
-                            );
-
-                        }
-
-                    }
-
-                }
-
-
-                if (
-                    e.key ===
-                    'Escape'
-                ) {
-
-                    list.classList.remove(
-                        'open'
-                    );
-
-
-                    activeIndex = -1;
-
-                }
-
-            }
-        );
-
-
-        input.addEventListener(
-            'blur',
-            function() {
-
-                setTimeout(
-                    () => {
 
                         list.classList.remove(
                             'open'
                         );
 
-                    },
-                    150
-                );
 
-            }
-        );
+                        activeIndex = -1;
 
-    }
+                    }
+
+                }
+            );
 
 
-    function setActiveOption(
-        options,
-        index
-    ) {
+            input.addEventListener(
+                'blur',
+                function() {
 
-        options.forEach(
-            option =>
+                    setTimeout(
+                        () => {
+
+                            list.classList.remove(
+                                'open'
+                            );
+
+                        },
+                        150
+                    );
+
+                }
+            );
+
+        }
+
+
+        function setActiveOption(
+            options,
+            index
+        ) {
+
+            options.forEach(
+                option =>
                 option.classList.remove(
                     'active'
                 )
-        );
+            );
 
 
-        if (options[index]) {
+            if (options[index]) {
 
-            options[index]
-                .classList.add(
-                    'active'
+                options[index]
+                    .classList.add(
+                        'active'
+                    );
+
+
+                options[index]
+                    .scrollIntoView({
+                        block: 'nearest'
+                    });
+
+            }
+
+        }
+
+
+        function selectVariant(
+            variant,
+            input,
+            select,
+            list
+        ) {
+
+            const sku =
+                String(
+                    variant.sku ??
+                    variant.code ??
+                    variant.article ??
+                    ''
                 );
 
 
-            options[index]
-                .scrollIntoView({
-                    block: 'nearest'
-                });
+            input.value =
+                sku;
+
+
+            select.value =
+                String(
+                    variant.id
+                );
+
+
+            list.classList.remove(
+                'open'
+            );
+
+
+            select.dispatchEvent(
+                new Event(
+                    'change', {
+                        bubbles: true
+                    }
+                )
+            );
 
         }
 
-    }
 
+        /* =========================================================
+           VARIANT CHANGED
+        ========================================================= */
 
-    function selectVariant(
-        variant,
-        input,
-        select,
-        list
-    ) {
+        function variantChanged(
+            select
+        ) {
 
-        const sku =
-            String(
-                variant.sku ??
-                variant.code ??
-                variant.article ??
-                ''
-            );
+            const item =
+                select.closest(
+                    '.item'
+                );
 
+            if (!item) {
+                return;
+            }
 
-        input.value =
-            sku;
+            const batchSelect =
+                item.querySelector(
+                    '.batch-select'
+                );
 
+            const priceInput =
+                item.querySelector(
+                    '.price-input'
+                );
 
-        select.value =
-            String(
-                variant.id
-            );
-
-
-        list.classList.remove(
-            'open'
-        );
-
-
-        select.dispatchEvent(
-            new Event(
-                'change',
-                {
-                    bubbles: true
-                }
-            )
-        );
-
-    }
-
-
-    /* =========================================================
-       VARIANT CHANGED
-    ========================================================= */
-
-    function variantChanged(
-        select
-    ) {
-
-        const item =
-            select.closest(
-                '.item'
-            );
-
-
-        if (!item) {
-            return;
-        }
-
-
-        const batchSelect =
-            item.querySelector(
-                '.batch-select'
-            );
-
-
-        const priceInput =
-            item.querySelector(
-                '.price-input'
-            );
-
-
-        batchSelect.innerHTML = `
+            batchSelect.innerHTML = `
 
             <option value="">
-                Без партии — создастся автоматически
+                Выберите партию
             </option>
 
         `;
 
+            priceInput.value = '0';
 
-        priceInput.value = '0';
+            const variantId =
+                select.value;
 
+            if (!variantId) {
 
-        const variantId =
-            select.value;
-
-
-        if (!variantId) {
-
-            batchSelect.innerHTML = `
+                batchSelect.innerHTML = `
 
                 <option value="">
                     Сначала артикул
@@ -2523,58 +2441,371 @@
 
             `;
 
+                return;
+            }
 
-            return;
+            const variant =
+                variants.find(
+                    v =>
+                    String(v.id) ===
+                    String(variantId)
+                );
+
+            if (!variant) {
+                return;
+            }
+
+            if (
+                variant.purchase_price !==
+                undefined &&
+                variant.purchase_price !==
+                null
+            ) {
+
+                priceInput.value =
+                    variant.purchase_price;
+
+            }
+
+            const batches =
+                variant.batches ??
+                variant.existing_batches ?? [];
+
+            batches.forEach(
+                batch => {
+
+                    const option =
+                        document.createElement(
+                            'option'
+                        );
+
+                    option.value =
+                        batch.id;
+
+                    option.textContent =
+                        batch.code ??
+                        batch.batch_code ??
+                        `Партия #${batch.id}`;
+
+                    batchSelect.appendChild(
+                        option
+                    );
+
+                }
+            );
+
+            const createOption =
+                document.createElement(
+                    'option'
+                );
+
+            createOption.value =
+                '__create_new__';
+
+            createOption.textContent =
+                '+ Создать новую партию';
+
+            batchSelect.appendChild(
+                createOption
+            );
+
+            previousBatchValues.set(
+                batchSelect,
+                ''
+            );
+
         }
 
 
-        const variant =
-            variants.find(
-                v =>
-                    String(v.id) ===
-                    String(variantId)
+        /* =========================================================
+           BATCH CHANGED
+        ========================================================= */
+
+        function batchChanged(
+            select
+        ) {
+
+            const value =
+                select.value;
+
+
+            if (
+                value ===
+                '__create_new__'
+            ) {
+
+                const item =
+                    select.closest(
+                        '.item'
+                    );
+
+
+                const variantSelect =
+                    item.querySelector(
+                        '.variant-hidden-select'
+                    );
+
+
+                if (
+                    !variantSelect.value
+                ) {
+
+                    select.value =
+                        previousBatchValues.get(
+                            select
+                        ) || '';
+
+
+                    return;
+                }
+
+
+                currentBatchSelect =
+                    select;
+
+
+                currentVariantId =
+                    variantSelect.value;
+
+
+                openBatchModal();
+
+
+                return;
+            }
+
+
+            previousBatchValues.set(
+                select,
+                value
+            );
+
+        }
+
+
+        /* =========================================================
+           CHANGE LISTENER
+        ========================================================= */
+
+        document.addEventListener(
+            'change',
+            function(e) {
+
+                if (
+                    e.target.classList.contains(
+                        'batch-select'
+                    )
+                ) {
+
+                    const select =
+                        e.target;
+
+
+                    if (
+                        select.value !==
+                        '__create_new__'
+                    ) {
+
+                        previousBatchValues.set(
+                            select,
+                            select.value
+                        );
+
+                    }
+
+                }
+
+            }
+        );
+
+
+        /* =========================================================
+           MODAL
+        ========================================================= */
+
+        function openBatchModal() {
+
+            const modal =
+                document.getElementById(
+                    'batchModal'
+                );
+
+
+            const input =
+                document.getElementById(
+                    'newBatchCode'
+                );
+
+
+            document
+                .getElementById(
+                    'batchModalError'
+                )
+                .style.display =
+                'none';
+
+
+            input.value = '';
+
+
+            modal.classList.add(
+                'open'
             );
 
 
-        if (!variant) {
-            return;
+            setTimeout(
+                () =>
+                input.focus(),
+                50
+            );
+
         }
 
 
-        if (
-            variant.purchase_price !==
-                undefined &&
-            variant.purchase_price !==
-                null
+        function closeBatchModal() {
+
+            const modal =
+                document.getElementById(
+                    'batchModal'
+                );
+
+
+            modal.classList.remove(
+                'open'
+            );
+
+
+            if (currentBatchSelect) {
+
+                currentBatchSelect.value =
+                    previousBatchValues.get(
+                        currentBatchSelect
+                    ) || '';
+
+            }
+
+
+            currentBatchSelect = null;
+
+            currentVariantId = null;
+
+        }
+
+
+        function showBatchModalError(
+            message
         ) {
 
-            priceInput.value =
-                variant.purchase_price;
+            const error =
+                document.getElementById(
+                    'batchModalError'
+                );
+
+
+            error.textContent =
+                message;
+
+
+            error.style.display =
+                'block';
 
         }
 
 
-        const batches =
-            variant.batches ??
-            variant.existing_batches ??
-            [];
+        async function createNewBatch() {
+
+            const input =
+                document.getElementById(
+                    'newBatchCode'
+                );
 
 
-        if (!batches.length) {
-
-            batchSelect.innerHTML = `
-
-                <option value="">
-                    Без партии — создастся автоматически
-                </option>
-
-            `;
-
-        }
+            const code =
+                input.value.trim();
 
 
-        batches.forEach(
-            batch => {
+            if (!code) {
+
+                showBatchModalError(
+                    'Введите код партии.'
+                );
+
+
+                input.focus();
+
+
+                return;
+            }
+
+
+            if (!currentVariantId) {
+
+                showBatchModalError(
+                    'Не выбран артикул.'
+                );
+
+
+                return;
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        createBatchUrl, {
+
+                            method: 'POST',
+
+                            headers: {
+
+                                'Content-Type': 'application/json',
+
+                                'Accept': 'application/json',
+
+                                'X-CSRF-TOKEN': csrfToken,
+
+                                'X-Requested-With': 'XMLHttpRequest'
+
+                            },
+
+                            body: JSON.stringify({
+
+                                variant_id: currentVariantId,
+
+                                code: code
+
+                            })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        'Не удалось создать партию.'
+                    );
+
+                }
+
+
+                if (
+                    !currentBatchSelect ||
+                    !data.batch
+                ) {
+
+                    throw new Error(
+                        'Сервер не вернул данные партии.'
+                    );
+
+                }
+
 
                 const option =
                     document.createElement(
@@ -2583,754 +2814,406 @@
 
 
                 option.value =
-                    batch.id;
+                    data.batch.id;
 
 
                 option.textContent =
-                    batch.code ??
-                    batch.batch_code ??
-                    `Партия #${batch.id}`;
+                    data.batch.code;
 
 
-                batchSelect.appendChild(
-                    option
+                const createOption =
+                    currentBatchSelect.querySelector(
+                        'option[value="__create_new__"]'
+                    );
+
+
+                if (createOption) {
+
+                    currentBatchSelect.insertBefore(
+                        option,
+                        createOption
+                    );
+
+                } else {
+
+                    currentBatchSelect.appendChild(
+                        option
+                    );
+
+                }
+
+
+                currentBatchSelect.value =
+                    data.batch.id;
+
+
+                previousBatchValues.set(
+                    currentBatchSelect,
+                    data.batch.id
+                );
+
+
+                closeBatchModalAfterSuccess();
+
+
+            } catch (error) {
+
+                showBatchModalError(
+                    error.message ||
+                    'Ошибка при создании партии.'
                 );
 
             }
-        );
+
+        }
 
 
-        const createOption =
-            document.createElement(
-                'option'
+        function closeBatchModalAfterSuccess() {
+
+            const modal =
+                document.getElementById(
+                    'batchModal'
+                );
+
+
+            modal.classList.remove(
+                'open'
             );
 
 
-        createOption.value =
-            '__create_new__';
+            currentBatchSelect = null;
+
+            currentVariantId = null;
+
+        }
 
 
-        createOption.textContent =
-            '+ Создать новую партию';
+        /* =========================================================
+           REMOVE
+        ========================================================= */
 
-
-        batchSelect.appendChild(
-            createOption
-        );
-
-
-        previousBatchValues.set(
-            batchSelect,
-            ''
-        );
-
-    }
-
-
-    /* =========================================================
-       BATCH CHANGED
-    ========================================================= */
-
-    function batchChanged(
-        select
-    ) {
-
-        const value =
-            select.value;
-
-
-        if (
-            value ===
-            '__create_new__'
+        function removeItem(
+            button
         ) {
 
             const item =
-                select.closest(
+                button.closest(
                     '.item'
                 );
 
 
-            const variantSelect =
-                item.querySelector(
-                    '.variant-hidden-select'
+            if (item) {
+
+                item.remove();
+
+                updateItemsCount();
+
+                updateItemNumbers();
+
+                updateEmptyState();
+
+            }
+
+        }
+
+
+        /* =========================================================
+           COUNT
+        ========================================================= */
+
+        function updateItemsCount() {
+
+            const count =
+                document.querySelectorAll(
+                    '#items .item'
+                ).length;
+
+
+            document.getElementById(
+                    'itemsCount'
+                ).textContent =
+                count;
+
+        }
+
+
+        /* =========================================================
+           NUMBERS
+        ========================================================= */
+
+        function updateItemNumbers() {
+
+            document
+                .querySelectorAll(
+                    '#items .item'
+                )
+                .forEach(
+                    (
+                        item,
+                        index
+                    ) => {
+
+                        const number =
+                            item.querySelector(
+                                '.item-number'
+                            );
+
+
+                        if (number) {
+
+                            number.textContent =
+                                `#${index + 1}`;
+
+                        }
+
+                    }
                 );
 
-
-            if (
-                !variantSelect.value
-            ) {
-
-                select.value =
-                    previousBatchValues.get(
-                        select
-                    ) || '';
-
-
-                return;
-            }
-
-
-            currentBatchSelect =
-                select;
-
-
-            currentVariantId =
-                variantSelect.value;
-
-
-            openBatchModal();
-
-
-            return;
         }
 
 
-        previousBatchValues.set(
-            select,
+        /* =========================================================
+           EMPTY
+        ========================================================= */
+
+        function updateEmptyState() {
+
+            const items =
+                document.querySelectorAll(
+                    '#items .item'
+                ).length;
+
+
+            document.getElementById(
+                    'emptyState'
+                ).style.display =
+                items === 0 ?
+                'block' :
+                'none';
+
+        }
+
+
+        /* =========================================================
+           ESCAPE HTML
+        ========================================================= */
+
+        function escapeHtml(
             value
-        );
+        ) {
 
-    }
+            return String(value)
 
-
-    /* =========================================================
-       CHANGE LISTENER
-    ========================================================= */
-
-    document.addEventListener(
-        'change',
-        function(e) {
-
-            if (
-                e.target.classList.contains(
-                    'batch-select'
+                .replace(
+                    /&/g,
+                    '&amp;'
                 )
-            ) {
 
-                const select =
-                    e.target;
+                .replace(
+                    /</g,
+                    '&lt;'
+                )
 
+                .replace(
+                    />/g,
+                    '&gt;'
+                )
 
-                if (
-                    select.value !==
-                    '__create_new__'
-                ) {
+                .replace(
+                    /"/g,
+                    '&quot;'
+                )
 
-                    previousBatchValues.set(
-                        select,
-                        select.value
-                    );
-
-                }
-
-            }
+                .replace(
+                    /'/g,
+                    '&#039;'
+                );
 
         }
-    );
 
 
-    /* =========================================================
-       MODAL
-    ========================================================= */
-
-    function openBatchModal() {
-
-        const modal =
-            document.getElementById(
-                'batchModal'
-            );
-
-
-        const input =
-            document.getElementById(
-                'newBatchCode'
-            );
-
+        /* =========================================================
+           FORM VALIDATION
+        ========================================================= */
 
         document
             .getElementById(
-                'batchModalError'
+                'receiptForm'
             )
-            .style.display =
-            'none';
-
-
-        input.value = '';
-
-
-        modal.classList.add(
-            'open'
-        );
-
-
-        setTimeout(
-            () =>
-                input.focus(),
-            50
-        );
-
-    }
-
-
-    function closeBatchModal() {
-
-        const modal =
-            document.getElementById(
-                'batchModal'
-            );
-
-
-        modal.classList.remove(
-            'open'
-        );
-
-
-        if (currentBatchSelect) {
-
-            currentBatchSelect.value =
-                previousBatchValues.get(
-                    currentBatchSelect
-                ) || '';
-
-        }
-
-
-        currentBatchSelect = null;
-
-        currentVariantId = null;
-
-    }
-
-
-    function showBatchModalError(
-        message
-    ) {
-
-        const error =
-            document.getElementById(
-                'batchModalError'
-            );
-
-
-        error.textContent =
-            message;
-
-
-        error.style.display =
-            'block';
-
-    }
-
-
-    async function createNewBatch() {
-
-        const input =
-            document.getElementById(
-                'newBatchCode'
-            );
-
-
-        const code =
-            input.value.trim();
-
-
-        if (!code) {
-
-            showBatchModalError(
-                'Введите код партии.'
-            );
-
-
-            input.focus();
-
-
-            return;
-        }
-
-
-        if (!currentVariantId) {
-
-            showBatchModalError(
-                'Не выбран артикул.'
-            );
-
-
-            return;
-        }
-
-
-        try {
-
-            const response =
-                await fetch(
-                    createBatchUrl,
-                    {
-
-                        method: 'POST',
-
-                        headers: {
-
-                            'Content-Type':
-                                'application/json',
-
-                            'Accept':
-                                'application/json',
-
-                            'X-CSRF-TOKEN':
-                                csrfToken,
-
-                            'X-Requested-With':
-                                'XMLHttpRequest'
-
-                        },
-
-                        body:
-                            JSON.stringify({
-
-                                variant_id:
-                                    currentVariantId,
-
-                                code:
-                                    code
-
-                            })
-
-                    }
-                );
-
-
-            const data =
-                await response.json();
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    data.message ||
-                    'Не удалось создать партию.'
-                );
-
-            }
-
-
-            if (
-                !currentBatchSelect ||
-                !data.batch
-            ) {
-
-                throw new Error(
-                    'Сервер не вернул данные партии.'
-                );
-
-            }
-
-
-            const option =
-                document.createElement(
-                    'option'
-                );
-
-
-            option.value =
-                data.batch.id;
-
-
-            option.textContent =
-                data.batch.code;
-
-
-            const createOption =
-                currentBatchSelect.querySelector(
-                    'option[value="__create_new__"]'
-                );
-
-
-            if (createOption) {
-
-                currentBatchSelect.insertBefore(
-                    option,
-                    createOption
-                );
-
-            } else {
-
-                currentBatchSelect.appendChild(
-                    option
-                );
-
-            }
-
-
-            currentBatchSelect.value =
-                data.batch.id;
-
-
-            previousBatchValues.set(
-                currentBatchSelect,
-                data.batch.id
-            );
-
-
-            closeBatchModalAfterSuccess();
-
-
-        } catch (error) {
-
-            showBatchModalError(
-                error.message ||
-                'Ошибка при создании партии.'
-            );
-
-        }
-
-    }
-
-
-    function closeBatchModalAfterSuccess() {
-
-        const modal =
-            document.getElementById(
-                'batchModal'
-            );
-
-
-        modal.classList.remove(
-            'open'
-        );
-
-
-        currentBatchSelect = null;
-
-        currentVariantId = null;
-
-    }
-
-
-    /* =========================================================
-       REMOVE
-    ========================================================= */
-
-    function removeItem(
-        button
-    ) {
-
-        const item =
-            button.closest(
-                '.item'
-            );
-
-
-        if (item) {
-
-            item.remove();
-
-            updateItemsCount();
-
-            updateItemNumbers();
-
-            updateEmptyState();
-
-        }
-
-    }
-
-
-    /* =========================================================
-       COUNT
-    ========================================================= */
-
-    function updateItemsCount() {
-
-        const count =
-            document.querySelectorAll(
-                '#items .item'
-            ).length;
-
-
-        document.getElementById(
-            'itemsCount'
-        ).textContent =
-            count;
-
-    }
-
-
-    /* =========================================================
-       NUMBERS
-    ========================================================= */
-
-    function updateItemNumbers() {
-
-        document
-            .querySelectorAll(
-                '#items .item'
-            )
-            .forEach(
-                (
-                    item,
-                    index
-                ) => {
-
-                    const number =
-                        item.querySelector(
-                            '.item-number'
+            .addEventListener(
+                'submit',
+                function(e) {
+
+                    const items =
+                        document.querySelectorAll(
+                            '#items .item'
                         );
 
 
-                    if (number) {
+                    if (!items.length) {
 
-                        number.textContent =
-                            `#${index + 1}`;
+                        e.preventDefault();
 
+
+                        alert(
+                            'Добавьте хотя бы один товар.'
+                        );
+
+
+                        return;
                     }
 
-                }
-            );
 
-    }
+                    let valid = true;
 
 
-    /* =========================================================
-       EMPTY
-    ========================================================= */
+                    items.forEach(
+                        item => {
 
-    function updateEmptyState() {
-
-        const items =
-            document.querySelectorAll(
-                '#items .item'
-            ).length;
+                            const variant =
+                                item.querySelector(
+                                    '.variant-hidden-select'
+                                );
 
 
-        document.getElementById(
-            'emptyState'
-        ).style.display =
-            items === 0
-                ? 'block'
-                : 'none';
-
-    }
+                            const batch =
+                                item.querySelector(
+                                    '.batch-select'
+                                );
 
 
-    /* =========================================================
-       ESCAPE HTML
-    ========================================================= */
-
-    function escapeHtml(
-        value
-    ) {
-
-        return String(value)
-
-            .replace(
-                /&/g,
-                '&amp;'
-            )
-
-            .replace(
-                /</g,
-                '&lt;'
-            )
-
-            .replace(
-                />/g,
-                '&gt;'
-            )
-
-            .replace(
-                /"/g,
-                '&quot;'
-            )
-
-            .replace(
-                /'/g,
-                '&#039;'
-            );
-
-    }
+                            const quantity =
+                                item.querySelector(
+                                    'input[name*="[quantity]"]'
+                                );
 
 
-    /* =========================================================
-       FORM VALIDATION
-    ========================================================= */
-
-    document
-        .getElementById(
-            'receiptForm'
-        )
-        .addEventListener(
-            'submit',
-            function(e) {
-
-                const items =
-                    document.querySelectorAll(
-                        '#items .item'
-                    );
+                            const price =
+                                item.querySelector(
+                                    '.price-input'
+                                );
 
 
-                if (!items.length) {
+                            if (
+                                !variant ||
+                                !variant.value
+                            ) {
 
-                    e.preventDefault();
+                                valid = false;
 
-
-                    alert(
-                        'Добавьте хотя бы один товар.'
-                    );
-
-
-                    return;
-                }
+                            }
 
 
-                let valid = true;
-
-
-                items.forEach(
-                    item => {
-
-                        const variant =
-                            item.querySelector(
-                                '.variant-hidden-select'
-                            );
-
-
-                        const batch =
-                            item.querySelector(
-                                '.batch-select'
-                            );
-
-
-                        const quantity =
-                            item.querySelector(
-                                'input[name*="[quantity]"]'
-                            );
-
-
-                        const price =
-                            item.querySelector(
-                                '.price-input'
-                            );
-
-
-                        if (
-                            !variant ||
-                            !variant.value
-                        ) {
-
-                            valid = false;
-
-                        }
-
-
-                        if (
-                            batch &&
-                            batch.value ===
+                            if (
+                                !batch ||
+                                !batch.value ||
+                                batch.value ===
                                 '__create_new__'
-                        ) {
+                            ) {
 
-                            valid = false;
+                                valid = false;
+
+                            }
+
+
+                            if (
+                                !quantity ||
+                                Number(
+                                    quantity.value
+                                ) < 1
+                            ) {
+
+                                valid = false;
+
+                            }
+
+
+                            if (
+                                !price ||
+                                Number(
+                                    price.value
+                                ) < 0
+                            ) {
+
+                                valid = false;
+
+                            }
 
                         }
-
-
-                        if (
-                            !quantity ||
-                            Number(
-                                quantity.value
-                            ) < 1
-                        ) {
-
-                            valid = false;
-
-                        }
-
-
-                        if (
-                            !price ||
-                            Number(
-                                price.value
-                            ) < 0
-                        ) {
-
-                            valid = false;
-
-                        }
-
-                    }
-                );
-
-
-                if (!valid) {
-
-                    e.preventDefault();
-
-
-                    alert(
-                        'Проверьте артикул, количество и закупочную цену.'
                     );
 
+
+                    if (!valid) {
+
+                        e.preventDefault();
+
+
+                        alert(
+                            'Проверьте артикул, партию, количество и закупочную цену.'
+                        );
+
+                    }
+
                 }
-
-            }
-        );
+            );
 
 
-    /* =========================================================
-       MODAL EVENTS
-    ========================================================= */
+        /* =========================================================
+           MODAL EVENTS
+        ========================================================= */
 
-    document
-        .getElementById(
-            'batchModal'
-        )
-        .addEventListener(
-            'click',
+        document
+            .getElementById(
+                'batchModal'
+            )
+            .addEventListener(
+                'click',
+                function(e) {
+
+                    if (
+                        e.target === this
+                    ) {
+
+                        closeBatchModal();
+
+                    }
+
+                }
+            );
+
+
+        document.addEventListener(
+            'keydown',
             function(e) {
 
                 if (
-                    e.target === this
+                    e.key ===
+                    'Escape'
                 ) {
 
-                    closeBatchModal();
+                    const modal =
+                        document.getElementById(
+                            'batchModal'
+                        );
+
+
+                    if (
+                        modal.classList.contains(
+                            'open'
+                        )
+                    ) {
+
+                        closeBatchModal();
+
+                    }
 
                 }
-
-            }
-        );
-
-
-    document.addEventListener(
-        'keydown',
-        function(e) {
-
-            if (
-                e.key ===
-                'Escape'
-            ) {
-
-                const modal =
-                    document.getElementById(
-                        'batchModal'
-                    );
 
 
                 if (
-                    modal.classList.contains(
-                        'open'
-                    )
-                ) {
+                    e.key === 'Enter' &&
 
-                    closeBatchModal();
-
-                }
-
-            }
-
-
-            if (
-                e.key === 'Enter' &&
-
-                document
+                    document
                     .getElementById(
                         'batchModal'
                     )
@@ -3338,33 +3221,32 @@
                         'open'
                     ) &&
 
-                document.activeElement.id ===
+                    document.activeElement.id ===
                     'newBatchCode'
-            ) {
+                ) {
 
-                e.preventDefault();
+                    e.preventDefault();
 
-                createNewBatch();
+                    createNewBatch();
+
+                }
 
             }
-
-        }
-    );
+        );
 
 
-    /* =========================================================
-       INITIAL
-    ========================================================= */
+        /* =========================================================
+           INITIAL
+        ========================================================= */
 
-    addItem();
+        addItem();
 
-    updateItemsCount();
+        updateItemsCount();
 
-    updateEmptyState();
-
-</script>
+        updateEmptyState();
+    </script>
 
 
 </body>
-</html>
 
+</html>
