@@ -182,7 +182,6 @@
                             </a>
                         </li>
 
-
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('admin.stocks.warehouses') }}">
                                 Добавить на склад
@@ -363,6 +362,25 @@
                     <hr class="my-1">
 
 
+                    <!-- ПРИЁМКИ -->
+                    <a
+                        class="nav-link"
+                        href="{{ route('admin.receipts.index') }}">
+                        Приёмки
+                    </a>
+
+                    <hr class="my-1">
+
+
+                    <!-- СПИСАНИЯ -->
+                    <a
+                        class="nav-link"
+                        href="{{ route('admin.writeoffs.index') }}">
+                        Списания
+                    </a>
+
+                    <hr class="my-1">
+
 
                     <a
                         class="nav-link"
@@ -372,6 +390,15 @@
 
                     <hr class="my-1">
 
+
+                    <!-- АНАЛИТИКА ПРИЁМОК -->
+                    <a
+                        class="nav-link"
+                        href="{{ route('admin.analytics.receipts') }}">
+                        Аналитика приёмок
+                    </a>
+
+                    <hr class="my-1">
 
 
                     @if(auth()->user()->is_owner)
