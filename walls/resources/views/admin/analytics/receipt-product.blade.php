@@ -109,14 +109,22 @@
             margin-bottom: 12px;
         }
 
+        /*
+         * ОТ / ПО
+         *
+         * Два поля строго 50% / 50%.
+         */
+
         .date-row {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 8px;
+            width: 100%;
             min-width: 0;
         }
 
         .date-row .field {
-            flex: 1;
+            width: 100%;
             min-width: 0;
         }
 
@@ -308,8 +316,6 @@
          * 4 — Приёмок
          * 5 — Количество
          * 6 — Средний завоз
-         *
-         * Поэтому скрываем 3-ю колонку.
          */
 
         .products-table th:nth-child(3),

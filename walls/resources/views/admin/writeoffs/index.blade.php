@@ -142,7 +142,7 @@
 
         .filters {
             display: grid;
-            grid-template-columns: minmax(180px, 1fr) auto auto;
+            grid-template-columns: minmax(180px, 1fr) minmax(0, 1fr) auto;
             gap: 10px;
             align-items: end;
         }
@@ -183,9 +183,20 @@
         ========================================================= */
 
         .date-fields {
+            width: 100%;
             display: grid;
-            grid-template-columns: 150px 150px;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
             gap: 10px;
+            min-width: 0;
+        }
+
+        .date-fields .field {
+            min-width: 0;
+        }
+
+        .date-fields input {
+            width: 100%;
+            min-width: 0;
         }
 
         /* =========================================================

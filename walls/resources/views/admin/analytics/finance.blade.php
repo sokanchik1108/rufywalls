@@ -113,6 +113,37 @@
         border-color: #9ca3af;
     }
 
+    /* ==========================================================
+       ДАТЫ — ОДИНАКОВАЯ ШИРИНА
+    ========================================================== */
+
+    .filter-box > .field:nth-child(1),
+    .filter-box > .field:nth-child(2) {
+        width: 145px;
+        min-width: 145px;
+    }
+
+    .filter-box > .field:nth-child(1) input[type="date"],
+    .filter-box > .field:nth-child(2) input[type="date"] {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        height: 38px;
+        box-sizing: border-box;
+        padding: 0 8px;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+    .filter-box > .field:nth-child(1) input[type="date"]::-webkit-calendar-picker-indicator,
+    .filter-box > .field:nth-child(2) input[type="date"]::-webkit-calendar-picker-indicator {
+        width: 18px;
+        height: 18px;
+        margin: 0;
+        padding: 0;
+    }
+
     .point-field {
         min-width: 150px;
     }
@@ -389,6 +420,35 @@
             font-size: 13px;
         }
 
+        /* ======================================================
+           ОТ / ПО — РОВНО ПО 50% НА ТЕЛЕФОНЕ
+        ====================================================== */
+
+        .filter-box > .field:nth-child(1),
+        .filter-box > .field:nth-child(2) {
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
+        }
+
+        .filter-box > .field:nth-child(1) input[type="date"],
+        .filter-box > .field:nth-child(2) input[type="date"] {
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
+            height: 38px;
+            box-sizing: border-box;
+            padding: 0 6px;
+        }
+
+        .filter-box > .field:nth-child(1) input[type="date"]::-webkit-calendar-picker-indicator,
+        .filter-box > .field:nth-child(2) input[type="date"]::-webkit-calendar-picker-indicator {
+            width: 17px;
+            height: 17px;
+            margin: 0;
+            padding: 0;
+        }
+
         .point-field {
             grid-column: 1 / -1;
             min-width: 0;
@@ -497,7 +557,6 @@
 
 </style>
 
-
 <div class="finance-page">
 
     {{-- НАВИГАЦИЯ --}}
@@ -513,7 +572,6 @@
         </a>
 
     </div>
-
 
     {{-- HEADER --}}
 
@@ -545,7 +603,6 @@
 
         </div>
 
-
         {{-- ФИЛЬТР --}}
 
         <form
@@ -567,7 +624,6 @@
 
             </div>
 
-
             {{-- ДАТА ДО --}}
 
             <div class="field">
@@ -582,7 +638,6 @@
                     value="{{ $to->format('Y-m-d') }}">
 
             </div>
-
 
             {{-- ТОЧКА ПРОДАЖ --}}
 
@@ -614,7 +669,6 @@
 
             </div>
 
-
             <button
                 type="submit"
                 class="btn btn-primary">
@@ -626,7 +680,6 @@
         </form>
 
     </div>
-
 
     {{-- СООБЩЕНИЯ --}}
 
@@ -640,7 +693,6 @@
 
     @endif
 
-
     @if(session('error'))
 
     <div class="alert alert-error">
@@ -651,11 +703,9 @@
 
     @endif
 
-
     {{-- ФИНАНСОВЫЕ ПОКАЗАТЕЛИ --}}
 
     <div class="finance-cards">
-
 
         {{-- ВЫРУЧКА --}}
 
@@ -673,7 +723,6 @@
 
         </div>
 
-
         {{-- СЕБЕСТОИМОСТЬ --}}
 
         <div class="finance-card">
@@ -689,7 +738,6 @@
             </div>
 
         </div>
-
 
         {{-- ПРИБЫЛЬ С ПРОДАЖ --}}
 
@@ -707,7 +755,6 @@
 
         </div>
 
-
         {{-- ОСТАЛЬНЫЕ РАСХОДЫ --}}
 
         <div class="finance-card">
@@ -724,8 +771,7 @@
 
         </div>
 
-
-        {{-- QR ЛЕЗГОВКО --}}
+        {{-- QR ЛЕЗГОВКА --}}
 
         <div class="finance-card qr-lezgovka">
 
@@ -740,7 +786,6 @@
             </div>
 
         </div>
-
 
         {{-- ЧИСТАЯ ПРИБЫЛЬ --}}
 
@@ -760,7 +805,6 @@
 
     </div>
 
-
     {{-- СПОСОБЫ ОПЛАТЫ --}}
 
     <div class="section">
@@ -769,13 +813,11 @@
             Способы оплаты
         </h2>
 
-
         @if(count($paymentMethodTotals) > 0)
 
         @php
             $totalPayments = array_sum($paymentMethodTotals);
         @endphp
-
 
         <div class="table-wrapper">
 
@@ -793,11 +835,9 @@
                             Сумма
                         </th>
 
-
                     </tr>
 
                 </thead>
-
 
                 <tbody>
 
@@ -811,7 +851,6 @@
 
                     @endphp
 
-
                     <tr>
 
                         <td>
@@ -824,7 +863,6 @@
 
                         </td>
 
-
                     </tr>
 
                     @endforeach
@@ -834,8 +872,6 @@
             </table>
 
         </div>
-
-
 
         @else
 
@@ -849,7 +885,6 @@
 
     </div>
 
-
     {{-- ИСХОДЯЩИЕ ПЛАТЕЖИ --}}
 
     <div class="section">
@@ -857,7 +892,6 @@
         <h2>
             Исходящие платежи
         </h2>
-
 
         <div class="table-wrapper">
 
@@ -891,7 +925,6 @@
 
                 </thead>
 
-
                 <tbody>
 
                     @forelse($outgoingPayments as $payment)
@@ -904,13 +937,11 @@
 
                         </td>
 
-
                         <td>
 
                             {{ $payment->expenseType->name ?? '—' }}
 
                         </td>
-
 
                         <td class="payment-amount">
 
@@ -918,13 +949,11 @@
 
                         </td>
 
-
                         <td class="payment-point">
 
                             {{ $payment->pointOfSale->name ?? 'Общий расход' }}
 
                         </td>
-
 
                         <td class="payment-description">
 
@@ -933,7 +962,6 @@
                         </td>
 
                     </tr>
-
 
                     @empty
 
@@ -958,7 +986,6 @@
             </table>
 
         </div>
-
 
         {{-- ИТОГО ПЛАТЕЖЕЙ --}}
 

@@ -4,675 +4,717 @@
 
 <head>
 
-
-<meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
-<title>Аналитика приёмок</title>
-
-<style>
-
-    * {
-        box-sizing: border-box;
-        -webkit-tap-highlight-color: transparent;
-    }
-
-    :root {
-        --accent: #01142f;
-        --accent-dark: #01142f;
-        --accent-soft: #eef2ff;
-        --text: black;
-        --text-muted: #6b7280;
-        --text-faint: #9ca3af;
-        --border: #e5e7eb;
-        --border-soft: #edf0f2;
-        --bg: #f4f5f8;
-        --card-bg: #ffffff;
-        --radius-lg: 16px;
-        --radius-md: 12px;
-        --radius-sm: 8px;
-        --shadow: 0 1px 2px rgba(17,24,39,.04), 0 1px 8px rgba(17,24,39,.04);
-    }
-
-    html {
-        -webkit-text-size-adjust: 100%;
-    }
-
-    body {
-        margin: 0;
-        background: var(--bg);
-        color: var(--text);
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-    }
-
-    .page {
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 16px;
-    }
-
-    /* HEADER */
-
-    .header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        margin-bottom: 14px;
-    }
-
-    .header-left {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .back-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        flex-shrink: 0;
-        border: 1px solid var(--border);
-        border-radius: var(--radius-sm);
-        background: var(--card-bg);
-        color: #374151;
-        text-decoration: none;
-        font-size: 15px;
-        font-weight: 700;
-        transition: .15s ease;
-    }
-
-    .back-btn:hover {
-        border-color: var(--accent);
-        color: var(--accent-dark);
-    }
-
-    h1 {
-        margin: 0;
-        font-size: 19px;
-        font-weight: 800;
-        letter-spacing: -0.01em;
-    }
-
-    .subtitle {
-        margin-top: 2px;
-        color: var(--text-muted);
-        font-size: 12px;
-    }
-
-    /* FILTERS */
-
-    .filters {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: end;
-        gap: 8px;
-        padding: 10px;
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-md);
-        margin-bottom: 12px;
-        box-shadow: var(--shadow);
-    }
-
-    .date-row {
-        display: flex;
-        gap: 8px;
-        flex: 1;
-        min-width: 0;
-    }
-
-    .field {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        flex: 1;
-        min-width: 0;
-    }
-
-    .field label {
-        font-size: 11px;
-        color: var(--text-muted);
-        font-weight: 600;
-    }
-
-    input,
-    select {
-        height: 34px;
-        padding: 0 8px;
-        border: 1px solid #d7dbe0;
-        border-radius: var(--radius-sm);
-        background: var(--card-bg);
-        font: inherit;
-        font-size: 12px;
-        outline: none;
-        color: var(--text);
-        transition: border-color .15s ease, box-shadow .15s ease;
-        width: 100%;
-    }
-
-    input:focus,
-    select:focus {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px var(--accent-soft);
-    }
-
-    .filter-btn {
-        height: 34px;
-        padding: 0 14px;
-        border: 0;
-        border-radius: var(--radius-sm);
-        background: var(--accent);
-        color: #fff;
-        font-size: 12px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: background .15s ease, transform .1s ease;
-    }
-
-    .filter-btn:hover {
-        background: var(--accent-dark);
-    }
-
-    .filter-btn:active {
-        transform: scale(.98);
-    }
-
-    /* RECEIPTS BUTTON */
-
-    .receipts-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        height: 34px;
-        padding: 0 12px;
-        border: 1px solid var(--border);
-        border-radius: var(--radius-sm);
-        background: var(--card-bg);
-        color: #374151;
-        text-decoration: none;
-        font-size: 12px;
-        font-weight: 700;
-        transition: .15s ease;
-        white-space: nowrap;
-    }
-
-    .receipts-btn:hover {
-        border-color: var(--accent);
-        color: var(--accent-dark);
-    }
-
-    /* CARDS */
-
-    .cards {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 8px;
-        margin-bottom: 12px;
-    }
-
-    .card {
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-md);
-        padding: 11px;
-        box-shadow: var(--shadow);
-    }
-
-    .card-label {
-        color: var(--text-muted);
-        font-size: 10px;
-        font-weight: 600;
-        margin-bottom: 5px;
-    }
-
-    .card-value {
-        font-size: 17px;
-        font-weight: 800;
-        letter-spacing: -0.01em;
-    }
-
-    .card-small {
-        margin-top: 3px;
-        color: var(--text-faint);
-        font-size: 9px;
-    }
-
-    /* SECTION */
-
-    .section {
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-md);
-        padding: 12px;
-        margin-bottom: 12px;
-        box-shadow: var(--shadow);
-    }
-
-    .section-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        margin-bottom: 10px;
-    }
-
-    .section-title {
-        margin: 0;
-        font-size: 13px;
-        font-weight: 800;
-        letter-spacing: -0.01em;
-    }
-
-    .section-note {
-        margin-bottom: 10px;
-        color: var(--text-muted);
-        font-size: 11px;
-    }
-
-    /* WEEKDAYS */
-
-    .weekday-scroller {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        margin: 0 -18px;
-        padding: 0 18px;
-    }
-
-    .weekday-grid {
-        display: grid;
-        grid-template-columns: repeat(7, minmax(0, 1fr));
-        gap: 8px;
-    }
-
-    .weekday-card {
-        border: 1px solid var(--border-soft);
-        border-radius: var(--radius-sm);
-        padding: 8px 4px;
-        text-align: center;
-        background: #fafbfc;
-    }
-
-    .weekday-name {
-        color: var(--text-muted);
-        font-size: 10px;
-        font-weight: 700;
-        margin-bottom: 5px;
-        text-transform: uppercase;
-    }
-
-    .weekday-value {
-        font-size: 15px;
-        font-weight: 800;
-        color: var(--accent-dark);
-    }
-
-    .weekday-label {
-        margin-top: 2px;
-        color: var(--text-faint);
-        font-size: 9px;
-    }
-
-    .weekday-products {
-        margin-top: 5px;
-        padding-top: 5px;
-        border-top: 1px solid var(--border-soft);
-        font-size: 10px;
-        font-weight: 700;
-        color: #374151;
-    }
-
-    /* TABLE (desktop / tablet) */
-
-    .table-wrap {
-        width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th,
-    td {
-        padding: 9px 8px;
-        border-bottom: 1px solid var(--border-soft);
-        text-align: left;
-        vertical-align: middle;
-    }
-
-    th {
-        color: var(--text-muted);
-        font-size: 10px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: .02em;
-        white-space: nowrap;
-    }
-
-    td {
-        font-size: 12px;
-    }
-
-    tbody tr:last-child td {
-        border-bottom: none;
-    }
-
-    .sku {
-        font-weight: 700;
-    }
-
-    .sku a {
-        color: var(--text);
-        text-decoration: none;
-    }
-
-    .sku a:hover {
-        color: var(--accent-dark);
-    }
-
-    .number {
-        text-align: right;
-        white-space: nowrap;
-        font-variant-numeric: tabular-nums;
-    }
-
-    .quantity {
-        font-weight: 700;
-    }
-
-    .empty {
-        padding: 35px 10px;
-        text-align: center;
-        color: var(--text-muted);
-    }
-
-    .rank {
-        width: 34px;
-        color: var(--text-faint);
-        font-weight: 800;
-    }
-
-    /* MOBILE — table stays a real table, just more compact + scrolls horizontally */
-
-    @media (max-width: 600px) {
-
-        th,
-        td {
-            padding: 8px 6px;
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Аналитика приёмок</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --accent: #01142f;
+            --accent-dark: #01142f;
+            --accent-soft: #eef2ff;
+            --text: black;
+            --text-muted: #6b7280;
+            --text-faint: #9ca3af;
+            --border: #e5e7eb;
+            --border-soft: #edf0f2;
+            --bg: #f4f5f8;
+            --card-bg: #ffffff;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow: 0 1px 2px rgba(17, 24, 39, .04), 0 1px 8px rgba(17, 24, 39, .04);
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .page {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        /* HEADER */
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--card-bg);
+            color: #374151;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 700;
+            transition: .15s ease;
+        }
+
+        .back-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent-dark);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 19px;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+        }
+
+        .subtitle {
+            margin-top: 2px;
+            color: var(--text-muted);
             font-size: 12px;
         }
 
-        th {
-            font-size: 10px;
-        }
-
-        .rank {
-            width: 22px;
-        }
-    }
-
-    /* MOBILE */
-
-    @media (max-width: 700px) {
-
-        .cards {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .weekday-grid {
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-        }
-
-    }
-
-    @media (max-width: 600px) {
-
-        .page {
-            padding: 10px 10px 28px;
-        }
+        /* FILTERS */
 
         .filters {
-            flex-direction: column;
-            align-items: stretch;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: end;
+            gap: 8px;
+            padding: 10px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
         }
 
-        .filters > .receipts-btn,
-        .filters > .filter-btn {
+        /* ИСПРАВЛЕНО:
+       От и По всегда одинаковой ширины */
+
+        .date-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 8px;
+            flex: 1 1 0;
+            min-width: 0;
             width: 100%;
         }
 
-    }
-
-    @media (max-width: 420px) {
-
-        .weekday-grid {
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 5px;
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            min-width: 0;
+            width: 100%;
         }
 
-    }
+        .field label {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
 
-</style>
+        input,
+        select {
+            height: 34px;
+            padding: 0 8px;
+            border: 1px solid #d7dbe0;
+            border-radius: var(--radius-sm);
+            background: var(--card-bg);
+            font: inherit;
+            font-size: 12px;
+            outline: none;
+            color: var(--text);
+            transition: border-color .15s ease, box-shadow .15s ease;
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
+        }
 
+        /* ДАТЫ */
+
+        input[type="date"] {
+            display: block;
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
+            box-sizing: border-box;
+            -webkit-appearance: auto;
+            appearance: auto;
+            padding-left: 8px;
+            padding-right: 5px;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            margin-left: 2px;
+            padding: 0;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+        }
+
+        .filter-btn {
+            height: 34px;
+            padding: 0 14px;
+            border: 0;
+            border-radius: var(--radius-sm);
+            background: var(--accent);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .15s ease, transform .1s ease;
+        }
+
+        .filter-btn:hover {
+            background: var(--accent-dark);
+        }
+
+        .filter-btn:active {
+            transform: scale(.98);
+        }
+
+        /* RECEIPTS BUTTON */
+
+        .receipts-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 34px;
+            padding: 0 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--card-bg);
+            color: #374151;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+            transition: .15s ease;
+            white-space: nowrap;
+        }
+
+        .receipts-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent-dark);
+        }
+
+        /* CARDS */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 11px;
+            box-shadow: var(--shadow);
+        }
+
+        .card-label {
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .card-value {
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+        }
+
+        .card-small {
+            margin-top: 3px;
+            color: var(--text-faint);
+            font-size: 9px;
+        }
+
+        /* SECTION */
+
+        .section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            margin: 0;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+        }
+
+        .section-note {
+            margin-bottom: 10px;
+            color: var(--text-muted);
+            font-size: 11px;
+        }
+
+        /* WEEKDAYS */
+
+        .weekday-scroller {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -18px;
+            padding: 0 18px;
+        }
+
+        .weekday-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .weekday-card {
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius-sm);
+            padding: 8px 4px;
+            text-align: center;
+            background: #fafbfc;
+        }
+
+        .weekday-name {
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .weekday-value {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--accent-dark);
+        }
+
+        .weekday-label {
+            margin-top: 2px;
+            color: var(--text-faint);
+            font-size: 9px;
+        }
+
+        .weekday-products {
+            margin-top: 5px;
+            padding-top: 5px;
+            border-top: 1px solid var(--border-soft);
+            font-size: 10px;
+            font-weight: 700;
+            color: #374151;
+        }
+
+        /* TABLE */
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 9px 8px;
+            border-bottom: 1px solid var(--border-soft);
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .02em;
+            white-space: nowrap;
+        }
+
+        td {
+            font-size: 12px;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .sku {
+            font-weight: 700;
+        }
+
+        .sku a {
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .sku a:hover {
+            color: var(--accent-dark);
+        }
+
+        .number {
+            text-align: right;
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .quantity {
+            font-weight: 700;
+        }
+
+        .empty {
+            padding: 35px 10px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .rank {
+            width: 34px;
+            color: var(--text-faint);
+            font-weight: 800;
+        }
+
+        /* MOBILE TABLE */
+
+        @media (max-width: 600px) {
+
+            th,
+            td {
+                padding: 8px 6px;
+                font-size: 12px;
+            }
+
+            th {
+                font-size: 10px;
+            }
+
+            .rank {
+                width: 22px;
+            }
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 700px) {
+
+            .cards {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .weekday-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .page {
+                padding: 10px 10px 28px;
+            }
+
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            /* На телефоне От и По остаются
+           в одной строке и имеют одинаковую ширину */
+
+            .date-row {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+                width: 100%;
+                min-width: 0;
+                flex: none;
+                gap: 8px;
+            }
+
+            .date-row .field {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .date-row input[type="date"] {
+                width: 100%;
+                min-width: 0;
+                max-width: 100%;
+                height: 34px;
+                padding-left: 7px;
+                padding-right: 4px;
+                font-size: 12px;
+            }
+
+            .filters>.receipts-btn,
+            .filters>.filter-btn {
+                width: 100%;
+            }
+
+        }
+
+        @media (max-width: 420px) {
+
+            .weekday-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 5px;
+            }
+
+            .date-row {
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+                gap: 7px;
+            }
+
+            .date-row input[type="date"] {
+                padding-left: 6px;
+                padding-right: 3px;
+                font-size: 11px;
+            }
+
+        }
+    </style>
 
 </head>
 
 <body>
 
-<div class="page">
+    <div class="page">
 
+        {{-- HEADER --}}
 
-{{-- HEADER --}}
+        <div class="header">
 
-<div class="header">
+            <div class="header-left">
 
-    <div class="header-left">
+                <a
+                    href="{{ route('admin.analytics.menu') }}"
+                    class="back-btn"
+                    title="В меню аналитики">
+                    ←
+                </a>
 
-        <a
-            href="{{ route('admin.analytics.menu') }}"
-            class="back-btn"
-            title="В меню аналитики"
-        >
-            ←
-        </a>
+                <div>
 
-        <div>
+                    <h1>
+                        Аналитика приёмок
+                    </h1>
 
-            <h1>
-                Аналитика приёмок
-            </h1>
+                    <div class="subtitle">
+                        Анализ поступления товаров на склады
+                    </div>
 
-            <div class="subtitle">
-                Анализ поступления товаров на склады
+                </div>
+
             </div>
 
         </div>
 
-    </div>
+        {{-- FILTERS --}}
 
-</div>
+        <form
+            method="GET"
+            action="{{ route('admin.analytics.receipts') }}"
+            class="filters">
 
+            <div class="date-row">
 
-{{-- FILTERS --}}
+                <div class="field">
 
-<form
-    method="GET"
-    action="{{ route('admin.analytics.receipts') }}"
-    class="filters"
->
+                    <label>
+                        От
+                    </label>
 
-    <div class="date-row">
+                    <input
+                        type="date"
+                        name="from"
+                        value="{{ $from->format('Y-m-d') }}">
 
-        <div class="field">
+                </div>
 
-            <label>
-                От
-            </label>
+                <div class="field">
 
-            <input
-                type="date"
-                name="from"
-                value="{{ $from->format('Y-m-d') }}"
-            >
+                    <label>
+                        По
+                    </label>
+
+                    <input
+                        type="date"
+                        name="to"
+                        value="{{ $to->format('Y-m-d') }}">
+
+                </div>
+
+            </div>
+
+            <div class="field">
+
+                <label>
+                    Склад
+                </label>
+
+                <select name="warehouse_id">
+
+                    <option value="">
+                        Все склады
+                    </option>
+
+                    @foreach($warehouses as $warehouse)
+
+                    <option
+                        value="{{ $warehouse->id }}"
+                        @selected($selectedWarehouse==$warehouse->id)
+                        >
+                        {{ $warehouse->name }}
+                    </option>
+
+                    @endforeach
+
+                </select>
+
+            </div>
+
+            <button
+                type="submit"
+                class="filter-btn">
+                Показать
+            </button>
+
+            <a
+                href="{{ url('/admin/receipts') }}"
+                class="receipts-btn">
+                Все приёмки
+            </a>
+
+        </form>
+
+        {{-- MAIN CARDS --}}
+
+        <div class="cards">
+
+            <div class="card">
+
+                <div class="card-label">
+                    Всего приёмок
+                </div>
+
+                <div class="card-value">
+                    {{ number_format($totalReceipts, 0, '.', ' ') }}
+                </div>
+
+                <div class="card-small">
+                    за выбранный период
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <div class="card-label">
+                    Завезено товаров
+                </div>
+
+                <div class="card-value">
+                    {{ number_format($totalQuantity, 0, '.', ' ') }} шт.
+                </div>
+
+                <div class="card-small">
+                    по всем приёмкам
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <div class="card-label">
+                    В среднем за приёмку
+                </div>
+
+                <div class="card-value">
+                    {{ number_format($averageQuantityPerReceipt, 1, '.', ' ') }}
+                    шт.
+                </div>
+
+                <div class="card-small">
+                    товаров на одну приёмку
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <div class="card-label">
+                    Дней с приёмками
+                </div>
+
+                <div class="card-value">
+                    {{ number_format($receiptDaysCount, 0, '.', ' ') }}
+                </div>
+
+                <div class="card-small">
+                    дней за выбранный период
+                </div>
+
+            </div>
 
         </div>
 
+        {{-- WEEKDAYS --}}
 
-        <div class="field">
+        @php
 
-            <label>
-                По
-            </label>
-
-            <input
-                type="date"
-                name="to"
-                value="{{ $to->format('Y-m-d') }}"
-            >
-
-        </div>
-
-    </div>
-
-
-    <div class="field">
-
-        <label>
-            Склад
-        </label>
-
-        <select name="warehouse_id">
-
-            <option value="">
-                Все склады
-            </option>
-
-            @foreach($warehouses as $warehouse)
-
-                <option
-                    value="{{ $warehouse->id }}"
-                    @selected($selectedWarehouse == $warehouse->id)
-                >
-                    {{ $warehouse->name }}
-                </option>
-
-            @endforeach
-
-        </select>
-
-    </div>
-
-
-    <button
-        type="submit"
-        class="filter-btn"
-    >
-        Показать
-    </button>
-
-
-
-    <a
-        href="{{ url('/admin/receipts') }}"
-        class="receipts-btn"
-    >
-        Все приёмки
-    </a>
-
-</form>
-
-
-{{-- MAIN CARDS --}}
-
-<div class="cards">
-
-    <div class="card">
-
-        <div class="card-label">
-            Всего приёмок
-        </div>
-
-        <div class="card-value">
-            {{ number_format($totalReceipts, 0, '.', ' ') }}
-        </div>
-
-        <div class="card-small">
-            за выбранный период
-        </div>
-
-    </div>
-
-
-    <div class="card">
-
-        <div class="card-label">
-            Завезено товаров
-        </div>
-
-        <div class="card-value">
-            {{ number_format($totalQuantity, 0, '.', ' ') }} шт.
-        </div>
-
-        <div class="card-small">
-            по всем приёмкам
-        </div>
-
-    </div>
-
-
-    <div class="card">
-
-        <div class="card-label">
-            В среднем за приёмку
-        </div>
-
-        <div class="card-value">
-            {{ number_format($averageQuantityPerReceipt, 1, '.', ' ') }}
-            шт.
-        </div>
-
-        <div class="card-small">
-            товаров на одну приёмку
-        </div>
-
-    </div>
-
-
-    <div class="card">
-
-        <div class="card-label">
-            Дней с приёмками
-        </div>
-
-        <div class="card-value">
-            {{ number_format($receiptDaysCount, 0, '.', ' ') }}
-        </div>
-
-        <div class="card-small">
-            дней за выбранный период
-        </div>
-
-    </div>
-
-</div>
-
-
-{{-- WEEKDAYS --}}
-
-@php
-
-    $weekdayNames = [
+        $weekdayNames = [
         1 => 'Пн',
         2 => 'Вт',
         3 => 'Ср',
@@ -680,219 +722,211 @@
         5 => 'Пт',
         6 => 'Сб',
         7 => 'Вс',
-    ];
-
-    $weekdayStats = [];
-
-    for ($i = 1; $i <= 7; $i++) {
-        $weekdayStats[$i] = [
-            'receipts' => 0,
-            'quantity' => 0,
         ];
-    }
 
-    foreach ($dailyStats as $day) {
+        $weekdayStats = [];
 
-        $date = \Carbon\Carbon::parse($day['date']);
+        for ($i = 1; $i <= 7; $i++) {
+            $weekdayStats[$i]=[ 'receipts'=> 0,
+            'quantity' => 0,
+            ];
+            }
 
-        $weekday = $date->dayOfWeekIso;
+            foreach ($dailyStats as $day) {
 
-        $weekdayStats[$weekday]['receipts'] += (int) $day['receipts'];
+            $date = \Carbon\Carbon::parse($day['date']);
 
-        $weekdayStats[$weekday]['quantity'] += (int) $day['quantity'];
-    }
+            $weekday = $date->dayOfWeekIso;
 
-@endphp
+            $weekdayStats[$weekday]['receipts'] += (int) $day['receipts'];
 
+            $weekdayStats[$weekday]['quantity'] += (int) $day['quantity'];
+            }
 
-<div class="section">
+            @endphp
 
-    <div class="section-header">
+            <div class="section">
 
-        <h2 class="section-title">
-            Приёмки по дням недели
-        </h2>
+                <div class="section-header">
 
-    </div>
+                    <h2 class="section-title">
+                        Приёмки по дням недели
+                    </h2>
 
+                </div>
 
-    <div class="weekday-scroller">
+                <div class="weekday-scroller">
 
-        <div class="weekday-grid">
+                    <div class="weekday-grid">
 
-            @foreach($weekdayNames as $dayNumber => $dayName)
+                        @foreach($weekdayNames as $dayNumber => $dayName)
 
-                <div class="weekday-card">
+                        <div class="weekday-card">
 
-                    <div class="weekday-name">
-                        {{ $dayName }}
-                    </div>
+                            <div class="weekday-name">
+                                {{ $dayName }}
+                            </div>
 
-                    <div class="weekday-value">
-                        {{ number_format($weekdayStats[$dayNumber]['receipts'], 0, '.', ' ') }}
-                    </div>
+                            <div class="weekday-value">
+                                {{ number_format($weekdayStats[$dayNumber]['receipts'], 0, '.', ' ') }}
+                            </div>
 
-                    <div class="weekday-label">
-                        приёмок
-                    </div>
+                            <div class="weekday-label">
+                                приёмок
+                            </div>
 
-                    <div class="weekday-products">
-                        {{ number_format($weekdayStats[$dayNumber]['quantity'], 0, '.', ' ') }}
-                        шт.
+                            <div class="weekday-products">
+                                {{ number_format($weekdayStats[$dayNumber]['quantity'], 0, '.', ' ') }}
+                                шт.
+                            </div>
+
+                        </div>
+
+                        @endforeach
+
                     </div>
 
                 </div>
 
-            @endforeach
+            </div>
 
-        </div>
+            {{-- TOP 10 PRODUCTS --}}
 
-    </div>
+            <div class="section">
 
-</div>
+                <div class="section-header">
 
+                    <h2 class="section-title">
+                        ТОП-10 товаров по среднему завозу
+                    </h2>
 
-{{-- TOP 10 PRODUCTS --}}
+                    <a
+                        href="{{ route('admin.analytics.receipts.product', request()->query()) }}"
+                        class="receipts-btn">
+                        Подробнее
+                    </a>
 
-<div class="section">
+                </div>
 
-    <div class="section-header">
+                <div class="section-note">
+                    Средний завоз = общее количество завезённого товара ÷ количество приёмок
+                </div>
 
-        <h2 class="section-title">
-            ТОП-10 товаров по среднему завозу
-        </h2>
+                <div class="table-wrap">
 
-        <a
-            href="{{ route('admin.analytics.receipts.product', request()->query()) }}"
-            class="receipts-btn"
-        >
-            Подробнее
-        </a>
+                    <table>
 
-    </div>
+                        <thead>
 
-    <div class="section-note">
-        Средний завоз = общее количество завезённого товара ÷ количество приёмок
-    </div>
+                            <tr>
 
-    <div class="table-wrap">
+                                <th>
+                                    #
+                                </th>
 
-        <table>
+                                <th>
+                                    Артикул
+                                </th>
 
-            <thead>
+                                <th class="number">
+                                    Приёмок
+                                </th>
 
-                <tr>
+                                <th class="number">
+                                    Завезено
+                                </th>
 
-                    <th>
-                        #
-                    </th>
+                                <th class="number">
+                                    Средний завоз
+                                </th>
 
-                    <th>
-                        Артикул
-                    </th>
+                            </tr>
 
-                    <th class="number">
-                        Приёмок
-                    </th>
+                        </thead>
 
-                    <th class="number">
-                        Завезено
-                    </th>
+                        <tbody>
 
-                    <th class="number">
-                        Средний завоз
-                    </th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                @php
-                    $topProducts = collect($productStats)
-                        ->map(function ($product) {
+                            @php
+                            $topProducts = collect($productStats)
+                            ->map(function ($product) {
 
                             $receipts = (int) $product['receipts'];
                             $quantity = (int) $product['quantity'];
 
                             $product['average_quantity'] = $receipts > 0
-                                ? $quantity / $receipts
-                                : 0;
+                            ? $quantity / $receipts
+                            : 0;
 
                             return $product;
-                        })
-                        ->sortByDesc('average_quantity')
-                        ->take(10)
-                        ->values();
-                @endphp
+                            })
+                            ->sortByDesc('average_quantity')
+                            ->take(10)
+                            ->values();
+                            @endphp
 
-                @forelse($topProducts as $index => $product)
+                            @forelse($topProducts as $index => $product)
 
-                    <tr>
+                            <tr>
 
-                        <td class="rank">
-                            {{ $index + 1 }}
-                        </td>
+                                <td class="rank">
+                                    {{ $index + 1 }}
+                                </td>
 
-                        <td class="sku">
-                            <a
-                                href="{{ route('admin.analytics.receipts.product', array_merge(
+                                <td class="sku">
+                                    <a
+                                        href="{{ route('admin.analytics.receipts.product', array_merge(
                                     request()->query(),
                                     ['variant_id' => $product['variant_id']]
-                                )) }}"
-                            >
-                                {{ $product['sku'] }}
-                            </a>
-                        </td>
+                                )) }}">
+                                        {{ $product['sku'] }}
+                                    </a>
+                                </td>
 
-                        <td class="number" data-label="Приёмок">
+                                <td class="number" data-label="Приёмок">
 
-                            {{ number_format($product['receipts'], 0, '.', ' ') }}
+                                    {{ number_format($product['receipts'], 0, '.', ' ') }}
 
-                        </td>
+                                </td>
 
-                        <td class="number quantity" data-label="Завезено">
+                                <td class="number quantity" data-label="Завезено">
 
-                            {{ number_format($product['quantity'], 0, '.', ' ') }}
-                            шт.
+                                    {{ number_format($product['quantity'], 0, '.', ' ') }}
+                                    шт.
 
-                        </td>
+                                </td>
 
-                        <td class="number quantity" data-label="Средний завоз">
+                                <td class="number quantity" data-label="Средний завоз">
 
-                            {{ number_format($product['average_quantity'], 1, '.', ' ') }}
-                            шт.
+                                    {{ number_format($product['average_quantity'], 1, '.', ' ') }}
+                                    шт.
 
-                        </td>
+                                </td>
 
-                    </tr>
+                            </tr>
 
-                @empty
+                            @empty
 
-                    <tr>
+                            <tr>
 
-                        <td
-                            colspan="5"
-                            class="empty"
-                        >
-                            За выбранный период данных нет
-                        </td>
+                                <td
+                                    colspan="5"
+                                    class="empty">
+                                    За выбранный период данных нет
+                                </td>
 
-                    </tr>
+                            </tr>
 
-                @endforelse
+                            @endforelse
 
-            </tbody>
+                        </tbody>
 
-        </table>
+                    </table>
+
+                </div>
+
+            </div>
 
     </div>
-
-</div>
-
-
-</div>
 
 </body>
 

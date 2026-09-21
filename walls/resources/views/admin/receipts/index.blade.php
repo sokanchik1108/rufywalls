@@ -134,6 +134,14 @@
         .filter {
             position: relative;
             flex: 1;
+            min-width: 0;
+        }
+
+        /* Ровная ширина полей "От" и "До" */
+        .filter:nth-child(2),
+        .filter:nth-child(3) {
+            flex: 1 1 0;
+            min-width: 0;
         }
 
         .filter-label {
@@ -150,6 +158,7 @@
         .filter input,
         .filter select {
             width: 100%;
+            min-width: 0;
             height: 45px;
             padding: 15px 10px 3px;
             border: 1px solid #e5e7eb;
@@ -431,6 +440,12 @@
                 grid-column: 1 / -1;
             }
 
+            .filter:nth-child(2),
+            .filter:nth-child(3) {
+                width: 100%;
+                min-width: 0;
+            }
+
             .filter-button {
                 grid-column: 1 / -1;
                 width: 100%;
@@ -578,7 +593,6 @@
 
         </div>
 
-
         {{-- =========================
          ALERTS
     ========================= --}}
@@ -614,7 +628,6 @@
         </div>
 
         @endif
-
 
         {{-- =========================
          FILTERS
@@ -654,7 +667,6 @@
 
             </div>
 
-
             {{-- От --}}
 
             <div class="filter">
@@ -669,7 +681,6 @@
                     value="{{ \Carbon\Carbon::parse($from)->format('Y-m-d') }}">
 
             </div>
-
 
             {{-- До --}}
 
@@ -686,7 +697,6 @@
 
             </div>
 
-
             {{-- Применить --}}
 
             <button
@@ -696,7 +706,6 @@
             </button>
 
         </form>
-
 
         {{-- ==================================================
          DESKTOP TABLE
@@ -746,20 +755,17 @@
                             #{{ $receipt->id }}
                         </td>
 
-
                         {{-- Дата --}}
 
                         <td class="date-cell">
                             {{ \Carbon\Carbon::parse($receipt->receipt_date)->format('d.m.Y') }}
                         </td>
 
-
                         {{-- Склад --}}
 
                         <td class="warehouse-cell">
                             {{ $receipt->warehouse->name }}
                         </td>
-
 
                         {{-- Комментарий --}}
 
@@ -778,7 +784,6 @@
                             @endif
 
                         </td>
-
 
                         {{-- Действия --}}
 
@@ -799,7 +804,6 @@
 
                                 </a>
 
-
                                 {{-- Изменить --}}
 
                                 <a
@@ -813,7 +817,6 @@
                                     </svg>
 
                                 </a>
-
 
                                 {{-- Удалить --}}
 
@@ -869,7 +872,6 @@
             </table>
 
         </div>
-
 
         {{-- ==================================================
          MOBILE CARDS
@@ -938,7 +940,6 @@
             @endforelse
 
         </div>
-
 
         {{-- =========================
          PAGINATION
