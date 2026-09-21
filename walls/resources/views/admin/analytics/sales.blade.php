@@ -566,15 +566,14 @@
             }
 
             .filters {
-                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+                grid-template-columns: 1fr;
                 gap: 9px;
                 padding: 11px;
                 margin-bottom: 12px;
                 border-radius: 11px;
             }
 
-            .filter-group:nth-child(3),
-            .filter-group:nth-child(4) {
+            .filter-group {
                 grid-column: 1 / -1;
             }
 
