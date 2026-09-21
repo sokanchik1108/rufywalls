@@ -54,7 +54,9 @@
             padding: 16px;
         }
 
-        /* HEADER */
+        /* =========================================================
+           HEADER
+        ========================================================= */
 
         .header {
             display: flex;
@@ -105,11 +107,13 @@
             font-size: 12px;
         }
 
-        /* FILTERS */
+        /* =========================================================
+           FILTERS
+        ========================================================= */
 
         .filters {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(180px, 220px) auto auto;
             align-items: end;
             gap: 8px;
             padding: 10px;
@@ -120,23 +124,22 @@
             box-shadow: var(--shadow);
         }
 
-        /* ИСПРАВЛЕНО:
-       От и По всегда одинаковой ширины */
+        /*
+         * От и По всегда одинаковой ширины.
+         */
 
         .date-row {
             display: grid;
             grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
             gap: 8px;
-            flex: 1 1 0;
-            min-width: 0;
             width: 100%;
+            min-width: 0;
         }
 
         .field {
             display: flex;
             flex-direction: column;
             gap: 4px;
-            flex: 1;
             min-width: 0;
             width: 100%;
         }
@@ -145,6 +148,7 @@
             font-size: 11px;
             color: var(--text-muted);
             font-weight: 600;
+            line-height: 1.2;
         }
 
         input,
@@ -164,18 +168,27 @@
             max-width: 100%;
         }
 
-        /* ДАТЫ */
+        /*
+         * Даты
+         */
 
         input[type="date"] {
             display: block;
             width: 100%;
             min-width: 0;
             max-width: 100%;
+            height: 34px;
             box-sizing: border-box;
             -webkit-appearance: auto;
             appearance: auto;
-            padding-left: 8px;
-            padding-right: 5px;
+
+            /*
+             * Выравниваем дату визуально по центру.
+             */
+            text-align: center;
+
+            padding-left: 6px;
+            padding-right: 6px;
         }
 
         input[type="date"]::-webkit-calendar-picker-indicator {
@@ -189,6 +202,15 @@
             box-shadow: 0 0 0 3px var(--accent-soft);
         }
 
+        /*
+         * Склад
+         */
+
+        .filters>.field {
+            width: 100%;
+            min-width: 0;
+        }
+
         .filter-btn {
             height: 34px;
             padding: 0 14px;
@@ -200,6 +222,7 @@
             font-weight: 700;
             cursor: pointer;
             transition: background .15s ease, transform .1s ease;
+            white-space: nowrap;
         }
 
         .filter-btn:hover {
@@ -210,7 +233,9 @@
             transform: scale(.98);
         }
 
-        /* RECEIPTS BUTTON */
+        /* =========================================================
+           RECEIPTS BUTTON
+        ========================================================= */
 
         .receipts-btn {
             display: inline-flex;
@@ -234,7 +259,9 @@
             color: var(--accent-dark);
         }
 
-        /* CARDS */
+        /* =========================================================
+           CARDS
+        ========================================================= */
 
         .cards {
             display: grid;
@@ -270,7 +297,9 @@
             font-size: 9px;
         }
 
-        /* SECTION */
+        /* =========================================================
+           SECTION
+        ========================================================= */
 
         .section {
             background: var(--card-bg);
@@ -302,22 +331,32 @@
             font-size: 11px;
         }
 
-        /* WEEKDAYS */
+        /* =========================================================
+           WEEKDAYS
+        ========================================================= */
 
         .weekday-scroller {
+            width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
-            margin: 0 -18px;
-            padding: 0 18px;
+            margin: 0;
+            padding: 0;
         }
 
         .weekday-grid {
             display: grid;
             grid-template-columns: repeat(7, minmax(0, 1fr));
             gap: 8px;
+            width: 100%;
         }
 
         .weekday-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+
+            min-width: 0;
             border: 1px solid var(--border-soft);
             border-radius: var(--radius-sm);
             padding: 8px 4px;
@@ -326,35 +365,48 @@
         }
 
         .weekday-name {
+            width: 100%;
             color: var(--text-muted);
             font-size: 10px;
             font-weight: 700;
             margin-bottom: 5px;
             text-transform: uppercase;
+            text-align: center;
         }
 
         .weekday-value {
+            width: 100%;
             font-size: 15px;
             font-weight: 800;
             color: var(--accent-dark);
+            text-align: center;
+            line-height: 1.2;
         }
 
         .weekday-label {
+            width: 100%;
             margin-top: 2px;
             color: var(--text-faint);
             font-size: 9px;
+            text-align: center;
+            line-height: 1.2;
         }
 
         .weekday-products {
+            width: 100%;
             margin-top: 5px;
             padding-top: 5px;
             border-top: 1px solid var(--border-soft);
             font-size: 10px;
             font-weight: 700;
             color: #374151;
+            text-align: center;
+            line-height: 1.2;
         }
 
-        /* TABLE */
+        /* =========================================================
+           TABLE
+        ========================================================= */
 
         .table-wrap {
             width: 100%;
@@ -405,10 +457,19 @@
             color: var(--accent-dark);
         }
 
+        /*
+         * Числовые колонки
+         */
+
         .number {
-            text-align: right;
+            text-align: center;
             white-space: nowrap;
             font-variant-numeric: tabular-nums;
+        }
+
+        th.number,
+        td.number {
+            text-align: center;
         }
 
         .quantity {
@@ -425,9 +486,12 @@
             width: 34px;
             color: var(--text-faint);
             font-weight: 800;
+            text-align: center;
         }
 
-        /* MOBILE TABLE */
+        /* =========================================================
+           MOBILE TABLE
+        ========================================================= */
 
         @media (max-width: 600px) {
 
@@ -443,10 +507,39 @@
 
             .rank {
                 width: 22px;
+                text-align: center;
             }
+
         }
 
-        /* MOBILE */
+        /* =========================================================
+           TABLET / MOBILE
+        ========================================================= */
+
+        @media (max-width: 900px) {
+
+            .filters {
+                grid-template-columns: minmax(0, 1fr) minmax(160px, 200px);
+            }
+
+            .date-row {
+                grid-column: 1 / -1;
+            }
+
+            .filters>.field {
+                grid-column: 1;
+            }
+
+            .filter-btn {
+                grid-column: 2;
+            }
+
+            .filters>.receipts-btn {
+                grid-column: 1 / -1;
+                width: 100%;
+            }
+
+        }
 
         @media (max-width: 700px) {
 
@@ -460,6 +553,10 @@
 
         }
 
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
         @media (max-width: 600px) {
 
             .page {
@@ -467,19 +564,23 @@
             }
 
             .filters {
-                flex-direction: column;
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 9px;
                 align-items: stretch;
             }
 
-            /* На телефоне От и По остаются
-           в одной строке и имеют одинаковую ширину */
+            /*
+             * От и По строго в одной строке.
+             * Оба поля всегда одинаковой ширины.
+             */
 
             .date-row {
+                grid-column: 1;
                 display: grid;
                 grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
                 width: 100%;
                 min-width: 0;
-                flex: none;
                 gap: 8px;
             }
 
@@ -493,17 +594,28 @@
                 min-width: 0;
                 max-width: 100%;
                 height: 34px;
-                padding-left: 7px;
+                padding-left: 4px;
                 padding-right: 4px;
                 font-size: 12px;
+                text-align: center;
             }
 
-            .filters>.receipts-btn,
-            .filters>.filter-btn {
+            .filters>.field {
+                grid-column: 1;
+                width: 100%;
+            }
+
+            .filters>.filter-btn,
+            .filters>.receipts-btn {
+                grid-column: 1;
                 width: 100%;
             }
 
         }
+
+        /* =========================================================
+           SMALL MOBILE
+        ========================================================= */
 
         @media (max-width: 420px) {
 
@@ -518,9 +630,23 @@
             }
 
             .date-row input[type="date"] {
-                padding-left: 6px;
+                padding-left: 3px;
                 padding-right: 3px;
                 font-size: 11px;
+                text-align: center;
+            }
+
+            .weekday-card {
+                padding-left: 3px;
+                padding-right: 3px;
+            }
+
+            .weekday-value {
+                text-align: center;
+            }
+
+            .weekday-products {
+                text-align: center;
             }
 
         }
@@ -727,9 +853,11 @@
         $weekdayStats = [];
 
         for ($i = 1; $i <= 7; $i++) {
+
             $weekdayStats[$i]=[ 'receipts'=> 0,
             'quantity' => 0,
             ];
+
             }
 
             foreach ($dailyStats as $day) {
@@ -741,6 +869,7 @@
             $weekdayStats[$weekday]['receipts'] += (int) $day['receipts'];
 
             $weekdayStats[$weekday]['quantity'] += (int) $day['quantity'];
+
             }
 
             @endphp
@@ -847,10 +976,12 @@
                         <tbody>
 
                             @php
+
                             $topProducts = collect($productStats)
                             ->map(function ($product) {
 
                             $receipts = (int) $product['receipts'];
+
                             $quantity = (int) $product['quantity'];
 
                             $product['average_quantity'] = $receipts > 0
@@ -858,10 +989,12 @@
                             : 0;
 
                             return $product;
+
                             })
                             ->sortByDesc('average_quantity')
                             ->take(10)
                             ->values();
+
                             @endphp
 
                             @forelse($topProducts as $index => $product)
@@ -873,29 +1006,37 @@
                                 </td>
 
                                 <td class="sku">
+
                                     <a
                                         href="{{ route('admin.analytics.receipts.product', array_merge(
-                                    request()->query(),
-                                    ['variant_id' => $product['variant_id']]
-                                )) }}">
+                                        request()->query(),
+                                        ['variant_id' => $product['variant_id']]
+                                    )) }}">
                                         {{ $product['sku'] }}
                                     </a>
+
                                 </td>
 
-                                <td class="number" data-label="Приёмок">
+                                <td
+                                    class="number"
+                                    data-label="Приёмок">
 
                                     {{ number_format($product['receipts'], 0, '.', ' ') }}
 
                                 </td>
 
-                                <td class="number quantity" data-label="Завезено">
+                                <td
+                                    class="number quantity"
+                                    data-label="Завезено">
 
                                     {{ number_format($product['quantity'], 0, '.', ' ') }}
                                     шт.
 
                                 </td>
 
-                                <td class="number quantity" data-label="Средний завоз">
+                                <td
+                                    class="number quantity"
+                                    data-label="Средний завоз">
 
                                     {{ number_format($product['average_quantity'], 1, '.', ' ') }}
                                     шт.
@@ -911,7 +1052,9 @@
                                 <td
                                     colspan="5"
                                     class="empty">
+
                                     За выбранный период данных нет
+
                                 </td>
 
                             </tr>

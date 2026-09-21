@@ -10,1004 +10,1016 @@
 
 <body>
 
-<style>
-
-    .finance-page {
-        padding: 24px;
-        background: #f6f7f9;
-        min-height: 100vh;
-        color: #111827;
-        font-family: sans-serif;
-    }
-
-    /* NAVIGATION */
-
-    .analytics-navigation {
-        margin-bottom: 18px;
-    }
-
-    .analytics-nav-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        height: 36px;
-        padding: 0 13px;
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 8px;
-        color: #374151;
-        text-decoration: none;
-        font-size: 13px;
-        font-weight: 600;
-        transition: .15s ease;
-    }
-
-    .analytics-nav-btn:hover {
-        background: #f9fafb;
-        border-color: #d1d5db;
-        color: #111827;
-    }
-
-    /* HEADER */
-
-    .finance-header {
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-        gap: 20px;
-        margin-bottom: 24px;
-    }
-
-    .finance-title h1 {
-        margin: 0;
-        font-size: 25px;
-        line-height: 1.2;
-        font-weight: 700;
-        letter-spacing: -0.4px;
-    }
-
-    .finance-title p {
-        margin: 7px 0 0;
-        color: #8a919c;
-        font-size: 13px;
-    }
-
-    /* FILTER */
-
-    .filter-box {
-        display: flex;
-        align-items: flex-end;
-        gap: 8px;
-        background: #fff;
-        padding: 8px;
-        border: 1px solid #eceef1;
-        border-radius: 12px;
-    }
-
-    .field {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    .field label {
-        padding-left: 3px;
-        font-size: 11px;
-        color: #8a919c;
-    }
-
-    .field input,
-    .field select {
-        height: 38px;
-        border: 1px solid #e5e7eb;
-        border-radius: 8px;
-        padding: 0 10px;
-        background: #fff;
-        color: #111827;
-        outline: none;
-        font-size: 13px;
-    }
-
-    .field input:focus,
-    .field select:focus {
-        border-color: #9ca3af;
-    }
-
-    /* ==========================================================
-       ДАТЫ — ОДИНАКОВАЯ ШИРИНА
-    ========================================================== */
-
-    .filter-box > .field:nth-child(1),
-    .filter-box > .field:nth-child(2) {
-        width: 145px;
-        min-width: 145px;
-    }
-
-    .filter-box > .field:nth-child(1) input[type="date"],
-    .filter-box > .field:nth-child(2) input[type="date"] {
-        display: block;
-        width: 100%;
-        min-width: 0;
-        max-width: 100%;
-        height: 38px;
-        box-sizing: border-box;
-        padding: 0 8px;
-        -webkit-appearance: none;
-        appearance: none;
-    }
-
-    .filter-box > .field:nth-child(1) input[type="date"]::-webkit-calendar-picker-indicator,
-    .filter-box > .field:nth-child(2) input[type="date"]::-webkit-calendar-picker-indicator {
-        width: 18px;
-        height: 18px;
-        margin: 0;
-        padding: 0;
-    }
-
-    .point-field {
-        min-width: 150px;
-    }
-
-    /* BUTTON */
-
-    .btn {
-        height: 38px;
-        border: 0;
-        border-radius: 8px;
-        padding: 0 14px;
-        cursor: pointer;
-        font-size: 13px;
-        font-weight: 600;
-        transition: .15s ease;
-    }
-
-    .btn-primary {
-        background: #01142f;
-        color: #fff;
-    }
-
-    .btn-primary:hover {
-        background: #02214b;
-    }
-
-    /* FINANCIAL CARDS */
-
-    .finance-cards {
-        display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        gap: 10px;
-        margin-bottom: 12px;
-    }
-
-    .finance-card {
-        background: #fff;
-        border: 1px solid #eceef1;
-        border-radius: 13px;
-        padding: 17px;
-    }
-
-    .finance-card-title {
-        font-size: 12px;
-        color: #8a919c;
-        margin-bottom: 9px;
-    }
-
-    .finance-card-value {
-        font-size: 21px;
-        font-weight: 700;
-        letter-spacing: -0.4px;
-        white-space: nowrap;
-    }
-
-    .finance-card-value.blue {
-        color: #1d4ed8;
-    }
-
-    .finance-card-value.green {
-        color: #15803d;
-    }
-
-    .finance-card-value.red {
-        color: #dc2626;
-    }
-
-    .finance-card.net-profit {
-        border-color: #dfe3e8;
-    }
-
-    .finance-card.qr-lezgovka {
-        border-color: #fecaca;
-    }
-
-    /* SECTION */
-
-    .section {
-        background: #fff;
-        border: 1px solid #eceef1;
-        border-radius: 13px;
-        padding: 18px;
-        margin-bottom: 12px;
-    }
-
-    .section h2 {
-        margin: 0 0 16px;
-        font-size: 16px;
-        font-weight: 650;
-        letter-spacing: -0.2px;
-    }
-
-    /* TABLE */
-
-    .table-wrapper {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        margin: 0 -18px;
-        padding: 0 18px;
-    }
-
-    .payment-table {
-        width: 100%;
-        border-collapse: collapse;
-        min-width: 780px;
-    }
-
-    .payment-table th {
-        text-align: left;
-        color: #9aa0a9;
-        font-size: 10px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: .3px;
-        padding: 10px 9px;
-        border-bottom: 1px solid #eef0f2;
-    }
-
-    .payment-table td {
-        padding: 11px 9px;
-        border-bottom: 1px solid #f2f3f5;
-        color: #222;
-        font-size: 13px;
-        vertical-align: middle;
-    }
-
-    .payment-table tbody tr:last-child td {
-        border-bottom: 0;
-    }
-
-    .payment-amount {
-        font-weight: 650;
-        white-space: nowrap;
-    }
-
-    .payment-description {
-        color: #6b7280;
-    }
-
-    .payment-point {
-        white-space: nowrap;
-    }
-
-    /* TOTAL */
-
-    .payments-total {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 15px;
-        margin-top: 15px;
-        padding-top: 14px;
-        border-top: 1px solid #eef0f2;
-    }
-
-    .payments-total-label {
-        color: #8a919c;
-        font-size: 12px;
-    }
-
-    .payments-total-value {
-        font-size: 16px;
-        font-weight: 700;
-        color: #dc2626;
-        white-space: nowrap;
-    }
-
-    /* EMPTY */
-
-    .empty {
-        padding: 28px 10px;
-        text-align: center;
-        color: #a0a6af;
-        font-size: 13px;
-    }
-
-    /* ALERTS */
-
-    .alert {
-        padding: 11px 13px;
-        border-radius: 9px;
-        margin-bottom: 14px;
-        font-size: 13px;
-    }
-
-    .alert-success {
-        background: #ecfdf3;
-        color: #166534;
-    }
-
-    .alert-error {
-        background: #fff1f2;
-        color: #991b1b;
-    }
-
-    /* TABLE ROW HOVER */
-
-    .payment-table tbody tr {
-        transition: background .15s ease;
-    }
-
-    .payment-table tbody tr:hover {
-        background: #fafafa;
-    }
-
-    /* TABLET */
-
-    @media (max-width: 1200px) {
-
-        .finance-cards {
-            grid-template-columns: repeat(3, 1fr);
-        }
-
-        .filter-box {
-            flex-wrap: wrap;
-        }
-
-        .point-field {
-            min-width: 140px;
-        }
-    }
-
-    /* MOBILE */
-
-    @media (max-width: 800px) {
-
+    <style>
         .finance-page {
-            padding: 14px;
+            padding: 24px;
+            background: #f6f7f9;
+            min-height: 100vh;
+            color: #111827;
+            font-family: sans-serif;
         }
+
+        /* NAVIGATION */
 
         .analytics-navigation {
-            margin-bottom: 14px;
+            margin-bottom: 18px;
         }
 
         .analytics-nav-btn {
-            height: 34px;
-            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            height: 36px;
+            padding: 0 13px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            color: #374151;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: .15s ease;
         }
+
+        .analytics-nav-btn:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+            color: #111827;
+        }
+
+        /* HEADER */
 
         .finance-header {
-            display: block;
-            margin-bottom: 16px;
-        }
-
-        .finance-title {
-            margin-bottom: 13px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 24px;
         }
 
         .finance-title h1 {
-            font-size: 22px;
+            margin: 0;
+            font-size: 25px;
+            line-height: 1.2;
+            font-weight: 700;
+            letter-spacing: -0.4px;
         }
 
+        .finance-title p {
+            margin: 7px 0 0;
+            color: #8a919c;
+            font-size: 13px;
+        }
+
+        /* FILTER */
+
         .filter-box {
-            width: 100%;
-            max-width: 100%;
-            box-sizing: border-box;
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            display: flex;
+            align-items: flex-end;
             gap: 8px;
+            background: #fff;
+            padding: 8px;
+            border: 1px solid #eceef1;
+            border-radius: 12px;
         }
 
         .field {
-            min-width: 0;
-            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .field label {
+            padding-left: 3px;
+            font-size: 11px;
+            color: #8a919c;
         }
 
         .field input,
         .field select {
-            width: 100%;
-            max-width: 100%;
-            min-width: 0;
-            box-sizing: border-box;
-            padding: 0 6px;
+            height: 38px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 0 10px;
+            background: #fff;
+            color: #111827;
+            outline: none;
             font-size: 13px;
         }
 
-        /* ======================================================
-           ОТ / ПО — РОВНО ПО 50% НА ТЕЛЕФОНЕ
-        ====================================================== */
-
-        .filter-box > .field:nth-child(1),
-        .filter-box > .field:nth-child(2) {
-            width: 100%;
-            min-width: 0;
-            max-width: 100%;
+        .field input:focus,
+        .field select:focus {
+            border-color: #9ca3af;
         }
 
-        .filter-box > .field:nth-child(1) input[type="date"],
-        .filter-box > .field:nth-child(2) input[type="date"] {
+        /* ==========================================================
+       ДАТЫ — ОДИНАКОВАЯ ШИРИНА
+    ========================================================== */
+
+        .filter-box>.field:nth-child(1),
+        .filter-box>.field:nth-child(2) {
+            width: 145px;
+            min-width: 145px;
+        }
+
+
+
+        .filter-box>.field:nth-child(1) input[type="date"],
+        .filter-box>.field:nth-child(2) input[type="date"] {
+            display: block;
             width: 100%;
             min-width: 0;
             max-width: 100%;
             height: 38px;
             box-sizing: border-box;
-            padding: 0 6px;
+            padding: 0 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            text-align: center;
         }
 
-        .filter-box > .field:nth-child(1) input[type="date"]::-webkit-calendar-picker-indicator,
-        .filter-box > .field:nth-child(2) input[type="date"]::-webkit-calendar-picker-indicator {
-            width: 17px;
-            height: 17px;
+        .filter-box>.field:nth-child(1) input[type="date"]::-webkit-calendar-picker-indicator,
+        .filter-box>.field:nth-child(2) input[type="date"]::-webkit-calendar-picker-indicator {
+            width: 18px;
+            height: 18px;
             margin: 0;
             padding: 0;
         }
 
         .point-field {
-            grid-column: 1 / -1;
-            min-width: 0;
+            min-width: 150px;
         }
 
-        .filter-box .btn {
-            grid-column: 1 / -1;
-            width: 100%;
+        /* BUTTON */
+
+        .btn {
+            height: 38px;
+            border: 0;
+            border-radius: 8px;
+            padding: 0 14px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: .15s ease;
         }
+
+        .btn-primary {
+            background: #01142f;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #02214b;
+        }
+
+        /* FINANCIAL CARDS */
 
         .finance-cards {
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            margin-bottom: 12px;
         }
 
         .finance-card {
-            padding: 14px;
-            border-radius: 11px;
-        }
-
-        .finance-card:last-child {
-            grid-column: 1 / -1;
+            background: #fff;
+            border: 1px solid #eceef1;
+            border-radius: 13px;
+            padding: 17px;
         }
 
         .finance-card-title {
-            font-size: 11px;
-            margin-bottom: 7px;
+            font-size: 12px;
+            color: #8a919c;
+            margin-bottom: 9px;
         }
 
         .finance-card-value {
-            font-size: 18px;
+            font-size: 21px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+            white-space: nowrap;
         }
 
+        .finance-card-value.blue {
+            color: #1d4ed8;
+        }
+
+        .finance-card-value.green {
+            color: #15803d;
+        }
+
+        .finance-card-value.red {
+            color: #dc2626;
+        }
+
+        .finance-card.net-profit {
+            border-color: #dfe3e8;
+        }
+
+        .finance-card.qr-lezgovka {
+            border-color: #fecaca;
+        }
+
+        /* SECTION */
+
         .section {
-            padding: 15px;
-            border-radius: 11px;
+            background: #fff;
+            border: 1px solid #eceef1;
+            border-radius: 13px;
+            padding: 18px;
+            margin-bottom: 12px;
         }
 
         .section h2 {
-            font-size: 15px;
-            margin-bottom: 14px;
+            margin: 0 0 16px;
+            font-size: 16px;
+            font-weight: 650;
+            letter-spacing: -0.2px;
         }
 
-        .table-wrapper {
-            margin: 0 -15px;
-            padding: 0 15px;
-        }
-
-        .payments-total {
-            align-items: flex-start;
-        }
-    }
-
-    @media (max-width: 480px) {
-
-        .payment-table {
-            min-width: 0;
-            width: max-content;
-            table-layout: auto;
-        }
-
-        .payment-table th,
-        .payment-table td {
-            padding: 8px 17px;
-            font-size: 12px;
-            white-space: nowrap;
-        }
-
-        .payment-table th:first-child,
-        .payment-table td:first-child {
-            width: auto;
-        }
-
-        .payment-table th:nth-child(2),
-        .payment-table td:nth-child(2) {
-            width: auto;
-        }
-
-        .payment-table th:nth-child(3),
-        .payment-table td:nth-child(3) {
-            width: auto;
-        }
-
-        .payment-table th:nth-child(4),
-        .payment-table td:nth-child(4) {
-            width: auto;
-        }
-
-        .payment-table th:nth-child(5),
-        .payment-table td:nth-child(5) {
-            width: auto;
-        }
-
-        .payment-description {
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+        /* TABLE */
 
         .table-wrapper {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
+            margin: 0 -18px;
+            padding: 0 18px;
         }
-    }
 
-</style>
+        .payment-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 780px;
+        }
 
-<div class="finance-page">
+        .payment-table th {
+            text-align: left;
+            color: #9aa0a9;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+            padding: 10px 9px;
+            border-bottom: 1px solid #eef0f2;
+        }
 
-    {{-- НАВИГАЦИЯ --}}
+        .payment-table td {
+            padding: 11px 9px;
+            border-bottom: 1px solid #f2f3f5;
+            color: #222;
+            font-size: 13px;
+            vertical-align: middle;
+        }
 
-    <div class="analytics-navigation">
+        .payment-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
 
-        <a
-            href="{{ route('admin.analytics.menu') }}"
-            class="analytics-nav-btn">
+        .payment-amount {
+            font-weight: 650;
+            white-space: nowrap;
+        }
 
-            ← В меню аналитики
+        .payment-description {
+            color: #6b7280;
+        }
 
-        </a>
+        .payment-point {
+            white-space: nowrap;
+        }
 
-    </div>
+        /* TOTAL */
 
-    {{-- HEADER --}}
+        .payments-total {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 14px;
+            border-top: 1px solid #eef0f2;
+        }
 
-    <div class="finance-header">
+        .payments-total-label {
+            color: #8a919c;
+            font-size: 12px;
+        }
 
-        <div class="finance-title">
+        .payments-total-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #dc2626;
+            white-space: nowrap;
+        }
 
-            <h1>
-                Финансы
-            </h1>
+        /* EMPTY */
 
-            <p>
+        .empty {
+            padding: 28px 10px;
+            text-align: center;
+            color: #a0a6af;
+            font-size: 13px;
+        }
 
-                {{ $from->format('d.m.Y') }}
+        /* ALERTS */
 
-                —
+        .alert {
+            padding: 11px 13px;
+            border-radius: 9px;
+            margin-bottom: 14px;
+            font-size: 13px;
+        }
 
-                {{ $to->format('d.m.Y') }}
+        .alert-success {
+            background: #ecfdf3;
+            color: #166534;
+        }
 
-                @if($selectedPointOfSale)
+        .alert-error {
+            background: #fff1f2;
+            color: #991b1b;
+        }
 
-                ·
+        /* TABLE ROW HOVER */
 
-                {{ $pointsOfSale->firstWhere('id', $selectedPointOfSale)->name ?? '' }}
+        .payment-table tbody tr {
+            transition: background .15s ease;
+        }
 
-                @endif
+        .payment-table tbody tr:hover {
+            background: #fafafa;
+        }
 
-            </p>
+        /* TABLET */
+
+        @media (max-width: 1200px) {
+
+            .finance-cards {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .filter-box {
+                flex-wrap: wrap;
+            }
+
+            .point-field {
+                min-width: 140px;
+            }
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 800px) {
+
+
+            input[type="date"] {
+                text-align: center;
+                text-align-last: center;
+            }
+
+            .finance-page {
+                padding: 14px;
+            }
+
+            .analytics-navigation {
+                margin-bottom: 14px;
+            }
+
+            .analytics-nav-btn {
+                height: 34px;
+                font-size: 12px;
+            }
+
+            .finance-header {
+                display: block;
+                margin-bottom: 16px;
+            }
+
+            .finance-title {
+                margin-bottom: 13px;
+            }
+
+            .finance-title h1 {
+                font-size: 22px;
+            }
+
+            .filter-box {
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+                gap: 8px;
+            }
+
+            .field {
+                min-width: 0;
+                width: 100%;
+            }
+
+            .field input,
+            .field select {
+                width: 100%;
+                max-width: 100%;
+                min-width: 0;
+                box-sizing: border-box;
+                padding: 0 6px;
+                font-size: 13px;
+            }
+
+            /* ======================================================
+           ОТ / ПО — РОВНО ПО 50% НА ТЕЛЕФОНЕ
+        ====================================================== */
+
+            .filter-box>.field:nth-child(1),
+            .filter-box>.field:nth-child(2) {
+                width: 100%;
+                min-width: 0;
+                max-width: 100%;
+            }
+
+            .filter-box>.field:nth-child(1) input[type="date"],
+            .filter-box>.field:nth-child(2) input[type="date"] {
+                width: 100%;
+                min-width: 0;
+                max-width: 100%;
+                height: 38px;
+                box-sizing: border-box;
+                padding: 0 6px;
+            }
+
+            .filter-box>.field:nth-child(1) input[type="date"]::-webkit-calendar-picker-indicator,
+            .filter-box>.field:nth-child(2) input[type="date"]::-webkit-calendar-picker-indicator {
+                width: 17px;
+                height: 17px;
+                margin: 0;
+                padding: 0;
+            }
+
+            .point-field {
+                grid-column: 1 / -1;
+                min-width: 0;
+            }
+
+            .filter-box .btn {
+                grid-column: 1 / -1;
+                width: 100%;
+            }
+
+            .finance-cards {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+
+            .finance-card {
+                padding: 14px;
+                border-radius: 11px;
+            }
+
+            .finance-card:last-child {
+                grid-column: 1 / -1;
+            }
+
+            .finance-card-title {
+                font-size: 11px;
+                margin-bottom: 7px;
+            }
+
+            .finance-card-value {
+                font-size: 18px;
+            }
+
+            .section {
+                padding: 15px;
+                border-radius: 11px;
+            }
+
+            .section h2 {
+                font-size: 15px;
+                margin-bottom: 14px;
+            }
+
+            .table-wrapper {
+                margin: 0 -15px;
+                padding: 0 15px;
+            }
+
+            .payments-total {
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .payment-table {
+                min-width: 0;
+                width: max-content;
+                table-layout: auto;
+            }
+
+            .payment-table th,
+            .payment-table td {
+                padding: 8px 17px;
+                font-size: 12px;
+                white-space: nowrap;
+            }
+
+            .payment-table th:first-child,
+            .payment-table td:first-child {
+                width: auto;
+            }
+
+            .payment-table th:nth-child(2),
+            .payment-table td:nth-child(2) {
+                width: auto;
+            }
+
+            .payment-table th:nth-child(3),
+            .payment-table td:nth-child(3) {
+                width: auto;
+            }
+
+            .payment-table th:nth-child(4),
+            .payment-table td:nth-child(4) {
+                width: auto;
+            }
+
+            .payment-table th:nth-child(5),
+            .payment-table td:nth-child(5) {
+                width: auto;
+            }
+
+            .payment-description {
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .table-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            input[type="date"] {
+                text-align: center;
+                text-align-last: center;
+            }
+        }
+    </style>
+
+    <div class="finance-page">
+
+        {{-- НАВИГАЦИЯ --}}
+
+        <div class="analytics-navigation">
+
+            <a
+                href="{{ route('admin.analytics.menu') }}"
+                class="analytics-nav-btn">
+
+                ← В меню аналитики
+
+            </a>
 
         </div>
 
-        {{-- ФИЛЬТР --}}
+        {{-- HEADER --}}
 
-        <form
-            method="GET"
-            class="filter-box">
+        <div class="finance-header">
 
-            {{-- ДАТА ОТ --}}
+            <div class="finance-title">
 
-            <div class="field">
+                <h1>
+                    Финансы
+                </h1>
 
-                <label>
-                    С
-                </label>
+                <p>
 
-                <input
-                    type="date"
-                    name="from"
-                    value="{{ $from->format('Y-m-d') }}">
+                    {{ $from->format('d.m.Y') }}
 
-            </div>
+                    —
 
-            {{-- ДАТА ДО --}}
+                    {{ $to->format('d.m.Y') }}
 
-            <div class="field">
+                    @if($selectedPointOfSale)
 
-                <label>
-                    По
-                </label>
+                    ·
 
-                <input
-                    type="date"
-                    name="to"
-                    value="{{ $to->format('Y-m-d') }}">
+                    {{ $pointsOfSale->firstWhere('id', $selectedPointOfSale)->name ?? '' }}
+
+                    @endif
+
+                </p>
 
             </div>
 
-            {{-- ТОЧКА ПРОДАЖ --}}
+            {{-- ФИЛЬТР --}}
 
-            <div class="field point-field">
+            <form
+                method="GET"
+                class="filter-box">
 
-                <label>
-                    Точка продаж
-                </label>
+                {{-- ДАТА ОТ --}}
 
-                <select name="point_of_sale_id">
+                <div class="field">
 
-                    <option value="">
-                        Все точки
-                    </option>
+                    <label>
+                        С
+                    </label>
 
-                    @foreach($pointsOfSale as $point)
+                    <input
+                        type="date"
+                        name="from"
+                        value="{{ $from->format('Y-m-d') }}">
 
-                    <option
-                        value="{{ $point->id }}"
-                        @selected($selectedPointOfSale == $point->id)>
+                </div>
 
-                        {{ $point->name }}
+                {{-- ДАТА ДО --}}
 
-                    </option>
+                <div class="field">
 
-                    @endforeach
+                    <label>
+                        По
+                    </label>
 
-                </select>
+                    <input
+                        type="date"
+                        name="to"
+                        value="{{ $to->format('Y-m-d') }}">
 
-            </div>
+                </div>
 
-            <button
-                type="submit"
-                class="btn btn-primary">
+                {{-- ТОЧКА ПРОДАЖ --}}
 
-                Применить
+                <div class="field point-field">
 
-            </button>
+                    <label>
+                        Точка продаж
+                    </label>
 
-        </form>
+                    <select name="point_of_sale_id">
 
-    </div>
+                        <option value="">
+                            Все точки
+                        </option>
 
-    {{-- СООБЩЕНИЯ --}}
+                        @foreach($pointsOfSale as $point)
 
-    @if(session('success'))
+                        <option
+                            value="{{ $point->id }}"
+                            @selected($selectedPointOfSale==$point->id)>
 
-    <div class="alert alert-success">
+                            {{ $point->name }}
 
-        {{ session('success') }}
+                        </option>
 
-    </div>
+                        @endforeach
 
-    @endif
+                    </select>
 
-    @if(session('error'))
+                </div>
 
-    <div class="alert alert-error">
+                <button
+                    type="submit"
+                    class="btn btn-primary">
 
-        {{ session('error') }}
+                    Применить
 
-    </div>
+                </button>
 
-    @endif
-
-    {{-- ФИНАНСОВЫЕ ПОКАЗАТЕЛИ --}}
-
-    <div class="finance-cards">
-
-        {{-- ВЫРУЧКА --}}
-
-        <div class="finance-card">
-
-            <div class="finance-card-title">
-                Выручка
-            </div>
-
-            <div class="finance-card-value blue">
-
-                {{ number_format($revenue, 0, ',', ' ') }} ₸
-
-            </div>
+            </form>
 
         </div>
 
-        {{-- СЕБЕСТОИМОСТЬ --}}
+        {{-- СООБЩЕНИЯ --}}
 
-        <div class="finance-card">
+        @if(session('success'))
 
-            <div class="finance-card-title">
-                Себестоимость товара
-            </div>
+        <div class="alert alert-success">
 
-            <div class="finance-card-value">
-
-                {{ number_format($cost, 0, ',', ' ') }} ₸
-
-            </div>
-
-        </div>
-
-        {{-- ПРИБЫЛЬ С ПРОДАЖ --}}
-
-        <div class="finance-card">
-
-            <div class="finance-card-title">
-                Прибыль с продаж
-            </div>
-
-            <div class="finance-card-value {{ $salesProfit >= 0 ? 'green' : 'red' }}">
-
-                {{ number_format($salesProfit, 0, ',', ' ') }} ₸
-
-            </div>
-
-        </div>
-
-        {{-- ОСТАЛЬНЫЕ РАСХОДЫ --}}
-
-        <div class="finance-card">
-
-            <div class="finance-card-title">
-                Остальные расходы
-            </div>
-
-            <div class="finance-card-value red">
-
-                {{ number_format($otherExpenses, 0, ',', ' ') }} ₸
-
-            </div>
-
-        </div>
-
-        {{-- QR ЛЕЗГОВКА --}}
-
-        <div class="finance-card qr-lezgovka">
-
-            <div class="finance-card-title">
-                QR Лезговко — погашение долга
-            </div>
-
-            <div class="finance-card-value red">
-
-                {{ number_format($qrLezgovkaPayments, 0, ',', ' ') }} ₸
-
-            </div>
-
-        </div>
-
-        {{-- ЧИСТАЯ ПРИБЫЛЬ --}}
-
-        <div class="finance-card net-profit">
-
-            <div class="finance-card-title">
-                Чистая прибыль
-            </div>
-
-            <div class="finance-card-value {{ $netProfit >= 0 ? 'green' : 'red' }}">
-
-                {{ number_format($netProfit, 0, ',', ' ') }} ₸
-
-            </div>
-
-        </div>
-
-    </div>
-
-    {{-- СПОСОБЫ ОПЛАТЫ --}}
-
-    <div class="section">
-
-        <h2>
-            Способы оплаты
-        </h2>
-
-        @if(count($paymentMethodTotals) > 0)
-
-        @php
-            $totalPayments = array_sum($paymentMethodTotals);
-        @endphp
-
-        <div class="table-wrapper">
-
-            <table class="payment-table">
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            Способ оплаты
-                        </th>
-
-                        <th>
-                            Сумма
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    @foreach($paymentMethodTotals as $method => $amount)
-
-                    @php
-
-                        $percentage = $totalPayments > 0
-                            ? ($amount / $totalPayments) * 100
-                            : 0;
-
-                    @endphp
-
-                    <tr>
-
-                        <td>
-                            {{ $method }}
-                        </td>
-
-                        <td class="payment-amount">
-
-                            {{ number_format($amount, 0, ',', ' ') }} ₸
-
-                        </td>
-
-                    </tr>
-
-                    @endforeach
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-        @else
-
-        <div class="empty">
-
-            За выбранный период оплат нет.
+            {{ session('success') }}
 
         </div>
 
         @endif
 
-    </div>
+        @if(session('error'))
 
-    {{-- ИСХОДЯЩИЕ ПЛАТЕЖИ --}}
+        <div class="alert alert-error">
 
-    <div class="section">
-
-        <h2>
-            Исходящие платежи
-        </h2>
-
-        <div class="table-wrapper">
-
-            <table class="payment-table">
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            Дата
-                        </th>
-
-                        <th>
-                            Вид расхода
-                        </th>
-
-                        <th>
-                            Сумма
-                        </th>
-
-                        <th>
-                            Точка продаж
-                        </th>
-
-                        <th>
-                            Описание
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    @forelse($outgoingPayments as $payment)
-
-                    <tr>
-
-                        <td>
-
-                            {{ $payment->payment_date->format('d.m.Y') }}
-
-                        </td>
-
-                        <td>
-
-                            {{ $payment->expenseType->name ?? '—' }}
-
-                        </td>
-
-                        <td class="payment-amount">
-
-                            {{ number_format($payment->amount, 0, ',', ' ') }} ₸
-
-                        </td>
-
-                        <td class="payment-point">
-
-                            {{ $payment->pointOfSale->name ?? 'Общий расход' }}
-
-                        </td>
-
-                        <td class="payment-description">
-
-                            {{ $payment->description ?: '—' }}
-
-                        </td>
-
-                    </tr>
-
-                    @empty
-
-                    <tr>
-
-                        <td colspan="5">
-
-                            <div class="empty">
-
-                                За выбранный период исходящих платежей нет.
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-                    @endforelse
-
-                </tbody>
-
-            </table>
+            {{ session('error') }}
 
         </div>
 
-        {{-- ИТОГО ПЛАТЕЖЕЙ --}}
+        @endif
 
-        <div class="payments-total">
+        {{-- ФИНАНСОВЫЕ ПОКАЗАТЕЛИ --}}
 
-            <div class="payments-total-label">
+        <div class="finance-cards">
 
-                Всего исходящих платежей
+            {{-- ВЫРУЧКА --}}
+
+            <div class="finance-card">
+
+                <div class="finance-card-title">
+                    Выручка
+                </div>
+
+                <div class="finance-card-value blue">
+
+                    {{ number_format($revenue, 0, ',', ' ') }} ₸
+
+                </div>
 
             </div>
 
-            <div class="payments-total-value">
+            {{-- СЕБЕСТОИМОСТЬ --}}
 
-                {{ number_format($otherExpenses, 0, ',', ' ') }} ₸
+            <div class="finance-card">
+
+                <div class="finance-card-title">
+                    Себестоимость товара
+                </div>
+
+                <div class="finance-card-value">
+
+                    {{ number_format($cost, 0, ',', ' ') }} ₸
+
+                </div>
+
+            </div>
+
+            {{-- ПРИБЫЛЬ С ПРОДАЖ --}}
+
+            <div class="finance-card">
+
+                <div class="finance-card-title">
+                    Прибыль с продаж
+                </div>
+
+                <div class="finance-card-value {{ $salesProfit >= 0 ? 'green' : 'red' }}">
+
+                    {{ number_format($salesProfit, 0, ',', ' ') }} ₸
+
+                </div>
+
+            </div>
+
+            {{-- ОСТАЛЬНЫЕ РАСХОДЫ --}}
+
+            <div class="finance-card">
+
+                <div class="finance-card-title">
+                    Остальные расходы
+                </div>
+
+                <div class="finance-card-value red">
+
+                    {{ number_format($otherExpenses, 0, ',', ' ') }} ₸
+
+                </div>
+
+            </div>
+
+            {{-- QR ЛЕЗГОВКА --}}
+
+            <div class="finance-card qr-lezgovka">
+
+                <div class="finance-card-title">
+                    QR Лезговко — погашение долга
+                </div>
+
+                <div class="finance-card-value red">
+
+                    {{ number_format($qrLezgovkaPayments, 0, ',', ' ') }} ₸
+
+                </div>
+
+            </div>
+
+            {{-- ЧИСТАЯ ПРИБЫЛЬ --}}
+
+            <div class="finance-card net-profit">
+
+                <div class="finance-card-title">
+                    Чистая прибыль
+                </div>
+
+                <div class="finance-card-value {{ $netProfit >= 0 ? 'green' : 'red' }}">
+
+                    {{ number_format($netProfit, 0, ',', ' ') }} ₸
+
+                </div>
 
             </div>
 
         </div>
 
-    </div>
+        {{-- СПОСОБЫ ОПЛАТЫ --}}
 
-</div>
+        <div class="section">
+
+            <h2>
+                Способы оплаты
+            </h2>
+
+            @if(count($paymentMethodTotals) > 0)
+
+            @php
+            $totalPayments = array_sum($paymentMethodTotals);
+            @endphp
+
+            <div class="table-wrapper">
+
+                <table class="payment-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Способ оплаты
+                            </th>
+
+                            <th>
+                                Сумма
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach($paymentMethodTotals as $method => $amount)
+
+                        @php
+
+                        $percentage = $totalPayments > 0
+                        ? ($amount / $totalPayments) * 100
+                        : 0;
+
+                        @endphp
+
+                        <tr>
+
+                            <td>
+                                {{ $method }}
+                            </td>
+
+                            <td class="payment-amount">
+
+                                {{ number_format($amount, 0, ',', ' ') }} ₸
+
+                            </td>
+
+                        </tr>
+
+                        @endforeach
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            @else
+
+            <div class="empty">
+
+                За выбранный период оплат нет.
+
+            </div>
+
+            @endif
+
+        </div>
+
+        {{-- ИСХОДЯЩИЕ ПЛАТЕЖИ --}}
+
+        <div class="section">
+
+            <h2>
+                Исходящие платежи
+            </h2>
+
+            <div class="table-wrapper">
+
+                <table class="payment-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Дата
+                            </th>
+
+                            <th>
+                                Вид расхода
+                            </th>
+
+                            <th>
+                                Сумма
+                            </th>
+
+                            <th>
+                                Точка продаж
+                            </th>
+
+                            <th>
+                                Описание
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @forelse($outgoingPayments as $payment)
+
+                        <tr>
+
+                            <td>
+
+                                {{ $payment->payment_date->format('d.m.Y') }}
+
+                            </td>
+
+                            <td>
+
+                                {{ $payment->expenseType->name ?? '—' }}
+
+                            </td>
+
+                            <td class="payment-amount">
+
+                                {{ number_format($payment->amount, 0, ',', ' ') }} ₸
+
+                            </td>
+
+                            <td class="payment-point">
+
+                                {{ $payment->pointOfSale->name ?? 'Общий расход' }}
+
+                            </td>
+
+                            <td class="payment-description">
+
+                                {{ $payment->description ?: '—' }}
+
+                            </td>
+
+                        </tr>
+
+                        @empty
+
+                        <tr>
+
+                            <td colspan="5">
+
+                                <div class="empty">
+
+                                    За выбранный период исходящих платежей нет.
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        @endforelse
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {{-- ИТОГО ПЛАТЕЖЕЙ --}}
+
+            <div class="payments-total">
+
+                <div class="payments-total-label">
+
+                    Всего исходящих платежей
+
+                </div>
+
+                <div class="payments-total-value">
+
+                    {{ number_format($otherExpenses, 0, ',', ' ') }} ₸
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </body>
 

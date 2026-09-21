@@ -109,17 +109,24 @@
             margin-bottom: 12px;
         }
 
+
         /*
          * ОТ / ПО
          *
-         * Два поля строго 50% / 50%.
+         * Всегда два равных столбца.
          */
 
         .date-row {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+
+            grid-template-columns:
+                minmax(0, 1fr)
+                minmax(0, 1fr);
+
             gap: 8px;
+
             width: 100%;
+
             min-width: 0;
         }
 
@@ -128,10 +135,20 @@
             min-width: 0;
         }
 
+        .date-row input[type="date"] {
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
+            display: block;
+        }
+
+
         .field {
             display: flex;
             flex-direction: column;
             gap: 4px;
+
+            min-width: 0;
         }
 
         .field label {
@@ -143,6 +160,9 @@
         .field input,
         .field select {
             width: 100%;
+            min-width: 0;
+            max-width: 100%;
+
             height: 34px;
 
             padding: 0 8px;
@@ -308,8 +328,6 @@
         /*
          * Убираем колонку "Товар".
          *
-         * Сейчас структура таблицы:
-         *
          * 1 — №
          * 2 — SKU
          * 3 — Товар
@@ -322,7 +340,6 @@
         .products-table td:nth-child(3) {
             display: none;
         }
-
 
         .products-table th:nth-child(4),
         .products-table td:nth-child(4),
@@ -606,7 +623,7 @@
 
 
         /* =========================================================
-           Адаптив
+           Планшет
         ========================================================= */
 
         @media (max-width: 900px) {
@@ -634,6 +651,10 @@
         }
 
 
+        /* =========================================================
+           Телефон
+        ========================================================= */
+
         @media (max-width: 600px) {
 
             .page {
@@ -656,6 +677,67 @@
                 grid-column: auto;
             }
 
+
+            /*
+             * ВАЖНО:
+             *
+             * От и По остаются в одной строке.
+             *
+             * Каждая колонка занимает ровно 50%
+             * доступной ширины.
+             */
+
+            .date-row {
+                display: grid;
+
+                grid-template-columns:
+                    minmax(0, 1fr)
+                    minmax(0, 1fr);
+
+                gap: 8px;
+
+                width: 100%;
+
+                min-width: 0;
+            }
+
+            .date-row .field {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .date-row input[type="date"] {
+                width: 100%;
+                min-width: 0;
+                max-width: 100%;
+
+                /*
+                 * Убираем лишнее внутреннее пространство
+                 * браузера на маленьком экране.
+                 */
+
+                padding-left: 7px;
+                padding-right: 4px;
+            }
+
+
+            .field input,
+            .field select {
+                width: 100%;
+
+                min-width: 0;
+
+                max-width: 100%;
+
+                height: 38px;
+            }
+
+
+            .filter-btn {
+                width: 100%;
+            }
+
+
             .card-header {
                 padding: 10px 12px;
             }
@@ -664,26 +746,33 @@
                 font-size: 13px;
             }
 
+
             .products-table th,
             .products-table td {
                 padding: 8px 8px;
             }
 
+
             .product-detail-header {
                 padding: 10px 12px;
             }
 
+
             .product-detail-stats {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns:
+                    1fr 1fr;
             }
+
 
             .detail-stat {
                 padding: 8px;
             }
 
+
             .detail-stat-value {
                 font-size: 13px;
             }
+
         }
 
     </style>
@@ -755,7 +844,7 @@
         </div>
 
 
-        <!-- От / По в одну строку -->
+        <!-- От / По -->
 
         <div class="date-row">
 
@@ -1256,12 +1345,6 @@ document.addEventListener(
          * =========================================================
          * Получаем фильтры
          * =========================================================
-         *
-         * Здесь всегда берутся текущие значения
-         * дат и склада.
-         *
-         * Но сами они отправляются только при
-         * нажатии "Применить".
          */
 
         function getFilters() {
@@ -1543,7 +1626,9 @@ document.addEventListener(
 
 
         /*
-         * Правильное склонение слова "товар".
+         * =========================================================
+         * Правильное склонение слова "товар"
+         * =========================================================
          */
 
         function getProductsWord(count) {
@@ -1641,8 +1726,6 @@ document.addEventListener(
          * =========================================================
          * Поиск по артикулу
          * =========================================================
-         *
-         * Поиск работает автоматически.
          */
 
         const searchInput =
@@ -1683,10 +1766,7 @@ document.addEventListener(
          * Даты
          * =========================================================
          *
-         * ВАЖНО:
-         * здесь больше НЕТ updateTable().
-         *
-         * Поэтому изменение даты само по себе
+         * Изменение даты само по себе
          * ничего не отправляет.
          */
 
@@ -1721,9 +1801,6 @@ document.addEventListener(
          * =========================================================
          * Склад
          * =========================================================
-         *
-         * ВАЖНО:
-         * здесь тоже больше НЕТ updateTable().
          */
 
         const warehouseInput =
@@ -1765,7 +1842,7 @@ document.addEventListener(
 
 
                 /*
-                 * Здесь уже отправляем:
+                 * Отправляем:
                  *
                  * - поиск
                  * - дату ОТ
