@@ -113,8 +113,8 @@
         .filters {
             display: grid;
             grid-template-columns:
-                180px
-                180px
+                minmax(150px, 180px)
+                minmax(150px, 180px)
                 minmax(200px, 260px)
                 minmax(220px, 1fr)
                 auto;
@@ -132,6 +132,7 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
+            min-width: 0;
         }
 
         .filter-group label {
@@ -143,6 +144,8 @@
         .filter-group input,
         .filter-group select {
             width: 100%;
+            max-width: 100%;
+            min-width: 0;
             height: 42px;
             padding: 0 11px;
             border: 1px solid #d7dce4;
@@ -154,6 +157,19 @@
             transition:
                 border-color .15s ease,
                 box-shadow .15s ease;
+        }
+
+        /* Дата: убираем "распирание" инпута нативным пикером,
+           чтобы он всегда помещался в свою колонку грида */
+        .filter-group input[type="date"] {
+            min-width: 0;
+            max-width: 100%;
+            padding-right: 6px;
+        }
+
+        .filter-group input[type="date"]::-webkit-calendar-picker-indicator {
+            margin-left: 2px;
+            padding: 0;
         }
 
         .filter-group input:focus,
@@ -169,6 +185,7 @@
         .sku-search-wrapper {
             position: relative;
             width: 100%;
+            min-width: 0;
         }
 
         .sku-search-wrapper input {
@@ -480,8 +497,8 @@
 
             .filters {
                 grid-template-columns:
-                    180px
-                    180px
+                    minmax(140px, 180px)
+                    minmax(140px, 180px)
                     minmax(200px, 260px)
                     1fr;
             }
@@ -549,7 +566,7 @@
             }
 
             .filters {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
                 gap: 9px;
                 padding: 11px;
                 margin-bottom: 12px;
