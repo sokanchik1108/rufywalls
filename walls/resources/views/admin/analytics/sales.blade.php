@@ -162,9 +162,14 @@
         /* Дата: убираем "распирание" инпута нативным пикером,
            чтобы он всегда помещался в свою колонку грида */
         .filter-group input[type="date"] {
+            display: block;
+            width: 100%;
             min-width: 0;
             max-width: 100%;
             padding-right: 6px;
+            box-sizing: border-box;
+            -webkit-appearance: auto;
+            appearance: auto;
         }
 
         .filter-group input[type="date"]::-webkit-calendar-picker-indicator {
@@ -566,11 +571,31 @@
             }
 
             .filters {
-                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+                grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: 8px;
                 padding: 11px;
                 margin-bottom: 12px;
                 border-radius: 11px;
+                width: 100%;
+                min-width: 0;
+            }
+
+            .filters > .filter-group {
+                width: 100%;
+                min-width: 0;
+                max-width: 100%;
+            }
+
+            .filters > .filter-group:nth-child(1),
+            .filters > .filter-group:nth-child(2) {
+                grid-column: span 1;
+            }
+
+            .filters > .filter-group:nth-child(1) input[type="date"],
+            .filters > .filter-group:nth-child(2) input[type="date"] {
+                width: 100%;
+                min-width: 0;
+                max-width: 100%;
             }
 
             .filter-group:nth-child(3),
@@ -579,8 +604,14 @@
             }
 
             .filter-group input[type="date"] {
-                padding: 0 5px;
-                font-size: 12.5px;
+                display: block;
+                width: 100%;
+                min-width: 0;
+                max-width: 100%;
+                height: 40px;
+                padding: 0 4px;
+                font-size: 12px;
+                line-height: 40px;
             }
 
             .filter-group {
@@ -702,8 +733,17 @@
             }
 
             .filters {
+                width: 100%;
+                min-width: 0;
                 padding: 9px;
                 gap: 7px;
+            }
+
+            .filters > .filter-group,
+            .filters > .filter-group input[type="date"] {
+                min-width: 0;
+                max-width: 100%;
+                width: 100%;
             }
 
             .filter-group input,
