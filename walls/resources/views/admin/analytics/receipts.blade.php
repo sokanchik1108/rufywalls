@@ -13,6 +13,7 @@
     <title>Аналитика приёмок</title>
 
     <style>
+
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
@@ -127,10 +128,9 @@
         /*
          * От и По всегда одинаковой ширины.
          */
-
         .date-row {
             display: grid;
-            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 8px;
             width: 100%;
             min-width: 0;
@@ -171,24 +171,49 @@
         /*
          * Даты
          */
-
         input[type="date"] {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
             width: 100%;
             min-width: 0;
             max-width: 100%;
+
             height: 34px;
+            min-height: 34px;
+
             box-sizing: border-box;
+
             -webkit-appearance: auto;
             appearance: auto;
 
-            /*
-             * Выравниваем дату визуально по центру.
-             */
-            text-align: center;
-
             padding-left: 6px;
             padding-right: 6px;
+
+            font-size: 12px;
+            line-height: 34px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        /*
+         * Вертикальное выравнивание даты внутри input
+         * для Chrome / Android / WebKit.
+         */
+        input[type="date"]::-webkit-datetime-edit {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            line-height: normal;
+        }
+
+        input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
         }
 
         input[type="date"]::-webkit-calendar-picker-indicator {
@@ -205,8 +230,7 @@
         /*
          * Склад
          */
-
-        .filters>.field {
+        .filters > .field {
             width: 100%;
             min-width: 0;
         }
@@ -355,7 +379,6 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-
             min-width: 0;
             border: 1px solid var(--border-soft);
             border-radius: var(--radius-sm);
@@ -460,7 +483,6 @@
         /*
          * Числовые колонки
          */
-
         .number {
             text-align: center;
             white-space: nowrap;
@@ -509,7 +531,6 @@
                 width: 22px;
                 text-align: center;
             }
-
         }
 
         /* =========================================================
@@ -526,7 +547,7 @@
                 grid-column: 1 / -1;
             }
 
-            .filters>.field {
+            .filters > .field {
                 grid-column: 1;
             }
 
@@ -534,11 +555,10 @@
                 grid-column: 2;
             }
 
-            .filters>.receipts-btn {
+            .filters > .receipts-btn {
                 grid-column: 1 / -1;
                 width: 100%;
             }
-
         }
 
         @media (max-width: 700px) {
@@ -550,7 +570,6 @@
             .weekday-grid {
                 grid-template-columns: repeat(4, minmax(0, 1fr));
             }
-
         }
 
         /* =========================================================
@@ -574,11 +593,10 @@
              * От и По строго в одной строке.
              * Оба поля всегда одинаковой ширины.
              */
-
             .date-row {
                 grid-column: 1;
                 display: grid;
-                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+                grid-template-columns: repeat(2, minmax(0, 1fr));
                 width: 100%;
                 min-width: 0;
                 gap: 8px;
@@ -590,27 +608,50 @@
             }
 
             .date-row input[type="date"] {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
                 width: 100%;
                 min-width: 0;
                 max-width: 100%;
+
                 height: 34px;
+                min-height: 34px;
+
                 padding-left: 4px;
                 padding-right: 4px;
+
                 font-size: 12px;
+                line-height: 34px;
                 text-align: center;
             }
 
-            .filters>.field {
+            .date-row input[type="date"]::-webkit-datetime-edit {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                line-height: normal;
+            }
+
+            .date-row input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+            }
+
+            .filters > .field {
                 grid-column: 1;
                 width: 100%;
             }
 
-            .filters>.filter-btn,
-            .filters>.receipts-btn {
+            .filters > .filter-btn,
+            .filters > .receipts-btn {
                 grid-column: 1;
                 width: 100%;
             }
-
         }
 
         /* =========================================================
@@ -625,7 +666,7 @@
             }
 
             .date-row {
-                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+                grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: 7px;
             }
 
@@ -633,6 +674,7 @@
                 padding-left: 3px;
                 padding-right: 3px;
                 font-size: 11px;
+                line-height: 34px;
                 text-align: center;
             }
 
@@ -648,8 +690,8 @@
             .weekday-products {
                 text-align: center;
             }
-
         }
+
     </style>
 
 </head>
@@ -668,7 +710,9 @@
                     href="{{ route('admin.analytics.menu') }}"
                     class="back-btn"
                     title="В меню аналитики">
+
                     ←
+
                 </a>
 
                 <div>
@@ -738,12 +782,12 @@
 
                     @foreach($warehouses as $warehouse)
 
-                    <option
-                        value="{{ $warehouse->id }}"
-                        @selected($selectedWarehouse==$warehouse->id)
+                        <option
+                            value="{{ $warehouse->id }}"
+                            @selected($selectedWarehouse == $warehouse->id)
                         >
-                        {{ $warehouse->name }}
-                    </option>
+                            {{ $warehouse->name }}
+                        </option>
 
                     @endforeach
 
@@ -754,13 +798,17 @@
             <button
                 type="submit"
                 class="filter-btn">
+
                 Показать
+
             </button>
 
             <a
                 href="{{ url('/admin/receipts') }}"
                 class="receipts-btn">
+
                 Все приёмки
+
             </a>
 
         </form>
@@ -840,55 +888,56 @@
 
         @php
 
-        $weekdayNames = [
-        1 => 'Пн',
-        2 => 'Вт',
-        3 => 'Ср',
-        4 => 'Чт',
-        5 => 'Пт',
-        6 => 'Сб',
-        7 => 'Вс',
-        ];
-
-        $weekdayStats = [];
-
-        for ($i = 1; $i <= 7; $i++) {
-
-            $weekdayStats[$i]=[ 'receipts'=> 0,
-            'quantity' => 0,
+            $weekdayNames = [
+                1 => 'Пн',
+                2 => 'Вт',
+                3 => 'Ср',
+                4 => 'Чт',
+                5 => 'Пт',
+                6 => 'Сб',
+                7 => 'Вс',
             ];
+
+            $weekdayStats = [];
+
+            for ($i = 1; $i <= 7; $i++) {
+
+                $weekdayStats[$i] = [
+                    'receipts' => 0,
+                    'quantity' => 0,
+                ];
 
             }
 
             foreach ($dailyStats as $day) {
 
-            $date = \Carbon\Carbon::parse($day['date']);
+                $date = \Carbon\Carbon::parse($day['date']);
 
-            $weekday = $date->dayOfWeekIso;
+                $weekday = $date->dayOfWeekIso;
 
-            $weekdayStats[$weekday]['receipts'] += (int) $day['receipts'];
+                $weekdayStats[$weekday]['receipts'] += (int) $day['receipts'];
 
-            $weekdayStats[$weekday]['quantity'] += (int) $day['quantity'];
+                $weekdayStats[$weekday]['quantity'] += (int) $day['quantity'];
 
             }
 
-            @endphp
+        @endphp
 
-            <div class="section">
+        <div class="section">
 
-                <div class="section-header">
+            <div class="section-header">
 
-                    <h2 class="section-title">
-                        Приёмки по дням недели
-                    </h2>
+                <h2 class="section-title">
+                    Приёмки по дням недели
+                </h2>
 
-                </div>
+            </div>
 
-                <div class="weekday-scroller">
+            <div class="weekday-scroller">
 
-                    <div class="weekday-grid">
+                <div class="weekday-grid">
 
-                        @foreach($weekdayNames as $dayNumber => $dayName)
+                    @foreach($weekdayNames as $dayNumber => $dayName)
 
                         <div class="weekday-card">
 
@@ -911,93 +960,94 @@
 
                         </div>
 
-                        @endforeach
-
-                    </div>
+                    @endforeach
 
                 </div>
 
             </div>
 
-            {{-- TOP 10 PRODUCTS --}}
+        </div>
 
-            <div class="section">
+        {{-- TOP 10 PRODUCTS --}}
 
-                <div class="section-header">
+        <div class="section">
 
-                    <h2 class="section-title">
-                        ТОП-10 товаров по среднему завозу
-                    </h2>
+            <div class="section-header">
 
-                    <a
-                        href="{{ route('admin.analytics.receipts.product', request()->query()) }}"
-                        class="receipts-btn">
-                        Подробнее
-                    </a>
+                <h2 class="section-title">
+                    ТОП-10 товаров по среднему завозу
+                </h2>
 
-                </div>
+                <a
+                    href="{{ route('admin.analytics.receipts.product', request()->query()) }}"
+                    class="receipts-btn">
 
-                <div class="section-note">
-                    Средний завоз = общее количество завезённого товара ÷ количество приёмок
-                </div>
+                    Подробнее
 
-                <div class="table-wrap">
+                </a>
 
-                    <table>
+            </div>
 
-                        <thead>
+            <div class="section-note">
+                Средний завоз = общее количество завезённого товара ÷ количество приёмок
+            </div>
 
-                            <tr>
+            <div class="table-wrap">
 
-                                <th>
-                                    #
-                                </th>
+                <table>
 
-                                <th>
-                                    Артикул
-                                </th>
+                    <thead>
 
-                                <th class="number">
-                                    Приёмок
-                                </th>
+                        <tr>
 
-                                <th class="number">
-                                    Завезено
-                                </th>
+                            <th>
+                                #
+                            </th>
 
-                                <th class="number">
-                                    Средний завоз
-                                </th>
+                            <th>
+                                Артикул
+                            </th>
 
-                            </tr>
+                            <th class="number">
+                                Приёмок
+                            </th>
 
-                        </thead>
+                            <th class="number">
+                                Завезено
+                            </th>
 
-                        <tbody>
+                            <th class="number">
+                                Средний завоз
+                            </th>
 
-                            @php
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @php
 
                             $topProducts = collect($productStats)
-                            ->map(function ($product) {
+                                ->map(function ($product) {
 
-                            $receipts = (int) $product['receipts'];
+                                    $receipts = (int) $product['receipts'];
+                                    $quantity = (int) $product['quantity'];
 
-                            $quantity = (int) $product['quantity'];
+                                    $product['average_quantity'] = $receipts > 0
+                                        ? $quantity / $receipts
+                                        : 0;
 
-                            $product['average_quantity'] = $receipts > 0
-                            ? $quantity / $receipts
-                            : 0;
+                                    return $product;
 
-                            return $product;
+                                })
+                                ->sortByDesc('average_quantity')
+                                ->take(10)
+                                ->values();
 
-                            })
-                            ->sortByDesc('average_quantity')
-                            ->take(10)
-                            ->values();
+                        @endphp
 
-                            @endphp
-
-                            @forelse($topProducts as $index => $product)
+                        @forelse($topProducts as $index => $product)
 
                             <tr>
 
@@ -1009,10 +1059,12 @@
 
                                     <a
                                         href="{{ route('admin.analytics.receipts.product', array_merge(
-                                        request()->query(),
-                                        ['variant_id' => $product['variant_id']]
-                                    )) }}">
+                                            request()->query(),
+                                            ['variant_id' => $product['variant_id']]
+                                        )) }}">
+
                                         {{ $product['sku'] }}
+
                                     </a>
 
                                 </td>
@@ -1045,7 +1097,7 @@
 
                             </tr>
 
-                            @empty
+                        @empty
 
                             <tr>
 
@@ -1059,15 +1111,15 @@
 
                             </tr>
 
-                            @endforelse
+                        @endforelse
 
-                        </tbody>
+                    </tbody>
 
-                    </table>
-
-                </div>
+                </table>
 
             </div>
+
+        </div>
 
     </div>
 
