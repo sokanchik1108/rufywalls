@@ -1916,7 +1916,6 @@
                 <select
                     name="items[${index}][batch_id]"
                     class="item-select batch-select"
-                    required
                     onchange="batchChanged(this)"
                 >
 
@@ -2501,7 +2500,7 @@
         batchSelect.innerHTML = `
 
             <option value="">
-                Выберите партию
+                Без партии — создастся автоматически
             </option>
 
         `;
@@ -2559,6 +2558,19 @@
             variant.batches ??
             variant.existing_batches ??
             [];
+
+
+        if (!batches.length) {
+
+            batchSelect.innerHTML = `
+
+                <option value="">
+                    Без партии — создастся автоматически
+                </option>
+
+            `;
+
+        }
 
 
         batches.forEach(
@@ -3211,8 +3223,7 @@
 
 
                         if (
-                            !batch ||
-                            !batch.value ||
+                            batch &&
                             batch.value ===
                                 '__create_new__'
                         ) {
@@ -3255,7 +3266,7 @@
 
 
                     alert(
-                        'Проверьте артикул, партию, количество и закупочную цену.'
+                        'Проверьте артикул, количество и закупочную цену.'
                     );
 
                 }
