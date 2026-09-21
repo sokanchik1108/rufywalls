@@ -1508,7 +1508,6 @@ $methodNames = [
     @endforelse
 
 </div>
-```
 
 </div>
 
@@ -1518,7 +1517,7 @@ NORMAL MODALS
 
 @foreach($orders as $order)
 
-```
+
 @php
 
 $orderSum =
@@ -1849,7 +1848,7 @@ $orderSum -
 </div>
 
 </div>
-```
+
 
 @endforeach
 
