@@ -267,7 +267,7 @@ class FinancialAnalyticsController extends Controller
         */
 
         $qrLezgovkaPayments =
-            $paymentMethodTotals['QR Лезговко']
+            $paymentMethodTotals['Qr Лезговко']
             ?? 0;
 
         /*

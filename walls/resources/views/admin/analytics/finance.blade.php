@@ -1054,7 +1054,7 @@
         <div class="finance-card qr-lezgovka">
 
             <div class="finance-card-title">
-                QR Лезговко — погашение долга
+                Qr Лезговко — погашение долга
             </div>
 
             <div class="finance-card-value red">
