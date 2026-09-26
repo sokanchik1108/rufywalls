@@ -587,7 +587,7 @@
 
                 </a>
 
-                 @endif
+                @endif
 
             </div>
 
@@ -628,6 +628,29 @@
                         <div class="ap-tile-title">
                             Приёмки
                         </div>
+
+                    </span>
+
+                </a>
+
+
+
+                {{-- Оприходования --}}
+
+                <a
+                    href="{{ route('admin.appropriations.index') }}"
+                    class="ap-tile accent-primary">
+
+                    <span class="ap-tile-icon">
+                        📥
+                    </span>
+
+                    <span class="ap-tile-text">
+
+                        <div class="ap-tile-title">
+                            Оприходования
+                        </div>
+
 
                     </span>
 

@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\FinancialAnalyticsController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\WriteOffController;
 use App\Http\Controllers\Admin\PointOfSaleController;
+use App\Http\Controllers\AppropriationController;
 
 
 Route::get('/address', function () {
@@ -142,6 +143,54 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/products/create/select', [AdminController::class, 'selectCreateForm'])->name('products.selectCreateForm');
     Route::get('sales/returns', [SaleController::class, 'returns'])
         ->name('sales.returns');
+
+
+    Route::get(
+        'appropriations',
+        [AppropriationController::class, 'index']
+    )->name('appropriations.index');
+
+    Route::get(
+        'appropriations/create',
+        [AppropriationController::class, 'create']
+    )->name('appropriations.create');
+
+    Route::post(
+        'appropriations',
+        [AppropriationController::class, 'store']
+    )->name('appropriations.store');
+
+    Route::get(
+        'appropriations/{appropriation}',
+        [AppropriationController::class, 'show']
+    )->name('appropriations.show');
+
+    Route::get(
+        'appropriations/{appropriation}/edit',
+        [AppropriationController::class, 'edit']
+    )->name('appropriations.edit');
+
+    Route::put(
+        'appropriations/{appropriation}',
+        [AppropriationController::class, 'update']
+    )->name('appropriations.update');
+
+    Route::delete(
+        'appropriations/{appropriation}',
+        [AppropriationController::class, 'destroy']
+    )->name('appropriations.destroy');
+
+    Route::delete(
+        'appropriations/{appropriation}/items/{appropriationItem}',
+        [AppropriationController::class, 'destroyItem']
+    )->name(
+        'appropriations.items.destroy'
+    );
+
+    Route::post(
+        'appropriations/batches',
+        [AppropriationController::class, 'storeBatch']
+    )->name('appropriations.batches.store');
 });
 
 Auth::routes();
@@ -378,6 +427,3 @@ Route::delete(
     '/admin/receipts/{receipt}/items/{receiptItem}',
     [ReceiptController::class, 'destroyItem']
 )->name('admin.receipts.items.destroy');
-
-
-
