@@ -547,15 +547,26 @@
                 font-size: 22px;
             }
 
-            /* Дата (От/До) и Склад — три равные по ширине колонки */
+            /* Дата От/До — две равные колонки, Склад — отдельно на всю ширину.
+               Так текст в нативном инпуте даты не наезжает на соседнее поле. */
             .filters {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: 1fr 1fr;
                 gap: 8px;
             }
 
             .filters .field {
                 grid-column: span 1;
                 min-width: 0;
+            }
+
+            .filters .field:nth-child(3) {
+                grid-column: 1 / -1;
+            }
+
+            .field input[type="date"] {
+                padding-left: 8px;
+                padding-right: 6px;
+                font-size: 13px;
             }
 
             .filter-actions {
@@ -634,7 +645,13 @@
                 height: 44px;
                 min-width: 0;
                 padding-left: 8px;
-                padding-right: 8px;
+                padding-right: 6px;
+                font-size: 12px;
+            }
+
+            .field input[type="date"] {
+                padding-left: 6px;
+                padding-right: 4px;
                 font-size: 12px;
             }
 
@@ -643,11 +660,12 @@
             }
 
             /*
-             * Три поля (От / До / Склад) — равные по ширине колонки,
-             * ровно выстроены и на самых узких экранах.
+             * От / До — две равные колонки, Склад — на всю ширину отдельной
+             * строкой. Так текст в нативном инпуте даты не наезжает на
+             * соседнее поле даже на самых узких экранах.
              */
             .filters {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: 1fr 1fr;
                 gap: 6px;
             }
 
@@ -655,6 +673,10 @@
                 grid-column: span 1;
                 width: 100%;
                 min-width: 0;
+            }
+
+            .filters .field:nth-child(3) {
+                grid-column: 1 / -1;
             }
 
             .filter-actions {
@@ -711,7 +733,6 @@
                 href="{{ route('admin.appropriations.create') }}"
                 class="create-btn">
                 <span class="plus">+</span>
-                <span>Новое оприходование</span>
             </a>
 
         </div>
