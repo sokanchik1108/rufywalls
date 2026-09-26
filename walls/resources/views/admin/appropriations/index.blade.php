@@ -484,25 +484,16 @@
         }
 
         /* =========================
-       MOBILE
+       MOBILE (TABLET)
     ========================= */
 
         @media (max-width: 900px) {
             .filters {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: repeat(3, 1fr);
             }
 
-            .filters .field:first-child {
-                grid-column: 1 / -1;
-            }
-
-            .filters .field:nth-child(2),
-            .filters .field:nth-child(3) {
+            .filters .field {
                 grid-column: span 1;
-            }
-
-            .filters .field:nth-child(4) {
-                grid-column: 1 / -1;
             }
 
             .filter-actions {
@@ -510,18 +501,22 @@
             }
         }
 
+        /* =========================
+       MOBILE (PHONE)
+    ========================= */
+
         @media (max-width: 700px) {
             .page {
                 padding: 16px;
             }
 
             .top {
-                align-items: flex-start;
+                align-items: center;
                 gap: 10px;
             }
 
             .top-left {
-                align-items: flex-start;
+                align-items: center;
             }
 
             .title {
@@ -532,36 +527,35 @@
                 font-size: 12px;
             }
 
+            /* Плюсик и кнопка "назад" — одинаковый размер и выравнивание */
+            .back-btn,
             .create-btn {
                 width: 44px;
                 height: 44px;
                 min-height: 44px;
+                flex: 0 0 44px;
                 padding: 0;
                 font-size: 0;
+                border-radius: 11px;
+            }
+
+            .back-btn {
+                font-size: 21px;
             }
 
             .create-btn .plus {
                 font-size: 22px;
             }
 
+            /* Дата (От/До) и Склад — три равные по ширине колонки */
             .filters {
-                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-                gap: 10px;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
             }
 
-            .filters .field:first-child {
-                grid-column: 1 / -1;
-            }
-
-            /* Даты строго в одной строке */
-            .filters .field:nth-child(2),
-            .filters .field:nth-child(3) {
+            .filters .field {
                 grid-column: span 1;
                 min-width: 0;
-            }
-
-            .filters .field:nth-child(4) {
-                grid-column: 1 / -1;
             }
 
             .filter-actions {
@@ -591,11 +585,23 @@
                 gap: 8px;
             }
 
-            .back-btn {
-                width: 38px;
-                height: 38px;
-                flex-basis: 38px;
+            .back-btn,
+            .create-btn {
+                width: 40px;
+                height: 40px;
+                min-height: 40px;
+                flex: 0 0 40px;
                 border-radius: 10px;
+                padding: 0;
+                font-size: 0;
+            }
+
+            .back-btn {
+                font-size: 18px;
+            }
+
+            .create-btn .plus {
+                font-size: 20px;
             }
 
             .title {
@@ -605,13 +611,6 @@
             .subtitle {
                 margin-top: 3px;
                 font-size: 11px;
-            }
-
-            .create-btn {
-                width: 40px;
-                height: 40px;
-                min-height: 40px;
-                border-radius: 10px;
             }
 
             .alert {
@@ -628,6 +627,7 @@
                 border-radius: 13px;
             }
 
+            /* Инпуты дат и селект склада — одинаковая высота/паддинги/шрифт */
             .field input,
             .field select {
                 width: 100%;
@@ -635,7 +635,7 @@
                 min-width: 0;
                 padding-left: 8px;
                 padding-right: 8px;
-                font-size: 13px;
+                font-size: 12px;
             }
 
             .field label {
@@ -643,23 +643,22 @@
             }
 
             /*
-         * ВАЖНО:
-         * На маленьком экране даты остаются 50% + 50%.
-         * Не ставим им 100% ширину через grid.
-         */
+             * Три поля (От / До / Склад) — равные по ширине колонки,
+             * ровно выстроены и на самых узких экранах.
+             */
             .filters {
-                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-                gap: 9px;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 6px;
             }
 
-            .filters .field:nth-child(2),
-            .filters .field:nth-child(3) {
+            .filters .field {
                 grid-column: span 1;
                 width: 100%;
                 min-width: 0;
             }
 
             .filter-actions {
+                grid-column: 1 / -1;
                 flex-direction: row;
             }
 
