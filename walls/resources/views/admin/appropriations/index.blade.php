@@ -143,7 +143,6 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-
             margin-bottom: 18px;
         }
 
@@ -171,8 +170,8 @@
 
             border-radius: 50%;
 
-            font-size: 13px;
             font-weight: 700;
+            font-size: 13px;
         }
 
         .alert-content {
@@ -224,14 +223,9 @@
         }
 
         /*
-         * DESKTOP:
-         *
-         * От       До       Склад       Кнопки
-         * 1fr      1fr      1.3fr       auto
-         *
-         * От и До одинаковой ширины.
+         * От / До — всегда одинаковая ширина.
+         * Склад — немного шире.
          */
-
         .filters {
             display: grid;
 
@@ -267,18 +261,18 @@
             font-weight: 600;
         }
 
-        /*
-         * Все поля имеют одинаковую высоту
-         * и занимают всю ширину своей grid-ячейки.
-         */
 
-        .field input,
+        /* =========================================================
+           ОБЫЧНЫЕ INPUT / SELECT
+        ========================================================= */
+
+        .field input:not([type="date"]),
         .field select {
             display: block;
 
             width: 100%;
-            max-width: 100%;
             min-width: 0;
+            max-width: 100%;
 
             height: 44px;
 
@@ -295,13 +289,10 @@
 
             outline: none;
 
-            transition:
-                border-color .2s,
-                box-shadow .2s,
-                background .2s;
+            transition: .2s;
         }
 
-        .field input:focus,
+        .field input:not([type="date"]):focus,
         .field select:focus {
             border-color: #7b8795;
 
@@ -309,28 +300,92 @@
                 0 0 0 3px rgba(1, 20, 47, .06);
         }
 
-        /*
-         * ВАЖНО:
-         * оба date input получают одинаковые параметры.
-         */
 
-        .field input[type="date"] {
+        /* =========================================================
+           DATE INPUT
+           
+           ВАЖНО:
+           Не задаём border самому input.
+           Border находится у .date-control.
+           Благодаря этому iPhone/Safari больше не ломает ширину.
+        ========================================================= */
+
+        .date-control {
+            position: relative;
+
+            display: flex;
+            align-items: center;
+
             width: 100%;
-            max-width: 100%;
             min-width: 0;
+            max-width: 100%;
 
             height: 44px;
 
-            padding: 0 10px;
+            overflow: hidden;
 
-            box-sizing: border-box;
+            border: 1px solid #dfe3e8;
+            border-radius: 10px;
 
+            background: #ffffff;
+
+            transition: .2s;
+        }
+
+        .date-control:focus-within {
+            border-color: #7b8795;
+
+            box-shadow:
+                0 0 0 3px rgba(1, 20, 47, .06);
+        }
+
+        .date-control input[type="date"] {
+            display: block;
+
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
+
+            height: 42px;
+
+            margin: 0;
+            padding: 0 9px;
+
+            border: 0;
+            outline: 0;
+
+            background: transparent;
+
+            color: #1a1d21;
+
+            font-family: inherit;
             font-size: 14px;
+
+            box-shadow: none;
+
+            appearance: auto;
+            -webkit-appearance: auto;
+        }
+
+        .date-control input[type="date"]:focus {
+            border: 0;
+            outline: 0;
+            box-shadow: none;
+        }
+
+        .date-control input[type="date"]::-webkit-calendar-picker-indicator {
+            margin: 0;
+            padding: 0;
+
+            width: 17px;
+            height: 17px;
+
+            cursor: pointer;
         }
 
 
         /* =========================================================
-           FILTER BUTTONS
+           BUTTONS
         ========================================================= */
 
         .filter-actions {
@@ -387,7 +442,7 @@
 
 
         /* =========================================================
-           TABLE CARD
+           TABLE
         ========================================================= */
 
         .table-card {
@@ -422,7 +477,6 @@
             color: #7a828d;
 
             font-size: 12px;
-
             white-space: nowrap;
         }
 
@@ -490,25 +544,21 @@
             color: #01142f;
 
             font-weight: 700;
-
             white-space: nowrap;
         }
 
         .date {
             color: #444b54;
-
             white-space: nowrap;
         }
 
         .warehouse {
             font-weight: 600;
-
             white-space: nowrap;
         }
 
         .items-count {
             color: #5f6873;
-
             white-space: nowrap;
         }
 
@@ -685,16 +735,10 @@
                     minmax(0, 1fr);
             }
 
-            /*
-             * Склад занимает всю строку.
-             */
             .filters .field:nth-child(3) {
                 grid-column: 1 / -1;
             }
 
-            /*
-             * Кнопки занимают всю строку.
-             */
             .filter-actions {
                 grid-column: 1 / -1;
             }
@@ -717,9 +761,7 @@
 
             .top {
                 align-items: center;
-
                 gap: 10px;
-
                 margin-bottom: 20px;
             }
 
@@ -736,9 +778,7 @@
             }
 
 
-            /* -----------------------------------------
-               Header buttons
-            ----------------------------------------- */
+            /* HEADER BUTTONS */
 
             .back-btn,
             .create-btn {
@@ -765,14 +805,16 @@
             }
 
 
-            /* -----------------------------------------
-               Filters
-            ----------------------------------------- */
+            /* FILTER CARD */
 
             .filter-card {
                 padding: 15px;
             }
 
+
+            /*
+             * ДВЕ РАВНЫЕ КОЛОНКИ.
+             */
             .filters {
                 display: grid;
 
@@ -780,17 +822,28 @@
                     minmax(0, 1fr)
                     minmax(0, 1fr);
 
-                gap: 10px;
+                column-gap: 8px;
+                row-gap: 10px;
 
                 width: 100%;
             }
 
-            .filters .field {
-                width: 100%;
-                min-width: 0;
 
-                grid-column: span 1;
+            /*
+             * От
+             */
+            .filters .field:nth-child(1) {
+                grid-column: 1;
             }
+
+
+            /*
+             * До
+             */
+            .filters .field:nth-child(2) {
+                grid-column: 2;
+            }
+
 
             /*
              * Склад на всю ширину.
@@ -799,14 +852,13 @@
                 grid-column: 1 / -1;
             }
 
+
             .field {
                 width: 100%;
                 min-width: 0;
             }
 
             .field label {
-                display: block;
-
                 width: 100%;
 
                 margin-bottom: 7px;
@@ -814,82 +866,50 @@
                 font-size: 11px;
             }
 
-            /*
-             * Все поля одинаковой высоты и ширины.
-             */
-            .field input,
-            .field select {
-                display: block;
 
+            /* DATE WRAPPER */
+
+            .date-control {
                 width: 100%;
-                max-width: 100%;
                 min-width: 0;
+                max-width: 100%;
 
                 height: 44px;
 
-                box-sizing: border-box;
-
-                padding: 0 8px;
-
-                border-radius: 10px;
-
-                font-size: 12px;
+                overflow: hidden;
             }
 
-            /*
-             * Обе даты абсолютно одинаковые.
-             */
-            .field input[type="date"] {
-                display: block;
-
+            .date-control input[type="date"] {
                 width: 100%;
-                max-width: 100%;
                 min-width: 0;
+                max-width: 100%;
 
-                height: 44px;
-
-                box-sizing: border-box;
+                height: 42px;
 
                 padding: 0 6px;
 
                 font-size: 12px;
 
-                line-height: normal;
-
-                overflow: hidden;
+                border: 0;
             }
 
-            /*
-             * Иконка календаря не должна ломать размеры.
-             */
-            .field input[type="date"]::-webkit-calendar-picker-indicator {
-                width: 16px;
-                height: 16px;
 
-                margin: 0;
-                padding: 0;
+            /* SELECT */
 
-                flex-shrink: 0;
-            }
-
-            /*
-             * Склад.
-             */
             .field select {
                 width: 100%;
-                max-width: 100%;
                 min-width: 0;
+                max-width: 100%;
 
-                padding-left: 8px;
-                padding-right: 8px;
+                height: 44px;
+
+                padding: 0 8px;
 
                 font-size: 12px;
             }
 
 
-            /* -----------------------------------------
-               Filter buttons
-            ----------------------------------------- */
+            /* BUTTONS */
 
             .filter-actions {
                 grid-column: 1 / -1;
@@ -899,8 +919,6 @@
                 width: 100%;
 
                 gap: 8px;
-
-                flex-direction: row;
             }
 
             .filter-actions .btn {
@@ -911,9 +929,7 @@
             }
 
 
-            /* -----------------------------------------
-               Table
-            ----------------------------------------- */
+            /* TABLE */
 
             .table-head {
                 padding: 15px;
@@ -933,14 +949,11 @@
 
             .top {
                 margin-bottom: 18px;
-
                 gap: 8px;
             }
 
 
-            /* -----------------------------------------
-               Header
-            ----------------------------------------- */
+            /* HEADER */
 
             .back-btn,
             .create-btn {
@@ -972,32 +985,29 @@
 
             .subtitle {
                 margin-top: 3px;
-
                 font-size: 11px;
             }
 
 
-            /* -----------------------------------------
-               Alerts
-            ----------------------------------------- */
+            /* ALERT */
 
             .alert {
                 padding: 12px;
-
                 font-size: 13px;
             }
 
 
-            /* -----------------------------------------
-               Filter
-            ----------------------------------------- */
+            /* FILTER */
 
             .filter-card {
                 padding: 13px;
-
                 border-radius: 13px;
             }
 
+
+            /*
+             * Здесь тоже две абсолютно равные колонки.
+             */
             .filters {
                 display: grid;
 
@@ -1005,24 +1015,25 @@
                     minmax(0, 1fr)
                     minmax(0, 1fr);
 
-                gap: 8px;
+                column-gap: 8px;
+                row-gap: 10px;
 
                 width: 100%;
             }
 
-            .filters .field {
-                width: 100%;
-                min-width: 0;
 
-                grid-column: span 1;
+            .filters .field:nth-child(1) {
+                grid-column: 1;
             }
 
-            /*
-             * Склад — вся ширина.
-             */
+            .filters .field:nth-child(2) {
+                grid-column: 2;
+            }
+
             .filters .field:nth-child(3) {
                 grid-column: 1 / -1;
             }
+
 
             .field {
                 width: 100%;
@@ -1030,8 +1041,6 @@
             }
 
             .field label {
-                display: block;
-
                 width: 100%;
 
                 margin-bottom: 6px;
@@ -1040,13 +1049,15 @@
             }
 
 
-            /* -----------------------------------------
-               All inputs
-            ----------------------------------------- */
-
-            .field input,
-            .field select {
-                display: block;
+            /*
+             * DATE BOX
+             *
+             * Именно эта оболочка отвечает
+             * за ширину и границу.
+             */
+            .date-control {
+                display: flex;
+                align-items: center;
 
                 width: 100%;
                 max-width: 100%;
@@ -1054,47 +1065,42 @@
 
                 height: 44px;
 
-                box-sizing: border-box;
-
-                padding: 0 8px;
+                overflow: hidden;
 
                 border: 1px solid #dfe3e8;
                 border-radius: 10px;
 
                 background: #ffffff;
-
-                font-family: inherit;
-                font-size: 12px;
-
-                overflow: hidden;
             }
 
-
-            /* -----------------------------------------
-               Date inputs
-            ----------------------------------------- */
-
-            .field input[type="date"] {
+            .date-control input[type="date"] {
                 display: block;
 
                 width: 100%;
                 max-width: 100%;
                 min-width: 0;
 
-                height: 44px;
+                height: 42px;
 
-                box-sizing: border-box;
+                margin: 0;
 
                 padding: 0 6px;
 
+                border: 0 !important;
+                outline: 0 !important;
+
+                background: transparent;
+
+                font-family: inherit;
                 font-size: 11px;
 
-                line-height: normal;
+                box-shadow: none !important;
 
-                overflow: hidden;
+                appearance: auto;
+                -webkit-appearance: auto;
             }
 
-            .field input[type="date"]::-webkit-calendar-picker-indicator {
+            .date-control input[type="date"]::-webkit-calendar-picker-indicator {
                 width: 15px;
                 height: 15px;
 
@@ -1103,11 +1109,12 @@
             }
 
 
-            /* -----------------------------------------
-               Warehouse select
-            ----------------------------------------- */
-
+            /*
+             * SELECT
+             */
             .field select {
+                display: block;
+
                 width: 100%;
                 max-width: 100%;
                 min-width: 0;
@@ -1116,14 +1123,16 @@
 
                 padding: 0 8px;
 
+                border: 1px solid #dfe3e8;
+                border-radius: 10px;
+
                 font-size: 12px;
             }
 
 
-            /* -----------------------------------------
-               Buttons
-            ----------------------------------------- */
-
+            /*
+             * BUTTONS
+             */
             .filter-actions {
                 grid-column: 1 / -1;
 
@@ -1132,8 +1141,6 @@
                 width: 100%;
 
                 gap: 8px;
-
-                flex-direction: row;
             }
 
             .filter-actions .btn {
@@ -1144,9 +1151,7 @@
             }
 
 
-            /* -----------------------------------------
-               Table
-            ----------------------------------------- */
+            /* TABLE */
 
             .table-card {
                 border-radius: 13px;
@@ -1154,17 +1159,16 @@
 
             .pagination-wrap {
                 padding: 13px;
-
                 overflow-x: auto;
             }
 
             .pagination {
                 flex-wrap: nowrap;
-
                 width: max-content;
             }
         }
     </style>
+
 </head>
 
 
@@ -1213,10 +1217,13 @@
                 +
             </span>
 
+            <span>
+                Новое оприходование
+            </span>
+
         </a>
 
     </div>
-
 
 
     {{-- =========================================================
@@ -1224,7 +1231,6 @@
     ========================================================== --}}
 
     <div class="alerts">
-
 
         @if(session('success'))
 
@@ -1249,7 +1255,6 @@
         </div>
 
         @endif
-
 
 
         @if(session('appropriation_error'))
@@ -1277,7 +1282,6 @@
         @endif
 
 
-
         @if(session('error'))
 
         <div class="alert alert-error">
@@ -1301,7 +1305,6 @@
         </div>
 
         @endif
-
 
 
         @if($errors->any())
@@ -1343,7 +1346,6 @@
     </div>
 
 
-
     {{-- =========================================================
          FILTERS
     ========================================================== --}}
@@ -1365,14 +1367,17 @@
                         От
                     </label>
 
-                    <input
-                        type="date"
-                        id="from"
-                        name="from"
-                        value="{{ $from }}">
+                    <div class="date-control">
+
+                        <input
+                            type="date"
+                            id="from"
+                            name="from"
+                            value="{{ $from }}">
+
+                    </div>
 
                 </div>
-
 
 
                 {{-- ДО --}}
@@ -1383,14 +1388,17 @@
                         До
                     </label>
 
-                    <input
-                        type="date"
-                        id="to"
-                        name="to"
-                        value="{{ $to }}">
+                    <div class="date-control">
+
+                        <input
+                            type="date"
+                            id="to"
+                            name="to"
+                            value="{{ $to }}">
+
+                    </div>
 
                 </div>
-
 
 
                 {{-- СКЛАД --}}
@@ -1428,7 +1436,6 @@
                 </div>
 
 
-
                 {{-- КНОПКИ --}}
 
                 <div class="filter-actions">
@@ -1440,7 +1447,6 @@
                         Применить
 
                     </button>
-
 
                     <a
                         href="{{ route('admin.appropriations.index') }}"
@@ -1459,15 +1465,12 @@
     </div>
 
 
-
     {{-- =========================================================
          TABLE
     ========================================================== --}}
 
     <div class="table-card">
 
-
-        {{-- TABLE HEADER --}}
 
         <div class="table-head">
 
@@ -1487,7 +1490,6 @@
             </div>
 
         </div>
-
 
 
         @if($appropriations->count())
@@ -1536,7 +1538,6 @@
 
                 <tbody>
 
-
                     @foreach($appropriations as $appropriation)
 
                     <tr>
@@ -1553,7 +1554,6 @@
                         </td>
 
 
-
                         {{-- Дата --}}
 
                         <td>
@@ -1565,7 +1565,6 @@
                             </span>
 
                         </td>
-
 
 
                         {{-- Склад --}}
@@ -1581,7 +1580,6 @@
                         </td>
 
 
-
                         {{-- Позиций --}}
 
                         <td>
@@ -1593,7 +1591,6 @@
                             </span>
 
                         </td>
-
 
 
                         {{-- Комментарий --}}
@@ -1621,7 +1618,6 @@
                         </td>
 
 
-
                         {{-- Действия --}}
 
                         <td>
@@ -1642,7 +1638,6 @@
                                 </a>
 
 
-
                                 {{-- Редактирование --}}
 
                                 <a
@@ -1654,7 +1649,6 @@
                                     ✎
 
                                 </a>
-
 
 
                                 {{-- Удаление --}}
@@ -1694,13 +1688,11 @@
 
                     @endforeach
 
-
                 </tbody>
 
             </table>
 
         </div>
-
 
 
         {{-- =====================================================
@@ -1738,7 +1730,6 @@
                 @endif
 
 
-
                 {{-- Pages --}}
 
                 @foreach(
@@ -1755,7 +1746,6 @@
                     as $page => $url
                 )
 
-
                     @if($page == $appropriations->currentPage())
 
                     <div class="active">
@@ -1769,16 +1759,12 @@
                     @else
 
                     <a href="{{ $url }}">
-
                         {{ $page }}
-
                     </a>
 
                     @endif
 
-
                 @endforeach
-
 
 
                 {{-- Next --}}
@@ -1840,7 +1826,6 @@
 
 
     </div>
-
 
 </div>
 
