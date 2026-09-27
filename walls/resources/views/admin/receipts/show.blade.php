@@ -1,19 +1,14 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
 >
-
 <title>Приёмка #{{ $receipt->id }}</title>
 
 <style>
-
     * {
         box-sizing: border-box;
     }
@@ -105,7 +100,7 @@
     }
 
     /* =========================================================
-       INFO + COMMENT — ONE BLOCK
+       INFO + COMMENT
     ========================================================= */
 
     .info-block {
@@ -118,7 +113,7 @@
 
     .info {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: repeat(3, 1fr);
     }
 
     .info-item {
@@ -146,6 +141,51 @@
         font-weight: 650;
         white-space: nowrap;
         text-overflow: ellipsis;
+    }
+
+    /* =========================================================
+       FINANCE — ONLY OWNER / ANALYST
+    ========================================================= */
+
+    .finance {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border-top: 1px solid #eceef0;
+    }
+
+    .finance-item {
+        min-width: 0;
+        padding: 10px 12px;
+    }
+
+    .finance-item + .finance-item {
+        border-left: 1px solid #eceef0;
+    }
+
+    .finance-label {
+        margin-bottom: 3px;
+        color: #989da5;
+        font-size: 9px;
+        line-height: 1;
+        font-weight: 500;
+    }
+
+    .finance-value {
+        overflow: hidden;
+        color: #17191d;
+        font-size: 12px;
+        line-height: 1.25;
+        font-weight: 750;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .finance-value.paid {
+        color: #18794e;
+    }
+
+    .finance-value.debt {
+        color: #c43d3d;
     }
 
     /* =========================================================
@@ -368,11 +408,15 @@
             font-size: 16px;
         }
 
-        /* INFO BLOCK */
+        /* INFO */
 
         .info-block {
             margin-bottom: 6px;
             border-radius: 9px;
+        }
+
+        .info {
+            grid-template-columns: repeat(3, 1fr);
         }
 
         .info-item {
@@ -385,6 +429,20 @@
 
         .info-value {
             font-size: 10.5px;
+        }
+
+        /* FINANCE */
+
+        .finance-item {
+            padding: 8px 9px;
+        }
+
+        .finance-label {
+            font-size: 8px;
+        }
+
+        .finance-value {
+            font-size: 10px;
         }
 
         /* COMMENT */
@@ -474,6 +532,24 @@
             padding-right: 5px;
         }
 
+        .info {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .info-item:nth-child(3) {
+            border-left: 0;
+            border-top: 1px solid #eceef0;
+        }
+
+        .finance {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .finance-item:nth-child(3) {
+            border-left: 0;
+            border-top: 1px solid #eceef0;
+        }
+
         .product {
             gap: 5px;
             padding-left: 7px;
@@ -499,12 +575,27 @@
             font-size: 9px;
         }
     }
-
 </style>
-
 </head>
 
 <body>
+
+@php
+    $isOwnerOrAnalyst =
+        auth()->user()->is_owner ||
+        auth()->user()->role === 'analyst';
+
+    $receiptTotal = $receipt->items->sum(function ($item) {
+        return (float) $item->quantity * (float) $item->purchase_price;
+    });
+
+    $paidAmount = $receipt->payments->sum('amount');
+
+    $debtAmount = max(
+        0,
+        $receiptTotal - (float) $paidAmount
+    );
+@endphp
 
 <div class="page">
 
@@ -547,7 +638,7 @@
     </div>
 
     {{-- =========================================================
-         INFO + COMMENT — ONE BLOCK
+         INFO + COMMENT
     ========================================================= --}}
 
     <div class="info-block">
@@ -555,7 +646,6 @@
         <div class="info">
 
             <div class="info-item">
-
                 <div class="info-label">
                     Дата
                 </div>
@@ -563,11 +653,9 @@
                 <div class="info-value">
                     {{ $receipt->receipt_date->format('d.m.Y') }}
                 </div>
-
             </div>
 
             <div class="info-item">
-
                 <div class="info-label">
                     Склад
                 </div>
@@ -575,11 +663,9 @@
                 <div class="info-value">
                     {{ $receipt->warehouse->name }}
                 </div>
-
             </div>
 
             <div class="info-item">
-
                 <div class="info-label">
                     Количество
                 </div>
@@ -587,10 +673,86 @@
                 <div class="info-value">
                     {{ $receipt->items->sum('quantity') }} шт.
                 </div>
+            </div>
+
+            @if($isOwnerOrAnalyst)
+
+                <div class="info-item">
+                    <div class="info-label">
+                        Поставщик
+                    </div>
+
+                    <div class="info-value">
+                        {{ $receipt->supplier?->name ?? 'Не указан' }}
+                    </div>
+                </div>
+
+            @endif
+
+        </div>
+
+        @if($isOwnerOrAnalyst)
+
+            {{-- =================================================
+                 FINANCE
+            ================================================== --}}
+
+            <div class="finance">
+
+                <div class="finance-item">
+
+                    <div class="finance-label">
+                        Сумма
+                    </div>
+
+                    <div class="finance-value">
+                        {{ number_format(
+                            $receiptTotal,
+                            0,
+                            ',',
+                            ' '
+                        ) }} ₸
+                    </div>
+
+                </div>
+
+                <div class="finance-item">
+
+                    <div class="finance-label">
+                        Оплачено
+                    </div>
+
+                    <div class="finance-value paid">
+                        {{ number_format(
+                            $paidAmount,
+                            0,
+                            ',',
+                            ' '
+                        ) }} ₸
+                    </div>
+
+                </div>
+
+                <div class="finance-item">
+
+                    <div class="finance-label">
+                        Долг
+                    </div>
+
+                    <div class="finance-value debt">
+                        {{ number_format(
+                            $debtAmount,
+                            0,
+                            ',',
+                            ' '
+                        ) }} ₸
+                    </div>
+
+                </div>
 
             </div>
 
-        </div>
+        @endif
 
         @if($receipt->comment)
 
@@ -687,17 +849,11 @@
             >
 
                 <svg viewBox="0 0 24 24">
-
                     <polyline points="3 6 5 6 21 6"></polyline>
-
                     <path d="M19 6l-1 14H6L5 6"></path>
-
                     <path d="M10 11v6"></path>
-
                     <path d="M14 11v6"></path>
-
                     <path d="M9 6V4h6v2"></path>
-
                 </svg>
 
                 <span>

@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ru">
 
 <head>
@@ -8,7 +7,8 @@
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    >
 
     <title>Приёмки</title>
 
@@ -58,40 +58,31 @@
 
         .header {
             position: relative;
-
             display: grid;
             grid-template-columns: 42px 1fr 42px;
-
             align-items: center;
-
             height: 52px;
             margin-bottom: 18px;
         }
 
         .header-title {
             text-align: center;
-
             font-size: 21px;
             font-weight: 700;
-
             letter-spacing: -0.3px;
         }
 
         .header-btn {
             width: 42px;
             height: 42px;
-
             display: inline-flex;
             align-items: center;
             justify-content: center;
-
             border: 1px solid #e5e7eb;
             border-radius: 12px;
-
             background: #fff;
             text-decoration: none;
             color: #111827;
-
             transition: .15s ease;
         }
 
@@ -103,10 +94,8 @@
         .header-btn svg {
             width: 19px;
             height: 19px;
-
             stroke: currentColor;
             fill: none;
-
             stroke-width: 2;
             stroke-linecap: round;
             stroke-linejoin: round;
@@ -135,96 +124,60 @@
 
         .filters {
             display: grid;
-
-            /*
-             * ВАЖНО:
-             * первая строка — склад,
-             * вторая — От / До,
-             * третья — кнопка.
-             */
             grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-
             gap: 8px;
-
             width: 100%;
-
             padding: 9px;
             margin-bottom: 14px;
-
             background: #fff;
-
             border: 1px solid #e7e9ed;
             border-radius: 14px;
-
             box-shadow: 0 2px 8px rgba(0, 0, 0, .025);
         }
 
         .filter {
             position: relative;
-
             width: 100%;
             min-width: 0;
         }
 
-        /*
-         * Склад занимает всю ширину.
-         */
         .filter:first-child {
             grid-column: 1 / -1;
         }
 
-        /*
-         * От и До занимают строго
-         * по 50% доступного пространства.
-         */
         .filter:nth-child(2),
         .filter:nth-child(3) {
             grid-column: auto;
-
             width: 100%;
             min-width: 0;
         }
 
         .filter-label {
             position: absolute;
-
             left: 11px;
             top: 5px;
-
             z-index: 2;
-
             font-size: 9px;
             line-height: 1;
-
             color: #9ca3af;
-
             pointer-events: none;
         }
 
         .filter input,
         .filter select {
             display: block;
-
             width: 100%;
             min-width: 0;
-
             height: 45px;
-
             margin: 0;
-
             padding: 15px 10px 3px;
-
             border: 1px solid #e5e7eb;
             border-radius: 10px;
-
             background: #fafafa;
             color: #111827;
-
             outline: none;
-
             font-size: 13px;
             line-height: 1.2;
-
             appearance: auto;
         }
 
@@ -234,31 +187,20 @@
             border-color: #9ca3af;
         }
 
-        /*
-         * Кнопка занимает всю строку.
-         */
         .filter-button {
             grid-column: 1 / -1;
-
             width: 100%;
             min-width: 0;
-
             height: 45px;
-
             padding: 0 18px;
-
             border: 0;
             border-radius: 10px;
-
             background: #111827;
             color: #fff;
-
             cursor: pointer;
-
             display: flex;
             align-items: center;
             justify-content: center;
-
             font-size: 13px;
             font-weight: 600;
         }
@@ -274,11 +216,8 @@
 
         .alert {
             padding: 12px 14px;
-
             margin-bottom: 12px;
-
             border-radius: 11px;
-
             font-size: 13px;
         }
 
@@ -301,23 +240,17 @@
 
         .table-wrapper {
             width: 100%;
-
             overflow-x: auto;
-
             background: #fff;
-
             border: 1px solid #e7e9ed;
             border-radius: 14px;
-
             box-shadow: 0 2px 8px rgba(0, 0, 0, .025);
         }
 
         table {
             width: 100%;
-
             border-collapse: collapse;
-
-            min-width: 760px;
+            min-width: 1000px;
         }
 
         thead {
@@ -326,26 +259,18 @@
 
         th {
             padding: 13px 15px;
-
             text-align: left;
-
             color: #6b7280;
-
             font-size: 11px;
             font-weight: 600;
-
             border-bottom: 1px solid #e7e9ed;
-
             white-space: nowrap;
         }
 
         td {
             padding: 14px 15px;
-
             font-size: 13px;
-
             border-bottom: 1px solid #f0f1f3;
-
             vertical-align: middle;
         }
 
@@ -369,40 +294,40 @@
 
         .warehouse-cell {
             font-weight: 600;
+            white-space: nowrap;
         }
 
-        .products-cell {
-            min-width: 230px;
-        }
-
-        .product-line {
-            margin-bottom: 4px;
-
-            font-size: 12px;
-            line-height: 1.4;
-        }
-
-        .product-line:last-child {
-            margin-bottom: 0;
-        }
-
-        .product-sku {
+        .supplier-cell {
             font-weight: 600;
+            min-width: 140px;
         }
 
-        .product-batch {
-            color: #9ca3af;
+        .amount-cell {
+            font-weight: 600;
+            white-space: nowrap;
         }
 
-        .product-qty {
+        .paid-cell {
             color: #374151;
+            white-space: nowrap;
+        }
+
+        .debt-cell {
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .debt-positive {
+            color: #dc2626;
+        }
+
+        .debt-zero {
+            color: #16a34a;
         }
 
         .comment-cell {
             max-width: 220px;
-
             color: #6b7280;
-
             font-size: 12px;
         }
 
@@ -410,33 +335,30 @@
             color: #d1d5db;
         }
 
+        .no-supplier {
+            color: #9ca3af;
+            font-weight: 400;
+        }
+
         .actions {
             display: flex;
             align-items: center;
             justify-content: flex-end;
-
             gap: 6px;
-
             white-space: nowrap;
         }
 
         .action-btn {
             width: 34px;
             height: 34px;
-
             display: inline-flex;
             align-items: center;
             justify-content: center;
-
             border-radius: 9px;
             border: 1px solid #e5e7eb;
-
             background: #fff;
-
             text-decoration: none;
-
             color: #4b5563;
-
             transition: .15s ease;
         }
 
@@ -448,12 +370,9 @@
         .action-btn svg {
             width: 16px;
             height: 16px;
-
             fill: none;
             stroke: currentColor;
-
             stroke-width: 1.8;
-
             stroke-linecap: round;
             stroke-linejoin: round;
         }
@@ -478,26 +397,18 @@
 
         .empty {
             padding: 55px 20px;
-
             text-align: center;
-
             background: #fff;
-
             border: 1px solid #e7e9ed;
             border-radius: 14px;
-
             color: #9ca3af;
-
             font-size: 14px;
         }
 
         .table-empty {
             padding: 45px 20px;
-
             text-align: center;
-
             color: #9ca3af;
-
             font-size: 13px;
         }
 
@@ -517,9 +428,7 @@
 
         .pagination {
             display: flex;
-
             justify-content: center;
-
             margin-top: 18px;
         }
 
@@ -532,7 +441,6 @@
 
             .page {
                 width: 100%;
-
                 padding: 10px 10px 30px;
             }
 
@@ -552,7 +460,6 @@
             .header-btn {
                 width: 40px;
                 height: 40px;
-
                 border-radius: 11px;
             }
 
@@ -562,44 +469,25 @@
             ===================== */
 
             .filters {
-
-                /*
-                 * Две абсолютно одинаковые колонки.
-                 */
                 grid-template-columns:
                     minmax(0, 1fr)
                     minmax(0, 1fr);
-
                 gap: 7px;
-
                 width: 100%;
-
                 padding: 7px;
-
                 border-radius: 14px;
             }
 
-            /*
-             * Важно:
-             * каждый filter не может
-             * растянуть свою колонку.
-             */
             .filters > .filter {
                 min-width: 0;
                 width: 100%;
                 max-width: 100%;
             }
 
-            /*
-             * Склад.
-             */
             .filter:first-child {
                 grid-column: 1 / -1;
             }
 
-            /*
-             * От.
-             */
             .filter:nth-child(2) {
                 grid-column: 1;
                 width: 100%;
@@ -607,9 +495,6 @@
                 max-width: 100%;
             }
 
-            /*
-             * До.
-             */
             .filter:nth-child(3) {
                 grid-column: 2;
                 width: 100%;
@@ -617,49 +502,30 @@
                 max-width: 100%;
             }
 
-            /*
-             * Инпуты обязательно
-             * остаются внутри своих колонок.
-             */
             .filter input,
             .filter select {
                 display: block;
-
                 width: 100%;
                 max-width: 100%;
                 min-width: 0;
-
                 height: 45px;
-
                 margin: 0;
-
                 padding: 15px 8px 3px 10px;
-
                 border: 1px solid #e5e7eb;
                 border-radius: 10px;
-
                 background: #fafafa;
                 color: #111827;
-
                 outline: none;
-
                 font-size: 13px;
                 line-height: 1.2;
-
                 box-sizing: border-box;
             }
 
-            /*
-             * Отдельно фиксируем
-             * ширину date input.
-             */
             .filter input[type="date"] {
                 width: 100%;
                 max-width: 100%;
                 min-width: 0;
-
                 flex: 1 1 0;
-
                 -webkit-appearance: none;
                 appearance: none;
             }
@@ -671,17 +537,11 @@
                 min-width: 0;
             }
 
-            /*
-             * Кнопка.
-             */
             .filter-button {
                 grid-column: 1 / -1;
-
                 width: 100%;
                 min-width: 0;
-
                 height: 45px;
-
                 font-size: 13px;
             }
 
@@ -701,29 +561,19 @@
 
             .receipts {
                 display: flex;
-
                 flex-direction: column;
-
                 gap: 7px;
             }
 
             .receipt {
                 display: grid;
-
                 grid-template-columns: minmax(0, 1fr) auto;
-
                 gap: 5px 10px;
-
                 padding: 13px;
-
                 background: #fff;
-
                 border: 1px solid #e7e9ed;
-
                 border-radius: 13px;
-
                 text-decoration: none;
-
                 transition: .15s ease;
             }
 
@@ -734,91 +584,107 @@
             .receipt-id {
                 grid-column: 1;
                 grid-row: 1;
-
                 font-size: 13px;
-
                 font-weight: 700;
             }
 
             .receipt-date {
                 grid-column: 2;
                 grid-row: 1;
-
                 text-align: right;
-
                 color: #6b7280;
-
                 font-size: 12px;
             }
 
             .receipt-main {
                 grid-column: 1;
                 grid-row: 2;
-
                 min-width: 0;
             }
 
             .receipt-warehouse {
                 font-size: 13px;
-
                 font-weight: 600;
-
                 white-space: nowrap;
-
                 overflow: hidden;
+                text-overflow: ellipsis;
+            }
 
+            .receipt-supplier {
+                margin-top: 3px;
+                font-size: 12px;
+                color: #4b5563;
+                white-space: nowrap;
+                overflow: hidden;
                 text-overflow: ellipsis;
             }
 
             .receipt-meta {
                 margin-top: 3px;
-
                 color: #9ca3af;
-
                 font-size: 11px;
             }
 
             .receipt-arrow {
                 grid-column: 2;
                 grid-row: 2;
-
                 width: 34px;
                 height: 34px;
-
                 display: flex;
-
                 align-items: center;
                 justify-content: center;
-
                 color: #9ca3af;
-
                 border-radius: 9px;
-
                 background: #f8f9fa;
             }
 
             .receipt-arrow svg {
                 width: 16px;
                 height: 16px;
-
                 fill: none;
-
                 stroke: currentColor;
-
                 stroke-width: 2;
-
                 stroke-linecap: round;
                 stroke-linejoin: round;
             }
 
-            .empty {
-                padding: 45px 15px;
 
-                border-radius: 13px;
+            /* =====================
+               MOBILE FINANCE
+            ===================== */
 
-                font-size: 13px;
+            .receipt-finance {
+                grid-column: 1 / -1;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                flex-wrap: wrap;
+                margin-top: 3px;
+                padding-top: 8px;
+                border-top: 1px solid #f0f1f3;
+                font-size: 11px;
+                line-height: 1.3;
             }
 
+            .receipt-total {
+                font-weight: 700;
+                color: #111827;
+            }
+
+            .receipt-paid {
+                color: #16a34a;
+            }
+
+            .receipt-debt {
+                color: #dc2626;
+                font-weight: 600;
+            }
+
+            .empty {
+                padding: 45px 15px;
+                border-radius: 13px;
+                font-size: 13px;
+            }
         }
 
     </style>
@@ -827,7 +693,6 @@
 
 
 <body>
-
 
     <div class="page">
 
@@ -843,39 +708,29 @@
                     ? route('admin.analytics.receipts')
                     : url('/admin') }}"
                 class="header-btn"
-                title="Назад">
-
+                title="Назад"
+            >
                 <svg viewBox="0 0 24 24">
-
                     <path d="M19 12H5"></path>
-
                     <path d="M12 19l-7-7 7-7"></path>
-
                 </svg>
-
             </a>
 
 
             <div class="header-title">
-
                 Приёмки
-
             </div>
 
 
             <a
                 href="{{ route('admin.receipts.create') }}"
                 class="header-btn add-btn"
-                title="Новая приёмка">
-
+                title="Новая приёмка"
+            >
                 <svg viewBox="0 0 24 24">
-
                     <path d="M12 5v14"></path>
-
                     <path d="M5 12h14"></path>
-
                 </svg>
-
             </a>
 
         </div>
@@ -888,9 +743,7 @@
         @if(session('success'))
 
             <div class="alert alert-success">
-
                 {{ session('success') }}
-
             </div>
 
         @endif
@@ -899,9 +752,7 @@
         @if(session('error'))
 
             <div class="alert alert-error">
-
                 {{ session('error') }}
-
             </div>
 
         @endif
@@ -914,9 +765,7 @@
                 @foreach($errors->all() as $error)
 
                     <div>
-
                         {{ $error }}
-
                     </div>
 
                 @endforeach
@@ -933,28 +782,22 @@
         <form
             method="GET"
             action="{{ route('admin.receipts.index') }}"
-            class="filters">
-
+            class="filters"
+        >
 
             {{-- Склад --}}
 
             <div class="filter">
 
                 <span class="filter-label">
-
                     Склад
-
                 </span>
-
 
                 <select name="warehouse_id">
 
                     <option value="">
-
                         Все склады
-
                     </option>
-
 
                     @foreach($warehouses as $warehouse)
 
@@ -962,9 +805,7 @@
                             value="{{ $warehouse->id }}"
                             @selected(request('warehouse_id') == $warehouse->id)
                         >
-
                             {{ $warehouse->name }}
-
                         </option>
 
                     @endforeach
@@ -979,11 +820,8 @@
             <div class="filter">
 
                 <span class="filter-label">
-
                     От
-
                 </span>
-
 
                 <input
                     type="date"
@@ -999,11 +837,8 @@
             <div class="filter">
 
                 <span class="filter-label">
-
                     До
-
                 </span>
-
 
                 <input
                     type="date"
@@ -1018,12 +853,10 @@
 
             <button
                 type="submit"
-                class="filter-button">
-
+                class="filter-button"
+            >
                 Применить
-
             </button>
-
 
         </form>
 
@@ -1052,6 +885,26 @@
                             Склад
                         </th>
 
+                        @if(auth()->user()->is_owner || auth()->user()->role === 'analyst')
+
+                            <th>
+                                Поставщик
+                            </th>
+
+                            <th>
+                                Сумма
+                            </th>
+
+                            <th>
+                                Оплачено
+                            </th>
+
+                            <th>
+                                Долг
+                            </th>
+
+                        @endif
+
                         <th>
                             Комментарий
                         </th>
@@ -1067,9 +920,7 @@
 
                 <tbody>
 
-
                     @forelse($receipts as $receipt)
-
 
                         <tr>
 
@@ -1077,34 +928,79 @@
                             {{-- ID --}}
 
                             <td class="id-cell">
-
                                 #{{ $receipt->id }}
-
                             </td>
 
 
                             {{-- Дата --}}
 
                             <td class="date-cell">
-
                                 {{ \Carbon\Carbon::parse($receipt->receipt_date)->format('d.m.Y') }}
-
                             </td>
 
 
                             {{-- Склад --}}
 
                             <td class="warehouse-cell">
-
                                 {{ $receipt->warehouse->name }}
-
                             </td>
+
+
+                            {{-- ФИНАНСЫ + ПОСТАВЩИК --}}
+
+                            @if(auth()->user()->is_owner || auth()->user()->role === 'analyst')
+
+                                <td class="supplier-cell">
+
+                                    @if($receipt->supplier)
+
+                                        {{ $receipt->supplier->name }}
+
+                                    @else
+
+                                        <span class="no-supplier">
+                                            —
+                                        </span>
+
+                                    @endif
+
+                                </td>
+
+
+                                <td class="amount-cell">
+                                    {{ number_format((float) $receipt->total_amount, 0, '.', ' ') }} ₸
+                                </td>
+
+
+                                <td class="paid-cell">
+                                    {{ number_format((float) $receipt->paid_amount, 0, '.', ' ') }} ₸
+                                </td>
+
+
+                                <td class="debt-cell">
+
+                                    @if((float) $receipt->debt_amount > 0)
+
+                                        <span class="debt-positive">
+                                            {{ number_format((float) $receipt->debt_amount, 0, '.', ' ') }} ₸
+                                        </span>
+
+                                    @else
+
+                                        <span class="debt-zero">
+                                            0 ₸
+                                        </span>
+
+                                    @endif
+
+                                </td>
+
+                            @endif
 
 
                             {{-- Комментарий --}}
 
                             <td class="comment-cell">
-
 
                                 @if($receipt->comment)
 
@@ -1113,13 +1009,10 @@
                                 @else
 
                                     <span class="no-comment">
-
                                         —
-
                                     </span>
 
                                 @endif
-
 
                             </td>
 
@@ -1136,14 +1029,11 @@
                                     <a
                                         href="{{ route('admin.receipts.show', $receipt) }}"
                                         class="action-btn show-btn"
-                                        title="Подробнее">
-
+                                        title="Подробнее"
+                                    >
                                         <svg viewBox="0 0 24 24">
-
                                             <path d="M9 18l6-6-6-6"></path>
-
                                         </svg>
-
                                     </a>
 
 
@@ -1152,16 +1042,12 @@
                                     <a
                                         href="{{ route('admin.receipts.edit', $receipt) }}"
                                         class="action-btn"
-                                        title="Изменить">
-
+                                        title="Изменить"
+                                    >
                                         <svg viewBox="0 0 24 24">
-
                                             <path d="M12 20h9"></path>
-
                                             <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path>
-
                                         </svg>
-
                                     </a>
 
 
@@ -1175,29 +1061,20 @@
                                     >
 
                                         @csrf
-
                                         @method('DELETE')
-
 
                                         <button
                                             type="submit"
                                             class="action-btn action-delete"
-                                            title="Удалить">
-
+                                            title="Удалить"
+                                        >
                                             <svg viewBox="0 0 24 24">
-
                                                 <path d="M3 6h18"></path>
-
                                                 <path d="M8 6V4h8v2"></path>
-
                                                 <path d="M19 6l-1 14H6L5 6"></path>
-
                                                 <path d="M10 11v5"></path>
-
                                                 <path d="M14 11v5"></path>
-
                                             </svg>
-
                                         </button>
 
                                     </form>
@@ -1207,28 +1084,22 @@
 
                             </td>
 
-
                         </tr>
 
-
                     @empty
-
 
                         <tr>
 
                             <td
-                                colspan="6"
-                                class="table-empty">
-
+                                colspan="{{ auth()->user()->is_owner || auth()->user()->role === 'analyst' ? 10 : 6 }}"
+                                class="table-empty"
+                            >
                                 За выбранный период приёмок нет
-
                             </td>
 
                         </tr>
 
-
                     @endforelse
-
 
                 </tbody>
 
@@ -1243,37 +1114,52 @@
 
         <div class="receipts">
 
-
             @forelse($receipts as $receipt)
-
 
                 <a
                     href="{{ route('admin.receipts.show', $receipt) }}"
-                    class="receipt">
+                    class="receipt"
+                >
 
+
+                    {{-- ID --}}
 
                     <div class="receipt-id">
-
                         #{{ $receipt->id }}
-
                     </div>
 
+
+                    {{-- Дата --}}
 
                     <div class="receipt-date">
-
                         {{ \Carbon\Carbon::parse($receipt->receipt_date)->format('d.m.Y') }}
-
                     </div>
 
+
+                    {{-- Основная информация --}}
 
                     <div class="receipt-main">
 
-
                         <div class="receipt-warehouse">
-
                             {{ $receipt->warehouse->name }}
-
                         </div>
+
+
+                        @if(auth()->user()->is_owner || auth()->user()->role === 'analyst')
+
+                            <div class="receipt-supplier">
+
+                                Поставщик:
+
+                                @if($receipt->supplier)
+                                    {{ $receipt->supplier->name }}
+                                @else
+                                    —
+                                @endif
+
+                            </div>
+
+                        @endif
 
 
                         <div class="receipt-meta">
@@ -1288,7 +1174,6 @@
 
                             шт.
 
-
                             @if($receipt->comment)
 
                                 · есть комментарий
@@ -1297,16 +1182,51 @@
 
                         </div>
 
-
                     </div>
 
+
+                    {{-- ФИНАНСЫ НА МОБИЛЬНОМ --}}
+
+                    @if(auth()->user()->is_owner || auth()->user()->role === 'analyst')
+
+                        <div class="receipt-finance">
+
+                            <span class="receipt-total">
+                                Сумма:
+                                {{ number_format((float) $receipt->total_amount, 0, '.', ' ') }} ₸
+                            </span>
+
+                            <span class="receipt-paid">
+                                Оплачено:
+                                {{ number_format((float) $receipt->paid_amount, 0, '.', ' ') }} ₸
+                            </span>
+
+                            @if((float) $receipt->debt_amount > 0)
+
+                                <span class="receipt-debt">
+                                    Долг:
+                                    {{ number_format((float) $receipt->debt_amount, 0, '.', ' ') }} ₸
+                                </span>
+
+                            @else
+
+                                <span class="receipt-paid">
+                                    Долг: 0 ₸
+                                </span>
+
+                            @endif
+
+                        </div>
+
+                    @endif
+
+
+                    {{-- Стрелка --}}
 
                     <div class="receipt-arrow">
 
                         <svg viewBox="0 0 24 24">
-
                             <path d="M9 18l6-6-6-6"></path>
-
                         </svg>
 
                     </div>
@@ -1314,19 +1234,13 @@
 
                 </a>
 
-
             @empty
 
-
                 <div class="empty">
-
                     За выбранный период приёмок нет
-
                 </div>
 
-
             @endforelse
-
 
         </div>
 
@@ -1338,9 +1252,7 @@
         @if($receipts->hasPages())
 
             <div class="pagination">
-
                 {{ $receipts->links() }}
-
             </div>
 
         @endif
@@ -1348,7 +1260,7 @@
 
     </div>
 
-
 </body>
 
 </html>
+

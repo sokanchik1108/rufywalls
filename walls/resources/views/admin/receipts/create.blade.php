@@ -242,6 +242,7 @@
 
             grid-template-columns:
                 minmax(0, 1fr)
+                minmax(0, 1fr)
                 minmax(170px, 220px);
 
             gap: 10px;
@@ -291,7 +292,6 @@
 
         /* =====================================================
            DATE
-           ЦЕНТР + НЕ ВЫПИРАЕТ СПРАВА
         ===================================================== */
 
         .field-input[type="date"] {
@@ -402,6 +402,62 @@
 
         .comment-field {
             margin-top: 14px;
+        }
+
+        /* =====================================================
+           PAYMENT
+        ===================================================== */
+
+        .payment-grid {
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1fr)
+                minmax(0, 1fr)
+                minmax(0, 1fr);
+
+            gap: 10px;
+
+            margin-top: 14px;
+        }
+
+        .payment-box {
+            min-width: 0;
+
+            min-height: 42px;
+            padding: 0 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+
+            border: 1px solid var(--border);
+            border-radius: 10px;
+
+            background: #f9fafb;
+        }
+
+        .payment-box-label {
+            color: #6b7280;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .payment-box-value {
+            color: #111827;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .payment-box-value.debt {
+            color: #dc2626;
+        }
+
+        .payment-field .field-input {
+            text-align: right;
         }
 
         /* =====================================================
@@ -900,6 +956,13 @@
 
         @media (max-width: 800px) {
 
+            .info-grid {
+                grid-template-columns:
+                    minmax(0, 1fr)
+                    minmax(0, 1fr)
+                    minmax(140px, .8fr);
+            }
+
             .item {
                 grid-template-columns:
                     minmax(0, 1fr)
@@ -1021,7 +1084,7 @@
             }
 
             /* =================================================
-               СКЛАД + ДАТА
+               INFO
             ================================================= */
 
             .info-grid {
@@ -1030,9 +1093,13 @@
 
                 grid-template-columns:
                     minmax(0, 1fr)
-                    minmax(0, .55fr);
+                    minmax(0, 1fr);
 
                 gap: 5px;
+            }
+
+            .info-grid .field:first-child {
+                grid-column: 1 / -1;
             }
 
             .field {
@@ -1064,7 +1131,7 @@
             }
 
             /* =================================================
-               DATE — ЦЕНТР ВНУТРИ ПОЛЯ
+               DATE
             ================================================= */
 
             .field-input[type="date"] {
@@ -1177,6 +1244,61 @@
 
             .comment-field {
                 margin-top: 6px;
+            }
+
+            /* =================================================
+               PAYMENT MOBILE
+            ================================================= */
+
+            .payment-grid {
+                /*
+                 * На телефоне:
+                 * 1 строка — Итого + Долг
+                 * 2 строка — Оплачено
+                 */
+                grid-template-columns:
+                    minmax(0, 1fr)
+                    minmax(0, 1fr);
+
+                gap: 5px;
+
+                margin-top: 6px;
+            }
+
+            .payment-field {
+                grid-column: 1 / -1;
+                grid-row: 2;
+            }
+
+            .payment-grid .payment-box:first-child {
+                grid-column: 1;
+                grid-row: 1;
+            }
+
+            .payment-grid .payment-box:last-child {
+                grid-column: 2;
+                grid-row: 1;
+            }
+
+            .payment-box {
+                min-height: 33px;
+
+                padding:
+                    0 8px;
+
+                border-radius: 6px;
+            }
+
+            .payment-box-label {
+                font-size: 9px;
+            }
+
+            .payment-box-value {
+                font-size: 11px;
+            }
+
+            .payment-field .field-input {
+                text-align: right;
             }
 
             /* =================================================
@@ -1347,9 +1469,7 @@
                 font-size: 10px;
             }
 
-            /* =================================================
-               MODAL
-            ================================================= */
+            /* MODAL */
 
             .modal-overlay {
                 padding: 6px;
@@ -1383,11 +1503,6 @@
                 padding:
                     7px 10px;
             }
-
-            /* =================================================
-               КОД ПАРТИИ
-               16px = iOS НЕ ДЕЛАЕТ ZOOM
-            ================================================= */
 
             #newBatchCode {
                 width: 100%;
@@ -1574,6 +1689,41 @@
 
                 <div class="info-grid">
 
+                    {{-- ПОСТАВЩИК --}}
+
+                    <div class="field">
+
+                        <label class="field-label">
+                            Поставщик
+                        </label>
+
+                        <select
+                            name="supplier_id"
+                            class="field-select"
+                            required>
+
+                            <option value="">
+                                Выберите поставщика
+                            </option>
+
+                            @foreach($suppliers as $supplier)
+
+                                <option
+                                    value="{{ $supplier->id }}"
+                                    {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>
+
+                                    {{ $supplier->name }}
+
+                                </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+                    {{-- СКЛАД --}}
+
                     <div class="field">
 
                         <label class="field-label">
@@ -1605,6 +1755,8 @@
 
                     </div>
 
+                    {{-- ДАТА --}}
+
                     <div class="field">
 
                         <label class="field-label">
@@ -1617,6 +1769,70 @@
                             class="field-input"
                             value="{{ old('receipt_date', now('Asia/Almaty')->format('Y-m-d')) }}"
                             required>
+
+                    </div>
+
+                </div>
+
+                {{-- =================================================
+                     PAYMENT
+                ================================================= --}}
+
+                <div class="payment-grid">
+
+                    {{-- ИТОГО --}}
+
+                    <div class="payment-box">
+
+                        <span class="payment-box-label">
+                            Итого
+                        </span>
+
+                        <span
+                            class="payment-box-value"
+                            id="totalAmount">
+
+                            0,00 ₸
+
+                        </span>
+
+                    </div>
+
+                    {{-- ОПЛАЧЕНО --}}
+
+                    <div class="field payment-field">
+
+                        <label class="field-label">
+                            Оплачено при приёмке
+                        </label>
+
+                        <input
+                            type="number"
+                            name="paid_amount"
+                            id="paidAmount"
+                            class="field-input"
+                            min="0"
+                            step="0.01"
+                            value="{{ old('paid_amount', '0') }}"
+                            placeholder="0">
+
+                    </div>
+
+                    {{-- ДОЛГ --}}
+
+                    <div class="payment-box">
+
+                        <span class="payment-box-label">
+                            Долг
+                        </span>
+
+                        <span
+                            class="payment-box-value debt"
+                            id="debtAmount">
+
+                            0,00 ₸
+
+                        </span>
 
                     </div>
 
@@ -1806,13 +2022,152 @@
 
 
     /* =========================================================
-       iOS — ЗАЩИТА ОТ ZOOM ПРИ ФОКУСЕ
+       MONEY
+    ========================================================= */
+
+    function parseMoney(value) {
+
+        const number = Number(value);
+
+        return Number.isFinite(number)
+            ? number
+            : 0;
+
+    }
+
+
+    function formatMoney(value) {
+
+        return new Intl.NumberFormat(
+            'ru-RU',
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }
+        ).format(value);
+
+    }
+
+
+    function updatePaymentSummary() {
+
+        let total = 0;
+
+        document
+            .querySelectorAll('#items .item')
+            .forEach(item => {
+
+                const quantityInput =
+                    item.querySelector(
+                        'input[name*="[quantity]"]'
+                    );
+
+                const priceInput =
+                    item.querySelector(
+                        '.price-input'
+                    );
+
+                const quantity =
+                    parseMoney(
+                        quantityInput
+                            ? quantityInput.value
+                            : 0
+                    );
+
+                const price =
+                    parseMoney(
+                        priceInput
+                            ? priceInput.value
+                            : 0
+                    );
+
+                total +=
+                    quantity * price;
+
+            });
+
+        const paidInput =
+            document.getElementById(
+                'paidAmount'
+            );
+
+        const totalOutput =
+            document.getElementById(
+                'totalAmount'
+            );
+
+        const debtOutput =
+            document.getElementById(
+                'debtAmount'
+            );
+
+        let paid =
+            parseMoney(
+                paidInput
+                    ? paidInput.value
+                    : 0
+            );
+
+        if (paid < 0) {
+
+            paid = 0;
+
+        }
+
+        if (paid > total) {
+
+            paid = total;
+
+            if (paidInput) {
+
+                paidInput.value =
+                    total.toFixed(2);
+
+            }
+
+        }
+
+        const debt =
+            Math.max(
+                total - paid,
+                0
+            );
+
+        if (totalOutput) {
+
+            totalOutput.textContent =
+                formatMoney(total) +
+                ' ₸';
+
+            totalOutput.dataset.value =
+                total.toFixed(2);
+
+        }
+
+        if (debtOutput) {
+
+            debtOutput.textContent =
+                formatMoney(debt) +
+                ' ₸';
+
+            debtOutput.dataset.value =
+                debt.toFixed(2);
+
+        }
+
+    }
+
+
+    /* =========================================================
+       iOS — ЗАЩИТА ОТ ZOOM
     ========================================================= */
 
     (function preventIOSInputZoom() {
 
         const isIOS =
-            /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+            /iPad|iPhone|iPod/.test(
+                navigator.userAgent
+            ) ||
             (
                 navigator.platform === 'MacIntel' &&
                 navigator.maxTouchPoints > 1
@@ -2121,13 +2476,19 @@
             .appendChild(item);
 
         const autocompleteInput =
-            item.querySelector('.variant-autocomplete');
+            item.querySelector(
+                '.variant-autocomplete'
+            );
 
         const autocompleteList =
-            item.querySelector('.autocomplete-list');
+            item.querySelector(
+                '.autocomplete-list'
+            );
 
         const variantSelect =
-            item.querySelector('.variant-hidden-select');
+            item.querySelector(
+                '.variant-hidden-select'
+            );
 
         setupAutocomplete(
             autocompleteInput,
@@ -2138,6 +2499,7 @@
         updateItemsCount();
         updateEmptyState();
         updateItemNumbers();
+        updatePaymentSummary();
 
     }
 
@@ -2501,10 +2863,14 @@
         }
 
         const batchSelect =
-            item.querySelector('.batch-select');
+            item.querySelector(
+                '.batch-select'
+            );
 
         const priceInput =
-            item.querySelector('.price-input');
+            item.querySelector(
+                '.price-input'
+            );
 
         batchSelect.innerHTML = `
 
@@ -2528,6 +2894,8 @@
                 </option>
 
             `;
+
+            updatePaymentSummary();
 
             return;
         }
@@ -2594,6 +2962,8 @@
             batchSelect,
             ''
         );
+
+        updatePaymentSummary();
 
     }
 
@@ -2674,6 +3044,34 @@
                     );
 
                 }
+
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       PAYMENT INPUT
+    ========================================================= */
+
+    document.addEventListener(
+        'input',
+        function(e) {
+
+            if (
+                e.target.matches(
+                    '.price-input'
+                ) ||
+                e.target.matches(
+                    'input[name*="[quantity]"]'
+                ) ||
+                e.target.matches(
+                    '#paidAmount'
+                )
+            ) {
+
+                updatePaymentSummary();
 
             }
 
@@ -2939,6 +3337,8 @@
 
             updateEmptyState();
 
+            updatePaymentSummary();
+
         }
 
     }
@@ -3064,6 +3464,27 @@
             'submit',
             function(e) {
 
+                const supplier =
+                    document.querySelector(
+                        'select[name="supplier_id"]'
+                    );
+
+                if (
+                    !supplier ||
+                    !supplier.value
+                ) {
+
+                    e.preventDefault();
+
+                    alert(
+                        'Выберите поставщика.'
+                    );
+
+                    supplier?.focus();
+
+                    return;
+                }
+
                 const items =
                     document.querySelectorAll(
                         '#items .item'
@@ -3081,6 +3502,8 @@
                 }
 
                 let valid = true;
+
+                let total = 0;
 
                 items.forEach(
                     item => {
@@ -3105,6 +3528,16 @@
                                 '.price-input'
                             );
 
+                        const quantityValue =
+                            Number(
+                                quantity?.value
+                            );
+
+                        const priceValue =
+                            Number(
+                                price?.value
+                            );
+
                         if (
                             !variant ||
                             !variant.value
@@ -3127,9 +3560,10 @@
 
                         if (
                             !quantity ||
-                            Number(
-                                quantity.value
-                            ) < 1
+                            !Number.isFinite(
+                                quantityValue
+                            ) ||
+                            quantityValue < 1
                         ) {
 
                             valid = false;
@@ -3138,12 +3572,28 @@
 
                         if (
                             !price ||
-                            Number(
-                                price.value
-                            ) < 0
+                            !Number.isFinite(
+                                priceValue
+                            ) ||
+                            priceValue < 0
                         ) {
 
                             valid = false;
+
+                        }
+
+                        if (
+                            Number.isFinite(
+                                quantityValue
+                            ) &&
+                            Number.isFinite(
+                                priceValue
+                            )
+                        ) {
+
+                            total +=
+                                quantityValue *
+                                priceValue;
 
                         }
 
@@ -3158,6 +3608,41 @@
                         'Проверьте артикул, партию, количество и закупочную цену.'
                     );
 
+                    return;
+                }
+
+                const paidInput =
+                    document.getElementById(
+                        'paidAmount'
+                    );
+
+                const paid =
+                    parseMoney(
+                        paidInput?.value
+                    );
+
+                if (paid < 0) {
+
+                    e.preventDefault();
+
+                    alert(
+                        'Сумма оплаты не может быть отрицательной.'
+                    );
+
+                    return;
+                }
+
+                if (paid > total) {
+
+                    e.preventDefault();
+
+                    alert(
+                        'Сумма оплаты не может быть больше общей суммы приёмки.'
+                    );
+
+                    paidInput?.focus();
+
+                    return;
                 }
 
             }
@@ -3242,8 +3727,11 @@
 
     updateEmptyState();
 
+    updatePaymentSummary();
+
 </script>
 
 </body>
 
 </html>
+

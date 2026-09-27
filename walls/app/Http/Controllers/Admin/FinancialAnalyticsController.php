@@ -262,16 +262,6 @@ class FinancialAnalyticsController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | QR Лезговко
-        |--------------------------------------------------------------------------
-        */
-
-        $qrLezgovkaPayments =
-            $paymentMethodTotals['Qr Лезговко']
-            ?? 0;
-
-        /*
-        |--------------------------------------------------------------------------
         | Исходящие платежи / остальные расходы
         |--------------------------------------------------------------------------
         */
@@ -309,14 +299,19 @@ class FinancialAnalyticsController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Чистая прибыль
+        | ЧИСТАЯ ПРИБЫЛЬ
         |--------------------------------------------------------------------------
+        |
+        | QR Лезговко здесь НЕ вычитается.
+        |
+        | QR Лезговко влияет только на долг поставщика
+        | Артекс через SupplierDebtController.
+        |
         */
 
         $netProfit =
             $salesProfit
-            - $otherExpenses
-            - $qrLezgovkaPayments;
+            - $otherExpenses;
 
         /*
         |--------------------------------------------------------------------------
@@ -369,7 +364,6 @@ class FinancialAnalyticsController extends Controller
                 'salesProfit',
                 'otherExpenses',
                 'netProfit',
-                'qrLezgovkaPayments',
                 'expenseTypes',
                 'outgoingPayments',
                 'pointsOfSale',
@@ -393,7 +387,11 @@ class FinancialAnalyticsController extends Controller
         }
 
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => [
+                'required',
+                'string',
+                'max:255'
+            ],
         ]);
 
         ExpenseType::create([
@@ -641,4 +639,3 @@ class FinancialAnalyticsController extends Controller
         );
     }
 }
-

@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ru">
 
 <head>
@@ -13,6 +12,7 @@
     <title>Редактирование приёмки #{{ $receipt->id }}</title>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -57,7 +57,7 @@
                 Arial,
                 sans-serif;
             font-size: 14px;
-            line-height: 1.45;
+            line-height: 1.4;
         }
 
         button,
@@ -77,25 +77,24 @@
             width: 100%;
             max-width: 1180px;
             margin: 0 auto;
-            padding: 20px 24px 40px;
+            padding: 18px 22px 36px;
         }
 
-
         /* =====================================================
-           TOP HEADER
+           HEADER
         ===================================================== */
 
         .top {
             position: relative;
 
             width: 100%;
-            min-height: 46px;
+            min-height: 42px;
 
             display: flex;
             align-items: center;
             justify-content: space-between;
 
-            margin-bottom: 22px;
+            margin-bottom: 16px;
         }
 
         .top-left,
@@ -112,6 +111,7 @@
 
         .top-center {
             position: absolute;
+
             left: 50%;
             top: 50%;
 
@@ -126,7 +126,7 @@
 
             color: var(--text);
 
-            font-size: 24px;
+            font-size: 22px;
             line-height: 1.15;
 
             font-weight: 750;
@@ -138,7 +138,6 @@
             font-weight: 500;
         }
 
-
         /* =====================================================
            BUTTONS
         ===================================================== */
@@ -147,13 +146,13 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 7px;
+            gap: 6px;
 
-            min-height: 38px;
-            padding: 0 13px;
+            min-height: 36px;
+            padding: 0 12px;
 
             border: 1px solid transparent;
-            border-radius: 9px;
+            border-radius: 8px;
 
             cursor: pointer;
             text-decoration: none;
@@ -187,9 +186,6 @@
             background: var(--primary);
             color: #fff;
             border-color: var(--primary);
-
-            box-shadow:
-                0 1px 2px rgba(0, 0, 0, .08);
         }
 
         .btn-primary:hover {
@@ -206,9 +202,8 @@
         }
 
         .save-top-button {
-            min-width: 165px;
+            min-width: 150px;
         }
-
 
         /* =====================================================
            ALERTS
@@ -217,29 +212,29 @@
         .alert {
             display: flex;
             align-items: flex-start;
-            gap: 11px;
+            gap: 9px;
 
-            margin-bottom: 16px;
-            padding: 13px 15px;
+            margin-bottom: 12px;
+            padding: 10px 12px;
 
-            border-radius: 11px;
+            border-radius: 9px;
 
-            font-size: 13px;
+            font-size: 12px;
         }
 
         .alert-icon {
-            width: 20px;
-            height: 20px;
+            width: 19px;
+            height: 19px;
 
             display: flex;
             align-items: center;
             justify-content: center;
 
-            flex: 0 0 20px;
+            flex: 0 0 19px;
 
             border-radius: 50%;
 
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 800;
         }
 
@@ -281,7 +276,6 @@
             background: #fde68a;
         }
 
-
         /* =====================================================
            CARD
         ===================================================== */
@@ -290,93 +284,105 @@
             background: var(--card);
 
             border: 1px solid var(--border);
-            border-radius: 14px;
+            border-radius: 12px;
 
-            margin-bottom: 16px;
+            margin-bottom: 12px;
 
             box-shadow:
                 0 1px 2px rgba(15, 23, 42, .02);
         }
 
         .card-inner {
-            padding: 20px;
+            padding: 14px;
         }
 
-
         /* =====================================================
-           RECEIPT INFO + COMMENT
+           RECEIPT INFO
         ===================================================== */
 
         .receipt-info-comment {
             display: grid;
 
             grid-template-columns:
-                170px 210px minmax(0, 1fr);
+                150px
+                170px
+                minmax(180px, .9fr)
+                minmax(220px, 1.4fr);
 
-            gap: 12px;
+            gap: 8px;
 
             align-items: stretch;
         }
 
         .info-item {
-            min-height: 86px;
+            min-height: 68px;
 
             display: flex;
             flex-direction: column;
             justify-content: center;
 
-            padding: 14px 16px;
+            padding: 10px 12px;
 
             background: var(--soft);
 
             border: 1px solid #edf0f3;
-            border-radius: 11px;
+            border-radius: 9px;
         }
 
-        .info-label {
+        .info-label,
+        .info-item > label {
             display: block;
 
-            margin-bottom: 6px;
+            margin-bottom: 4px;
 
             color: #9ca3af;
 
-            font-size: 10px;
+            font-size: 9px;
+            line-height: 1.1;
             font-weight: 700;
 
             text-transform: uppercase;
-            letter-spacing: .05em;
+            letter-spacing: .045em;
         }
 
         .info-value {
             color: var(--text);
 
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 650;
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .comment-block {
             min-width: 0;
         }
 
+        .comment-block .field {
+            height: 100%;
+        }
+
         .comment-block textarea {
             width: 100%;
 
-            height: 86px;
-            min-height: 86px;
+            height: 68px;
+            min-height: 68px;
 
-            padding: 12px 13px;
+            padding: 9px 10px;
 
             border: 1px solid #dfe3e8;
-            border-radius: 11px;
+            border-radius: 9px;
 
             background: #fff;
             color: var(--text);
 
             outline: none;
 
-            resize: vertical;
+            resize: none;
 
-            font-size: 13px;
+            font-size: 12px;
 
             transition:
                 border-color .15s ease,
@@ -394,11 +400,104 @@
                 0 0 0 3px rgba(17, 24, 39, .06);
         }
 
-        .warning {
-            margin-top: 14px;
-            margin-bottom: 0;
+        /* =====================================================
+           FINANCE
+           СУММА ПРИЁМКИ / ОПЛАЧЕНО / ДОЛГ
+        ===================================================== */
+
+        .finance-block {
+            margin-top: 9px;
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(180px, 1fr)
+                minmax(150px, .8fr)
+                minmax(150px, .8fr);
+
+            gap: 7px;
         }
 
+        .finance-item {
+            min-height: 50px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 10px;
+
+            padding: 8px 11px;
+
+            background: #f8fafc;
+
+            border: 1px solid #edf0f3;
+            border-radius: 8px;
+        }
+
+        .finance-label {
+            color: #9ca3af;
+
+            font-size: 8px;
+            line-height: 1.1;
+            font-weight: 700;
+
+            text-transform: uppercase;
+            letter-spacing: .045em;
+
+            white-space: nowrap;
+        }
+
+        .finance-input {
+            width: 125px;
+
+            min-height: 31px;
+            height: 31px;
+
+            padding: 5px 8px;
+
+            border: 1px solid #dfe3e8;
+            border-radius: 7px;
+
+            background: #fff;
+            color: #111827;
+
+            outline: none;
+
+            font-size: 12px;
+            font-weight: 650;
+
+            text-align: right;
+        }
+
+        .finance-input:focus {
+            border-color: #9ca3af;
+
+            box-shadow:
+                0 0 0 3px rgba(17, 24, 39, .06);
+        }
+
+        .finance-value {
+            color: #111827;
+
+            font-size: 12px;
+            font-weight: 750;
+
+            white-space: nowrap;
+        }
+
+        .finance-value.debt {
+            color: #dc2626;
+        }
+
+        /* =====================================================
+           WARNING
+        ===================================================== */
+
+        .warning {
+            margin-top: 9px;
+            margin-bottom: 0;
+        }
 
         /* =====================================================
            SECTION HEADER
@@ -409,9 +508,9 @@
             align-items: center;
             justify-content: space-between;
 
-            gap: 15px;
+            gap: 12px;
 
-            padding: 18px 20px;
+            padding: 13px 14px;
 
             border-bottom: 1px solid #eef0f2;
         }
@@ -419,7 +518,7 @@
         .section-title {
             margin: 0;
 
-            font-size: 16px;
+            font-size: 15px;
             line-height: 1.2;
 
             font-weight: 720;
@@ -427,20 +526,19 @@
         }
 
         .section-subtitle {
-            margin-top: 4px;
+            margin-top: 3px;
 
             color: #9ca3af;
 
-            font-size: 11px;
+            font-size: 10px;
         }
-
 
         /* =====================================================
            PRODUCTS
         ===================================================== */
 
         .products-body {
-            padding: 14px;
+            padding: 10px;
         }
 
         .item {
@@ -454,16 +552,16 @@
                 72px
                 92px;
 
-            gap: 7px;
+            gap: 6px;
 
-            padding: 8px 48px 8px 10px;
+            padding: 7px 46px 7px 8px;
 
             background: #fff;
 
             border: 1px solid #e6e9ed;
-            border-radius: 9px;
+            border-radius: 8px;
 
-            margin-bottom: 6px;
+            margin-bottom: 5px;
 
             align-items: start;
 
@@ -483,59 +581,8 @@
                 0 2px 7px rgba(15, 23, 42, .035);
         }
 
-
-        /* =====================================================
-           LEFT PART
-        ===================================================== */
-
         .product-main {
             display: contents;
-        }
-
-        .identity-box {
-            min-height: 42px;
-
-            display: grid;
-
-            grid-template-columns:
-                minmax(0, 1fr) minmax(0, 1fr);
-
-            align-items: center;
-
-            gap: 14px;
-
-            padding: 0;
-
-            border: 0;
-            background: transparent;
-        }
-
-        .identity-sku {
-            min-width: 0;
-
-            color: #111827;
-
-            font-size: 13px;
-            line-height: 1.25;
-
-            font-weight: 750;
-
-            overflow-wrap: anywhere;
-        }
-
-        .identity-batch {
-            min-width: 0;
-
-            color: #7b8490;
-
-            font-size: 13px;
-            line-height: 1.3;
-
-            overflow-wrap: anywhere;
-        }
-
-        .identity-batch span {
-            color: #9ca3af;
         }
 
         .product-values {
@@ -554,7 +601,7 @@
         label {
             color: #4b5563;
 
-            font-size: 9px;
+            font-size: 8px;
             line-height: 1;
             font-weight: 650;
         }
@@ -564,19 +611,19 @@
         select {
             width: 100%;
 
-            min-height: 34px;
+            min-height: 32px;
 
-            padding: 6px 9px;
+            padding: 5px 8px;
 
             border: 1px solid #dfe3e8;
-            border-radius: 9px;
+            border-radius: 7px;
 
             background: #fff;
             color: #111827;
 
             outline: none;
 
-            font-size: 13px;
+            font-size: 12px;
 
             transition:
                 border-color .15s ease,
@@ -607,20 +654,20 @@
         .readonly {
             width: 100%;
 
-            min-height: 34px;
+            min-height: 32px;
 
             display: flex;
             align-items: center;
 
-            padding: 6px 9px;
+            padding: 5px 8px;
 
             border: 1px solid #e8ebef;
-            border-radius: 9px;
+            border-radius: 7px;
 
             background: #f8fafc;
             color: #1f2937;
 
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
 
             overflow: hidden;
@@ -628,46 +675,62 @@
             white-space: nowrap;
         }
 
-
-        /* =====================================================
-           EXISTING IDENTITY
-        ===================================================== */
-
         .existing-identity {
             display: grid;
 
             grid-template-columns:
-                minmax(0, 1fr) minmax(0, 1fr);
+                minmax(0, 1fr)
+                minmax(0, 1fr);
 
             align-items: center;
 
-            gap: 14px;
+            gap: 10px;
 
-            min-height: 42px;
+            min-height: 32px;
 
-            padding: 9px 11px;
+            padding: 6px 8px;
 
             border: 1px solid #e8ebef;
-            border-radius: 9px;
+            border-radius: 7px;
 
             background: #f8fafc;
         }
 
         .existing-identity .identity-sku {
-            padding-right: 14px;
+            padding-right: 10px;
 
             border-right: 1px solid #e1e5e9;
         }
 
-        .existing-identity .identity-batch {
-            padding-left: 0;
+        .identity-sku {
+            min-width: 0;
+
+            color: #111827;
+
+            font-size: 12px;
+            line-height: 1.2;
+
+            font-weight: 750;
+
+            overflow-wrap: anywhere;
+        }
+
+        .identity-batch {
+            min-width: 0;
+
+            color: #7b8490;
+
+            font-size: 11px;
+            line-height: 1.2;
+
+            overflow-wrap: anywhere;
         }
 
         .hint {
             color: #9ca3af;
 
-            font-size: 10px;
-            line-height: 1.45;
+            font-size: 8px;
+            line-height: 1.3;
         }
 
         .hint strong {
@@ -675,22 +738,20 @@
             font-weight: 650;
         }
 
-
         /* =====================================================
-           DELETE BUTTON
+           DELETE
         ===================================================== */
 
         .delete-item-btn {
             position: absolute;
 
-            top: 12px;
-            right: 12px;
-            left: auto;
+            top: 9px;
+            right: 9px;
 
             z-index: 20;
 
-            width: 32px;
-            height: 32px;
+            width: 30px;
+            height: 30px;
 
             display: flex;
             align-items: center;
@@ -699,7 +760,7 @@
             padding: 0;
 
             border: 1px solid #eceff2;
-            border-radius: 8px;
+            border-radius: 7px;
 
             background: #fff;
             color: #9ca3af;
@@ -729,7 +790,6 @@
             opacity: .45;
         }
 
-
         /* =====================================================
            NEW ITEM
         ===================================================== */
@@ -737,7 +797,7 @@
         .new-item {
             position: relative;
 
-            padding-top: 58px;
+            padding-top: 51px;
 
             border-style: dashed;
             border-color: #d2d8df;
@@ -748,11 +808,11 @@
         .new-item-header {
             position: absolute;
 
-            top: 12px;
-            left: 16px;
-            right: 54px;
+            top: 10px;
+            left: 11px;
+            right: 51px;
 
-            height: 32px;
+            height: 30px;
 
             display: flex;
             align-items: center;
@@ -765,45 +825,56 @@
             display: inline-flex;
             align-items: center;
 
-            gap: 7px;
+            gap: 6px;
 
             color: #6b7280;
 
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 750;
 
             text-transform: uppercase;
-            letter-spacing: .07em;
+            letter-spacing: .06em;
         }
 
         .new-item-title::before {
             content: "+";
 
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
 
             display: inline-flex;
             align-items: center;
             justify-content: center;
 
-            border-radius: 6px;
+            border-radius: 5px;
 
             background: #f0f2f5;
             color: #4b5563;
 
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
         }
 
         .new-item-header .delete-item-btn {
             position: absolute;
 
-            top: -2px;
-            right: -42px;
+            top: -1px;
+            right: -40px;
 
             pointer-events: auto;
         }
 
+        .new-item {
+            grid-template-columns:
+                minmax(110px, .75fr)
+                minmax(100px, .65fr)
+                minmax(150px, 1.45fr)
+                minmax(105px, .9fr);
+        }
+
+        .new-item .product-main {
+            display: contents;
+        }
 
         /* =====================================================
            AUTOCOMPLETE
@@ -819,17 +890,17 @@
         }
 
         .autocomplete-input {
-            padding-right: 38px;
+            padding-right: 35px;
         }
 
         .autocomplete-icon {
             position: absolute;
 
             top: 50%;
-            right: 12px;
+            right: 10px;
 
-            width: 16px;
-            height: 16px;
+            width: 15px;
+            height: 15px;
 
             transform: translateY(-50%);
 
@@ -861,7 +932,7 @@
             top: 10px;
             left: 9px;
 
-            width: 6px;
+            width: 5px;
             height: 1.5px;
 
             background: currentColor;
@@ -874,7 +945,7 @@
         .autocomplete-dropdown {
             position: absolute;
 
-            top: calc(100% + 5px);
+            top: calc(100% + 4px);
             left: 0;
             right: 0;
 
@@ -882,14 +953,13 @@
 
             display: none;
 
-            max-height: 280px;
-
+            max-height: 260px;
             overflow-y: auto;
 
             background: #fff;
 
             border: 1px solid #dfe3e8;
-            border-radius: 10px;
+            border-radius: 9px;
 
             box-shadow:
                 0 12px 30px rgba(15, 23, 42, .12);
@@ -908,7 +978,7 @@
 
             gap: 2px;
 
-            padding: 10px 12px;
+            padding: 9px 10px;
 
             border: 0;
             border-bottom: 1px solid #f0f1f3;
@@ -932,7 +1002,7 @@
         .autocomplete-option-sku {
             color: #111827;
 
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 750;
         }
 
@@ -941,7 +1011,7 @@
 
             color: #8b95a3;
 
-            font-size: 10px;
+            font-size: 9px;
 
             overflow: hidden;
             text-overflow: ellipsis;
@@ -949,11 +1019,11 @@
         }
 
         .autocomplete-empty {
-            padding: 13px 12px;
+            padding: 12px 10px;
 
             color: #9ca3af;
 
-            font-size: 11px;
+            font-size: 10px;
 
             text-align: center;
         }
@@ -971,68 +1041,32 @@
             text-overflow: ellipsis;
         }
 
-
         /* =====================================================
-           BATCH
-        ===================================================== */
-
-        .batch-select-wrap {
-            position: relative;
-        }
-
-        .batch-select-wrap select:disabled {
-            background: #f8fafc;
-            color: #a0a7b0;
-            cursor: not-allowed;
-        }
-
-        .new-item {
-            grid-template-columns:
-                minmax(110px, .75fr)
-                minmax(100px, .65fr)
-                minmax(150px, 1.45fr)
-                minmax(105px, .9fr);
-        }
-
-        .new-item .product-main {
-            display: contents;
-        }
-
-        .new-item .product-main>.field:first-child {
-            min-width: 0;
-        }
-
-        .new-item .batch-select-wrap {
-            min-width: 0;
-        }
-
-
-        /* =====================================================
-           ADD ITEM BUTTON
+           ADD ITEM
         ===================================================== */
 
         .add-item-btn {
             width: auto;
 
-            min-height: 38px;
+            min-height: 36px;
 
             display: inline-flex;
             align-items: center;
             justify-content: center;
 
-            gap: 7px;
+            gap: 6px;
 
-            margin-top: 12px;
+            margin-top: 9px;
 
-            padding: 0 14px;
+            padding: 0 13px;
 
             border: 1px dashed #cfd5dc;
-            border-radius: 9px;
+            border-radius: 8px;
 
             background: #fafbfc;
             color: #4b5563;
 
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 650;
 
             cursor: pointer;
@@ -1045,15 +1079,13 @@
 
         .add-item-btn:hover {
             background: #f5f6f8;
-
             border-color: #9ca3af;
-
             color: #111827;
         }
 
         .add-item-icon {
-            width: 20px;
-            height: 20px;
+            width: 19px;
+            height: 19px;
 
             display: flex;
             align-items: center;
@@ -1064,52 +1096,41 @@
             background: #111827;
             color: #fff;
 
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 400;
 
             line-height: 1;
         }
 
-
         /* =====================================================
-           MOBILE / TABLET
+           TABLET
         ===================================================== */
 
-        @media (max-width: 900px) {
-
-            .page {
-                padding: 20px 16px 30px;
-            }
-
-            .top-left,
-            .top-right {
-                width: 160px;
-            }
+        @media (max-width: 1100px) {
 
             .receipt-info-comment {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .comment-block {
-                grid-column: 1 / -1;
-            }
-
-            .item {
                 grid-template-columns:
-                    minmax(150px, 1.25fr)
-                    minmax(110px, 1fr)
-                    68px
-                    88px;
-                gap: 6px;
-                padding: 7px 44px 7px 8px;
+                    1fr
+                    1fr;
             }
 
-            .product-main,
-            .product-values {
-                display: contents;
+            /*
+             * Теперь комментарий НЕ растягиваем на всю строку.
+             * На планшете и телефоне поставщик + комментарий
+             * находятся рядом.
+             */
+            .comment-block {
+                grid-column: auto;
             }
+
+            .finance-block {
+                grid-template-columns:
+                    1fr
+                    1fr
+                    1fr;
+            }
+
         }
-
 
         /* =====================================================
            MOBILE
@@ -1118,22 +1139,16 @@
         @media (max-width: 640px) {
 
             body {
-                font-size: 13px;
+                font-size: 12px;
             }
 
             .page {
-                padding: 10px 10px 24px;
+                padding: 7px 7px 18px;
             }
 
-
-            /* HEADER */
-
             .top {
-                min-height: 40px;
-
-                margin-bottom: 16px;
-
-                padding: 0;
+                min-height: 36px;
+                margin-bottom: 9px;
             }
 
             .top-left,
@@ -1141,187 +1156,261 @@
                 width: auto;
             }
 
-            .top-center {
-                position: absolute;
-            }
-
             h1 {
-                font-size: 18px;
+                font-size: 16px;
             }
 
             .back-button {
-                min-height: 34px;
-
-                padding: 0 10px;
-
-                font-size: 11px;
-            }
-
-            .back-icon {
-                font-size: 14px;
+                min-height: 31px;
+                padding: 0 8px;
+                font-size: 10px;
             }
 
             .save-top-button {
                 min-width: 0;
-
-                min-height: 34px;
-
-                padding: 0 10px;
-
+                min-height: 31px;
+                padding: 0 8px;
                 font-size: 10px;
             }
 
-
-            /* CARDS */
-
             .card {
-                border-radius: 12px;
-
-                margin-bottom: 12px;
+                border-radius: 9px;
+                margin-bottom: 8px;
             }
 
             .card-inner {
-                padding: 12px;
+                padding: 8px;
             }
 
-
-            /* INFO */
+            /* =================================================
+               INFO
+               СКЛАД + ДАТА
+               ПОСТАВЩИК + КОММЕНТАРИЙ
+            ================================================= */
 
             .receipt-info-comment {
-                grid-template-columns: 1fr 1fr;
+                display: grid;
 
-                gap: 7px;
+                grid-template-columns:
+                    minmax(0, 1fr)
+                    minmax(0, 1fr);
+
+                gap: 5px;
             }
 
-            .info-item {
-                min-height: 30px;
+            .receipt-info-comment > .info-item {
+                min-width: 0;
 
-                padding: 10px 11px;
+                min-height: 46px;
 
-                border-radius: 9px;
+                padding: 6px 7px;
+
+                border-radius: 7px;
             }
 
-            .info-label {
-                margin-bottom: 3px;
+            /*
+             * Поставщик — левая ячейка второй строки
+             */
+            .receipt-info-comment > .info-item:nth-child(3) {
+                grid-column: 1;
+            }
 
-                font-size: 8px;
+            /*
+             * Комментарий — правая ячейка второй строки
+             */
+            .comment-block {
+                grid-column: 2;
+
+                min-width: 0;
+            }
+
+            .comment-block .field {
+                height: 100%;
+            }
+
+            .info-label,
+            .info-item > label {
+                margin-bottom: 2px;
+
+                font-size: 6.5px;
             }
 
             .info-value {
-                font-size: 11px;
+                font-size: 9px;
             }
 
-            .comment-block {
-                grid-column: 1 / -1;
-            }
+            .info-item select {
+                min-height: 27px;
+                height: 27px;
 
-            .comment-block textarea {
-                height: 50px;
-                min-height: 50px;
-
-                padding: 9px;
-
-                font-size: 12px;
-            }
-
-
-            /* ALERT */
-
-            .alert {
-                margin-bottom: 10px;
-
-                padding: 10px 11px;
-
-                border-radius: 9px;
-
-                font-size: 10px;
-            }
-
-            .alert-icon {
-                width: 18px;
-                height: 18px;
-
-                flex-basis: 18px;
+                padding: 2px 4px;
 
                 font-size: 9px;
+            }
+
+            /*
+             * Комментарий остаётся textarea,
+             * но визуально занимает одну компактную строку.
+             */
+            .comment-block textarea {
+                width: 100%;
+
+                height: 46px;
+                min-height: 46px;
+
+                padding: 6px 7px;
+
+                border-radius: 7px;
+
+                font-size: 9px;
+
+                line-height: 1.2;
+            }
+
+            /* =================================================
+               FINANCE
+               СУММА ПРИЁМКИ | ОПЛАЧЕНО | ДОЛГ
+               СТРОГО ОДНА СТРОКА
+            ================================================= */
+
+            .finance-block {
+                display: grid;
+
+                grid-template-columns:
+                    minmax(0, 1fr)
+                    minmax(0, 1fr)
+                    minmax(0, 1fr);
+
+                gap: 4px;
+
+                margin-top: 5px;
+            }
+
+            .finance-item {
+                min-width: 0;
+                min-height: 42px;
+
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                justify-content: center;
+
+                gap: 2px;
+
+                padding: 5px 6px;
+
+                border-radius: 7px;
+            }
+
+            .finance-label {
+                margin: 0;
+
+                font-size: 5.8px;
+
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .finance-input {
+                width: 100%;
+
+                min-height: 25px;
+                height: 25px;
+
+                padding: 2px 4px;
+
+                border-radius: 5px;
+
+                font-size: 9px;
+
+                text-align: left;
+            }
+
+            .finance-value {
+                width: 100%;
+
+                font-size: 9px;
+
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
 
             .warning {
-                margin-top: 9px !important;
+                margin-top: 5px;
             }
 
+            .alert {
+                margin-bottom: 7px;
+                padding: 7px 8px;
+                border-radius: 7px;
+                font-size: 8.5px;
+            }
 
-            /* SECTION */
+            .alert-icon {
+                width: 15px;
+                height: 15px;
+                flex-basis: 15px;
+                font-size: 8px;
+            }
+
+            /* =================================================
+               PRODUCTS
+            ================================================= */
 
             .section-head {
-                padding: 13px 12px;
+                padding: 9px 9px;
             }
 
             .section-title {
-                font-size: 14px;
+                font-size: 12px;
             }
 
             .section-subtitle {
-                font-size: 9px;
+                margin-top: 2px;
+                font-size: 7.5px;
             }
 
-
-            /* PRODUCTS */
-
             .products-body {
-                padding: 9px;
+                padding: 6px;
             }
 
             .item {
                 grid-template-columns:
                     minmax(0, 1.25fr)
                     minmax(0, 1fr)
-                    58px
-                    74px;
+                    55px
+                    69px;
 
-                gap: 5px;
+                gap: 4px;
 
-                padding: 52px 7px 7px;
+                padding: 47px 6px 6px;
 
-                margin-bottom: 5px;
+                margin-bottom: 4px;
 
-                border-radius: 8px;
+                border-radius: 7px;
             }
 
-            .product-main,
-            .product-values {
-                display: contents;
-            }
-
-            /* NEW ITEM */
             .new-item {
-                padding-top: 52px;
+                padding-top: 47px;
             }
-
-
-            /* FIELDS */
 
             .field {
                 gap: 2px;
-                min-width: 0;
             }
 
             label {
-                font-size: 7px;
-                line-height: 1;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
+                font-size: 6px;
             }
 
             input,
             textarea,
             select {
-                min-height: 30px;
+                min-height: 28px;
+                height: 28px;
 
-                height: 30px;
-
-                padding: 4px 6px;
+                padding: 3px 5px;
 
                 border-radius: 6px;
 
@@ -1329,225 +1418,202 @@
             }
 
             .readonly {
-                min-height: 30px;
+                min-height: 28px;
+                height: 28px;
 
-                height: 30px;
-
-                padding: 4px 6px;
+                padding: 3px 5px;
 
                 border-radius: 6px;
 
                 font-size: 9px;
-            }
-
-
-            /* EXISTING */
-
-            .existing-identity {
-                grid-template-columns:
-                    minmax(0, 1fr) minmax(0, 1fr);
-
-                gap: 5px;
-
-                min-height: 30px;
-
-                padding: 5px;
-
-                border-radius: 6px;
-            }
-
-            .existing-identity .identity-sku {
-                padding-right: 8px;
-            }
-
-            .identity-box {
-                min-height: 38px;
-
-                grid-template-columns:
-                    minmax(0, 1fr) minmax(0, 1fr);
-
-                gap: 8px;
             }
 
             .identity-sku {
-                font-size: 11px;
+                font-size: 10px;
             }
 
             .identity-batch {
-                font-size: 9px;
+                font-size: 8px;
             }
 
             .hint {
-                margin-top: 1px;
-                font-size: 7px;
+                font-size: 6.3px;
                 line-height: 1.15;
             }
 
-
-            /* DELETE */
-
             .delete-item-btn {
-                top: 10px;
-                right: 10px;
+                top: 7px;
+                right: 7px;
 
-                width: 29px;
-                height: 29px;
+                width: 26px;
+                height: 26px;
 
-                border-radius: 7px;
+                border-radius: 6px;
             }
 
             .delete-item-btn svg {
-                width: 13px;
-                height: 13px;
-            }
-
-
-            /* NEW ITEM */
-
-            .new-item {
-                padding-top: 55px;
+                width: 12px;
+                height: 12px;
             }
 
             .new-item-header {
-                top: 10px;
-                left: 10px;
-                right: 49px;
+                top: 8px;
+                left: 8px;
+                right: 46px;
 
-                height: 31px;
+                height: 28px;
             }
 
             .new-item-title {
-                font-size: 9px;
+                font-size: 7.5px;
             }
 
             .new-item-title::before {
-                width: 20px;
-                height: 20px;
-
-                font-size: 13px;
+                width: 18px;
+                height: 18px;
+                font-size: 12px;
             }
 
             .new-item-header .delete-item-btn {
                 top: -1px;
-                right: -40px;
+                right: -37px;
             }
 
-
-            /* AUTOCOMPLETE */
-
             .autocomplete-dropdown {
-                max-height: 230px;
+                max-height: 210px;
             }
 
             .autocomplete-option {
-                padding: 9px 10px;
+                padding: 7px 8px;
             }
 
             .autocomplete-option-sku {
-                font-size: 11px;
+                font-size: 10px;
             }
 
             .autocomplete-option-name {
-                font-size: 9px;
+                font-size: 8px;
             }
 
-
-            /* ADD BUTTON */
+            .selected-variant {
+                font-size: 7px;
+            }
 
             .add-item-btn {
-                min-height: 36px;
+                min-height: 33px;
 
-                padding: 0 12px;
-
-                margin-top: 10px;
-
-                font-size: 11px;
                 width: 100%;
+
+                padding: 0 9px;
+
+                margin-top: 7px;
+
+                font-size: 9.5px;
             }
 
             .add-item-icon {
-                width: 19px;
-                height: 19px;
-
-                font-size: 14px;
+                width: 17px;
+                height: 17px;
+                font-size: 12px;
             }
 
         }
 
-
         /* =====================================================
-           VERY SMALL
+           VERY SMALL MOBILE
         ===================================================== */
 
         @media (max-width: 380px) {
 
             .page {
-                padding-left: 8px;
-                padding-right: 8px;
+                padding-left: 5px;
+                padding-right: 5px;
             }
 
             h1 {
-                font-size: 16px;
+                font-size: 15px;
             }
 
             .back-button {
-                padding: 0 8px;
-
-                font-size: 10px;
-            }
-
-            .save-top-button {
-                padding: 0 8px;
-
+                padding: 0 7px;
                 font-size: 9px;
             }
 
-            .info-item {
-                padding: 9px;
+            .save-top-button {
+                padding: 0 7px;
+                font-size: 9px;
+            }
+
+            .card-inner {
+                padding: 7px;
+            }
+
+            .receipt-info-comment {
+                gap: 4px;
+            }
+
+            .receipt-info-comment > .info-item {
+                padding: 5px;
+            }
+
+            .info-label,
+            .info-item > label {
+                font-size: 6px;
             }
 
             .info-value {
-                font-size: 10px;
+                font-size: 8.5px;
+            }
+
+            .info-item select {
+                font-size: 8px;
+            }
+
+            .comment-block textarea {
+                padding: 5px 6px;
+                font-size: 8.5px;
+            }
+
+            .finance-block {
+                gap: 3px;
+            }
+
+            .finance-item {
+                padding: 4px 5px;
+                min-height: 40px;
+            }
+
+            .finance-label {
+                font-size: 5px;
+            }
+
+            .finance-input {
+                font-size: 8.5px;
+                min-height: 24px;
+                height: 24px;
+            }
+
+            .finance-value {
+                font-size: 8.5px;
             }
 
             .item {
                 grid-template-columns:
                     minmax(0, 1.15fr)
                     minmax(0, .9fr)
-                    52px
-                    68px;
+                    51px
+                    65px;
 
-                gap: 4px;
+                gap: 3px;
 
-                padding-left: 6px;
-                padding-right: 6px;
+                padding-left: 5px;
+                padding-right: 5px;
             }
 
             input,
             textarea,
             select {
-                font-size: 10px;
-            }
-
-            .identity-sku {
-                font-size: 10px;
-            }
-
-            .identity-batch {
-                font-size: 10px;
-            }
-
-            .readonly {
                 font-size: 9px;
-            }
-
-            .existing-identity {
-                gap: 6px;
-                padding: 7px;
-            }
-
-            .existing-identity .identity-sku {
-                padding-right: 6px;
             }
 
             .new-item {
@@ -1558,90 +1624,96 @@
                     minmax(0, .9fr);
             }
 
-            .new-item .product-main {
-                display: contents;
-            }
-
         }
+
     </style>
 
 </head>
 
-
 <body>
 
+@php
 
-    <div class="page">
+    $isOwnerOrAnalyst =
+        auth()->user()->is_owner ||
+        auth()->user()->role === 'analyst';
+
+    $receiptTotal = $receipt->items->sum(function ($item) {
+        return (float) $item->quantity *
+            (float) $item->purchase_price;
+    });
+
+    $paidAmount = $receipt->payments->sum('amount');
+
+    $debtAmount = max(
+        0,
+        $receiptTotal - (float) $paidAmount
+    );
+
+@endphp
 
 
-        {{-- =====================================================
-         TOP HEADER
+<div class="page">
+
+
+    {{-- =====================================================
+         HEADER
     ====================================================== --}}
 
-        <div class="top">
+    <div class="top">
 
+        <div class="top-left">
 
-            {{-- НАЗАД --}}
+            <a
+                href="{{ route('admin.receipts.index') }}"
+                class="btn btn-light back-button">
 
-            <div class="top-left">
+                <span class="back-icon">←</span>
 
-                <a
-                    href="{{ route('admin.receipts.index') }}"
-                    class="btn btn-light back-button">
+                Назад
 
-                    <span class="back-icon">
-                        ←
-                    </span>
-
-                    Назад
-
-                </a>
-
-            </div>
-
-
-            {{-- НОМЕР ПРИЁМКИ ПО ЦЕНТРУ --}}
-
-            <div class="top-center">
-
-                <h1>
-
-                    Приёмка
-
-                    <span class="receipt-number">
-                        #{{ $receipt->id }}
-                    </span>
-
-                </h1>
-
-            </div>
-
-
-            {{-- СОХРАНИТЬ --}}
-
-            <div class="top-right">
-
-                <button
-                    type="submit"
-                    form="receipt-edit-form"
-                    class="btn btn-primary save-top-button"
-                    id="save-button">
-
-                    Сохранить
-
-                </button>
-
-            </div>
-
+            </a>
 
         </div>
 
 
-        {{-- =====================================================
-         SUCCESS
+        <div class="top-center">
+
+            <h1>
+
+                Приёмка
+
+                <span class="receipt-number">
+                    #{{ $receipt->id }}
+                </span>
+
+            </h1>
+
+        </div>
+
+
+        <div class="top-right">
+
+            <button
+                type="submit"
+                form="receipt-edit-form"
+                class="btn btn-primary save-top-button"
+                id="save-button">
+
+                Сохранить
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    {{-- =====================================================
+         ALERTS
     ====================================================== --}}
 
-        @if(session('success'))
+    @if(session('success'))
 
         <div class="alert alert-success">
 
@@ -1650,21 +1722,15 @@
             </div>
 
             <div class="alert-content">
-
                 {{ session('success') }}
-
             </div>
 
         </div>
 
-        @endif
+    @endif
 
 
-        {{-- =====================================================
-         RECEIPT ERROR
-    ====================================================== --}}
-
-        @if(session('receipt_error'))
+    @if(session('receipt_error'))
 
         <div class="alert alert-error">
 
@@ -1673,21 +1739,15 @@
             </div>
 
             <div class="alert-content">
-
                 {{ session('receipt_error') }}
-
             </div>
 
         </div>
 
-        @endif
+    @endif
 
 
-        {{-- =====================================================
-         VALIDATION ERRORS
-    ====================================================== --}}
-
-        @if($errors->any())
+    @if($errors->any())
 
         <div class="alert alert-error">
 
@@ -1699,9 +1759,9 @@
 
                 @foreach($errors->all() as $error)
 
-                <div>
-                    {{ $error }}
-                </div>
+                    <div>
+                        {{ $error }}
+                    </div>
 
                 @endforeach
 
@@ -1709,77 +1769,218 @@
 
         </div>
 
-        @endif
+    @endif
 
 
-        {{-- =====================================================
-         MAIN FORM
+    {{-- =====================================================
+         FORM
     ====================================================== --}}
 
-        <form
-            id="receipt-edit-form"
-            method="POST"
-            action="{{ route('admin.receipts.update', $receipt) }}">
+    <form
+        id="receipt-edit-form"
+        method="POST"
+        action="{{ route('admin.receipts.update', $receipt) }}">
 
-            @csrf
+        @csrf
 
-            @method('PUT')
+        @method('PUT')
 
 
-            {{-- =================================================
-             DATE + WAREHOUSE + COMMENT
+        {{-- =================================================
+             RECEIPT INFO
         ================================================== --}}
 
-            <div class="card">
+        <div class="card">
 
-                <div class="card-inner">
+            <div class="card-inner">
 
-                    <div class="receipt-info-comment">
+                <div class="receipt-info-comment">
 
 
-                        {{-- СКЛАД --}}
+                    {{-- СКЛАД --}}
+
+                    <div class="info-item">
+
+                        <span class="info-label">
+                            Склад
+                        </span>
+
+                        <div class="info-value">
+                            {{ $receipt->warehouse->name }}
+                        </div>
+
+                    </div>
+
+
+                    {{-- ДАТА --}}
+
+                    <div class="info-item">
+
+                        <span class="info-label">
+                            Дата приёмки
+                        </span>
+
+                        <div class="info-value">
+                            {{ $receipt->receipt_date->format('d.m.Y') }}
+                        </div>
+
+                    </div>
+
+
+                    {{-- ПОСТАВЩИК --}}
+
+                    @if($isOwnerOrAnalyst)
+
+                        <div class="info-item">
+
+                            <label for="supplier_id">
+                                Поставщик
+                            </label>
+
+                            <select
+                                name="supplier_id"
+                                id="supplier_id">
+
+                                <option value="">
+                                    Без поставщика
+                                </option>
+
+                                @foreach($suppliers as $supplier)
+
+                                    <option
+                                        value="{{ $supplier->id }}"
+                                        @selected(
+                                            old(
+                                                'supplier_id',
+                                                $receipt->supplier_id
+                                            ) == $supplier->id
+                                        )>
+
+                                        {{ $supplier->name }}
+
+                                    </option>
+
+                                @endforeach
+
+                            </select>
+
+                        </div>
+
+                    @else
 
                         <div class="info-item">
 
                             <span class="info-label">
-
-                                Склад:
-
-                                <strong style="color: black;">
-                                    {{ $receipt->warehouse->name }}
-                                </strong>
-
+                                Поставщик
                             </span>
+
+                            <div class="info-value">
+                                {{ $receipt->supplier?->name ?? 'Не указан' }}
+                            </div>
+
+                        </div>
+
+                    @endif
+
+
+                    {{-- КОММЕНТАРИЙ --}}
+
+                    <div class="comment-block">
+
+                        <div class="field">
+
+                            <label>
+                                Комментарий
+                            </label>
+
+                            <textarea
+                                name="comment"
+                                placeholder="Комментарий">{{ old(
+                                    'comment',
+                                    $receipt->comment
+                                ) }}</textarea>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {{-- =================================================
+                     FINANCE
+                ================================================== --}}
+
+                @if($isOwnerOrAnalyst)
+
+                    <div class="finance-block">
+
+
+                        {{-- СУММА ПРИЁМКИ --}}
+
+                        <div class="finance-item">
+
+                            <div class="finance-label">
+                                Сумма приёмки
+                            </div>
+
+                            <div
+                                class="finance-value"
+                                id="receipt-total">
+
+                                {{ number_format(
+                                    $receiptTotal,
+                                    0,
+                                    ',',
+                                    ' '
+                                ) }} ₸
+
+                            </div>
 
                         </div>
 
 
-                        {{-- ДАТА --}}
+                        {{-- ОПЛАЧЕНО --}}
 
-                        <div class="info-item">
+                        <div class="finance-item">
 
-                            <span class="info-label">
+                            <div class="finance-label">
+                                Оплачено
+                            </div>
 
-                                Дата приёмки:
-
-                                <strong style="color: black;">
-                                    {{ $receipt->receipt_date->format('d.m.Y') }}
-                                </strong>
-
-                            </span>
+                            <input
+                                type="number"
+                                name="paid_amount"
+                                id="paid_amount"
+                                class="finance-input"
+                                min="0"
+                                step="0.01"
+                                value="{{ old(
+                                    'paid_amount',
+                                    $paidAmount
+                                ) }}">
 
                         </div>
 
 
-                        {{-- КОММЕНТАРИЙ --}}
+                        {{-- ДОЛГ --}}
 
-                        <div class="comment-block">
+                        <div class="finance-item">
 
-                            <div class="field">
+                            <div class="finance-label">
+                                Долг
+                            </div>
 
-                                <textarea
-                                    name="comment"
-                                    placeholder="Комментарий к приёмке">{{ old('comment', $receipt->comment) }}</textarea>
+                            <div
+                                class="finance-value debt"
+                                id="receipt-debt">
+
+                                {{ number_format(
+                                    $debtAmount,
+                                    0,
+                                    ',',
+                                    ' '
+                                ) }} ₸
 
                             </div>
 
@@ -1788,70 +1989,73 @@
 
                     </div>
 
+                @endif
 
-                    {{-- WARNING --}}
 
-                    <div class="alert alert-warning warning">
+                {{-- WARNING --}}
 
-                        <div class="alert-icon">
-                            !
-                        </div>
+                <div class="alert alert-warning warning">
 
-                        <div class="alert-content">
+                    <div class="alert-icon">
+                        !
+                    </div>
 
-                            Дата и склад приёмки после создания не изменяются.
-                            Если они указаны неправильно — удалите приёмку
-                            и создайте её заново.
+                    <div class="alert-content">
 
-                        </div>
+                        Дата и склад приёмки после создания
+                        не изменяются. Если они указаны неправильно —
+                        удалите приёмку и создайте её заново.
 
                     </div>
 
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {{-- =================================================
+             PRODUCTS
+        ================================================== --}}
+
+        <div class="card">
+
+
+            <div class="section-head">
+
+                <div>
+
+                    <div class="section-title">
+                        Товары
+                    </div>
+
+                    <div class="section-subtitle">
+                        Изменение количества и закупочной цены
+                    </div>
 
                 </div>
 
             </div>
 
 
-            {{-- =================================================
-             PRODUCTS
-        ================================================== --}}
-
-            <div class="card">
+            <div class="products-body">
 
 
-                <div class="section-head">
+                {{-- EXISTING ITEMS --}}
 
-                    <div>
-
-                        <div class="section-title">
-                            Товары
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="products-body">
-
-
-                    {{-- =========================================
-                     EXISTING ITEMS
-                ========================================== --}}
-
-                    @foreach($receipt->items as $index => $item)
+                @foreach($receipt->items as $index => $item)
 
                     @php
 
-                    $layer = $item->inventoryLayer;
+                        $layer = $item->inventoryLayer;
 
-                    $consumed = $layer
-                    ? \App\Models\FifoAllocation::where(
-                    'inventory_layer_id',
-                    $layer->id
-                    )->sum('quantity')
-                    : 0;
+                        $consumed = $layer
+                            ? \App\Models\FifoAllocation::where(
+                                'inventory_layer_id',
+                                $layer->id
+                            )->sum('quantity')
+                            : 0;
 
                     @endphp
 
@@ -1867,19 +2071,18 @@
                             title="Удалить артикул"
 
                             data-url="{{ route(
-                            'admin.receipts.items.destroy',
-                            [
-                                'receipt' => $receipt,
-                                'receiptItem' => $item
-                            ]
-                        ) }}"
+                                'admin.receipts.items.destroy',
+                                [
+                                    'receipt' => $receipt,
+                                    'receiptItem' => $item
+                                ]
+                            ) }}"
 
                             onclick="deleteExistingItem(this)">
 
-
                             <svg
-                                width="15"
-                                height="15"
+                                width="14"
+                                height="14"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
@@ -1887,13 +2090,9 @@
                                 stroke-linecap="round"
                                 stroke-linejoin="round">
 
-                                <polyline
-                                    points="3 6 5 6 21 6">
-                                </polyline>
+                                <polyline points="3 6 5 6 21 6"></polyline>
 
-                                <path
-                                    d="M19 6l-1 14H6L5 6">
-                                </path>
+                                <path d="M19 6l-1 14H6L5 6"></path>
 
                                 <path d="M10 11v6"></path>
 
@@ -1903,13 +2102,10 @@
 
                             </svg>
 
-
                         </button>
 
 
-                        {{-- =================================
-                         SKU + BATCH
-                    ================================== --}}
+                        {{-- SKU + BATCH --}}
 
                         <div class="product-main">
 
@@ -1945,18 +2141,13 @@
                                 name="items[{{ $index }}][id]"
                                 value="{{ $item->id }}">
 
-
                         </div>
 
 
-                        {{-- =================================
-                         QUANTITY + PRICE
-                    ================================== --}}
+                        {{-- QUANTITY + PRICE --}}
 
                         <div class="product-values">
 
-
-                            {{-- КОЛИЧЕСТВО --}}
 
                             <div class="field">
 
@@ -1969,42 +2160,36 @@
                                     name="items[{{ $index }}][quantity]"
 
                                     value="{{ old(
-                                    'items.' . $index . '.quantity',
-                                    $item->quantity
-                                ) }}"
+                                        'items.' . $index . '.quantity',
+                                        $item->quantity
+                                    ) }}"
 
                                     min="{{ max(1, $consumed) }}"
 
                                     required>
 
-
                                 @if($consumed > 0)
 
-                                <div class="hint">
+                                    <div class="hint">
 
-                                    Уже использовано:
+                                        Использовано:
+                                        <strong>
+                                            {{ $consumed }} шт.
+                                        </strong>
 
-                                    <strong>
-                                        {{ $consumed }} шт.
-                                    </strong>
+                                        <br>
 
-                                    <br>
+                                        Мин:
+                                        <strong>
+                                            {{ $consumed }} шт.
+                                        </strong>
 
-                                    Минимум:
-
-                                    <strong>
-                                        {{ $consumed }} шт.
-                                    </strong>
-
-                                </div>
+                                    </div>
 
                                 @endif
 
-
                             </div>
 
-
-                            {{-- ЦЕНА --}}
 
                             <div class="field">
 
@@ -2017,32 +2202,29 @@
                                     name="items[{{ $index }}][purchase_price]"
 
                                     value="{{ old(
-                                    'items.' . $index . '.purchase_price',
-                                    $item->purchase_price
-                                ) }}"
+                                        'items.' . $index . '.purchase_price',
+                                        $item->purchase_price
+                                    ) }}"
 
                                     min="0"
                                     step="0.01"
                                     required>
 
-
                                 <div class="hint">
 
-                                    Текущая цена:
-
+                                    Текущая:
                                     <strong>
 
                                         {{ number_format(
-                                        (float) $item->purchase_price,
-                                        2,
-                                        ',',
-                                        ' '
-                                    ) }} ₸
+                                            (float) $item->purchase_price,
+                                            2,
+                                            ',',
+                                            ' '
+                                        ) }} ₸
 
                                     </strong>
 
                                 </div>
-
 
                             </div>
 
@@ -2052,284 +2234,432 @@
 
                     </div>
 
-                    @endforeach
+                @endforeach
 
 
-                    {{-- =================================================
-                     NEW ITEMS
-                ================================================== --}}
+                {{-- NEW ITEMS --}}
 
-                    <div id="new-items"></div>
+                <div id="new-items"></div>
 
 
-                    {{-- =================================================
-                     ADD BUTTON
-                ================================================== --}}
+                {{-- ADD BUTTON --}}
 
-                    <button
-                        type="button"
-                        class="add-item-btn"
-                        onclick="addNewItem()">
+                <button
+                    type="button"
+                    class="add-item-btn"
+                    onclick="addNewItem()">
 
-                        <span class="add-item-icon">
-                            +
-                        </span>
+                    <span class="add-item-icon">
+                        +
+                    </span>
 
-                        Добавить товар
+                    Добавить товар
 
-                    </button>
+                </button>
 
-
-                </div>
 
             </div>
 
-
-        </form>
-
-
-    </div>
+        </div>
 
 
-    <script>
-        /* =====================================================
-           VARIANTS
-        ====================================================== */
-
-        const variants = @json($variants);
-
-        let newItemIndex = 0;
+    </form>
 
 
+</div>
 
-        /* =====================================================
-           IOS / IPHONE ZOOM PROTECTION
-           
-           ВАЖНО:
-           Твои размеры шрифтов в CSS НЕ МЕНЯЮТСЯ.
 
-           Safari на iPhone может автоматически увеличивать
-           страницу, если размер шрифта элемента при фокусе
-           меньше 16px.
+<script>
 
-           Перед фокусом временно ставим 16px,
-           после blur возвращаем исходный CSS-размер.
-        ====================================================== */
+    /* =====================================================
+       VARIANTS
+    ====================================================== */
 
-        (function () {
+    const variants = @json($variants);
 
-            const isIOS =
-                /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-                (
-                    navigator.platform === 'MacIntel' &&
-                    navigator.maxTouchPoints > 1
+    let newItemIndex = 0;
+
+
+    /* =====================================================
+       RECALCULATE TOTAL / DEBT
+    ====================================================== */
+
+    function recalculateReceiptTotal() {
+
+        let total = 0;
+
+
+        document
+            .querySelectorAll(
+                'input[name^="items["][name$="[quantity]"]'
+            )
+            .forEach(function(quantityInput) {
+
+                const name = quantityInput.name;
+
+                const match = name.match(
+                    /items\[(.*?)\]\[quantity\]/
                 );
 
-            if (!isIOS) {
+                if (!match) {
+                    return;
+                }
+
+                const index = match[1];
+
+                const priceInput =
+                    document.querySelector(
+                        `input[name="items[${index}][purchase_price]"]`
+                    );
+
+                if (!priceInput) {
+                    return;
+                }
+
+                const quantity =
+                    parseFloat(quantityInput.value) || 0;
+
+                const price =
+                    parseFloat(priceInput.value) || 0;
+
+                total += quantity * price;
+
+            });
+
+
+        /* NEW ITEMS */
+
+        document
+            .querySelectorAll(
+                'input[name^="new_items["][name$="[quantity]"]'
+            )
+            .forEach(function(quantityInput) {
+
+                const name = quantityInput.name;
+
+                const match = name.match(
+                    /new_items\[(.*?)\]\[quantity\]/
+                );
+
+                if (!match) {
+                    return;
+                }
+
+                const index = match[1];
+
+                const priceInput =
+                    document.querySelector(
+                        `input[name="new_items[${index}][purchase_price]"]`
+                    );
+
+                if (!priceInput) {
+                    return;
+                }
+
+                const quantity =
+                    parseFloat(quantityInput.value) || 0;
+
+                const price =
+                    parseFloat(priceInput.value) || 0;
+
+                total += quantity * price;
+
+            });
+
+
+        const totalElement =
+            document.getElementById(
+                'receipt-total'
+            );
+
+
+        if (totalElement) {
+
+            totalElement.textContent =
+                formatMoney(total);
+
+        }
+
+
+        const paidInput =
+            document.getElementById(
+                'paid_amount'
+            );
+
+        let paid =
+            paidInput
+                ? parseFloat(paidInput.value) || 0
+                : 0;
+
+
+        /* Не позволяем оплате быть выше общей суммы */
+
+        if (paid > total && paidInput) {
+
+            paid = total;
+
+            paidInput.value =
+                total.toFixed(2);
+
+        }
+
+
+        const debt =
+            Math.max(
+                0,
+                total - paid
+            );
+
+
+        const debtElement =
+            document.getElementById(
+                'receipt-debt'
+            );
+
+
+        if (debtElement) {
+
+            debtElement.textContent =
+                formatMoney(debt);
+
+            debtElement.style.color =
+                debt > 0
+                    ? '#dc2626'
+                    : '#166534';
+
+        }
+
+    }
+
+
+    function formatMoney(value) {
+
+        return new Intl.NumberFormat(
+            'ru-RU',
+            {
+                maximumFractionDigits: 0
+            }
+        ).format(value) + ' ₸';
+
+    }
+
+
+    document.addEventListener(
+        'input',
+        function(event) {
+
+            if (
+                event.target.matches(
+                    'input[name$="[quantity]"], input[name$="[purchase_price]"], #paid_amount'
+                )
+            ) {
+
+                recalculateReceiptTotal();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       IOS / IPHONE ZOOM PROTECTION
+    ====================================================== */
+
+    (function () {
+
+        const isIOS =
+            /iPad|iPhone|iPod/.test(
+                navigator.userAgent
+            ) ||
+            (
+                navigator.platform === 'MacIntel' &&
+                navigator.maxTouchPoints > 1
+            );
+
+        if (!isIOS) {
+            return;
+        }
+
+
+        function prepareForFocus(element) {
+
+            if (!element) {
+                return;
+            }
+
+            if (
+                element.tagName !== 'INPUT' &&
+                element.tagName !== 'TEXTAREA' &&
+                element.tagName !== 'SELECT'
+            ) {
                 return;
             }
 
 
-            function prepareForFocus(element) {
+            if (
+                !element.dataset.iosOriginalFontSizeSaved
+            ) {
 
-                if (!element) {
-                    return;
-                }
+                element.dataset.iosOriginalFontSize =
+                    element.style.fontSize || '';
 
-                if (
-                    element.tagName !== 'INPUT' &&
-                    element.tagName !== 'TEXTAREA' &&
-                    element.tagName !== 'SELECT'
-                ) {
-                    return;
-                }
-
-
-                /*
-                 * Сохраняем именно inline-стиль.
-                 *
-                 * Если его нет — после blur значение снова
-                 * возьмётся из твоего CSS, например 10px.
-                 */
-                if (
-                    !element.dataset.iosOriginalFontSizeSaved
-                ) {
-
-                    element.dataset.iosOriginalFontSize =
-                        element.style.fontSize || '';
-
-                    element.dataset.iosOriginalFontSizeSaved =
-                        '1';
-
-                }
-
-
-                /*
-                 * Safari должен увидеть 16px ДО фактического
-                 * открытия клавиатуры.
-                 */
-                element.style.fontSize = '16px';
+                element.dataset.iosOriginalFontSizeSaved =
+                    '1';
 
             }
 
 
-            function restoreAfterBlur(element) {
+            element.style.fontSize =
+                '16px';
 
-                if (!element) {
-                    return;
-                }
-
-
-                if (
-                    element.dataset.iosOriginalFontSizeSaved !== '1'
-                ) {
-                    return;
-                }
+        }
 
 
-                element.style.fontSize =
-                    element.dataset.iosOriginalFontSize || '';
+        function restoreAfterBlur(element) {
 
-
-                delete element.dataset.iosOriginalFontSize;
-
-                delete element.dataset.iosOriginalFontSizeSaved;
-
+            if (!element) {
+                return;
             }
 
+            if (
+                element.dataset.iosOriginalFontSizeSaved !== '1'
+            ) {
+                return;
+            }
 
-            /*
-             * pointerdown срабатывает до focus.
-             */
-            document.addEventListener(
-                'pointerdown',
-                function (event) {
+            element.style.fontSize =
+                element.dataset.iosOriginalFontSize || '';
 
-                    const element =
-                        event.target.closest(
-                            'input, textarea, select'
-                        );
+            delete element.dataset.iosOriginalFontSize;
+            delete element.dataset.iosOriginalFontSizeSaved;
 
-                    if (element) {
-                        prepareForFocus(element);
-                    }
+        }
 
-                },
-                true
+
+        document.addEventListener(
+            'pointerdown',
+            function(event) {
+
+                const element =
+                    event.target.closest(
+                        'input, textarea, select'
+                    );
+
+                if (element) {
+                    prepareForFocus(element);
+                }
+
+            },
+            true
+        );
+
+
+        document.addEventListener(
+            'touchstart',
+            function(event) {
+
+                const element =
+                    event.target.closest(
+                        'input, textarea, select'
+                    );
+
+                if (element) {
+                    prepareForFocus(element);
+                }
+
+            },
+            true
+        );
+
+
+        document.addEventListener(
+            'focusin',
+            function(event) {
+
+                const element =
+                    event.target;
+
+                if (
+                    element &&
+                    (
+                        element.tagName === 'INPUT' ||
+                        element.tagName === 'TEXTAREA' ||
+                        element.tagName === 'SELECT'
+                    )
+                ) {
+
+                    prepareForFocus(element);
+
+                }
+
+            },
+            true
+        );
+
+
+        document.addEventListener(
+            'focusout',
+            function(event) {
+
+                const element =
+                    event.target;
+
+                if (
+                    element &&
+                    (
+                        element.tagName === 'INPUT' ||
+                        element.tagName === 'TEXTAREA' ||
+                        element.tagName === 'SELECT'
+                    )
+                ) {
+
+                    setTimeout(
+                        function() {
+
+                            restoreAfterBlur(element);
+
+                        },
+                        50
+                    );
+
+                }
+
+            },
+            true
+        );
+
+    })();
+
+
+    /* =====================================================
+       ADD NEW ITEM
+    ====================================================== */
+
+    function addNewItem() {
+
+        const container =
+            document.getElementById(
+                'new-items'
             );
 
+        const index =
+            newItemIndex++;
 
-            /*
-             * Для старых версий iOS.
-             */
-            document.addEventListener(
-                'touchstart',
-                function (event) {
 
-                    const element =
-                        event.target.closest(
-                            'input, textarea, select'
-                        );
-
-                    if (element) {
-                        prepareForFocus(element);
-                    }
-
-                },
-                true
+        const item =
+            document.createElement(
+                'div'
             );
 
+        item.className =
+            'item new-item';
 
-            /*
-             * Дополнительная страховка перед focus.
-             */
-            document.addEventListener(
-                'focusin',
-                function (event) {
-
-                    const element =
-                        event.target;
-
-                    if (
-                        element &&
-                        (
-                            element.tagName === 'INPUT' ||
-                            element.tagName === 'TEXTAREA' ||
-                            element.tagName === 'SELECT'
-                        )
-                    ) {
-                        prepareForFocus(element);
-                    }
-
-                },
-                true
-            );
+        item.dataset.index =
+            index;
 
 
-            /*
-             * После ухода с поля возвращаем твой размер.
-             */
-            document.addEventListener(
-                'focusout',
-                function (event) {
-
-                    const element =
-                        event.target;
-
-                    if (
-                        element &&
-                        (
-                            element.tagName === 'INPUT' ||
-                            element.tagName === 'TEXTAREA' ||
-                            element.tagName === 'SELECT'
-                        )
-                    ) {
-
-                        /*
-                         * Небольшая задержка нужна Safari,
-                         * чтобы не вернуть размер слишком рано.
-                         */
-                        setTimeout(
-                            function () {
-                                restoreAfterBlur(element);
-                            },
-                            50
-                        );
-
-                    }
-
-                },
-                true
-            );
-
-        })();
-
-
-
-        /* =====================================================
-           ADD NEW ITEM
-        ====================================================== */
-
-        function addNewItem() {
-
-            const container =
-                document.getElementById('new-items');
-
-            const index =
-                newItemIndex++;
-
-
-            const item =
-                document.createElement('div');
-
-            item.className =
-                'item new-item';
-
-            item.dataset.index =
-                index;
-
-
-            item.innerHTML = `
+        item.innerHTML = `
 
         <div class="new-item-header">
 
@@ -2344,8 +2674,8 @@
                 title="Удалить">
 
                 <svg
-                    width="15"
-                    height="15"
+                    width="14"
+                    height="14"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -2353,13 +2683,9 @@
                     stroke-linecap="round"
                     stroke-linejoin="round">
 
-                    <polyline
-                        points="3 6 5 6 21 6">
-                    </polyline>
+                    <polyline points="3 6 5 6 21 6"></polyline>
 
-                    <path
-                        d="M19 6l-1 14H6L5 6">
-                    </path>
+                    <path d="M19 6l-1 14H6L5 6"></path>
 
                     <path d="M10 11v6"></path>
 
@@ -2376,13 +2702,11 @@
 
         <div class="product-main">
 
-
             <div class="field">
 
                 <label>
                     Артикул
                 </label>
-
 
                 <div class="autocomplete">
 
@@ -2400,9 +2724,7 @@
 
                     </div>
 
-
                     <div class="autocomplete-dropdown"></div>
-
 
                     <input
                         type="hidden"
@@ -2411,7 +2733,6 @@
                         required>
 
                 </div>
-
 
                 <div class="selected-variant"></div>
 
@@ -2438,12 +2759,10 @@
 
             </div>
 
-
         </div>
 
 
         <div class="product-values">
-
 
             <div class="field">
 
@@ -2478,100 +2797,105 @@
 
             </div>
 
-
         </div>
 
         `;
 
 
-            container.appendChild(item);
+        container.appendChild(item);
 
 
-            const input =
-                item.querySelector('.autocomplete-input');
+        const input =
+            item.querySelector(
+                '.autocomplete-input'
+            );
 
 
-            if (input) {
+        if (input) {
 
-                setTimeout(() => {
+            setTimeout(() => {
 
-                    /*
-                     * Для iPhone защитный обработчик выше
-                     * уже подготовит поле до focus.
-                     */
-                    input.focus();
+                input.focus();
 
-                }, 50);
-
-            }
+            }, 50);
 
         }
 
+    }
 
 
-        /* =====================================================
-           SEARCH VARIANT
-        ====================================================== */
+    /* =====================================================
+       SEARCH VARIANT
+    ====================================================== */
 
-        function searchNewVariant(input) {
+    function searchNewVariant(input) {
 
-            const autocomplete =
-                input.closest('.autocomplete');
+        const autocomplete =
+            input.closest(
+                '.autocomplete'
+            );
 
-            if (!autocomplete) {
-                return;
-            }
-
-
-            const dropdown =
-                autocomplete.querySelector(
-                    '.autocomplete-dropdown'
-                );
+        if (!autocomplete) {
+            return;
+        }
 
 
-            const value =
-                input.value
+        const dropdown =
+            autocomplete.querySelector(
+                '.autocomplete-dropdown'
+            );
+
+
+        const value =
+            input.value
                 .trim()
                 .toLowerCase();
 
 
-            const item =
-                input.closest('.new-item');
+        const item =
+            input.closest(
+                '.new-item'
+            );
 
 
-            if (!item) {
-                return;
-            }
+        if (!item) {
+            return;
+        }
 
 
-            const hiddenId =
-                item.querySelector('.new-variant-id');
-
-
-            hiddenId.value = '';
-
+        const hiddenId =
             item.querySelector(
-                '.selected-variant'
-            ).textContent = '';
+                '.new-variant-id'
+            );
 
 
-            resetBatchSelect(item);
+        hiddenId.value = '';
 
 
-            dropdown.innerHTML = '';
+        item.querySelector(
+            '.selected-variant'
+        ).textContent = '';
 
 
-            if (!value) {
-
-                dropdown.classList.remove('show');
-
-                return;
-
-            }
+        resetBatchSelect(item);
 
 
-            const results =
-                variants
+        dropdown.innerHTML = '';
+
+
+        if (!value) {
+
+            dropdown.classList.remove(
+                'show'
+            );
+
+            return;
+
+        }
+
+
+        const results =
+            variants
                 .filter(variant => {
 
                     const sku =
@@ -2595,9 +2919,9 @@
                 .slice(0, 30);
 
 
-            if (!results.length) {
+        if (!results.length) {
 
-                dropdown.innerHTML = `
+            dropdown.innerHTML = `
 
                 <div class="autocomplete-empty">
                     Артикул не найден
@@ -2605,17 +2929,119 @@
 
             `;
 
-                dropdown.classList.add('show');
+            dropdown.classList.add(
+                'show'
+            );
 
-                return;
+            return;
 
-            }
+        }
 
 
-            results.forEach(variant => {
+        results.forEach(variant => {
+
+            const option =
+                document.createElement(
+                    'button'
+                );
+
+
+            option.type = 'button';
+
+            option.className =
+                'autocomplete-option';
+
+
+            option.innerHTML = `
+
+                <span class="autocomplete-option-sku">
+                    ${escapeHtml(
+                        variant.sku ?? ''
+                    )}
+                </span>
+
+                <span class="autocomplete-option-name">
+                    ${escapeHtml(
+                        variant.name ?? ''
+                    )}
+                </span>
+
+            `;
+
+
+            option.addEventListener(
+                'mousedown',
+                function(event) {
+
+                    event.preventDefault();
+
+                    selectNewVariant(
+                        input,
+                        variant
+                    );
+
+                }
+            );
+
+
+            dropdown.appendChild(
+                option
+            );
+
+        });
+
+
+        dropdown.classList.add(
+            'show'
+        );
+
+    }
+
+
+    /* =====================================================
+       OPEN SEARCH
+    ====================================================== */
+
+    function openVariantSearch(input) {
+
+        const autocomplete =
+            input.closest(
+                '.autocomplete'
+            );
+
+        if (!autocomplete) {
+            return;
+        }
+
+
+        const dropdown =
+            autocomplete.querySelector(
+                '.autocomplete-dropdown'
+            );
+
+
+        if (input.value.trim()) {
+
+            searchNewVariant(
+                input
+            );
+
+            return;
+
+        }
+
+
+        dropdown.innerHTML = '';
+
+
+        variants
+            .slice(0, 30)
+            .forEach(variant => {
 
                 const option =
-                    document.createElement('button');
+                    document.createElement(
+                        'button'
+                    );
 
 
                 option.type = 'button';
@@ -2624,29 +3050,21 @@
                     'autocomplete-option';
 
 
-                const sku =
-                    escapeHtml(
-                        variant.sku ?? ''
-                    );
-
-
-                const name =
-                    escapeHtml(
-                        variant.name ?? ''
-                    );
-
-
                 option.innerHTML = `
 
-                <span class="autocomplete-option-sku">
-                    ${sku}
-                </span>
+                    <span class="autocomplete-option-sku">
+                        ${escapeHtml(
+                            variant.sku ?? ''
+                        )}
+                    </span>
 
-                <span class="autocomplete-option-name">
-                    ${name}
-                </span>
+                    <span class="autocomplete-option-name">
+                        ${escapeHtml(
+                            variant.name ?? ''
+                        )}
+                    </span>
 
-            `;
+                `;
 
 
                 option.addEventListener(
@@ -2664,247 +3082,169 @@
                 );
 
 
-                dropdown.appendChild(option);
+                dropdown.appendChild(
+                    option
+                );
 
             });
 
 
-            dropdown.classList.add('show');
+        if (variants.length) {
 
-        }
-
-
-
-        /* =====================================================
-           OPEN SEARCH
-        ====================================================== */
-
-        function openVariantSearch(input) {
-
-            const autocomplete =
-                input.closest('.autocomplete');
-
-            if (!autocomplete) {
-                return;
-            }
-
-
-            const dropdown =
-                autocomplete.querySelector(
-                    '.autocomplete-dropdown'
-                );
-
-
-            if (input.value.trim()) {
-
-                searchNewVariant(input);
-
-                return;
-
-            }
-
-
-            dropdown.innerHTML = '';
-
-
-            variants
-                .slice(0, 30)
-                .forEach(variant => {
-
-                    const option =
-                        document.createElement('button');
-
-
-                    option.type = 'button';
-
-                    option.className =
-                        'autocomplete-option';
-
-
-                    option.innerHTML = `
-
-                    <span class="autocomplete-option-sku">
-                        ${escapeHtml(
-                            variant.sku ?? ''
-                        )}
-                    </span>
-
-                    <span class="autocomplete-option-name">
-                        ${escapeHtml(
-                            variant.name ?? ''
-                        )}
-                    </span>
-
-                `;
-
-
-                    option.addEventListener(
-                        'mousedown',
-                        function(event) {
-
-                            event.preventDefault();
-
-                            selectNewVariant(
-                                input,
-                                variant
-                            );
-
-                        }
-                    );
-
-
-                    dropdown.appendChild(option);
-
-                });
-
-
-            if (variants.length) {
-
-                dropdown.classList.add('show');
-
-            }
-
-        }
-
-
-
-        /* =====================================================
-           SELECT VARIANT
-        ====================================================== */
-
-        function selectNewVariant(input, variant) {
-
-            const item =
-                input.closest('.new-item');
-
-
-            if (!item) {
-                return;
-            }
-
-
-            const hiddenId =
-                item.querySelector(
-                    '.new-variant-id'
-                );
-
-
-            const selectedText =
-                item.querySelector(
-                    '.selected-variant'
-                );
-
-
-            const dropdown =
-                input.closest('.autocomplete')
-                .querySelector(
-                    '.autocomplete-dropdown'
-                );
-
-
-            hiddenId.value =
-                variant.id;
-
-
-            input.value =
-                variant.sku ?? '';
-
-
-            selectedText.textContent =
-                variant.name ?
-                variant.name :
-                '';
-
-
-            dropdown.innerHTML = '';
-
-            dropdown.classList.remove(
+            dropdown.classList.add(
                 'show'
             );
 
+        }
 
-            changeNewVariant(item);
+    }
+
+
+    /* =====================================================
+       SELECT VARIANT
+    ====================================================== */
+
+    function selectNewVariant(
+        input,
+        variant
+    ) {
+
+        const item =
+            input.closest(
+                '.new-item'
+            );
+
+
+        if (!item) {
+            return;
+        }
+
+
+        const hiddenId =
+            item.querySelector(
+                '.new-variant-id'
+            );
+
+
+        const selectedText =
+            item.querySelector(
+                '.selected-variant'
+            );
+
+
+        const dropdown =
+            input.closest(
+                '.autocomplete'
+            )
+            .querySelector(
+                '.autocomplete-dropdown'
+            );
+
+
+        hiddenId.value =
+            variant.id;
+
+
+        input.value =
+            variant.sku ?? '';
+
+
+        selectedText.textContent =
+            variant.name
+                ? variant.name
+                : '';
+
+
+        dropdown.innerHTML = '';
+
+        dropdown.classList.remove(
+            'show'
+        );
+
+
+        changeNewVariant(
+            item
+        );
+
+    }
+
+
+    /* =====================================================
+       CHANGE VARIANT
+    ====================================================== */
+
+    function changeNewVariant(item) {
+
+        if (!item) {
+            return;
+        }
+
+
+        const variantIdInput =
+            item.querySelector(
+                '.new-variant-id'
+            );
+
+
+        const batchSelect =
+            item.querySelector(
+                '.new-batch-select'
+            );
+
+
+        const priceInput =
+            item.querySelector(
+                '.new-price-input'
+            );
+
+
+        const variantId =
+            Number(
+                variantIdInput.value
+            );
+
+
+        batchSelect.innerHTML = '';
+
+
+        if (!variantId) {
+
+            resetBatchSelect(item);
+
+            priceInput.value = '0';
+
+            return;
 
         }
 
 
-
-        /* =====================================================
-           CHANGE VARIANT / LOAD BATCHES
-        ====================================================== */
-
-        function changeNewVariant(item) {
-
-            if (!item) {
-                return;
-            }
-
-
-            const variantIdInput =
-                item.querySelector(
-                    '.new-variant-id'
-                );
-
-
-            const batchSelect =
-                item.querySelector(
-                    '.new-batch-select'
-                );
-
-
-            const priceInput =
-                item.querySelector(
-                    '.new-price-input'
-                );
-
-
-            const variantId =
-                Number(
-                    variantIdInput.value
-                );
-
-
-            batchSelect.innerHTML = '';
-
-
-            if (!variantId) {
-
-                resetBatchSelect(item);
-
-                priceInput.value = '0';
-
-                return;
-
-            }
-
-
-            const variant =
-                variants.find(
-                    v =>
+        const variant =
+            variants.find(
+                v =>
                     Number(v.id) ===
                     variantId
-                );
+            );
 
 
-            if (!variant) {
+        if (!variant) {
 
-                resetBatchSelect(item);
+            resetBatchSelect(item);
 
-                return;
+            return;
 
-            }
-
-
-            batchSelect.disabled =
-                false;
+        }
 
 
-            if (
-                !variant.batches ||
-                !variant.batches.length
-            ) {
+        batchSelect.disabled =
+            false;
 
-                batchSelect.innerHTML = `
+
+        if (
+            !variant.batches ||
+            !variant.batches.length
+        ) {
+
+            batchSelect.innerHTML = `
 
                 <option value="">
                     Нет доступных партий
@@ -2912,9 +3252,9 @@
 
             `;
 
-            } else {
+        } else {
 
-                batchSelect.innerHTML = `
+            batchSelect.innerHTML = `
 
                 <option value="">
                     Выберите партию
@@ -2923,59 +3263,58 @@
             `;
 
 
-                variant.batches.forEach(
-                    batch => {
+            variant.batches.forEach(
+                batch => {
 
-                        const option =
-                            document.createElement(
-                                'option'
-                            );
-
-
-                        option.value =
-                            batch.id;
-
-
-                        option.textContent =
-                            batch.code;
-
-
-                        batchSelect.appendChild(
-                            option
+                    const option =
+                        document.createElement(
+                            'option'
                         );
 
-                    }
-                );
 
-            }
+                    option.value =
+                        batch.id;
 
 
-            priceInput.value =
-                Number(
-                    variant.purchase_price || 0
-                ).toFixed(2);
+                    option.textContent =
+                        batch.code;
+
+
+                    batchSelect.appendChild(
+                        option
+                    );
+
+                }
+            );
 
         }
 
 
+        priceInput.value =
+            Number(
+                variant.purchase_price || 0
+            ).toFixed(2);
 
-        /* =====================================================
-           RESET BATCH
-        ====================================================== */
-
-        function resetBatchSelect(item) {
-
-            const batchSelect =
-                item.querySelector(
-                    '.new-batch-select'
-                );
+    }
 
 
-            batchSelect.disabled =
-                true;
+    /* =====================================================
+       RESET BATCH
+    ====================================================== */
+
+    function resetBatchSelect(item) {
+
+        const batchSelect =
+            item.querySelector(
+                '.new-batch-select'
+            );
 
 
-            batchSelect.innerHTML = `
+        batchSelect.disabled =
+            true;
+
+
+        batchSelect.innerHTML = `
 
             <option value="">
                 Сначала выберите артикул
@@ -2983,185 +3322,225 @@
 
         `;
 
-        }
+    }
 
 
+    /* =====================================================
+       REMOVE NEW ITEM
+    ====================================================== */
 
-        /* =====================================================
-           REMOVE NEW ITEM
-        ====================================================== */
+    function removeNewItem(button) {
 
-        function removeNewItem(button) {
-
-            const item =
-                button.closest('.new-item');
-
-
-            if (item) {
-
-                item.remove();
-
-            }
-
-        }
-
-
-
-        /* =====================================================
-           DELETE EXISTING ITEM
-        ====================================================== */
-
-        function deleteExistingItem(button) {
-
-            const url =
-                button.dataset.url;
-
-
-            if (!url) {
-                return;
-            }
-
-
-            const confirmed =
-                confirm(
-                    'Удалить этот артикул из приёмки?\n\n' +
-                    'Количество будет списано со склада.'
-                );
-
-
-            if (!confirmed) {
-                return;
-            }
-
-
-            button.disabled =
-                true;
-
-
-            button.style.opacity =
-                '0.5';
-
-
-            button.style.pointerEvents =
-                'none';
-
-
-            const form =
-                document.createElement(
-                    'form'
-                );
-
-
-            form.method =
-                'POST';
-
-
-            form.action =
-                url;
-
-
-            form.style.display =
-                'none';
-
-
-            const csrf =
-                document.createElement(
-                    'input'
-                );
-
-
-            csrf.type =
-                'hidden';
-
-
-            csrf.name =
-                '_token';
-
-
-            csrf.value =
-                '{{ csrf_token() }}';
-
-
-            const method =
-                document.createElement(
-                    'input'
-                );
-
-
-            method.type =
-                'hidden';
-
-
-            method.name =
-                '_method';
-
-
-            method.value =
-                'DELETE';
-
-
-            form.appendChild(csrf);
-
-            form.appendChild(method);
-
-
-            document.body.appendChild(
-                form
+        const item =
+            button.closest(
+                '.new-item'
             );
 
 
-            form.submit();
+        if (item) {
+
+            item.remove();
+
+            recalculateReceiptTotal();
 
         }
 
+    }
 
 
-        /* =====================================================
-           ESCAPE HTML
-        ====================================================== */
+    /* =====================================================
+       DELETE EXISTING ITEM
+    ====================================================== */
 
-        function escapeHtml(value) {
+    function deleteExistingItem(button) {
 
-            return String(
-                    value ?? ''
+        const url =
+            button.dataset.url;
+
+
+        if (!url) {
+            return;
+        }
+
+
+        const confirmed =
+            confirm(
+                'Удалить этот артикул из приёмки?\n\n' +
+                'Количество будет списано со склада.'
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        button.disabled =
+            true;
+
+
+        button.style.opacity =
+            '0.5';
+
+
+        button.style.pointerEvents =
+            'none';
+
+
+        const form =
+            document.createElement(
+                'form'
+            );
+
+
+        form.method =
+            'POST';
+
+
+        form.action =
+            url;
+
+
+        form.style.display =
+            'none';
+
+
+        const csrf =
+            document.createElement(
+                'input'
+            );
+
+
+        csrf.type =
+            'hidden';
+
+        csrf.name =
+            '_token';
+
+        csrf.value =
+            '{{ csrf_token() }}';
+
+
+        const method =
+            document.createElement(
+                'input'
+            );
+
+
+        method.type =
+            'hidden';
+
+        method.name =
+            '_method';
+
+        method.value =
+            'DELETE';
+
+
+        form.appendChild(
+            csrf
+        );
+
+        form.appendChild(
+            method
+        );
+
+
+        document.body.appendChild(
+            form
+        );
+
+
+        form.submit();
+
+    }
+
+
+    /* =====================================================
+       ESCAPE HTML
+    ====================================================== */
+
+    function escapeHtml(value) {
+
+        return String(
+            value ?? ''
+        )
+        .replace(
+            /&/g,
+            '&amp;'
+        )
+        .replace(
+            /</g,
+            '&lt;'
+        )
+        .replace(
+            />/g,
+            '&gt;'
+        )
+        .replace(
+            /"/g,
+            '&quot;'
+        )
+        .replace(
+            /'/g,
+            '&#039;'
+        );
+
+    }
+
+
+    /* =====================================================
+       CLOSE AUTOCOMPLETE
+    ====================================================== */
+
+    document.addEventListener(
+        'click',
+        function(event) {
+
+            document
+                .querySelectorAll(
+                    '.autocomplete-dropdown.show'
                 )
+                .forEach(
+                    dropdown => {
 
-                .replace(
-                    /&/g,
-                    '&amp;'
-                )
+                        const autocomplete =
+                            dropdown.closest(
+                                '.autocomplete'
+                            );
 
-                .replace(
-                    /</g,
-                    '&lt;'
-                )
 
-                .replace(
-                    />/g,
-                    '&gt;'
-                )
+                        if (
+                            autocomplete &&
+                            !autocomplete.contains(
+                                event.target
+                            )
+                        ) {
 
-                .replace(
-                    /"/g,
-                    '&quot;'
-                )
+                            dropdown.classList.remove(
+                                'show'
+                            );
 
-                .replace(
-                    /'/g,
-                    '&#039;'
+                        }
+
+                    }
                 );
 
         }
+    );
 
 
+    /* =====================================================
+       ESC
+    ====================================================== */
 
-        /* =====================================================
-           CLOSE AUTOCOMPLETE OUTSIDE
-        ====================================================== */
+    document.addEventListener(
+        'keydown',
+        function(event) {
 
-        document.addEventListener(
-            'click',
-            function(event) {
+            if (
+                event.key === 'Escape'
+            ) {
 
                 document
                     .querySelectorAll(
@@ -3170,108 +3549,75 @@
                     .forEach(
                         dropdown => {
 
-                            const autocomplete =
-                                dropdown.closest(
-                                    '.autocomplete'
-                                );
-
-
-                            if (
-                                autocomplete &&
-                                !autocomplete.contains(
-                                    event.target
-                                )
-                            ) {
-
-                                dropdown.classList.remove(
-                                    'show'
-                                );
-
-                            }
+                            dropdown.classList.remove(
+                                'show'
+                            );
 
                         }
                     );
 
             }
-        );
+
+        }
+    );
 
 
+    /* =====================================================
+       PROTECT DOUBLE SUBMIT
+    ====================================================== */
 
-        /* =====================================================
-           ESC
-        ====================================================== */
+    document
+        .getElementById(
+            'receipt-edit-form'
+        )
+        .addEventListener(
+            'submit',
+            function() {
 
-        document.addEventListener(
-            'keydown',
-            function(event) {
+                const button =
+                    document.getElementById(
+                        'save-button'
+                    );
 
-                if (
-                    event.key === 'Escape'
-                ) {
 
-                    document
-                        .querySelectorAll(
-                            '.autocomplete-dropdown.show'
-                        )
-                        .forEach(
-                            dropdown => {
-
-                                dropdown.classList.remove(
-                                    'show'
-                                );
-
-                            }
-                        );
-
+                if (!button) {
+                    return;
                 }
+
+
+                button.disabled =
+                    true;
+
+
+                button.textContent =
+                    'Сохранение...';
+
+
+                button.style.opacity =
+                    '0.7';
+
+
+                button.style.cursor =
+                    'wait';
 
             }
         );
 
 
+    /* =====================================================
+       INITIAL CALCULATION
+    ====================================================== */
 
-        /* =====================================================
-           PROTECT FROM DOUBLE SUBMIT
-        ====================================================== */
+    document.addEventListener(
+        'DOMContentLoaded',
+        function() {
 
-        document
-            .getElementById(
-                'receipt-edit-form'
-            )
-            .addEventListener(
-                'submit',
-                function() {
+            recalculateReceiptTotal();
 
-                    const button =
-                        document.getElementById(
-                            'save-button'
-                        );
+        }
+    );
 
-
-                    if (!button) {
-                        return;
-                    }
-
-
-                    button.disabled =
-                        true;
-
-
-                    button.textContent =
-                        'Сохранение...';
-
-
-                    button.style.opacity =
-                        '0.7';
-
-
-                    button.style.cursor =
-                        'wait';
-
-                }
-            );
-    </script>
-
+</script>
 
 </body>
 

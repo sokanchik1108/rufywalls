@@ -16,6 +16,8 @@ use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\WriteOffController;
 use App\Http\Controllers\Admin\PointOfSaleController;
 use App\Http\Controllers\AppropriationController;
+use App\Http\Controllers\SupplierDebtController;
+
 
 
 Route::get('/address', function () {
@@ -117,6 +119,32 @@ Route::get('/admin/variants/autocomplete', [AdminController::class, 'autocomplet
 
 Route::get('/catalog-autocomplete', [WebsiteController::class, 'catalogAutocomplete'])->name('catalog.autocomplete');
 
+
+Route::prefix('admin/supplier-debts')
+    ->name('admin.supplier-debts.')
+    ->middleware('auth')
+    ->group(function () {
+
+        Route::get('/', [SupplierDebtController::class, 'index'])
+            ->name('index');
+
+        Route::post('/opening-debt', [SupplierDebtController::class, 'storeOpeningDebt'])
+            ->name('opening-debt');
+
+        Route::post('/payment', [SupplierDebtController::class, 'storePayment'])
+            ->name('payment');
+
+        Route::post('/adjustment', [SupplierDebtController::class, 'storeAdjustment'])
+            ->name('adjustment');
+
+        Route::delete('/transaction/{transaction}', [SupplierDebtController::class, 'destroyTransaction'])
+            ->name('transaction.destroy');
+
+        Route::get('/{supplier}', [SupplierDebtController::class, 'show'])
+            ->whereNumber('supplier')
+            ->name('show');
+    });
+
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/product/create', [AdminController::class, 'create'])->name('form');
     Route::post('/products', [AdminController::class, 'store'])->name('products.store');
@@ -191,6 +219,9 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
         'appropriations/batches',
         [AppropriationController::class, 'storeBatch']
     )->name('appropriations.batches.store');
+
+
+    Route::resource('suppliers', \App\Http\Controllers\Admin\SupplierController::class)->except(['show']);
 });
 
 Auth::routes();
@@ -299,6 +330,16 @@ Route::prefix('admin/receipts')
         Route::delete('/{receipt}', [\App\Http\Controllers\ReceiptController::class, 'destroy'])
             ->name('destroy');
     });
+
+
+use App\Http\Controllers\CapitalController;
+
+Route::prefix('admin/capital')->name('admin.capital.')->middleware('auth')->group(function () {
+    Route::get('/', [CapitalController::class, 'index'])->name('index');
+    Route::post('/cash', [CapitalController::class, 'updateCash'])->name('cash.update');
+    Route::post('/personal-expense', [CapitalController::class, 'storePersonalExpense'])->name('personal-expense.store');
+    Route::delete('/personal-expense/{entry}', [CapitalController::class, 'destroyPersonalExpense'])->name('personal-expense.destroy');
+});
 
 
 Route::prefix('admin/receipts')

@@ -6,6 +6,8 @@ use App\Models\Batch;
 use App\Models\InventoryLayer;
 use App\Models\Receipt;
 use App\Models\ReceiptItem;
+use App\Models\ReceiptPayment;
+use App\Models\Supplier;
 use App\Models\Variant;
 use App\Models\Warehouse;
 use App\Services\FifoService;
@@ -33,8 +35,10 @@ class ReceiptController extends Controller
 
         $receipts = Receipt::with([
             'warehouse',
+            'supplier',
             'items.variant.product',
             'items.batch',
+            'payments',
         ])
             ->when(
                 $request->filled('warehouse_id'),
@@ -67,18 +71,12 @@ class ReceiptController extends Controller
 
     /**
      * Страница создания приёмки.
-     *
-     * Показываем ВСЕ товары:
-     * - скрытые и обычные;
-     * - с партией и без партии;
-     * - с остатком и без остатка.
-     *
-     * Если у товара нет партии, её можно создать
-     * через кнопку в интерфейсе.
      */
     public function create()
     {
         $warehouses = Warehouse::orderBy('name')->get();
+
+        $suppliers = Supplier::orderBy('name')->get();
 
         $variants = Variant::with([
             'product',
@@ -88,7 +86,6 @@ class ReceiptController extends Controller
             ->get()
             ->map(function ($variant) {
 
-                // Последняя цена прихода по этому варианту.
                 $lastReceiptItem = ReceiptItem::query()
                     ->where('variant_id', $variant->id)
                     ->whereHas('receipt')
@@ -103,11 +100,6 @@ class ReceiptController extends Controller
                     ->orderByDesc('id')
                     ->first();
 
-                // Если товар уже приходил —
-                // берём последнюю цену прихода.
-                //
-                // Если товар ещё ни разу не приходил —
-                // берём purchase_price товара.
                 $purchasePrice = $lastReceiptItem
                     ? (float) $lastReceiptItem->purchase_price
                     : (float) (
@@ -138,6 +130,7 @@ class ReceiptController extends Controller
             'admin.receipts.create',
             compact(
                 'warehouses',
+                'suppliers',
                 'variants'
             )
         );
@@ -145,11 +138,6 @@ class ReceiptController extends Controller
 
     /**
      * Создание приёмки.
-     *
-     * Партия ОБЯЗАТЕЛЬНА.
-     *
-     * Если партии нет, пользователь должен
-     * сначала создать её через интерфейс.
      */
     public function store(Request $request)
     {
@@ -157,6 +145,11 @@ class ReceiptController extends Controller
             'warehouse_id' => [
                 'required',
                 'exists:warehouses,id',
+            ],
+
+            'supplier_id' => [
+                'required',
+                'exists:suppliers,id',
             ],
 
             'receipt_date' => [
@@ -168,6 +161,12 @@ class ReceiptController extends Controller
                 'nullable',
                 'string',
                 'max:5000',
+            ],
+
+            'paid_amount' => [
+                'required',
+                'numeric',
+                'min:0',
             ],
 
             'items' => [
@@ -199,11 +198,38 @@ class ReceiptController extends Controller
             ],
         ]);
 
+        $totalAmount = collect($data['items'])->sum(
+            function ($item) {
+                return (float) $item['quantity']
+                    * (float) $item['purchase_price'];
+            }
+        );
+
+        $paidAmount = (float) $data['paid_amount'];
+
+        if ($paidAmount > $totalAmount) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'paid_amount' =>
+                        'Сумма оплаты не может быть больше ' .
+                        'суммы приёмки (' .
+                        number_format(
+                            $totalAmount,
+                            2,
+                            ',',
+                            ' '
+                        ) .
+                        ' ₸).',
+                ]);
+        }
+
         DB::beginTransaction();
 
         try {
             $receipt = Receipt::create([
                 'warehouse_id' => $data['warehouse_id'],
+                'supplier_id' => $data['supplier_id'],
                 'receipt_date' => Carbon::parse(
                     $data['receipt_date']
                 ),
@@ -216,20 +242,10 @@ class ReceiptController extends Controller
                     $item['variant_id']
                 );
 
-                /*
-                 * Партия теперь обязательна.
-                 *
-                 * Автоматического создания партии здесь нет.
-                 */
                 $batch = Batch::findOrFail(
                     $item['batch_id']
                 );
 
-                /*
-                 * Защита от ситуации, когда
-                 * пользователь отправил партию
-                 * другого артикула.
-                 */
                 if (
                     (int) $batch->variant_id
                     !==
@@ -237,13 +253,10 @@ class ReceiptController extends Controller
                 ) {
                     throw new RuntimeException(
                         "Партия {$batch->batch_code} " .
-                            "не принадлежит товару {$variant->sku}."
+                        "не принадлежит товару {$variant->sku}."
                     );
                 }
 
-                /*
-                 * Создаём позицию приёмки.
-                 */
                 $receiptItem = ReceiptItem::create([
                     'receipt_id' => $receipt->id,
                     'variant_id' => $variant->id,
@@ -252,9 +265,6 @@ class ReceiptController extends Controller
                     'purchase_price' => $item['purchase_price'],
                 ]);
 
-                /*
-                 * Создаём FIFO-слой.
-                 */
                 InventoryLayer::create([
                     'warehouse_id' => $receipt->warehouse_id,
                     'variant_id' => $variant->id,
@@ -268,15 +278,25 @@ class ReceiptController extends Controller
                         ->startOfDay(),
                 ]);
 
-                /*
-                 * Добавляем количество партии
-                 * на выбранный склад.
-                 */
                 $this->changeWarehouseQuantity(
                     $batch,
                     $receipt->warehouse_id,
                     (int) $item['quantity']
                 );
+            }
+
+            /*
+             * Если была оплата —
+             * создаём платёж, привязанный к приёмке.
+             */
+            if ($paidAmount > 0) {
+                ReceiptPayment::create([
+                    'receipt_id' => $receipt->id,
+                    'amount' => $paidAmount,
+                    'paid_at' => Carbon::parse(
+                        $data['receipt_date']
+                    ),
+                ]);
             }
 
             DB::commit();
@@ -297,7 +317,7 @@ class ReceiptController extends Controller
                 ->withInput()
                 ->withErrors([
                     'error' =>
-                    'Не удалось создать приёмку: '
+                        'Не удалось создать приёмку: '
                         . $e->getMessage(),
                 ]);
         }
@@ -310,16 +330,33 @@ class ReceiptController extends Controller
     {
         $receipt->load([
             'warehouse',
+            'supplier',
+            'payments',
             'items.variant.product',
             'items.batch',
             'items.inventoryLayer',
         ]);
 
-        /*
-         * Показываем ВСЕ товары.
-         *
-         * В том числе скрытые товары.
-         */
+        $suppliers = Supplier::orderBy('name')->get();
+
+        $totalAmount = $receipt->items->sum(
+            function ($item) {
+                return (float) $item->quantity
+                    * (float) $item->purchase_price;
+            }
+        );
+
+        $paidAmount = $receipt->payments->sum(
+            function ($payment) {
+                return (float) $payment->amount;
+            }
+        );
+
+        $debtAmount = max(
+            $totalAmount - $paidAmount,
+            0
+        );
+
         $variants = Variant::with([
             'product',
             'batches',
@@ -375,7 +412,11 @@ class ReceiptController extends Controller
             'admin.receipts.edit',
             compact(
                 'receipt',
-                'variants'
+                'suppliers',
+                'variants',
+                'totalAmount',
+                'paidAmount',
+                'debtAmount'
             )
         );
     }
@@ -383,7 +424,16 @@ class ReceiptController extends Controller
     /**
      * Обновление приёмки.
      *
-     * Дата и склад не изменяются.
+     * Можно изменить:
+     * - поставщика;
+     * - комментарий;
+     * - существующие позиции;
+     * - количество;
+     * - закупочную цену;
+     * - добавить новые позиции;
+     * - общую сумму оплаты.
+     *
+     * Дата и склад остаются неизменными.
      */
     public function update(
         Request $request,
@@ -391,10 +441,24 @@ class ReceiptController extends Controller
         FifoService $fifoService
     ) {
         $data = $request->validate([
+            'supplier_id' => [
+                'required',
+                'exists:suppliers,id',
+            ],
+
             'comment' => [
                 'nullable',
                 'string',
                 'max:5000',
+            ],
+
+            /*
+             * Общая сумма оплаты по этой приёмке.
+             */
+            'paid_amount' => [
+                'required',
+                'numeric',
+                'min:0',
             ],
 
             /*
@@ -425,8 +489,6 @@ class ReceiptController extends Controller
 
             /*
              * Новые позиции.
-             *
-             * Партия ОБЯЗАТЕЛЬНА.
              */
             'new_items' => [
                 'nullable',
@@ -466,11 +528,58 @@ class ReceiptController extends Controller
                 ) {
 
                     /*
-                     * Обновляем комментарий.
+                     * Считаем новую сумму приёмки
+                     * ДО изменения товаров.
+                     */
+                    $newTotal = 0;
+
+                    foreach (
+                        $data['items'] ?? []
+                        as $itemData
+                    ) {
+                        $newTotal +=
+                            (float) $itemData['quantity']
+                            * (float) $itemData['purchase_price'];
+                    }
+
+                    foreach (
+                        $data['new_items'] ?? []
+                        as $newItem
+                    ) {
+                        $newTotal +=
+                            (float) $newItem['quantity']
+                            * (float) $newItem['purchase_price'];
+                    }
+
+                    $newPaidAmount = (float) $data['paid_amount'];
+
+                    /*
+                     * Нельзя оплатить больше суммы приёмки.
+                     */
+                    if ($newPaidAmount > $newTotal) {
+                        throw new RuntimeException(
+                            'Сумма оплаты не может быть больше ' .
+                            'суммы приёмки. ' .
+                            'Сумма приёмки: ' .
+                            number_format(
+                                $newTotal,
+                                2,
+                                ',',
+                                ' '
+                            ) .
+                            ' ₸.'
+                        );
+                    }
+
+                    /*
+                     * Обновляем поставщика и комментарий.
                      */
                     $receipt->update([
+                        'supplier_id' =>
+                            $data['supplier_id'],
+
                         'comment' =>
-                        $data['comment'] ?? null,
+                            $data['comment'] ?? null,
                     ]);
 
                     /*
@@ -507,14 +616,12 @@ class ReceiptController extends Controller
                             (int) $itemData['quantity'];
 
                         /*
-                         * Сколько уже было продано
+                         * Сколько уже продано
                          * из этого FIFO-слоя.
                          */
                         $consumed = $layer
                             ? $fifoService
-                            ->getConsumedQuantity(
-                                $layer
-                            )
+                                ->getConsumedQuantity($layer)
                             : 0;
 
                         /*
@@ -525,10 +632,10 @@ class ReceiptController extends Controller
 
                             throw new RuntimeException(
                                 "Нельзя уменьшить количество товара " .
-                                    "«{$receiptItem->variant->sku}» " .
-                                    "ниже {$consumed} шт., " .
-                                    "потому что это количество " .
-                                    "уже используется в продажах."
+                                "«{$receiptItem->variant->sku}» " .
+                                "ниже {$consumed} шт., " .
+                                "потому что это количество " .
+                                "уже используется в продажах."
                             );
                         }
 
@@ -536,7 +643,7 @@ class ReceiptController extends Controller
                             $newQuantity - $oldQuantity;
 
                         /*
-                         * Меняем остаток на складе.
+                         * Меняем складской остаток.
                          */
                         if ($difference !== 0) {
 
@@ -548,12 +655,12 @@ class ReceiptController extends Controller
                         }
 
                         /*
-                         * Обновляем позицию приёмки.
+                         * Обновляем позицию.
                          */
                         $receiptItem->update([
                             'quantity' => $newQuantity,
                             'purchase_price' =>
-                            $itemData['purchase_price'],
+                                $itemData['purchase_price'],
                         ]);
 
                         /*
@@ -564,7 +671,7 @@ class ReceiptController extends Controller
                             $layer->update([
                                 'quantity' => $newQuantity,
                                 'unit_cost' =>
-                                $itemData['purchase_price'],
+                                    $itemData['purchase_price'],
                             ]);
                         } else {
 
@@ -574,29 +681,29 @@ class ReceiptController extends Controller
                              */
                             InventoryLayer::create([
                                 'warehouse_id' =>
-                                $receipt->warehouse_id,
+                                    $receipt->warehouse_id,
 
                                 'variant_id' =>
-                                $receiptItem->variant_id,
+                                    $receiptItem->variant_id,
 
                                 'batch_id' =>
-                                $receiptItem->batch_id,
+                                    $receiptItem->batch_id,
 
                                 'source_type' => 'receipt',
 
                                 'source_id' =>
-                                $receiptItem->id,
+                                    $receiptItem->id,
 
                                 'quantity' =>
-                                $newQuantity,
+                                    $newQuantity,
 
                                 'unit_cost' =>
-                                $itemData['purchase_price'],
+                                    $itemData['purchase_price'],
 
                                 'layer_date' =>
-                                $receipt->receipt_date
-                                    ->copy()
-                                    ->startOfDay(),
+                                    $receipt->receipt_date
+                                        ->copy()
+                                        ->startOfDay(),
                             ]);
                         }
                     }
@@ -613,51 +720,44 @@ class ReceiptController extends Controller
                             $newItem['variant_id']
                         );
 
-                        /*
-                         * Партия ОБЯЗАТЕЛЬНА.
-                         *
-                         * Никакого AUTO создания.
-                         */
                         $batch = Batch::findOrFail(
                             $newItem['batch_id']
                         );
 
                         /*
-                         * Проверяем принадлежность
-                         * партии к выбранному SKU.
+                         * Проверяем принадлежность партии SKU.
                          */
                         if (
                             (int) $batch->variant_id
                             !==
                             (int) $variant->id
                         ) {
-
                             throw new RuntimeException(
                                 "Партия {$batch->batch_code} " .
-                                    "не принадлежит SKU " .
-                                    "{$variant->sku}."
+                                "не принадлежит SKU " .
+                                "{$variant->sku}."
                             );
                         }
 
                         /*
-                         * Создаём позицию.
+                         * Создаём новую позицию.
                          */
                         $receiptItem =
                             ReceiptItem::create([
                                 'receipt_id' =>
-                                $receipt->id,
+                                    $receipt->id,
 
                                 'variant_id' =>
-                                $variant->id,
+                                    $variant->id,
 
                                 'batch_id' =>
-                                $batch->id,
+                                    $batch->id,
 
                                 'quantity' =>
-                                $newItem['quantity'],
+                                    $newItem['quantity'],
 
                                 'purchase_price' =>
-                                $newItem['purchase_price'],
+                                    $newItem['purchase_price'],
                             ]);
 
                         /*
@@ -674,34 +774,110 @@ class ReceiptController extends Controller
                          */
                         InventoryLayer::create([
                             'warehouse_id' =>
-                            $receipt->warehouse_id,
+                                $receipt->warehouse_id,
 
                             'variant_id' =>
-                            $variant->id,
+                                $variant->id,
 
                             'batch_id' =>
-                            $batch->id,
+                                $batch->id,
 
                             'source_type' =>
-                            'receipt',
+                                'receipt',
 
                             'source_id' =>
-                            $receiptItem->id,
+                                $receiptItem->id,
 
                             'quantity' =>
-                            $newItem['quantity'],
+                                $newItem['quantity'],
 
                             'unit_cost' =>
-                            $newItem['purchase_price'],
+                                $newItem['purchase_price'],
 
                             'layer_date' =>
-                            $receipt->receipt_date
-                                ->copy()
-                                ->startOfDay(),
+                                $receipt->receipt_date
+                                    ->copy()
+                                    ->startOfDay(),
                         ]);
+                    }
+
+                    /*
+                     * ОБНОВЛЯЕМ ОПЛАТУ.
+                     *
+                     * Если сумма 0 —
+                     * удаляем платёж по этой приёмке.
+                     *
+                     * Если сумма больше 0 —
+                     * обновляем существующий платёж
+                     * или создаём новый.
+                     */
+                    $payments = ReceiptPayment::where(
+                        'receipt_id',
+                        $receipt->id
+                    )
+                        ->orderBy('id')
+                        ->get();
+
+                    if ($newPaidAmount <= 0) {
+
+                        ReceiptPayment::where(
+                            'receipt_id',
+                            $receipt->id
+                        )->delete();
+
+                    } else {
+
+                        $payment = $payments->first();
+
+                        if ($payment) {
+
+                            /*
+                             * Сохраняем дату существующей оплаты.
+                             */
+                            $payment->update([
+                                'amount' =>
+                                    $newPaidAmount,
+                            ]);
+
+                            /*
+                             * Если по старой логике
+                             * каким-то образом существует
+                             * несколько платежей —
+                             * удаляем лишние, чтобы поле
+                             * paid_amount соответствовало
+                             * общей оплате.
+                             */
+                            if ($payments->count() > 1) {
+
+                                ReceiptPayment::where(
+                                    'receipt_id',
+                                    $receipt->id
+                                )
+                                    ->where(
+                                        'id',
+                                        '!=',
+                                        $payment->id
+                                    )
+                                    ->delete();
+                            }
+
+                        } else {
+
+                            ReceiptPayment::create([
+                                'receipt_id' =>
+                                    $receipt->id,
+
+                                'amount' =>
+                                    $newPaidAmount,
+
+                                'paid_at' =>
+                                    $receipt->receipt_date,
+                            ]);
+                        }
                     }
                 }
             );
+
         } catch (RuntimeException $e) {
 
             return redirect()
@@ -757,19 +933,11 @@ class ReceiptController extends Controller
                     continue;
                 }
 
-                /*
-                 * Сколько уже использовано
-                 * в продажах.
-                 */
                 $consumed =
                     $fifoService->getConsumedQuantity(
                         $layer
                     );
 
-                /*
-                 * Остаток, который можно вернуть
-                 * со склада.
-                 */
                 $remaining = max(
                     0,
                     (int) $layer->quantity
@@ -785,23 +953,14 @@ class ReceiptController extends Controller
                     );
                 }
 
-                /*
-                 * Удаляем FIFO-распределения.
-                 */
                 \App\Models\FifoAllocation::where(
                     'inventory_layer_id',
                     $layer->id
                 )->delete();
 
-                /*
-                 * Удаляем FIFO-слой.
-                 */
                 $layer->delete();
             }
 
-            /*
-             * Удаляем саму приёмку.
-             */
             $receipt->delete();
         });
 
@@ -838,15 +997,12 @@ class ReceiptController extends Controller
         $newQuantity =
             $current + $difference;
 
-        /*
-         * Нельзя получить отрицательный остаток.
-         */
         if ($newQuantity < 0) {
 
             throw new RuntimeException(
                 "Невозможно изменить остаток партии " .
-                    "{$batch->batch_code}. " .
-                    "Остаток на складе недостаточен."
+                "{$batch->batch_code}. " .
+                "Остаток на складе недостаточен."
             );
         }
 
@@ -857,15 +1013,12 @@ class ReceiptController extends Controller
                     $warehouseId,
                     [
                         'quantity' =>
-                        $newQuantity,
+                            $newQuantity,
                     ]
                 );
+
         } else {
 
-            /*
-             * Если записи на складе ещё нет,
-             * нельзя списывать из неё.
-             */
             if ($difference < 0) {
 
                 throw new RuntimeException(
@@ -873,15 +1026,11 @@ class ReceiptController extends Controller
                 );
             }
 
-            /*
-             * Если это приход — создаём
-             * запись в pivot.
-             */
             $batch->warehouses()->attach(
                 $warehouseId,
                 [
                     'quantity' =>
-                    $difference,
+                        $difference,
                 ]
             );
         }
@@ -894,6 +1043,8 @@ class ReceiptController extends Controller
     {
         $receipt->load([
             'warehouse',
+            'supplier',
+            'payments',
             'items.variant.product',
             'items.batch',
         ]);
@@ -922,8 +1073,7 @@ class ReceiptController extends Controller
             ) {
 
                 /*
-                 * Проверяем, что позиция принадлежит
-                 * именно этой приёмке.
+                 * Проверяем принадлежность позиции.
                  */
                 if (
                     (int) $receiptItem->receipt_id
@@ -933,7 +1083,7 @@ class ReceiptController extends Controller
 
                     throw new RuntimeException(
                         'Эта позиция не принадлежит ' .
-                            'выбранной приёмке.'
+                        'выбранной приёмке.'
                     );
                 }
 
@@ -952,14 +1102,11 @@ class ReceiptController extends Controller
                     ->first();
 
                 /*
-                 * Проверяем, использовался ли товар
-                 * в продажах.
+                 * Проверяем продажи.
                  */
                 $consumed = $layer
                     ? $fifoService
-                    ->getConsumedQuantity(
-                        $layer
-                    )
+                        ->getConsumedQuantity($layer)
                     : 0;
 
                 if ($consumed > 0) {
@@ -970,8 +1117,54 @@ class ReceiptController extends Controller
 
                     throw new RuntimeException(
                         "Нельзя удалить SKU {$sku}. " .
-                            "Из этой позиции уже использовано " .
-                            "{$consumed} шт. в продажах."
+                        "Из этой позиции уже использовано " .
+                        "{$consumed} шт. в продажах."
+                    );
+                }
+
+                /*
+                 * Проверяем оплату.
+                 *
+                 * После удаления позиции сумма приёмки
+                 * не должна стать меньше уже оплаченной суммы.
+                 */
+                $currentTotal = ReceiptItem::where(
+                    'receipt_id',
+                    $receipt->id
+                )
+                    ->get()
+                    ->sum(function ($item) {
+                        return (float) $item->quantity
+                            * (float) $item->purchase_price;
+                    });
+
+                $itemAmount =
+                    (float) $receiptItem->quantity
+                    * (float) $receiptItem->purchase_price;
+
+                $newTotal =
+                    $currentTotal - $itemAmount;
+
+                $paidAmount =
+                    ReceiptPayment::where(
+                        'receipt_id',
+                        $receipt->id
+                    )->sum('amount');
+
+                if ($paidAmount > $newTotal) {
+
+                    throw new RuntimeException(
+                        'Нельзя удалить эту позицию. ' .
+                        'После удаления сумма приёмки будет ' .
+                        'меньше уже оплаченной суммы. ' .
+                        'Оплачено: ' .
+                        number_format(
+                            $paidAmount,
+                            2,
+                            ',',
+                            ' '
+                        ) .
+                        ' ₸.'
                     );
                 }
 
@@ -1011,10 +1204,11 @@ class ReceiptController extends Controller
                 }
 
                 /*
-                 * Удаляем позицию приёмки.
+                 * Удаляем позицию.
                  */
                 $receiptItem->delete();
             });
+
         } catch (RuntimeException $e) {
 
             return redirect()
@@ -1036,7 +1230,8 @@ class ReceiptController extends Controller
             ->with(
                 'success',
                 'Артикул удалён из приёмки, ' .
-                    'остаток списан со склада.'
+                'остаток списан со склада.'
             );
     }
 }
+
