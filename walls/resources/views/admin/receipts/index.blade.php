@@ -7,13 +7,11 @@
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
-    >
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
     <title>Приёмки</title>
 
     <style>
-
         * {
             box-sizing: border-box;
         }
@@ -470,15 +468,14 @@
 
             .filters {
                 grid-template-columns:
-                    minmax(0, 1fr)
-                    minmax(0, 1fr);
+                    minmax(0, 1fr) minmax(0, 1fr);
                 gap: 7px;
                 width: 100%;
                 padding: 7px;
                 border-radius: 14px;
             }
 
-            .filters > .filter {
+            .filters>.filter {
                 min-width: 0;
                 width: 100%;
                 max-width: 100%;
@@ -686,7 +683,6 @@
                 font-size: 13px;
             }
         }
-
     </style>
 
 </head>
@@ -708,8 +704,7 @@
                     ? route('admin.analytics.receipts')
                     : url('/admin') }}"
                 class="header-btn"
-                title="Назад"
-            >
+                title="Назад">
                 <svg viewBox="0 0 24 24">
                     <path d="M19 12H5"></path>
                     <path d="M12 19l-7-7 7-7"></path>
@@ -725,8 +720,7 @@
             <a
                 href="{{ route('admin.receipts.create') }}"
                 class="header-btn add-btn"
-                title="Новая приёмка"
-            >
+                title="Новая приёмка">
                 <svg viewBox="0 0 24 24">
                     <path d="M12 5v14"></path>
                     <path d="M5 12h14"></path>
@@ -742,35 +736,35 @@
 
         @if(session('success'))
 
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
 
         @endif
 
 
         @if(session('error'))
 
-            <div class="alert alert-error">
-                {{ session('error') }}
-            </div>
+        <div class="alert alert-error">
+            {{ session('error') }}
+        </div>
 
         @endif
 
 
         @if($errors->any())
 
-            <div class="alert alert-error">
+        <div class="alert alert-error">
 
-                @foreach($errors->all() as $error)
+            @foreach($errors->all() as $error)
 
-                    <div>
-                        {{ $error }}
-                    </div>
-
-                @endforeach
-
+            <div>
+                {{ $error }}
             </div>
+
+            @endforeach
+
+        </div>
 
         @endif
 
@@ -782,8 +776,7 @@
         <form
             method="GET"
             action="{{ route('admin.receipts.index') }}"
-            class="filters"
-        >
+            class="filters">
 
             {{-- Склад --}}
 
@@ -801,12 +794,12 @@
 
                     @foreach($warehouses as $warehouse)
 
-                        <option
-                            value="{{ $warehouse->id }}"
-                            @selected(request('warehouse_id') == $warehouse->id)
+                    <option
+                        value="{{ $warehouse->id }}"
+                        @selected(request('warehouse_id')==$warehouse->id)
                         >
-                            {{ $warehouse->name }}
-                        </option>
+                        {{ $warehouse->name }}
+                    </option>
 
                     @endforeach
 
@@ -826,8 +819,7 @@
                 <input
                     type="date"
                     name="from"
-                    value="{{ \Carbon\Carbon::parse($from)->format('Y-m-d') }}"
-                >
+                    value="{{ \Carbon\Carbon::parse($from)->format('Y-m-d') }}">
 
             </div>
 
@@ -843,8 +835,7 @@
                 <input
                     type="date"
                     name="to"
-                    value="{{ \Carbon\Carbon::parse($to)->format('Y-m-d') }}"
-                >
+                    value="{{ \Carbon\Carbon::parse($to)->format('Y-m-d') }}">
 
             </div>
 
@@ -853,8 +844,7 @@
 
             <button
                 type="submit"
-                class="filter-button"
-            >
+                class="filter-button">
                 Применить
             </button>
 
@@ -885,23 +875,23 @@
                             Склад
                         </th>
 
-                        @if(auth()->user()->is_owner || auth()->user()->role === 'analyst')
+                        @if(auth()->user()->is_owner || auth()->user()->can_view_analytics)
 
-                            <th>
-                                Поставщик
-                            </th>
+                        <th>
+                            Поставщик
+                        </th>
 
-                            <th>
-                                Сумма
-                            </th>
+                        <th>
+                            Сумма
+                        </th>
 
-                            <th>
-                                Оплачено
-                            </th>
+                        <th>
+                            Оплачено
+                        </th>
 
-                            <th>
-                                Долг
-                            </th>
+                        <th>
+                            Долг
+                        </th>
 
                         @endif
 
@@ -922,182 +912,177 @@
 
                     @forelse($receipts as $receipt)
 
-                        <tr>
+                    <tr>
 
 
-                            {{-- ID --}}
+                        {{-- ID --}}
 
-                            <td class="id-cell">
-                                #{{ $receipt->id }}
-                            </td>
-
-
-                            {{-- Дата --}}
-
-                            <td class="date-cell">
-                                {{ \Carbon\Carbon::parse($receipt->receipt_date)->format('d.m.Y') }}
-                            </td>
+                        <td class="id-cell">
+                            #{{ $receipt->id }}
+                        </td>
 
 
-                            {{-- Склад --}}
+                        {{-- Дата --}}
 
-                            <td class="warehouse-cell">
-                                {{ $receipt->warehouse->name }}
-                            </td>
-
-
-                            {{-- ФИНАНСЫ + ПОСТАВЩИК --}}
-
-                            @if(auth()->user()->is_owner || auth()->user()->role === 'analyst')
-
-                                <td class="supplier-cell">
-
-                                    @if($receipt->supplier)
-
-                                        {{ $receipt->supplier->name }}
-
-                                    @else
-
-                                        <span class="no-supplier">
-                                            —
-                                        </span>
-
-                                    @endif
-
-                                </td>
+                        <td class="date-cell">
+                            {{ \Carbon\Carbon::parse($receipt->receipt_date)->format('d.m.Y') }}
+                        </td>
 
 
-                                <td class="amount-cell">
-                                    {{ number_format((float) $receipt->total_amount, 0, '.', ' ') }} ₸
-                                </td>
+                        {{-- Склад --}}
+
+                        <td class="warehouse-cell">
+                            {{ $receipt->warehouse->name }}
+                        </td>
 
 
-                                <td class="paid-cell">
-                                    {{ number_format((float) $receipt->paid_amount, 0, '.', ' ') }} ₸
-                                </td>
+                        {{-- ФИНАНСЫ + ПОСТАВЩИК --}}
 
+                        @if(auth()->user()->is_owner || auth()->user()->can_view_analytics)
 
-                                <td class="debt-cell">
+                        <td class="supplier-cell">
 
-                                    @if((float) $receipt->debt_amount > 0)
+                            @if($receipt->supplier)
 
-                                        <span class="debt-positive">
-                                            {{ number_format((float) $receipt->debt_amount, 0, '.', ' ') }} ₸
-                                        </span>
+                            {{ $receipt->supplier->name }}
 
-                                    @else
+                            @else
 
-                                        <span class="debt-zero">
-                                            0 ₸
-                                        </span>
-
-                                    @endif
-
-                                </td>
+                            <span class="no-supplier">
+                                —
+                            </span>
 
                             @endif
 
-
-                            {{-- Комментарий --}}
-
-                            <td class="comment-cell">
-
-                                @if($receipt->comment)
-
-                                    {{ $receipt->comment }}
-
-                                @else
-
-                                    <span class="no-comment">
-                                        —
-                                    </span>
-
-                                @endif
-
-                            </td>
+                        </td>
 
 
-                            {{-- Действия --}}
-
-                            <td>
-
-                                <div class="actions">
+                        <td class="amount-cell">
+                            {{ number_format((float) $receipt->total_amount, 0, '.', ' ') }} ₸
+                        </td>
 
 
-                                    {{-- Подробнее --}}
+                        <td class="paid-cell">
+                            {{ number_format((float) $receipt->paid_amount, 0, '.', ' ') }} ₸
+                        </td>
 
-                                    <a
-                                        href="{{ route('admin.receipts.show', $receipt) }}"
-                                        class="action-btn show-btn"
-                                        title="Подробнее"
-                                    >
+
+                        <td class="debt-cell">
+
+                            @if((float) $receipt->debt_amount > 0)
+
+                            <span class="debt-positive">
+                                {{ number_format((float) $receipt->debt_amount, 0, '.', ' ') }} ₸
+                            </span>
+
+                            @else
+
+                            <span class="debt-zero">
+                                0 ₸
+                            </span>
+
+                            @endif
+
+                        </td>
+
+                        @endif
+
+
+                        {{-- Комментарий --}}
+
+                        <td class="comment-cell">
+
+                            @if($receipt->comment)
+
+                            {{ $receipt->comment }}
+
+                            @else
+
+                            <span class="no-comment">
+                                —
+                            </span>
+
+                            @endif
+
+                        </td>
+
+
+                        {{-- Действия --}}
+
+                        <td>
+
+                            <div class="actions">
+
+
+                                {{-- Подробнее --}}
+
+                                <a
+                                    href="{{ route('admin.receipts.show', $receipt) }}"
+                                    class="action-btn show-btn"
+                                    title="Подробнее">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M9 18l6-6-6-6"></path>
+                                    </svg>
+                                </a>
+
+
+                                {{-- Изменить --}}
+
+                                <a
+                                    href="{{ route('admin.receipts.edit', $receipt) }}"
+                                    class="action-btn"
+                                    title="Изменить">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M12 20h9"></path>
+                                        <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path>
+                                    </svg>
+                                </a>
+
+
+                                {{-- Удалить --}}
+
+                                <form
+                                    action="{{ route('admin.receipts.destroy', $receipt) }}"
+                                    method="POST"
+                                    style="display:inline"
+                                    onsubmit="return confirm('Удалить эту приёмку? Неиспользованный остаток будет убран со склада.');">
+
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button
+                                        type="submit"
+                                        class="action-btn action-delete"
+                                        title="Удалить">
                                         <svg viewBox="0 0 24 24">
-                                            <path d="M9 18l6-6-6-6"></path>
+                                            <path d="M3 6h18"></path>
+                                            <path d="M8 6V4h8v2"></path>
+                                            <path d="M19 6l-1 14H6L5 6"></path>
+                                            <path d="M10 11v5"></path>
+                                            <path d="M14 11v5"></path>
                                         </svg>
-                                    </a>
+                                    </button>
+
+                                </form>
 
 
-                                    {{-- Изменить --}}
+                            </div>
 
-                                    <a
-                                        href="{{ route('admin.receipts.edit', $receipt) }}"
-                                        class="action-btn"
-                                        title="Изменить"
-                                    >
-                                        <svg viewBox="0 0 24 24">
-                                            <path d="M12 20h9"></path>
-                                            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path>
-                                        </svg>
-                                    </a>
+                        </td>
 
-
-                                    {{-- Удалить --}}
-
-                                    <form
-                                        action="{{ route('admin.receipts.destroy', $receipt) }}"
-                                        method="POST"
-                                        style="display:inline"
-                                        onsubmit="return confirm('Удалить эту приёмку? Неиспользованный остаток будет убран со склада.');"
-                                    >
-
-                                        @csrf
-                                        @method('DELETE')
-
-                                        <button
-                                            type="submit"
-                                            class="action-btn action-delete"
-                                            title="Удалить"
-                                        >
-                                            <svg viewBox="0 0 24 24">
-                                                <path d="M3 6h18"></path>
-                                                <path d="M8 6V4h8v2"></path>
-                                                <path d="M19 6l-1 14H6L5 6"></path>
-                                                <path d="M10 11v5"></path>
-                                                <path d="M14 11v5"></path>
-                                            </svg>
-                                        </button>
-
-                                    </form>
-
-
-                                </div>
-
-                            </td>
-
-                        </tr>
+                    </tr>
 
                     @empty
 
-                        <tr>
+                    <tr>
 
-                            <td
-                                colspan="{{ auth()->user()->is_owner || auth()->user()->role === 'analyst' ? 10 : 6 }}"
-                                class="table-empty"
-                            >
-                                За выбранный период приёмок нет
-                            </td>
+                        <td
+                            colspan="{{ auth()->user()->is_owner || auth()->user()->can_view_analytics ? 10 : 6 }}"
+                            class="table-empty">
+                            За выбранный период приёмок нет
+                        </td>
 
-                        </tr>
+                    </tr>
 
                     @endforelse
 
@@ -1116,129 +1101,128 @@
 
             @forelse($receipts as $receipt)
 
-                <a
-                    href="{{ route('admin.receipts.show', $receipt) }}"
-                    class="receipt"
-                >
+            <a
+                href="{{ route('admin.receipts.show', $receipt) }}"
+                class="receipt">
 
 
-                    {{-- ID --}}
+                {{-- ID --}}
 
-                    <div class="receipt-id">
-                        #{{ $receipt->id }}
+                <div class="receipt-id">
+                    #{{ $receipt->id }}
+                </div>
+
+
+                {{-- Дата --}}
+
+                <div class="receipt-date">
+                    {{ \Carbon\Carbon::parse($receipt->receipt_date)->format('d.m.Y') }}
+                </div>
+
+
+                {{-- Основная информация --}}
+
+                <div class="receipt-main">
+
+                    <div class="receipt-warehouse">
+                        {{ $receipt->warehouse->name }}
                     </div>
 
 
-                    {{-- Дата --}}
+                    @if(auth()->user()->is_owner || auth()->user()->can_view_analytics)
 
-                    <div class="receipt-date">
-                        {{ \Carbon\Carbon::parse($receipt->receipt_date)->format('d.m.Y') }}
-                    </div>
+                    <div class="receipt-supplier">
 
+                        Поставщик:
 
-                    {{-- Основная информация --}}
-
-                    <div class="receipt-main">
-
-                        <div class="receipt-warehouse">
-                            {{ $receipt->warehouse->name }}
-                        </div>
-
-
-                        @if(auth()->user()->is_owner || auth()->user()->role === 'analyst')
-
-                            <div class="receipt-supplier">
-
-                                Поставщик:
-
-                                @if($receipt->supplier)
-                                    {{ $receipt->supplier->name }}
-                                @else
-                                    —
-                                @endif
-
-                            </div>
-
+                        @if($receipt->supplier)
+                        {{ $receipt->supplier->name }}
+                        @else
+                        —
                         @endif
 
-
-                        <div class="receipt-meta">
-
-                            {{ $receipt->items->count() }}
-
-                            {{ $receipt->items->count() == 1 ? 'позиция' : 'позиций' }}
-
-                            ·
-
-                            {{ $receipt->items->sum('quantity') }}
-
-                            шт.
-
-                            @if($receipt->comment)
-
-                                · есть комментарий
-
-                            @endif
-
-                        </div>
-
                     </div>
-
-
-                    {{-- ФИНАНСЫ НА МОБИЛЬНОМ --}}
-
-                    @if(auth()->user()->is_owner || auth()->user()->role === 'analyst')
-
-                        <div class="receipt-finance">
-
-                            <span class="receipt-total">
-                                Сумма:
-                                {{ number_format((float) $receipt->total_amount, 0, '.', ' ') }} ₸
-                            </span>
-
-                            <span class="receipt-paid">
-                                Оплачено:
-                                {{ number_format((float) $receipt->paid_amount, 0, '.', ' ') }} ₸
-                            </span>
-
-                            @if((float) $receipt->debt_amount > 0)
-
-                                <span class="receipt-debt">
-                                    Долг:
-                                    {{ number_format((float) $receipt->debt_amount, 0, '.', ' ') }} ₸
-                                </span>
-
-                            @else
-
-                                <span class="receipt-paid">
-                                    Долг: 0 ₸
-                                </span>
-
-                            @endif
-
-                        </div>
 
                     @endif
 
 
-                    {{-- Стрелка --}}
+                    <div class="receipt-meta">
 
-                    <div class="receipt-arrow">
+                        {{ $receipt->items->count() }}
 
-                        <svg viewBox="0 0 24 24">
-                            <path d="M9 18l6-6-6-6"></path>
-                        </svg>
+                        {{ $receipt->items->count() == 1 ? 'позиция' : 'позиций' }}
+
+                        ·
+
+                        {{ $receipt->items->sum('quantity') }}
+
+                        шт.
+
+                        @if($receipt->comment)
+
+                        · есть комментарий
+
+                        @endif
 
                     </div>
 
+                </div>
 
-                </a>
+
+                {{-- ФИНАНСЫ НА МОБИЛЬНОМ --}}
+
+                @if(auth()->user()->is_owner || auth()->user()->can_view_analytics)
+
+                <div class="receipt-finance">
+
+                    <span class="receipt-total">
+                        Сумма:
+                        {{ number_format((float) $receipt->total_amount, 0, '.', ' ') }} ₸
+                    </span>
+
+                    <span class="receipt-paid">
+                        Оплачено:
+                        {{ number_format((float) $receipt->paid_amount, 0, '.', ' ') }} ₸
+                    </span>
+
+                    @if((float) $receipt->debt_amount > 0)
+
+                    <span class="receipt-debt">
+                        Долг:
+                        {{ number_format((float) $receipt->debt_amount, 0, '.', ' ') }} ₸
+                    </span>
+
+                    @else
+
+                    <span class="receipt-paid">
+                        Долг: 0 ₸
+                    </span>
+
+                    @endif
+
+                </div>
+
+                @endif
+
+
+                {{-- Стрелка --}}
+
+                <div class="receipt-arrow">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 18l6-6-6-6"></path>
+                    </svg>
+
+                </div>
+
+
+            </a>
 
             @empty
 
-                <div class="empty">
-                    За выбранный период приёмок нет
-                </div>
+            <div class="empty">
+                За выбранный период приёмок нет
+            </div>
 
             @endforelse
 
@@ -1251,9 +1235,9 @@
 
         @if($receipts->hasPages())
 
-            <div class="pagination">
-                {{ $receipts->links() }}
-            </div>
+        <div class="pagination">
+            {{ $receipts->links() }}
+        </div>
 
         @endif
 
@@ -1263,4 +1247,3 @@
 </body>
 
 </html>
-

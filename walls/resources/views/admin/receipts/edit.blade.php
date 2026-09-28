@@ -12,7 +12,6 @@
     <title>Редактирование приёмки #{{ $receipt->id }}</title>
 
     <style>
-
         * {
             box-sizing: border-box;
         }
@@ -304,10 +303,7 @@
             display: grid;
 
             grid-template-columns:
-                150px
-                170px
-                minmax(180px, .9fr)
-                minmax(220px, 1.4fr);
+                150px 170px minmax(180px, .9fr) minmax(220px, 1.4fr);
 
             gap: 8px;
 
@@ -330,7 +326,7 @@
         }
 
         .info-label,
-        .info-item > label {
+        .info-item>label {
             display: block;
 
             margin-bottom: 4px;
@@ -411,9 +407,7 @@
             display: grid;
 
             grid-template-columns:
-                minmax(180px, 1fr)
-                minmax(150px, .8fr)
-                minmax(150px, .8fr);
+                minmax(180px, 1fr) minmax(150px, .8fr) minmax(150px, .8fr);
 
             gap: 7px;
         }
@@ -547,10 +541,7 @@
             display: grid;
 
             grid-template-columns:
-                minmax(180px, 1.35fr)
-                minmax(130px, 1fr)
-                72px
-                92px;
+                minmax(180px, 1.35fr) minmax(130px, 1fr) 72px 92px;
 
             gap: 6px;
 
@@ -679,8 +670,7 @@
             display: grid;
 
             grid-template-columns:
-                minmax(0, 1fr)
-                minmax(0, 1fr);
+                minmax(0, 1fr) minmax(0, 1fr);
 
             align-items: center;
 
@@ -866,10 +856,7 @@
 
         .new-item {
             grid-template-columns:
-                minmax(110px, .75fr)
-                minmax(100px, .65fr)
-                minmax(150px, 1.45fr)
-                minmax(105px, .9fr);
+                minmax(110px, .75fr) minmax(100px, .65fr) minmax(150px, 1.45fr) minmax(105px, .9fr);
         }
 
         .new-item .product-main {
@@ -1110,8 +1097,7 @@
 
             .receipt-info-comment {
                 grid-template-columns:
-                    1fr
-                    1fr;
+                    1fr 1fr;
             }
 
             /*
@@ -1125,9 +1111,7 @@
 
             .finance-block {
                 grid-template-columns:
-                    1fr
-                    1fr
-                    1fr;
+                    1fr 1fr 1fr;
             }
 
         }
@@ -1192,13 +1176,12 @@
                 display: grid;
 
                 grid-template-columns:
-                    minmax(0, 1fr)
-                    minmax(0, 1fr);
+                    minmax(0, 1fr) minmax(0, 1fr);
 
                 gap: 5px;
             }
 
-            .receipt-info-comment > .info-item {
+            .receipt-info-comment>.info-item {
                 min-width: 0;
 
                 min-height: 46px;
@@ -1211,7 +1194,7 @@
             /*
              * Поставщик — левая ячейка второй строки
              */
-            .receipt-info-comment > .info-item:nth-child(3) {
+            .receipt-info-comment>.info-item:nth-child(3) {
                 grid-column: 1;
             }
 
@@ -1229,7 +1212,7 @@
             }
 
             .info-label,
-            .info-item > label {
+            .info-item>label {
                 margin-bottom: 2px;
 
                 font-size: 6.5px;
@@ -1277,9 +1260,7 @@
                 display: grid;
 
                 grid-template-columns:
-                    minmax(0, 1fr)
-                    minmax(0, 1fr)
-                    minmax(0, 1fr);
+                    minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
 
                 gap: 4px;
 
@@ -1378,10 +1359,7 @@
 
             .item {
                 grid-template-columns:
-                    minmax(0, 1.25fr)
-                    minmax(0, 1fr)
-                    55px
-                    69px;
+                    minmax(0, 1.25fr) minmax(0, 1fr) 55px 69px;
 
                 gap: 4px;
 
@@ -1552,12 +1530,12 @@
                 gap: 4px;
             }
 
-            .receipt-info-comment > .info-item {
+            .receipt-info-comment>.info-item {
                 padding: 5px;
             }
 
             .info-label,
-            .info-item > label {
+            .info-item>label {
                 font-size: 6px;
             }
 
@@ -1599,10 +1577,7 @@
 
             .item {
                 grid-template-columns:
-                    minmax(0, 1.15fr)
-                    minmax(0, .9fr)
-                    51px
-                    65px;
+                    minmax(0, 1.15fr) minmax(0, .9fr) 51px 65px;
 
                 gap: 3px;
 
@@ -1618,102 +1593,98 @@
 
             .new-item {
                 grid-template-columns:
-                    minmax(0, .8fr)
-                    minmax(0, .7fr)
-                    minmax(0, 1.45fr)
-                    minmax(0, .9fr);
+                    minmax(0, .8fr) minmax(0, .7fr) minmax(0, 1.45fr) minmax(0, .9fr);
             }
 
         }
-
     </style>
 
 </head>
 
 <body>
 
-@php
+    @php
 
     $isOwnerOrAnalyst =
-        auth()->user()->is_owner ||
-        auth()->user()->role === 'analyst';
+    auth()->user()->is_owner ||
+    auth()->user()->can_view_analytics;
 
     $receiptTotal = $receipt->items->sum(function ($item) {
-        return (float) $item->quantity *
-            (float) $item->purchase_price;
+    return (float) $item->quantity *
+    (float) $item->purchase_price;
     });
 
     $paidAmount = $receipt->payments->sum('amount');
 
     $debtAmount = max(
-        0,
-        $receiptTotal - (float) $paidAmount
+    0,
+    $receiptTotal - (float) $paidAmount
     );
 
-@endphp
+    @endphp
 
 
-<div class="page">
+    <div class="page">
 
 
-    {{-- =====================================================
+        {{-- =====================================================
          HEADER
     ====================================================== --}}
 
-    <div class="top">
+        <div class="top">
 
-        <div class="top-left">
+            <div class="top-left">
 
-            <a
-                href="{{ route('admin.receipts.index') }}"
-                class="btn btn-light back-button">
+                <a
+                    href="{{ route('admin.receipts.index') }}"
+                    class="btn btn-light back-button">
 
-                <span class="back-icon">←</span>
+                    <span class="back-icon">←</span>
 
-                Назад
+                    Назад
 
-            </a>
+                </a>
+
+            </div>
+
+
+            <div class="top-center">
+
+                <h1>
+
+                    Приёмка
+
+                    <span class="receipt-number">
+                        #{{ $receipt->id }}
+                    </span>
+
+                </h1>
+
+            </div>
+
+
+            <div class="top-right">
+
+                <button
+                    type="submit"
+                    form="receipt-edit-form"
+                    class="btn btn-primary save-top-button"
+                    id="save-button">
+
+                    Сохранить
+
+                </button>
+
+            </div>
 
         </div>
 
 
-        <div class="top-center">
-
-            <h1>
-
-                Приёмка
-
-                <span class="receipt-number">
-                    #{{ $receipt->id }}
-                </span>
-
-            </h1>
-
-        </div>
-
-
-        <div class="top-right">
-
-            <button
-                type="submit"
-                form="receipt-edit-form"
-                class="btn btn-primary save-top-button"
-                id="save-button">
-
-                Сохранить
-
-            </button>
-
-        </div>
-
-    </div>
-
-
-    {{-- =====================================================
+        {{-- =====================================================
          ALERTS
     ====================================================== --}}
 
-    @if(session('success'))
+        @if(session('success'))
 
         <div class="alert alert-success">
 
@@ -1727,10 +1698,10 @@
 
         </div>
 
-    @endif
+        @endif
 
 
-    @if(session('receipt_error'))
+        @if(session('receipt_error'))
 
         <div class="alert alert-error">
 
@@ -1744,10 +1715,10 @@
 
         </div>
 
-    @endif
+        @endif
 
 
-    @if($errors->any())
+        @if($errors->any())
 
         <div class="alert alert-error">
 
@@ -1759,9 +1730,9 @@
 
                 @foreach($errors->all() as $error)
 
-                    <div>
-                        {{ $error }}
-                    </div>
+                <div>
+                    {{ $error }}
+                </div>
 
                 @endforeach
 
@@ -1769,67 +1740,67 @@
 
         </div>
 
-    @endif
+        @endif
 
 
-    {{-- =====================================================
+        {{-- =====================================================
          FORM
     ====================================================== --}}
 
-    <form
-        id="receipt-edit-form"
-        method="POST"
-        action="{{ route('admin.receipts.update', $receipt) }}">
+        <form
+            id="receipt-edit-form"
+            method="POST"
+            action="{{ route('admin.receipts.update', $receipt) }}">
 
-        @csrf
+            @csrf
 
-        @method('PUT')
+            @method('PUT')
 
 
-        {{-- =================================================
+            {{-- =================================================
              RECEIPT INFO
         ================================================== --}}
 
-        <div class="card">
+            <div class="card">
 
-            <div class="card-inner">
+                <div class="card-inner">
 
-                <div class="receipt-info-comment">
+                    <div class="receipt-info-comment">
 
 
-                    {{-- СКЛАД --}}
+                        {{-- СКЛАД --}}
 
-                    <div class="info-item">
+                        <div class="info-item">
 
-                        <span class="info-label">
-                            Склад
-                        </span>
+                            <span class="info-label">
+                                Склад
+                            </span>
 
-                        <div class="info-value">
-                            {{ $receipt->warehouse->name }}
+                            <div class="info-value">
+                                {{ $receipt->warehouse->name }}
+                            </div>
+
                         </div>
 
-                    </div>
 
+                        {{-- ДАТА --}}
 
-                    {{-- ДАТА --}}
+                        <div class="info-item">
 
-                    <div class="info-item">
+                            <span class="info-label">
+                                Дата приёмки
+                            </span>
 
-                        <span class="info-label">
-                            Дата приёмки
-                        </span>
+                            <div class="info-value">
+                                {{ $receipt->receipt_date->format('d.m.Y') }}
+                            </div>
 
-                        <div class="info-value">
-                            {{ $receipt->receipt_date->format('d.m.Y') }}
                         </div>
 
-                    </div>
 
+                        {{-- ПОСТАВЩИК --}}
 
-                    {{-- ПОСТАВЩИК --}}
-
-                    @if($isOwnerOrAnalyst)
+                        @if($isOwnerOrAnalyst)
 
                         <div class="info-item">
 
@@ -1847,18 +1818,17 @@
 
                                 @foreach($suppliers as $supplier)
 
-                                    <option
-                                        value="{{ $supplier->id }}"
-                                        @selected(
-                                            old(
-                                                'supplier_id',
-                                                $receipt->supplier_id
-                                            ) == $supplier->id
-                                        )>
+                                <option
+                                    value="{{ $supplier->id }}"
+                                    @selected(
+                                    old( 'supplier_id' ,
+                                    $receipt->supplier_id
+                                    ) == $supplier->id
+                                    )>
 
-                                        {{ $supplier->name }}
+                                    {{ $supplier->name }}
 
-                                    </option>
+                                </option>
 
                                 @endforeach
 
@@ -1866,7 +1836,7 @@
 
                         </div>
 
-                    @else
+                        @else
 
                         <div class="info-item">
 
@@ -1880,38 +1850,38 @@
 
                         </div>
 
-                    @endif
+                        @endif
 
 
-                    {{-- КОММЕНТАРИЙ --}}
+                        {{-- КОММЕНТАРИЙ --}}
 
-                    <div class="comment-block">
+                        <div class="comment-block">
 
-                        <div class="field">
+                            <div class="field">
 
-                            <label>
-                                Комментарий
-                            </label>
+                                <label>
+                                    Комментарий
+                                </label>
 
-                            <textarea
-                                name="comment"
-                                placeholder="Комментарий">{{ old(
+                                <textarea
+                                    name="comment"
+                                    placeholder="Комментарий">{{ old(
                                     'comment',
                                     $receipt->comment
                                 ) }}</textarea>
+
+                            </div>
 
                         </div>
 
                     </div>
 
-                </div>
 
-
-                {{-- =================================================
+                    {{-- =================================================
                      FINANCE
                 ================================================== --}}
 
-                @if($isOwnerOrAnalyst)
+                    @if($isOwnerOrAnalyst)
 
                     <div class="finance-block">
 
@@ -1989,22 +1959,24 @@
 
                     </div>
 
-                @endif
+                    @endif
 
 
-                {{-- WARNING --}}
+                    {{-- WARNING --}}
 
-                <div class="alert alert-warning warning">
+                    <div class="alert alert-warning warning">
 
-                    <div class="alert-icon">
-                        !
-                    </div>
+                        <div class="alert-icon">
+                            !
+                        </div>
 
-                    <div class="alert-content">
+                        <div class="alert-content">
 
-                        Дата и склад приёмки после создания
-                        не изменяются. Если они указаны неправильно —
-                        удалите приёмку и создайте её заново.
+                            Дата и склад приёмки после создания
+                            не изменяются. Если они указаны неправильно —
+                            удалите приёмку и создайте её заново.
+
+                        </div>
 
                     </div>
 
@@ -2012,50 +1984,48 @@
 
             </div>
 
-        </div>
 
-
-        {{-- =================================================
+            {{-- =================================================
              PRODUCTS
         ================================================== --}}
 
-        <div class="card">
+            <div class="card">
 
 
-            <div class="section-head">
+                <div class="section-head">
 
-                <div>
+                    <div>
 
-                    <div class="section-title">
-                        Товары
-                    </div>
+                        <div class="section-title">
+                            Товары
+                        </div>
 
-                    <div class="section-subtitle">
-                        Изменение количества и закупочной цены
+                        <div class="section-subtitle">
+                            Изменение количества и закупочной цены
+                        </div>
+
                     </div>
 
                 </div>
 
-            </div>
+
+                <div class="products-body">
 
 
-            <div class="products-body">
+                    {{-- EXISTING ITEMS --}}
 
-
-                {{-- EXISTING ITEMS --}}
-
-                @foreach($receipt->items as $index => $item)
+                    @foreach($receipt->items as $index => $item)
 
                     @php
 
-                        $layer = $item->inventoryLayer;
+                    $layer = $item->inventoryLayer;
 
-                        $consumed = $layer
-                            ? \App\Models\FifoAllocation::where(
-                                'inventory_layer_id',
-                                $layer->id
-                            )->sum('quantity')
-                            : 0;
+                    $consumed = $layer
+                    ? \App\Models\FifoAllocation::where(
+                    'inventory_layer_id',
+                    $layer->id
+                    )->sum('quantity')
+                    : 0;
 
                     @endphp
 
@@ -2170,21 +2140,21 @@
 
                                 @if($consumed > 0)
 
-                                    <div class="hint">
+                                <div class="hint">
 
-                                        Использовано:
-                                        <strong>
-                                            {{ $consumed }} шт.
-                                        </strong>
+                                    Использовано:
+                                    <strong>
+                                        {{ $consumed }} шт.
+                                    </strong>
 
-                                        <br>
+                                    <br>
 
-                                        Мин:
-                                        <strong>
-                                            {{ $consumed }} шт.
-                                        </strong>
+                                    Мин:
+                                    <strong>
+                                        {{ $consumed }} шт.
+                                    </strong>
 
-                                    </div>
+                                </div>
 
                                 @endif
 
@@ -2234,432 +2204,430 @@
 
                     </div>
 
-                @endforeach
+                    @endforeach
 
 
-                {{-- NEW ITEMS --}}
+                    {{-- NEW ITEMS --}}
 
-                <div id="new-items"></div>
+                    <div id="new-items"></div>
 
 
-                {{-- ADD BUTTON --}}
+                    {{-- ADD BUTTON --}}
 
-                <button
-                    type="button"
-                    class="add-item-btn"
-                    onclick="addNewItem()">
+                    <button
+                        type="button"
+                        class="add-item-btn"
+                        onclick="addNewItem()">
 
-                    <span class="add-item-icon">
-                        +
-                    </span>
+                        <span class="add-item-icon">
+                            +
+                        </span>
 
-                    Добавить товар
+                        Добавить товар
 
-                </button>
+                    </button>
 
+
+                </div>
 
             </div>
 
-        </div>
+
+        </form>
 
 
-    </form>
+    </div>
 
 
-</div>
-
-
-<script>
-
-    /* =====================================================
+    <script>
+        /* =====================================================
        VARIANTS
     ====================================================== */
 
-    const variants = @json($variants);
+        const variants = @json($variants);
 
-    let newItemIndex = 0;
-
-
-    /* =====================================================
-       RECALCULATE TOTAL / DEBT
-    ====================================================== */
-
-    function recalculateReceiptTotal() {
-
-        let total = 0;
+        let newItemIndex = 0;
 
 
-        document
-            .querySelectorAll(
-                'input[name^="items["][name$="[quantity]"]'
-            )
-            .forEach(function(quantityInput) {
+        /* =====================================================
+           RECALCULATE TOTAL / DEBT
+        ====================================================== */
 
-                const name = quantityInput.name;
+        function recalculateReceiptTotal() {
 
-                const match = name.match(
-                    /items\[(.*?)\]\[quantity\]/
-                );
-
-                if (!match) {
-                    return;
-                }
-
-                const index = match[1];
-
-                const priceInput =
-                    document.querySelector(
-                        `input[name="items[${index}][purchase_price]"]`
-                    );
-
-                if (!priceInput) {
-                    return;
-                }
-
-                const quantity =
-                    parseFloat(quantityInput.value) || 0;
-
-                const price =
-                    parseFloat(priceInput.value) || 0;
-
-                total += quantity * price;
-
-            });
+            let total = 0;
 
 
-        /* NEW ITEMS */
-
-        document
-            .querySelectorAll(
-                'input[name^="new_items["][name$="[quantity]"]'
-            )
-            .forEach(function(quantityInput) {
-
-                const name = quantityInput.name;
-
-                const match = name.match(
-                    /new_items\[(.*?)\]\[quantity\]/
-                );
-
-                if (!match) {
-                    return;
-                }
-
-                const index = match[1];
-
-                const priceInput =
-                    document.querySelector(
-                        `input[name="new_items[${index}][purchase_price]"]`
-                    );
-
-                if (!priceInput) {
-                    return;
-                }
-
-                const quantity =
-                    parseFloat(quantityInput.value) || 0;
-
-                const price =
-                    parseFloat(priceInput.value) || 0;
-
-                total += quantity * price;
-
-            });
-
-
-        const totalElement =
-            document.getElementById(
-                'receipt-total'
-            );
-
-
-        if (totalElement) {
-
-            totalElement.textContent =
-                formatMoney(total);
-
-        }
-
-
-        const paidInput =
-            document.getElementById(
-                'paid_amount'
-            );
-
-        let paid =
-            paidInput
-                ? parseFloat(paidInput.value) || 0
-                : 0;
-
-
-        /* Не позволяем оплате быть выше общей суммы */
-
-        if (paid > total && paidInput) {
-
-            paid = total;
-
-            paidInput.value =
-                total.toFixed(2);
-
-        }
-
-
-        const debt =
-            Math.max(
-                0,
-                total - paid
-            );
-
-
-        const debtElement =
-            document.getElementById(
-                'receipt-debt'
-            );
-
-
-        if (debtElement) {
-
-            debtElement.textContent =
-                formatMoney(debt);
-
-            debtElement.style.color =
-                debt > 0
-                    ? '#dc2626'
-                    : '#166534';
-
-        }
-
-    }
-
-
-    function formatMoney(value) {
-
-        return new Intl.NumberFormat(
-            'ru-RU',
-            {
-                maximumFractionDigits: 0
-            }
-        ).format(value) + ' ₸';
-
-    }
-
-
-    document.addEventListener(
-        'input',
-        function(event) {
-
-            if (
-                event.target.matches(
-                    'input[name$="[quantity]"], input[name$="[purchase_price]"], #paid_amount'
+            document
+                .querySelectorAll(
+                    'input[name^="items["][name$="[quantity]"]'
                 )
-            ) {
+                .forEach(function(quantityInput) {
 
-                recalculateReceiptTotal();
+                    const name = quantityInput.name;
 
-            }
-
-        }
-    );
-
-
-    /* =====================================================
-       IOS / IPHONE ZOOM PROTECTION
-    ====================================================== */
-
-    (function () {
-
-        const isIOS =
-            /iPad|iPhone|iPod/.test(
-                navigator.userAgent
-            ) ||
-            (
-                navigator.platform === 'MacIntel' &&
-                navigator.maxTouchPoints > 1
-            );
-
-        if (!isIOS) {
-            return;
-        }
-
-
-        function prepareForFocus(element) {
-
-            if (!element) {
-                return;
-            }
-
-            if (
-                element.tagName !== 'INPUT' &&
-                element.tagName !== 'TEXTAREA' &&
-                element.tagName !== 'SELECT'
-            ) {
-                return;
-            }
-
-
-            if (
-                !element.dataset.iosOriginalFontSizeSaved
-            ) {
-
-                element.dataset.iosOriginalFontSize =
-                    element.style.fontSize || '';
-
-                element.dataset.iosOriginalFontSizeSaved =
-                    '1';
-
-            }
-
-
-            element.style.fontSize =
-                '16px';
-
-        }
-
-
-        function restoreAfterBlur(element) {
-
-            if (!element) {
-                return;
-            }
-
-            if (
-                element.dataset.iosOriginalFontSizeSaved !== '1'
-            ) {
-                return;
-            }
-
-            element.style.fontSize =
-                element.dataset.iosOriginalFontSize || '';
-
-            delete element.dataset.iosOriginalFontSize;
-            delete element.dataset.iosOriginalFontSizeSaved;
-
-        }
-
-
-        document.addEventListener(
-            'pointerdown',
-            function(event) {
-
-                const element =
-                    event.target.closest(
-                        'input, textarea, select'
+                    const match = name.match(
+                        /items\[(.*?)\]\[quantity\]/
                     );
 
-                if (element) {
-                    prepareForFocus(element);
-                }
+                    if (!match) {
+                        return;
+                    }
 
-            },
-            true
-        );
+                    const index = match[1];
+
+                    const priceInput =
+                        document.querySelector(
+                            `input[name="items[${index}][purchase_price]"]`
+                        );
+
+                    if (!priceInput) {
+                        return;
+                    }
+
+                    const quantity =
+                        parseFloat(quantityInput.value) || 0;
+
+                    const price =
+                        parseFloat(priceInput.value) || 0;
+
+                    total += quantity * price;
+
+                });
 
 
-        document.addEventListener(
-            'touchstart',
-            function(event) {
+            /* NEW ITEMS */
 
-                const element =
-                    event.target.closest(
-                        'input, textarea, select'
+            document
+                .querySelectorAll(
+                    'input[name^="new_items["][name$="[quantity]"]'
+                )
+                .forEach(function(quantityInput) {
+
+                    const name = quantityInput.name;
+
+                    const match = name.match(
+                        /new_items\[(.*?)\]\[quantity\]/
                     );
 
-                if (element) {
-                    prepareForFocus(element);
-                }
+                    if (!match) {
+                        return;
+                    }
 
-            },
-            true
-        );
+                    const index = match[1];
+
+                    const priceInput =
+                        document.querySelector(
+                            `input[name="new_items[${index}][purchase_price]"]`
+                        );
+
+                    if (!priceInput) {
+                        return;
+                    }
+
+                    const quantity =
+                        parseFloat(quantityInput.value) || 0;
+
+                    const price =
+                        parseFloat(priceInput.value) || 0;
+
+                    total += quantity * price;
+
+                });
+
+
+            const totalElement =
+                document.getElementById(
+                    'receipt-total'
+                );
+
+
+            if (totalElement) {
+
+                totalElement.textContent =
+                    formatMoney(total);
+
+            }
+
+
+            const paidInput =
+                document.getElementById(
+                    'paid_amount'
+                );
+
+            let paid =
+                paidInput ?
+                parseFloat(paidInput.value) || 0 :
+                0;
+
+
+            /* Не позволяем оплате быть выше общей суммы */
+
+            if (paid > total && paidInput) {
+
+                paid = total;
+
+                paidInput.value =
+                    total.toFixed(2);
+
+            }
+
+
+            const debt =
+                Math.max(
+                    0,
+                    total - paid
+                );
+
+
+            const debtElement =
+                document.getElementById(
+                    'receipt-debt'
+                );
+
+
+            if (debtElement) {
+
+                debtElement.textContent =
+                    formatMoney(debt);
+
+                debtElement.style.color =
+                    debt > 0 ?
+                    '#dc2626' :
+                    '#166534';
+
+            }
+
+        }
+
+
+        function formatMoney(value) {
+
+            return new Intl.NumberFormat(
+                'ru-RU', {
+                    maximumFractionDigits: 0
+                }
+            ).format(value) + ' ₸';
+
+        }
 
 
         document.addEventListener(
-            'focusin',
+            'input',
             function(event) {
-
-                const element =
-                    event.target;
 
                 if (
-                    element &&
-                    (
-                        element.tagName === 'INPUT' ||
-                        element.tagName === 'TEXTAREA' ||
-                        element.tagName === 'SELECT'
+                    event.target.matches(
+                        'input[name$="[quantity]"], input[name$="[purchase_price]"], #paid_amount'
                     )
                 ) {
 
-                    prepareForFocus(element);
+                    recalculateReceiptTotal();
 
                 }
 
-            },
-            true
+            }
         );
 
 
-        document.addEventListener(
-            'focusout',
-            function(event) {
+        /* =====================================================
+           IOS / IPHONE ZOOM PROTECTION
+        ====================================================== */
 
-                const element =
-                    event.target;
+        (function() {
+
+            const isIOS =
+                /iPad|iPhone|iPod/.test(
+                    navigator.userAgent
+                ) ||
+                (
+                    navigator.platform === 'MacIntel' &&
+                    navigator.maxTouchPoints > 1
+                );
+
+            if (!isIOS) {
+                return;
+            }
+
+
+            function prepareForFocus(element) {
+
+                if (!element) {
+                    return;
+                }
 
                 if (
-                    element &&
-                    (
-                        element.tagName === 'INPUT' ||
-                        element.tagName === 'TEXTAREA' ||
-                        element.tagName === 'SELECT'
-                    )
+                    element.tagName !== 'INPUT' &&
+                    element.tagName !== 'TEXTAREA' &&
+                    element.tagName !== 'SELECT'
+                ) {
+                    return;
+                }
+
+
+                if (
+                    !element.dataset.iosOriginalFontSizeSaved
                 ) {
 
-                    setTimeout(
-                        function() {
+                    element.dataset.iosOriginalFontSize =
+                        element.style.fontSize || '';
 
-                            restoreAfterBlur(element);
-
-                        },
-                        50
-                    );
+                    element.dataset.iosOriginalFontSizeSaved =
+                        '1';
 
                 }
 
-            },
-            true
-        );
 
-    })();
+                element.style.fontSize =
+                    '16px';
+
+            }
 
 
-    /* =====================================================
-       ADD NEW ITEM
-    ====================================================== */
+            function restoreAfterBlur(element) {
 
-    function addNewItem() {
+                if (!element) {
+                    return;
+                }
 
-        const container =
-            document.getElementById(
-                'new-items'
+                if (
+                    element.dataset.iosOriginalFontSizeSaved !== '1'
+                ) {
+                    return;
+                }
+
+                element.style.fontSize =
+                    element.dataset.iosOriginalFontSize || '';
+
+                delete element.dataset.iosOriginalFontSize;
+                delete element.dataset.iosOriginalFontSizeSaved;
+
+            }
+
+
+            document.addEventListener(
+                'pointerdown',
+                function(event) {
+
+                    const element =
+                        event.target.closest(
+                            'input, textarea, select'
+                        );
+
+                    if (element) {
+                        prepareForFocus(element);
+                    }
+
+                },
+                true
             );
 
-        const index =
-            newItemIndex++;
 
+            document.addEventListener(
+                'touchstart',
+                function(event) {
 
-        const item =
-            document.createElement(
-                'div'
+                    const element =
+                        event.target.closest(
+                            'input, textarea, select'
+                        );
+
+                    if (element) {
+                        prepareForFocus(element);
+                    }
+
+                },
+                true
             );
 
-        item.className =
-            'item new-item';
 
-        item.dataset.index =
-            index;
+            document.addEventListener(
+                'focusin',
+                function(event) {
+
+                    const element =
+                        event.target;
+
+                    if (
+                        element &&
+                        (
+                            element.tagName === 'INPUT' ||
+                            element.tagName === 'TEXTAREA' ||
+                            element.tagName === 'SELECT'
+                        )
+                    ) {
+
+                        prepareForFocus(element);
+
+                    }
+
+                },
+                true
+            );
 
 
-        item.innerHTML = `
+            document.addEventListener(
+                'focusout',
+                function(event) {
+
+                    const element =
+                        event.target;
+
+                    if (
+                        element &&
+                        (
+                            element.tagName === 'INPUT' ||
+                            element.tagName === 'TEXTAREA' ||
+                            element.tagName === 'SELECT'
+                        )
+                    ) {
+
+                        setTimeout(
+                            function() {
+
+                                restoreAfterBlur(element);
+
+                            },
+                            50
+                        );
+
+                    }
+
+                },
+                true
+            );
+
+        })();
+
+
+        /* =====================================================
+           ADD NEW ITEM
+        ====================================================== */
+
+        function addNewItem() {
+
+            const container =
+                document.getElementById(
+                    'new-items'
+                );
+
+            const index =
+                newItemIndex++;
+
+
+            const item =
+                document.createElement(
+                    'div'
+                );
+
+            item.className =
+                'item new-item';
+
+            item.dataset.index =
+                index;
+
+
+            item.innerHTML = `
 
         <div class="new-item-header">
 
@@ -2802,100 +2770,100 @@
         `;
 
 
-        container.appendChild(item);
+            container.appendChild(item);
 
 
-        const input =
-            item.querySelector(
-                '.autocomplete-input'
-            );
+            const input =
+                item.querySelector(
+                    '.autocomplete-input'
+                );
 
 
-        if (input) {
+            if (input) {
 
-            setTimeout(() => {
+                setTimeout(() => {
 
-                input.focus();
+                    input.focus();
 
-            }, 50);
+                }, 50);
+
+            }
 
         }
 
-    }
+
+        /* =====================================================
+           SEARCH VARIANT
+        ====================================================== */
+
+        function searchNewVariant(input) {
+
+            const autocomplete =
+                input.closest(
+                    '.autocomplete'
+                );
+
+            if (!autocomplete) {
+                return;
+            }
 
 
-    /* =====================================================
-       SEARCH VARIANT
-    ====================================================== */
-
-    function searchNewVariant(input) {
-
-        const autocomplete =
-            input.closest(
-                '.autocomplete'
-            );
-
-        if (!autocomplete) {
-            return;
-        }
+            const dropdown =
+                autocomplete.querySelector(
+                    '.autocomplete-dropdown'
+                );
 
 
-        const dropdown =
-            autocomplete.querySelector(
-                '.autocomplete-dropdown'
-            );
-
-
-        const value =
-            input.value
+            const value =
+                input.value
                 .trim()
                 .toLowerCase();
 
 
-        const item =
-            input.closest(
-                '.new-item'
-            );
+            const item =
+                input.closest(
+                    '.new-item'
+                );
 
 
-        if (!item) {
-            return;
-        }
+            if (!item) {
+                return;
+            }
 
 
-        const hiddenId =
+            const hiddenId =
+                item.querySelector(
+                    '.new-variant-id'
+                );
+
+
+            hiddenId.value = '';
+
+
             item.querySelector(
-                '.new-variant-id'
-            );
+                '.selected-variant'
+            ).textContent = '';
 
 
-        hiddenId.value = '';
+            resetBatchSelect(item);
 
 
-        item.querySelector(
-            '.selected-variant'
-        ).textContent = '';
+            dropdown.innerHTML = '';
 
 
-        resetBatchSelect(item);
+            if (!value) {
+
+                dropdown.classList.remove(
+                    'show'
+                );
+
+                return;
+
+            }
 
 
-        dropdown.innerHTML = '';
-
-
-        if (!value) {
-
-            dropdown.classList.remove(
-                'show'
-            );
-
-            return;
-
-        }
-
-
-        const results =
-            variants
+            const results =
+                variants
                 .filter(variant => {
 
                     const sku =
@@ -2919,9 +2887,9 @@
                 .slice(0, 30);
 
 
-        if (!results.length) {
+            if (!results.length) {
 
-            dropdown.innerHTML = `
+                dropdown.innerHTML = `
 
                 <div class="autocomplete-empty">
                     Артикул не найден
@@ -2929,114 +2897,16 @@
 
             `;
 
-            dropdown.classList.add(
-                'show'
-            );
-
-            return;
-
-        }
-
-
-        results.forEach(variant => {
-
-            const option =
-                document.createElement(
-                    'button'
+                dropdown.classList.add(
+                    'show'
                 );
 
+                return;
 
-            option.type = 'button';
-
-            option.className =
-                'autocomplete-option';
+            }
 
 
-            option.innerHTML = `
-
-                <span class="autocomplete-option-sku">
-                    ${escapeHtml(
-                        variant.sku ?? ''
-                    )}
-                </span>
-
-                <span class="autocomplete-option-name">
-                    ${escapeHtml(
-                        variant.name ?? ''
-                    )}
-                </span>
-
-            `;
-
-
-            option.addEventListener(
-                'mousedown',
-                function(event) {
-
-                    event.preventDefault();
-
-                    selectNewVariant(
-                        input,
-                        variant
-                    );
-
-                }
-            );
-
-
-            dropdown.appendChild(
-                option
-            );
-
-        });
-
-
-        dropdown.classList.add(
-            'show'
-        );
-
-    }
-
-
-    /* =====================================================
-       OPEN SEARCH
-    ====================================================== */
-
-    function openVariantSearch(input) {
-
-        const autocomplete =
-            input.closest(
-                '.autocomplete'
-            );
-
-        if (!autocomplete) {
-            return;
-        }
-
-
-        const dropdown =
-            autocomplete.querySelector(
-                '.autocomplete-dropdown'
-            );
-
-
-        if (input.value.trim()) {
-
-            searchNewVariant(
-                input
-            );
-
-            return;
-
-        }
-
-
-        dropdown.innerHTML = '';
-
-
-        variants
-            .slice(0, 30)
-            .forEach(variant => {
+            results.forEach(variant => {
 
                 const option =
                     document.createElement(
@@ -3052,19 +2922,19 @@
 
                 option.innerHTML = `
 
-                    <span class="autocomplete-option-sku">
-                        ${escapeHtml(
-                            variant.sku ?? ''
-                        )}
-                    </span>
+                <span class="autocomplete-option-sku">
+                    ${escapeHtml(
+                        variant.sku ?? ''
+                    )}
+                </span>
 
-                    <span class="autocomplete-option-name">
-                        ${escapeHtml(
-                            variant.name ?? ''
-                        )}
-                    </span>
+                <span class="autocomplete-option-name">
+                    ${escapeHtml(
+                        variant.name ?? ''
+                    )}
+                </span>
 
-                `;
+            `;
 
 
                 option.addEventListener(
@@ -3089,162 +2959,260 @@
             });
 
 
-        if (variants.length) {
-
             dropdown.classList.add(
                 'show'
             );
 
         }
 
-    }
+
+        /* =====================================================
+           OPEN SEARCH
+        ====================================================== */
+
+        function openVariantSearch(input) {
+
+            const autocomplete =
+                input.closest(
+                    '.autocomplete'
+                );
+
+            if (!autocomplete) {
+                return;
+            }
 
 
-    /* =====================================================
-       SELECT VARIANT
-    ====================================================== */
-
-    function selectNewVariant(
-        input,
-        variant
-    ) {
-
-        const item =
-            input.closest(
-                '.new-item'
-            );
+            const dropdown =
+                autocomplete.querySelector(
+                    '.autocomplete-dropdown'
+                );
 
 
-        if (!item) {
-            return;
-        }
+            if (input.value.trim()) {
+
+                searchNewVariant(
+                    input
+                );
+
+                return;
+
+            }
 
 
-        const hiddenId =
-            item.querySelector(
-                '.new-variant-id'
-            );
+            dropdown.innerHTML = '';
 
 
-        const selectedText =
-            item.querySelector(
-                '.selected-variant'
-            );
+            variants
+                .slice(0, 30)
+                .forEach(variant => {
+
+                    const option =
+                        document.createElement(
+                            'button'
+                        );
 
 
-        const dropdown =
-            input.closest(
-                '.autocomplete'
-            )
-            .querySelector(
-                '.autocomplete-dropdown'
-            );
+                    option.type = 'button';
+
+                    option.className =
+                        'autocomplete-option';
 
 
-        hiddenId.value =
-            variant.id;
+                    option.innerHTML = `
+
+                    <span class="autocomplete-option-sku">
+                        ${escapeHtml(
+                            variant.sku ?? ''
+                        )}
+                    </span>
+
+                    <span class="autocomplete-option-name">
+                        ${escapeHtml(
+                            variant.name ?? ''
+                        )}
+                    </span>
+
+                `;
 
 
-        input.value =
-            variant.sku ?? '';
+                    option.addEventListener(
+                        'mousedown',
+                        function(event) {
+
+                            event.preventDefault();
+
+                            selectNewVariant(
+                                input,
+                                variant
+                            );
+
+                        }
+                    );
 
 
-        selectedText.textContent =
-            variant.name
-                ? variant.name
-                : '';
+                    dropdown.appendChild(
+                        option
+                    );
+
+                });
 
 
-        dropdown.innerHTML = '';
+            if (variants.length) {
 
-        dropdown.classList.remove(
-            'show'
-        );
+                dropdown.classList.add(
+                    'show'
+                );
 
-
-        changeNewVariant(
-            item
-        );
-
-    }
-
-
-    /* =====================================================
-       CHANGE VARIANT
-    ====================================================== */
-
-    function changeNewVariant(item) {
-
-        if (!item) {
-            return;
-        }
-
-
-        const variantIdInput =
-            item.querySelector(
-                '.new-variant-id'
-            );
-
-
-        const batchSelect =
-            item.querySelector(
-                '.new-batch-select'
-            );
-
-
-        const priceInput =
-            item.querySelector(
-                '.new-price-input'
-            );
-
-
-        const variantId =
-            Number(
-                variantIdInput.value
-            );
-
-
-        batchSelect.innerHTML = '';
-
-
-        if (!variantId) {
-
-            resetBatchSelect(item);
-
-            priceInput.value = '0';
-
-            return;
+            }
 
         }
 
 
-        const variant =
-            variants.find(
-                v =>
-                    Number(v.id) ===
-                    variantId
-            );
+        /* =====================================================
+           SELECT VARIANT
+        ====================================================== */
 
-
-        if (!variant) {
-
-            resetBatchSelect(item);
-
-            return;
-
-        }
-
-
-        batchSelect.disabled =
-            false;
-
-
-        if (
-            !variant.batches ||
-            !variant.batches.length
+        function selectNewVariant(
+            input,
+            variant
         ) {
 
-            batchSelect.innerHTML = `
+            const item =
+                input.closest(
+                    '.new-item'
+                );
+
+
+            if (!item) {
+                return;
+            }
+
+
+            const hiddenId =
+                item.querySelector(
+                    '.new-variant-id'
+                );
+
+
+            const selectedText =
+                item.querySelector(
+                    '.selected-variant'
+                );
+
+
+            const dropdown =
+                input.closest(
+                    '.autocomplete'
+                )
+                .querySelector(
+                    '.autocomplete-dropdown'
+                );
+
+
+            hiddenId.value =
+                variant.id;
+
+
+            input.value =
+                variant.sku ?? '';
+
+
+            selectedText.textContent =
+                variant.name ?
+                variant.name :
+                '';
+
+
+            dropdown.innerHTML = '';
+
+            dropdown.classList.remove(
+                'show'
+            );
+
+
+            changeNewVariant(
+                item
+            );
+
+        }
+
+
+        /* =====================================================
+           CHANGE VARIANT
+        ====================================================== */
+
+        function changeNewVariant(item) {
+
+            if (!item) {
+                return;
+            }
+
+
+            const variantIdInput =
+                item.querySelector(
+                    '.new-variant-id'
+                );
+
+
+            const batchSelect =
+                item.querySelector(
+                    '.new-batch-select'
+                );
+
+
+            const priceInput =
+                item.querySelector(
+                    '.new-price-input'
+                );
+
+
+            const variantId =
+                Number(
+                    variantIdInput.value
+                );
+
+
+            batchSelect.innerHTML = '';
+
+
+            if (!variantId) {
+
+                resetBatchSelect(item);
+
+                priceInput.value = '0';
+
+                return;
+
+            }
+
+
+            const variant =
+                variants.find(
+                    v =>
+                    Number(v.id) ===
+                    variantId
+                );
+
+
+            if (!variant) {
+
+                resetBatchSelect(item);
+
+                return;
+
+            }
+
+
+            batchSelect.disabled =
+                false;
+
+
+            if (
+                !variant.batches ||
+                !variant.batches.length
+            ) {
+
+                batchSelect.innerHTML = `
 
                 <option value="">
                     Нет доступных партий
@@ -3252,9 +3220,9 @@
 
             `;
 
-        } else {
+            } else {
 
-            batchSelect.innerHTML = `
+                batchSelect.innerHTML = `
 
                 <option value="">
                     Выберите партию
@@ -3263,58 +3231,58 @@
             `;
 
 
-            variant.batches.forEach(
-                batch => {
+                variant.batches.forEach(
+                    batch => {
 
-                    const option =
-                        document.createElement(
-                            'option'
+                        const option =
+                            document.createElement(
+                                'option'
+                            );
+
+
+                        option.value =
+                            batch.id;
+
+
+                        option.textContent =
+                            batch.code;
+
+
+                        batchSelect.appendChild(
+                            option
                         );
 
+                    }
+                );
 
-                    option.value =
-                        batch.id;
-
-
-                    option.textContent =
-                        batch.code;
+            }
 
 
-                    batchSelect.appendChild(
-                        option
-                    );
-
-                }
-            );
+            priceInput.value =
+                Number(
+                    variant.purchase_price || 0
+                ).toFixed(2);
 
         }
 
 
-        priceInput.value =
-            Number(
-                variant.purchase_price || 0
-            ).toFixed(2);
+        /* =====================================================
+           RESET BATCH
+        ====================================================== */
 
-    }
+        function resetBatchSelect(item) {
 
-
-    /* =====================================================
-       RESET BATCH
-    ====================================================== */
-
-    function resetBatchSelect(item) {
-
-        const batchSelect =
-            item.querySelector(
-                '.new-batch-select'
-            );
+            const batchSelect =
+                item.querySelector(
+                    '.new-batch-select'
+                );
 
 
-        batchSelect.disabled =
-            true;
+            batchSelect.disabled =
+                true;
 
 
-        batchSelect.innerHTML = `
+            batchSelect.innerHTML = `
 
             <option value="">
                 Сначала выберите артикул
@@ -3322,225 +3290,180 @@
 
         `;
 
-    }
-
-
-    /* =====================================================
-       REMOVE NEW ITEM
-    ====================================================== */
-
-    function removeNewItem(button) {
-
-        const item =
-            button.closest(
-                '.new-item'
-            );
-
-
-        if (item) {
-
-            item.remove();
-
-            recalculateReceiptTotal();
-
-        }
-
-    }
-
-
-    /* =====================================================
-       DELETE EXISTING ITEM
-    ====================================================== */
-
-    function deleteExistingItem(button) {
-
-        const url =
-            button.dataset.url;
-
-
-        if (!url) {
-            return;
         }
 
 
-        const confirmed =
-            confirm(
-                'Удалить этот артикул из приёмки?\n\n' +
-                'Количество будет списано со склада.'
-            );
+        /* =====================================================
+           REMOVE NEW ITEM
+        ====================================================== */
+
+        function removeNewItem(button) {
+
+            const item =
+                button.closest(
+                    '.new-item'
+                );
 
 
-        if (!confirmed) {
-            return;
+            if (item) {
+
+                item.remove();
+
+                recalculateReceiptTotal();
+
+            }
+
         }
 
 
-        button.disabled =
-            true;
+        /* =====================================================
+           DELETE EXISTING ITEM
+        ====================================================== */
+
+        function deleteExistingItem(button) {
+
+            const url =
+                button.dataset.url;
 
 
-        button.style.opacity =
-            '0.5';
+            if (!url) {
+                return;
+            }
 
 
-        button.style.pointerEvents =
-            'none';
+            const confirmed =
+                confirm(
+                    'Удалить этот артикул из приёмки?\n\n' +
+                    'Количество будет списано со склада.'
+                );
 
 
-        const form =
-            document.createElement(
-                'form'
+            if (!confirmed) {
+                return;
+            }
+
+
+            button.disabled =
+                true;
+
+
+            button.style.opacity =
+                '0.5';
+
+
+            button.style.pointerEvents =
+                'none';
+
+
+            const form =
+                document.createElement(
+                    'form'
+                );
+
+
+            form.method =
+                'POST';
+
+
+            form.action =
+                url;
+
+
+            form.style.display =
+                'none';
+
+
+            const csrf =
+                document.createElement(
+                    'input'
+                );
+
+
+            csrf.type =
+                'hidden';
+
+            csrf.name =
+                '_token';
+
+            csrf.value =
+                '{{ csrf_token() }}';
+
+
+            const method =
+                document.createElement(
+                    'input'
+                );
+
+
+            method.type =
+                'hidden';
+
+            method.name =
+                '_method';
+
+            method.value =
+                'DELETE';
+
+
+            form.appendChild(
+                csrf
+            );
+
+            form.appendChild(
+                method
             );
 
 
-        form.method =
-            'POST';
-
-
-        form.action =
-            url;
-
-
-        form.style.display =
-            'none';
-
-
-        const csrf =
-            document.createElement(
-                'input'
+            document.body.appendChild(
+                form
             );
 
 
-        csrf.type =
-            'hidden';
+            form.submit();
 
-        csrf.name =
-            '_token';
-
-        csrf.value =
-            '{{ csrf_token() }}';
+        }
 
 
-        const method =
-            document.createElement(
-                'input'
-            );
+        /* =====================================================
+           ESCAPE HTML
+        ====================================================== */
 
+        function escapeHtml(value) {
 
-        method.type =
-            'hidden';
-
-        method.name =
-            '_method';
-
-        method.value =
-            'DELETE';
-
-
-        form.appendChild(
-            csrf
-        );
-
-        form.appendChild(
-            method
-        );
-
-
-        document.body.appendChild(
-            form
-        );
-
-
-        form.submit();
-
-    }
-
-
-    /* =====================================================
-       ESCAPE HTML
-    ====================================================== */
-
-    function escapeHtml(value) {
-
-        return String(
-            value ?? ''
-        )
-        .replace(
-            /&/g,
-            '&amp;'
-        )
-        .replace(
-            /</g,
-            '&lt;'
-        )
-        .replace(
-            />/g,
-            '&gt;'
-        )
-        .replace(
-            /"/g,
-            '&quot;'
-        )
-        .replace(
-            /'/g,
-            '&#039;'
-        );
-
-    }
-
-
-    /* =====================================================
-       CLOSE AUTOCOMPLETE
-    ====================================================== */
-
-    document.addEventListener(
-        'click',
-        function(event) {
-
-            document
-                .querySelectorAll(
-                    '.autocomplete-dropdown.show'
+            return String(
+                    value ?? ''
                 )
-                .forEach(
-                    dropdown => {
-
-                        const autocomplete =
-                            dropdown.closest(
-                                '.autocomplete'
-                            );
-
-
-                        if (
-                            autocomplete &&
-                            !autocomplete.contains(
-                                event.target
-                            )
-                        ) {
-
-                            dropdown.classList.remove(
-                                'show'
-                            );
-
-                        }
-
-                    }
+                .replace(
+                    /&/g,
+                    '&amp;'
+                )
+                .replace(
+                    /</g,
+                    '&lt;'
+                )
+                .replace(
+                    />/g,
+                    '&gt;'
+                )
+                .replace(
+                    /"/g,
+                    '&quot;'
+                )
+                .replace(
+                    /'/g,
+                    '&#039;'
                 );
 
         }
-    );
 
 
-    /* =====================================================
-       ESC
-    ====================================================== */
+        /* =====================================================
+           CLOSE AUTOCOMPLETE
+        ====================================================== */
 
-    document.addEventListener(
-        'keydown',
-        function(event) {
-
-            if (
-                event.key === 'Escape'
-            ) {
+        document.addEventListener(
+            'click',
+            function(event) {
 
                 document
                     .querySelectorAll(
@@ -3549,75 +3472,119 @@
                     .forEach(
                         dropdown => {
 
-                            dropdown.classList.remove(
-                                'show'
-                            );
+                            const autocomplete =
+                                dropdown.closest(
+                                    '.autocomplete'
+                                );
+
+
+                            if (
+                                autocomplete &&
+                                !autocomplete.contains(
+                                    event.target
+                                )
+                            ) {
+
+                                dropdown.classList.remove(
+                                    'show'
+                                );
+
+                            }
 
                         }
                     );
 
             }
-
-        }
-    );
+        );
 
 
-    /* =====================================================
-       PROTECT DOUBLE SUBMIT
-    ====================================================== */
+        /* =====================================================
+           ESC
+        ====================================================== */
 
-    document
-        .getElementById(
-            'receipt-edit-form'
-        )
-        .addEventListener(
-            'submit',
-            function() {
+        document.addEventListener(
+            'keydown',
+            function(event) {
 
-                const button =
-                    document.getElementById(
-                        'save-button'
-                    );
+                if (
+                    event.key === 'Escape'
+                ) {
 
+                    document
+                        .querySelectorAll(
+                            '.autocomplete-dropdown.show'
+                        )
+                        .forEach(
+                            dropdown => {
 
-                if (!button) {
-                    return;
+                                dropdown.classList.remove(
+                                    'show'
+                                );
+
+                            }
+                        );
+
                 }
-
-
-                button.disabled =
-                    true;
-
-
-                button.textContent =
-                    'Сохранение...';
-
-
-                button.style.opacity =
-                    '0.7';
-
-
-                button.style.cursor =
-                    'wait';
 
             }
         );
 
 
-    /* =====================================================
-       INITIAL CALCULATION
-    ====================================================== */
+        /* =====================================================
+           PROTECT DOUBLE SUBMIT
+        ====================================================== */
 
-    document.addEventListener(
-        'DOMContentLoaded',
-        function() {
+        document
+            .getElementById(
+                'receipt-edit-form'
+            )
+            .addEventListener(
+                'submit',
+                function() {
 
-            recalculateReceiptTotal();
+                    const button =
+                        document.getElementById(
+                            'save-button'
+                        );
 
-        }
-    );
 
-</script>
+                    if (!button) {
+                        return;
+                    }
+
+
+                    button.disabled =
+                        true;
+
+
+                    button.textContent =
+                        'Сохранение...';
+
+
+                    button.style.opacity =
+                        '0.7';
+
+
+                    button.style.cursor =
+                        'wait';
+
+                }
+            );
+
+
+        /* =====================================================
+           INITIAL CALCULATION
+        ====================================================== */
+
+        document.addEventListener(
+            'DOMContentLoaded',
+            function() {
+
+                recalculateReceiptTotal();
+
+            }
+        );
+    </script>
 
 </body>
 
