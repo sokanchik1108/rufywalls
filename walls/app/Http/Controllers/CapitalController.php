@@ -6,6 +6,7 @@ use App\Models\FinancialEntry;
 use App\Models\FinancialSetting;
 use App\Models\InventoryLayer;
 use App\Models\Supplier;
+use App\Models\Order;
 use App\Services\FifoService;
 use Illuminate\Http\Request;
 
@@ -123,6 +124,7 @@ class CapitalController extends Controller
          * + корректировки
          * - оплаты по приходам
          * - ручные оплаты
+         * - оплаты через Qr Лезговко для Артекс
          */
 
         $supplierDebt = 0;
@@ -208,13 +210,63 @@ class CapitalController extends Controller
 
 
             /*
-             * Текущий долг конкретному поставщику.
+             * ========================================================
+             * Оплаты через Qr Лезговко
+             * ========================================================
+             *
+             * Эти оплаты учитываем только для поставщика Артекс.
+             *
+             * Логика такая же, как на странице
+             * задолженности поставщика.
              */
+
+            $qrLegzovkoPayments = 0;
+
+            if (
+                mb_strtolower(trim($supplier->name))
+                === mb_strtolower('Артекс')
+            ) {
+                $qrLegzovkoPayments = Order::query()
+                    ->whereHas(
+                        'payments',
+                        function ($query) {
+                            $query->where(
+                                'payment_method',
+                                'Qr Лезговко'
+                            );
+                        }
+                    )
+                    ->with('payments')
+                    ->get()
+                    ->sum(
+                        function ($order) {
+                            return $order->payments
+                                ->where(
+                                    'payment_method',
+                                    'Qr Лезговко'
+                                )
+                                ->sum(
+                                    function ($payment) {
+                                        return (float) $payment->amount;
+                                    }
+                                );
+                        }
+                    );
+            }
+
+
+            /*
+             * ========================================================
+             * Текущий долг конкретному поставщику.
+             * ========================================================
+             */
+
             $debt =
                 $receiptsTotal
                 + $openingAndAdjustments
                 - $receiptPaymentsTotal
-                - $manualPaymentsTotal;
+                - $manualPaymentsTotal
+                - $qrLegzovkoPayments;
 
 
             /*
@@ -362,4 +414,3 @@ class CapitalController extends Controller
             );
     }
 }
-
