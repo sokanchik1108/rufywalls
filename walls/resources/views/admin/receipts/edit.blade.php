@@ -1756,6 +1756,14 @@
 
             @method('PUT')
 
+            {{-- Для администраторов без видимого поля оплаты отправляем текущую оплаченную сумму. --}}
+            @unless($isOwnerOrAnalyst)
+            <input
+                type="hidden"
+                name="paid_amount"
+                value="{{ old('paid_amount', $paidAmount) }}">
+            @endunless
+
 
             {{-- =================================================
              RECEIPT INFO
@@ -1798,10 +1806,6 @@
                         </div>
 
 
-                        {{-- ПОСТАВЩИК --}}
-
-                        @if($isOwnerOrAnalyst)
-
                         <div class="info-item">
 
                             <label for="supplier_id">
@@ -1836,21 +1840,10 @@
 
                         </div>
 
-                        @else
 
-                        <div class="info-item">
+                        {{-- ПОСТАВЩИК --}}
 
-                            <span class="info-label">
-                                Поставщик
-                            </span>
 
-                            <div class="info-value">
-                                {{ $receipt->supplier?->name ?? 'Не указан' }}
-                            </div>
-
-                        </div>
-
-                        @endif
 
 
                         {{-- КОММЕНТАРИЙ --}}
