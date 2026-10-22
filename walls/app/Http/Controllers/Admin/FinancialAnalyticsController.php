@@ -282,33 +282,49 @@ class FinancialAnalyticsController extends Controller
     public function storeExpenseType(Request $request)
     {
         if (!Auth::check() || !Auth::user()->can_view_analytics) {
-            abort(403);
+            abort(403, 'Доступ к аналитике запрещён');
         }
 
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => [
+                'required',
+                'string',
+                'max:255'
+            ],
         ]);
 
-        ExpenseType::create($validated);
+        ExpenseType::create([
+            'name' => trim($validated['name']),
+        ]);
 
         return back()->with(
             'success',
-            'Категория расходов добавлена.'
+            'Вид расхода добавлен.'
         );
     }
 
-    public function destroyExpenseType($id)
-    {
+
+    /*
+    |--------------------------------------------------------------------------
+    | Удалить вид расхода
+    |--------------------------------------------------------------------------
+    */
+
+    public function destroyExpenseType(
+        ExpenseType $expenseType
+    ) {
         if (!Auth::check() || !Auth::user()->can_view_analytics) {
-            abort(403);
+            abort(403, 'Доступ к аналитике запрещён');
         }
 
-        $expenseType = ExpenseType::findOrFail($id);
-
-        if ($expenseType->outgoingPayments()->exists()) {
+        if (
+            $expenseType
+                ->outgoingPayments()
+                ->exists()
+        ) {
             return back()->with(
                 'error',
-                'Нельзя удалить категорию, к которой привязаны расходы.'
+                'Нельзя удалить этот вид расхода, потому что он используется в исходящих платежах.'
             );
         }
 
@@ -316,160 +332,209 @@ class FinancialAnalyticsController extends Controller
 
         return back()->with(
             'success',
-            'Категория расходов удалена.'
+            'Вид расхода удалён.'
         );
     }
 
-    public function storeOutgoingPayment(Request $request)
-    {
+
+    /*
+    |--------------------------------------------------------------------------
+    | Добавить исходящий платёж
+    |--------------------------------------------------------------------------
+    */
+
+    public function storeOutgoingPayment(
+        Request $request
+    ) {
         if (!Auth::check() || !Auth::user()->can_view_analytics) {
-            abort(403);
+            abort(403, 'Доступ к аналитике запрещён');
         }
 
         $validated = $request->validate([
-            'expense_type_id' => ['required', 'exists:expense_types,id'],
-            'point_of_sale_id' => ['nullable', 'exists:point_of_sales,id'],
-            'amount' => ['required', 'numeric', 'gt:0'],
-            'payment_date' => ['required', 'date'],
-            'comment' => ['nullable', 'string', 'max:2000'],
+            'expense_type_id' => [
+                'required',
+                'exists:expense_types,id'
+            ],
+
+            'point_of_sale_id' => [
+                'nullable',
+                'integer',
+                'exists:points_of_sale,id'
+            ],
+
+            'payment_date' => [
+                'required',
+                'date'
+            ],
+
+            'amount' => [
+                'required',
+                'numeric',
+                'min:0.01'
+            ],
+
+            'description' => [
+                'nullable',
+                'string',
+                'max:1000'
+            ],
         ]);
 
-        OutgoingPayment::create($validated);
+        OutgoingPayment::create(
+            $validated
+        );
 
         return back()->with(
             'success',
-            'Расход добавлен.'
+            'Исходящий платёж добавлен.'
         );
     }
 
-    public function destroyOutgoingPayment($id)
-    {
+
+    /*
+    |--------------------------------------------------------------------------
+    | Удалить исходящий платёж
+    |--------------------------------------------------------------------------
+    */
+
+    public function destroyOutgoingPayment(
+        OutgoingPayment $outgoingPayment
+    ) {
         if (!Auth::check() || !Auth::user()->can_view_analytics) {
-            abort(403);
+            abort(403, 'Доступ к аналитике запрещён');
         }
 
-        $payment = OutgoingPayment::findOrFail($id);
-        $payment->delete();
+        $outgoingPayment->delete();
 
         return back()->with(
             'success',
-            'Расход удалён.'
+            'Исходящий платёж удалён.'
         );
     }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Платежи
+    |--------------------------------------------------------------------------
+    */
 
     public function payments(Request $request)
     {
         if (!Auth::check() || !Auth::user()->can_view_analytics) {
-            abort(403);
+            abort(403, 'Доступ к аналитике запрещён');
         }
 
         $from = $request->filled('from')
-            ? Carbon::parse($request->input('from'))->startOfDay()
-            : now()->startOfMonth()->startOfDay();
+            ? Carbon::parse($request->from)->startOfDay()
+            : now()->startOfMonth();
 
         $to = $request->filled('to')
-            ? Carbon::parse($request->input('to'))->endOfDay()
+            ? Carbon::parse($request->to)->endOfDay()
             : now()->endOfDay();
 
-        $selectedPointOfSale = $request->filled('point_of_sale_id')
-            ? (int) $request->input('point_of_sale_id')
-            : null;
-
         /*
         |--------------------------------------------------------------------------
-        | Продажи по способам оплаты
+        | Точки продаж
         |--------------------------------------------------------------------------
         */
 
-        $ordersQuery = Order::with('payments')
-            ->whereBetween('order_date', [
-                $from->toDateTimeString(),
-                $to->toDateTimeString(),
-            ]);
+        $pointsOfSale =
+            PointOfSale::orderBy('name')->get();
 
-        if ($selectedPointOfSale) {
-            $ordersQuery->where(
-                'point_of_sale_id',
-                $selectedPointOfSale
-            );
-        }
-
-        $orders = $ordersQuery->get();
-
-        $salesPaymentMethodTotals = [];
-
-        foreach ($orders as $order) {
-            foreach ($order->payments as $payment) {
-                $method = $payment->payment_method
-                    ?? $payment->method
-                    ?? 'Не указан';
-
-                if (!isset($salesPaymentMethodTotals[$method])) {
-                    $salesPaymentMethodTotals[$method] = 0.0;
-                }
-
-                $salesPaymentMethodTotals[$method] +=
-                    (float) $payment->amount;
-            }
-        }
+        $selectedPointOfSale =
+            $request->filled('point_of_sale_id')
+                ? (int) $request->point_of_sale_id
+                : null;
 
         /*
         |--------------------------------------------------------------------------
-        | Возвраты по способам оплаты
+        | Исходящие платежи
         |--------------------------------------------------------------------------
         */
 
-        $returnPaymentsQuery = DB::table('customer_return_payments as crp')
-            ->join(
-                'customer_returns as cr',
-                'cr.id',
-                '=',
-                'crp.customer_return_id'
-            )
-            ->join('orders as o', 'o.id', '=', 'cr.order_id')
-            ->join(
-                'payment_methods as pm',
-                'pm.id',
-                '=',
-                'crp.payment_method_id'
-            )
-            ->whereBetween('cr.return_date', [
-                $from->toDateTimeString(),
-                $to->toDateTimeString(),
-            ]);
-
-        if ($selectedPointOfSale) {
-            $returnPaymentsQuery->where(
-                'o.point_of_sale_id',
-                $selectedPointOfSale
-            );
-        }
-
-        $returnPaymentMethodTotals = [];
-
-        $returnPayments = $returnPaymentsQuery
-            ->select([
-                'pm.name as payment_method',
-                'crp.amount',
+        $outgoingPayments =
+            OutgoingPayment::with([
+                'expenseType',
+                'pointOfSale'
             ])
-            ->get();
+                ->whereDate(
+                    'payment_date',
+                    '>=',
+                    $from->toDateString()
+                )
+                ->whereDate(
+                    'payment_date',
+                    '<=',
+                    $to->toDateString()
+                )
+                ->when(
+                    $selectedPointOfSale,
+                    function ($query) use (
+                        $selectedPointOfSale
+                    ) {
+                        $query->where(
+                            'point_of_sale_id',
+                            $selectedPointOfSale
+                        );
+                    }
+                )
+                ->orderByDesc('payment_date')
+                ->orderByDesc('id')
+                ->get();
 
-        foreach ($returnPayments as $payment) {
-            $method = $payment->payment_method ?: 'Не указан';
+        /*
+        |--------------------------------------------------------------------------
+        | Виды расходов
+        |--------------------------------------------------------------------------
+        */
 
-            if (!isset($returnPaymentMethodTotals[$method])) {
-                $returnPaymentMethodTotals[$method] = 0.0;
-            }
+        $expenseTypes =
+            ExpenseType::withCount([
+                'outgoingPayments as outgoing_payments_count'
+                    => function ($query) use (
+                        $from,
+                        $to,
+                        $selectedPointOfSale
+                    ) {
 
-            $returnPaymentMethodTotals[$method] +=
-                (float) $payment->amount;
-        }
+                        $query
+                            ->whereDate(
+                                'payment_date',
+                                '>=',
+                                $from->toDateString()
+                            )
+                            ->whereDate(
+                                'payment_date',
+                                '<=',
+                                $to->toDateString()
+                            )
+                            ->when(
+                                $selectedPointOfSale,
+                                function ($query) use (
+                                    $selectedPointOfSale
+                                ) {
+                                    $query->where(
+                                        'point_of_sale_id',
+                                        $selectedPointOfSale
+                                    );
+                                }
+                            );
+                    }
+            ])
+                ->orderBy('name')
+                ->get();
 
-        return response()->json([
-            'from' => $from->toDateString(),
-            'to' => $to->toDateString(),
-            'salesPaymentMethodTotals' => $salesPaymentMethodTotals,
-            'returnPaymentMethodTotals' => $returnPaymentMethodTotals,
-        ]);
+        return view(
+            'admin.analytics.payments',
+            compact(
+                'from',
+                'to',
+                'outgoingPayments',
+                'expenseTypes',
+                'pointsOfSale',
+                'selectedPointOfSale'
+            )
+        );
     }
 }
