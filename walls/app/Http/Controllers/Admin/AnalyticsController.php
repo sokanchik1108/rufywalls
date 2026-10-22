@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\PointOfSale;
+use App\Models\CustomerReturn;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,24 +13,176 @@ use Illuminate\Support\Facades\Hash;
 
 class AnalyticsController extends Controller
 {
-    public function index(Request $request)
-    {
-        /*
-        |--------------------------------------------------------------------------
-        | ПРОВЕРКА ДОСТУПА
-        |--------------------------------------------------------------------------
-        */
+    private string $timezone = 'Asia/Almaty';
 
+    /*
+    |--------------------------------------------------------------------------
+    | ПРОВЕРКА ДОСТУПА
+    |--------------------------------------------------------------------------
+    */
+
+    private function checkAnalyticsAccess(): void
+    {
         if (!Auth::check() || !Auth::user()->can_view_analytics) {
             abort(403, 'Доступ к аналитике запрещён');
         }
+    }
 
+    /*
+    |--------------------------------------------------------------------------
+    | ЗАПРОС ЗАКАЗОВ ЗА ПЕРИОД
+    |--------------------------------------------------------------------------
+    */
 
-        /*
-        |--------------------------------------------------------------------------
-        | ТОЧКИ ПРОДАЖ
-        |--------------------------------------------------------------------------
-        */
+    private function ordersQuery(
+        Carbon $from,
+        Carbon $to,
+        ?int $pointOfSaleId = null
+    ) {
+        $query = Order::with([
+            'items.variant.product',
+        ])->where(function ($q) use ($from, $to) {
+            $q->whereBetween('order_date', [$from, $to])
+                ->orWhere(function ($sub) use ($from, $to) {
+                    $sub->whereNull('order_date')
+                        ->whereBetween('created_at', [$from, $to]);
+                });
+        });
+
+        if ($pointOfSaleId) {
+            $query->where('point_of_sale_id', $pointOfSaleId);
+        }
+
+        return $query;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ЗАПРОС ВОЗВРАТОВ ЗА ПЕРИОД
+    |--------------------------------------------------------------------------
+    |
+    | Возврат относится к дате CustomerReturn.return_date,
+    | а точка продаж определяется через исходный заказ.
+    |
+    */
+
+    private function returnsQuery(
+        Carbon $from,
+        Carbon $to,
+        ?int $pointOfSaleId = null
+    ) {
+        $query = CustomerReturn::with([
+            'order',
+            'items.orderItem.variant.product',
+            'items.variant.product',
+        ])->where(function ($q) use ($from, $to) {
+            $q->whereBetween('return_date', [$from, $to])
+                ->orWhere(function ($sub) use ($from, $to) {
+                    $sub->whereNull('return_date')
+                        ->whereBetween('created_at', [$from, $to]);
+                });
+        });
+
+        if ($pointOfSaleId) {
+            $query->whereHas('order', function ($q) use ($pointOfSaleId) {
+                $q->where('point_of_sale_id', $pointOfSaleId);
+            });
+        }
+
+        return $query;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ДАТА ЗАКАЗА
+    |--------------------------------------------------------------------------
+    */
+
+    private function orderDate(Order $order): Carbon
+    {
+        return Carbon::parse(
+            $order->order_date ?? $order->created_at,
+            $this->timezone
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ДАТА ВОЗВРАТА
+    |--------------------------------------------------------------------------
+    */
+
+    private function returnDate(CustomerReturn $return): Carbon
+    {
+        return Carbon::parse(
+            $return->return_date ?? $return->created_at,
+            $this->timezone
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ЦЕНА ПРОДАЖИ ВОЗВРАЩЁННОГО ТОВАРА
+    |--------------------------------------------------------------------------
+    |
+    | CustomerReturnItem.unit_cost — себестоимость.
+    | Для суммы возврата используем исходную цену OrderItem.price.
+    |
+    */
+
+    private function returnItemPrice($returnItem): float
+    {
+        return (float) ($returnItem->orderItem?->price ?? 0);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | РАСЧЁТ ПРОДАЖ И ВОЗВРАТОВ
+    |--------------------------------------------------------------------------
+    */
+
+    private function calculateTotals($orders, $returns): array
+    {
+        $sales = 0;
+        $returnAmount = 0;
+
+        foreach ($orders as $order) {
+            foreach ($order->items as $item) {
+                $quantity = (int) ($item->quantity ?? 0);
+                $price = (float) ($item->price ?? 0);
+
+                // Продажи считаются только по положительному количеству.
+                if ($quantity > 0) {
+                    $sales += $quantity * $price;
+                }
+            }
+        }
+
+        foreach ($returns as $return) {
+            foreach ($return->items as $item) {
+                $quantity = max(0, (int) ($item->quantity ?? 0));
+                $price = $this->returnItemPrice($item);
+
+                $returnAmount += $quantity * $price;
+            }
+        }
+
+        return [
+            'sales' => $sales,
+            'returns' => $returnAmount,
+            'profit' => $sales - $returnAmount,
+        ];
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ОСНОВНАЯ АНАЛИТИКА
+    |--------------------------------------------------------------------------
+    */
+
+    public function index(Request $request)
+    {
+        $this->checkAnalyticsAccess();
 
         $pointsOfSale = PointOfSale::orderBy('name')->get();
 
@@ -37,134 +190,45 @@ class AnalyticsController extends Controller
             ? (int) $request->point_of_sale_id
             : null;
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | ПЕРИОД
-        |--------------------------------------------------------------------------
-        */
-
         $from = $request->filled('from')
-            ? Carbon::parse(
-                $request->from,
-                'Asia/Almaty'
-            )->startOfDay()
-            : now('Asia/Almaty')->startOfMonth();
-
+            ? Carbon::parse($request->from, $this->timezone)->startOfDay()
+            : now($this->timezone)->startOfMonth();
 
         $to = $request->filled('to')
-            ? Carbon::parse(
-                $request->to,
-                'Asia/Almaty'
-            )->endOfDay()
-            : now('Asia/Almaty')->endOfDay();
+            ? Carbon::parse($request->to, $this->timezone)->endOfDay()
+            : now($this->timezone)->endOfDay();
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | ЗАКАЗЫ
-        |--------------------------------------------------------------------------
-        */
-
-        $ordersQuery = Order::with([
-            'items.variant.product'
-        ])
-            ->where(function ($query) use ($from, $to) {
-
-                $query->whereBetween(
-                    'order_date',
-                    [$from, $to]
-                );
-
-                $query->orWhere(function ($q) use ($from, $to) {
-
-                    $q->whereNull('order_date')
-                        ->whereBetween(
-                            'created_at',
-                            [$from, $to]
-                        );
-                });
-            });
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | ФИЛЬТР ПО ТОЧКЕ ПРОДАЖ
-        |--------------------------------------------------------------------------
-        */
-
-        if ($selectedPointOfSale) {
-
-            $ordersQuery->where(
-                'point_of_sale_id',
-                $selectedPointOfSale
-            );
+        if ($from->gt($to)) {
+            abort(422, 'Начало периода не может быть позже его окончания.');
         }
 
-
-        $orders = $ordersQuery
-            ->orderByRaw(
-                'COALESCE(order_date, created_at) DESC'
-            )
-            ->get();
-
-
         /*
         |--------------------------------------------------------------------------
-        | ОБЩАЯ АНАЛИТИКА
+        | ЗАКАЗЫ И ВОЗВРАТЫ ЗА ВЫБРАННЫЙ ПЕРИОД
         |--------------------------------------------------------------------------
         */
+
+        $orders = $this->ordersQuery(
+            $from,
+            $to,
+            $selectedPointOfSale
+        )
+            ->orderByRaw('COALESCE(order_date, created_at) DESC')
+            ->get();
+
+        $returns = $this->returnsQuery(
+            $from,
+            $to,
+            $selectedPointOfSale
+        )->get();
 
         $totalOrders = $orders->count();
 
-        $totalSales = 0;
+        $totals = $this->calculateTotals($orders, $returns);
 
-        $totalReturns = 0;
-
-
-        foreach ($orders as $order) {
-
-            foreach ($order->items as $item) {
-
-                $quantity = (int) ($item->quantity ?? 0);
-
-                $price = (float) ($item->price ?? 0);
-
-                $sum = $quantity * $price;
-
-
-                /*
-                | Продажа
-                */
-
-                if ($quantity > 0) {
-
-                    $totalSales += $sum;
-                }
-
-
-                /*
-                | Возврат
-                */
-
-                elseif ($quantity < 0) {
-
-                    $totalReturns += abs($sum);
-                }
-            }
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | ОБЩАЯ ПРИБЫЛЬ / ИТОГ
-        |--------------------------------------------------------------------------
-        */
-
-        $totalProfit =
-            $totalSales -
-            $totalReturns;
-
+        $totalSales = $totals['sales'];
+        $totalReturns = $totals['returns'];
+        $totalProfit = $totals['profit'];
 
         /*
         |--------------------------------------------------------------------------
@@ -174,100 +238,56 @@ class AnalyticsController extends Controller
 
         $salesByDay = [];
 
-
-        foreach ($orders as $order) {
-
-            $date = $order->order_date
-
-                ? Carbon::parse(
-                    $order->order_date,
-                    'Asia/Almaty'
-                )->format('Y-m-d')
-
-                : Carbon::parse(
-                    $order->created_at,
-                    'Asia/Almaty'
-                )->format('Y-m-d');
-
-
+        $getDay = function (string $date) use (&$salesByDay) {
             if (!isset($salesByDay[$date])) {
-
                 $salesByDay[$date] = [
-
                     'date' => $date,
-
                     'orders' => 0,
-
                     'sales' => 0,
-
                     'returns' => 0,
-
                     'profit' => 0,
                 ];
             }
 
+            return $date;
+        };
 
+        foreach ($orders as $order) {
+            $date = $this->orderDate($order)->format('Y-m-d');
+
+            $getDay($date);
             $salesByDay[$date]['orders']++;
 
-
             foreach ($order->items as $item) {
-
-                $quantity =
-                    (int) ($item->quantity ?? 0);
-
-                $price =
-                    (float) ($item->price ?? 0);
-
-                $sum =
-                    $quantity * $price;
-
-
-                /*
-                | Продажа
-                */
+                $quantity = (int) ($item->quantity ?? 0);
+                $price = (float) ($item->price ?? 0);
 
                 if ($quantity > 0) {
-
-                    $salesByDay[$date]['sales'] += $sum;
-                }
-
-
-                /*
-                | Возврат
-                */
-
-                elseif ($quantity < 0) {
-
-                    $salesByDay[$date]['returns'] += abs($sum);
+                    $salesByDay[$date]['sales'] += $quantity * $price;
                 }
             }
         }
 
+        foreach ($returns as $return) {
+            $date = $this->returnDate($return)->format('Y-m-d');
 
-        /*
-        |--------------------------------------------------------------------------
-        | ИТОГ ПО КАЖДОМУ ДНЮ
-        |--------------------------------------------------------------------------
-        */
+            $getDay($date);
+
+            foreach ($return->items as $item) {
+                $quantity = max(0, (int) ($item->quantity ?? 0));
+                $price = $this->returnItemPrice($item);
+
+                $salesByDay[$date]['returns'] += $quantity * $price;
+            }
+        }
 
         foreach ($salesByDay as &$day) {
-
-            $day['profit'] =
-                $day['sales'] -
-                $day['returns'];
+            $day['profit'] = $day['sales'] - $day['returns'];
         }
 
         unset($day);
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | СОРТИРОВКА ДНЕЙ
-        |--------------------------------------------------------------------------
-        */
-
         krsort($salesByDay);
-
 
         /*
         |--------------------------------------------------------------------------
@@ -276,266 +296,146 @@ class AnalyticsController extends Controller
         */
 
         $weekDays = [
-
             1 => 'Понедельник',
-
             2 => 'Вторник',
-
             3 => 'Среда',
-
             4 => 'Четверг',
-
             5 => 'Пятница',
-
             6 => 'Суббота',
-
             7 => 'Воскресенье',
-
         ];
-
 
         $weeklyStats = [];
 
-
         foreach ($weekDays as $number => $name) {
-
             $weeklyStats[$number] = [
-
                 'day' => $name,
-
                 'days_count' => 0,
-
                 'sales' => 0,
-
                 'returns' => 0,
-
                 'profit' => 0,
-
                 'average_profit' => 0,
             ];
         }
 
-
         foreach ($salesByDay as $day) {
-
-            $date = Carbon::parse(
+            $number = Carbon::parse(
                 $day['date'],
-                'Asia/Almaty'
-            );
+                $this->timezone
+            )->dayOfWeekIso;
 
-
-            $dayNumber =
-                $date->dayOfWeekIso;
-
-
-            $weeklyStats[$dayNumber]['days_count']++;
-
-
-            $weeklyStats[$dayNumber]['sales'] +=
-                $day['sales'];
-
-
-            $weeklyStats[$dayNumber]['returns'] +=
-                $day['returns'];
-
-
-            $weeklyStats[$dayNumber]['profit'] +=
-                $day['profit'];
+            $weeklyStats[$number]['days_count']++;
+            $weeklyStats[$number]['sales'] += $day['sales'];
+            $weeklyStats[$number]['returns'] += $day['returns'];
+            $weeklyStats[$number]['profit'] += $day['profit'];
         }
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | СРЕДНИЙ ИТОГ ПО ДНЯМ НЕДЕЛИ
-        |--------------------------------------------------------------------------
-        */
-
         foreach ($weeklyStats as &$day) {
-
-            if ($day['days_count'] > 0) {
-
-                $day['average_profit'] =
-                    $day['profit'] /
-                    $day['days_count'];
-
-            } else {
-
-                $day['average_profit'] = 0;
-            }
+            $day['average_profit'] = $day['days_count'] > 0
+                ? $day['profit'] / $day['days_count']
+                : 0;
         }
 
         unset($day);
 
-
         /*
         |--------------------------------------------------------------------------
-        | АНАЛИТИКА ПО ВАРИАНТАМ / SKU
+        | СТАТИСТИКА ПО SKU
         |--------------------------------------------------------------------------
         */
 
         $variantStats = [];
 
-
+        // Проданные товары учитываем по дате заказа.
         foreach ($orders as $order) {
-
             foreach ($order->items as $item) {
+                $quantity = (int) ($item->quantity ?? 0);
 
-                $variant = $item->variant;
-
-                $product = $variant?->product;
-
-
-                /*
-                | Если вариант или товар удалён
-                */
-
-                if (!$variant || !$product) {
+                if ($quantity <= 0) {
                     continue;
                 }
 
+                $variant = $item->variant;
+                $product = $variant?->product;
 
-                /*
-                | SKU
-                */
-
-                $sku = $variant->sku
-                    ?? $item->batch_code
-                    ?? '—';
-
-
-                /*
-                | ID варианта
-                */
+                if (!$variant) {
+                    continue;
+                }
 
                 $variantId = $variant->id;
 
-
-                /*
-                | Создаём статистику варианта
-                */
-
                 if (!isset($variantStats[$variantId])) {
-
                     $variantStats[$variantId] = [
-
-                        'variant_id' =>
-                            $variant->id,
-
-                        'product_id' =>
-                            $product->id,
-
-                        'product_name' =>
-                            $product->name
-                                ?? 'Без названия',
-
-                        'sku' =>
-                            $sku,
-
-                        'color' =>
-                            $variant->color
-                                ?? '—',
-
+                        'variant_id' => $variantId,
+                        'product_id' => $product?->id,
+                        'product_name' => $product?->name ?? 'Без названия',
+                        'sku' => $variant->sku ?? $item->batch_code ?? '—',
+                        'color' => $variant->color ?? '—',
                         'sold_quantity' => 0,
-
                         'return_quantity' => 0,
-
                         'sales' => 0,
-
                         'returns' => 0,
-
                         'profit' => 0,
                     ];
                 }
 
-
-                /*
-                | ДАННЫЕ ПОЗИЦИИ
-                */
-
-                $quantity =
-                    (int) ($item->quantity ?? 0);
-
-
-                $price =
-                    (float) ($item->price ?? 0);
-
-
-                $sum =
-                    $quantity * $price;
-
-
-                /*
-                | ПРОДАЖА
-                */
-
-                if ($quantity > 0) {
-
-                    $variantStats[$variantId]['sold_quantity'] +=
-                        $quantity;
-
-
-                    $variantStats[$variantId]['sales'] +=
-                        $sum;
-                }
-
-
-                /*
-                | ВОЗВРАТ
-                */
-
-                elseif ($quantity < 0) {
-
-                    $variantStats[$variantId]['return_quantity'] +=
-                        abs($quantity);
-
-
-                    $variantStats[$variantId]['returns'] +=
-                        abs($sum);
-                }
-
-
-                /*
-                | ИТОГ ПО ВАРИАНТУ
-                */
-
-                $variantStats[$variantId]['profit'] =
-                    $variantStats[$variantId]['sales']
-                    -
-                    $variantStats[$variantId]['returns'];
+                $variantStats[$variantId]['sold_quantity'] += $quantity;
+                $variantStats[$variantId]['sales'] +=
+                    $quantity * (float) ($item->price ?? 0);
             }
         }
 
+        // Возвращённые товары учитываем по дате самого возврата.
+        foreach ($returns as $return) {
+            foreach ($return->items as $item) {
+                $quantity = max(0, (int) ($item->quantity ?? 0));
 
-        /*
-        |--------------------------------------------------------------------------
-        | COLLECTION
-        |--------------------------------------------------------------------------
-        */
+                if ($quantity <= 0) {
+                    continue;
+                }
+
+                $variant = $item->variant ?? $item->orderItem?->variant;
+                $product = $variant?->product;
+
+                if (!$variant) {
+                    continue;
+                }
+
+                $variantId = $variant->id;
+
+                if (!isset($variantStats[$variantId])) {
+                    $variantStats[$variantId] = [
+                        'variant_id' => $variantId,
+                        'product_id' => $product?->id,
+                        'product_name' => $product?->name ?? 'Без названия',
+                        'sku' => $variant->sku ?? '—',
+                        'color' => $variant->color ?? '—',
+                        'sold_quantity' => 0,
+                        'return_quantity' => 0,
+                        'sales' => 0,
+                        'returns' => 0,
+                        'profit' => 0,
+                    ];
+                }
+
+                $variantStats[$variantId]['return_quantity'] += $quantity;
+                $variantStats[$variantId]['returns'] +=
+                    $quantity * $this->returnItemPrice($item);
+            }
+        }
+
+        foreach ($variantStats as &$variant) {
+            $variant['profit'] = $variant['sales'] - $variant['returns'];
+        }
+
+        unset($variant);
 
         $productStats = collect($variantStats)
             ->sortByDesc('sold_quantity')
             ->values();
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | ТОП-10 ВАРИАНТОВ
-        |--------------------------------------------------------------------------
-        */
-
-        $topProducts =
-            $productStats->take(10);
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | САМЫЙ ПРОДАВАЕМЫЙ ВАРИАНТ
-        |--------------------------------------------------------------------------
-        */
-
-        $bestProduct =
-            $productStats->first();
-
+        $topProducts = $productStats->take(10);
+        $bestProduct = $productStats->first();
 
         /*
         |--------------------------------------------------------------------------
@@ -543,100 +443,29 @@ class AnalyticsController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $todayStart =
-            now('Asia/Almaty')->startOfDay();
+        $todayStart = now($this->timezone)->startOfDay();
+        $todayEnd = now($this->timezone)->endOfDay();
 
+        $todayOrders = $this->ordersQuery(
+            $todayStart,
+            $todayEnd,
+            $selectedPointOfSale
+        )->get();
 
-        $todayEnd =
-            now('Asia/Almaty')->endOfDay();
+        $todayReturnsCollection = $this->returnsQuery(
+            $todayStart,
+            $todayEnd,
+            $selectedPointOfSale
+        )->get();
 
+        $todayTotals = $this->calculateTotals(
+            $todayOrders,
+            $todayReturnsCollection
+        );
 
-        $todayOrdersQuery = Order::with('items')
-            ->where(function ($query) use (
-                $todayStart,
-                $todayEnd
-            ) {
-
-                $query->whereBetween(
-                    'order_date',
-                    [
-                        $todayStart,
-                        $todayEnd
-                    ]
-                );
-
-
-                $query->orWhere(function ($q) use (
-                    $todayStart,
-                    $todayEnd
-                ) {
-
-                    $q->whereNull('order_date')
-                        ->whereBetween(
-                            'created_at',
-                            [
-                                $todayStart,
-                                $todayEnd
-                            ]
-                        );
-                });
-            });
-
-
-        /*
-        | ФИЛЬТР ТОЧКИ ДЛЯ СЕГОДНЯ
-        */
-
-        if ($selectedPointOfSale) {
-
-            $todayOrdersQuery->where(
-                'point_of_sale_id',
-                $selectedPointOfSale
-            );
-        }
-
-
-        $todayOrders =
-            $todayOrdersQuery->get();
-
-
-        $todaySales = 0;
-
-        $todayReturns = 0;
-
-
-        foreach ($todayOrders as $order) {
-
-            foreach ($order->items as $item) {
-
-                $quantity =
-                    (int) ($item->quantity ?? 0);
-
-
-                $price =
-                    (float) ($item->price ?? 0);
-
-
-                $sum =
-                    $quantity * $price;
-
-
-                if ($quantity > 0) {
-
-                    $todaySales += $sum;
-
-                } elseif ($quantity < 0) {
-
-                    $todayReturns += abs($sum);
-                }
-            }
-        }
-
-
-        $todayProfit =
-            $todaySales -
-            $todayReturns;
-
+        $todaySales = $todayTotals['sales'];
+        $todayReturns = $todayTotals['returns'];
+        $todayProfit = $todayTotals['profit'];
 
         /*
         |--------------------------------------------------------------------------
@@ -644,100 +473,29 @@ class AnalyticsController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $monthStart =
-            now('Asia/Almaty')->startOfMonth();
+        $monthStart = now($this->timezone)->startOfMonth();
+        $monthEnd = now($this->timezone)->endOfMonth();
 
+        $monthOrders = $this->ordersQuery(
+            $monthStart,
+            $monthEnd,
+            $selectedPointOfSale
+        )->get();
 
-        $monthEnd =
-            now('Asia/Almaty')->endOfMonth();
+        $monthReturnsCollection = $this->returnsQuery(
+            $monthStart,
+            $monthEnd,
+            $selectedPointOfSale
+        )->get();
 
+        $monthTotals = $this->calculateTotals(
+            $monthOrders,
+            $monthReturnsCollection
+        );
 
-        $monthOrdersQuery = Order::with('items')
-            ->where(function ($query) use (
-                $monthStart,
-                $monthEnd
-            ) {
-
-                $query->whereBetween(
-                    'order_date',
-                    [
-                        $monthStart,
-                        $monthEnd
-                    ]
-                );
-
-
-                $query->orWhere(function ($q) use (
-                    $monthStart,
-                    $monthEnd
-                ) {
-
-                    $q->whereNull('order_date')
-                        ->whereBetween(
-                            'created_at',
-                            [
-                                $monthStart,
-                                $monthEnd
-                            ]
-                        );
-                });
-            });
-
-
-        /*
-        | ФИЛЬТР ТОЧКИ ДЛЯ МЕСЯЦА
-        */
-
-        if ($selectedPointOfSale) {
-
-            $monthOrdersQuery->where(
-                'point_of_sale_id',
-                $selectedPointOfSale
-            );
-        }
-
-
-        $monthOrders =
-            $monthOrdersQuery->get();
-
-
-        $monthSales = 0;
-
-        $monthReturns = 0;
-
-
-        foreach ($monthOrders as $order) {
-
-            foreach ($order->items as $item) {
-
-                $quantity =
-                    (int) ($item->quantity ?? 0);
-
-
-                $price =
-                    (float) ($item->price ?? 0);
-
-
-                $sum =
-                    $quantity * $price;
-
-
-                if ($quantity > 0) {
-
-                    $monthSales += $sum;
-
-                } elseif ($quantity < 0) {
-
-                    $monthReturns += abs($sum);
-                }
-            }
-        }
-
-
-        $monthProfit =
-            $monthSales -
-            $monthReturns;
-
+        $monthSales = $monthTotals['sales'];
+        $monthReturns = $monthTotals['returns'];
+        $monthProfit = $monthTotals['profit'];
 
         /*
         |--------------------------------------------------------------------------
@@ -745,57 +503,31 @@ class AnalyticsController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        return view(
-            'admin.analytics.index',
-            compact(
-
-                'from',
-
-                'to',
-
-                'orders',
-
-                'totalOrders',
-
-                'totalSales',
-
-                'totalReturns',
-
-                'totalProfit',
-
-                'salesByDay',
-
-                'weeklyStats',
-
-                'todaySales',
-
-                'todayReturns',
-
-                'todayProfit',
-
-                'todayOrders',
-
-                'monthSales',
-
-                'monthReturns',
-
-                'monthProfit',
-
-                'monthOrders',
-
-                'productStats',
-
-                'topProducts',
-
-                'bestProduct',
-
-                'pointsOfSale',
-
-                'selectedPointOfSale'
-            )
-        );
+        return view('admin.analytics.index', compact(
+            'from',
+            'to',
+            'orders',
+            'totalOrders',
+            'totalSales',
+            'totalReturns',
+            'totalProfit',
+            'salesByDay',
+            'weeklyStats',
+            'todaySales',
+            'todayReturns',
+            'todayProfit',
+            'todayOrders',
+            'monthSales',
+            'monthReturns',
+            'monthProfit',
+            'monthOrders',
+            'productStats',
+            'topProducts',
+            'bestProduct',
+            'pointsOfSale',
+            'selectedPointOfSale'
+        ));
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -805,16 +537,10 @@ class AnalyticsController extends Controller
 
     public function menu()
     {
-        if (!Auth::check() || !Auth::user()->can_view_analytics) {
-            abort(403, 'Доступ к аналитике запрещён');
-        }
+        $this->checkAnalyticsAccess();
 
-
-        return view(
-            'admin.analytics.menu'
-        );
+        return view('admin.analytics.menu');
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -826,35 +552,19 @@ class AnalyticsController extends Controller
     {
         $user = auth()->user();
 
-
         if (
+            $user &&
             $user->email === 'analytics@mail.ru' &&
-            Hash::check(
-                'kurbanov',
-                $user->password
-            )
+            Hash::check('kurbanov', $user->password)
         ) {
-
             $user->can_view_analytics = true;
-
             $user->save();
 
-
             return redirect()
-                ->route(
-                    'admin.analytics.menu'
-                )
-                ->with(
-                    'status',
-                    'Вы получили доступ к аналитике.'
-                );
+                ->route('admin.analytics.menu')
+                ->with('status', 'Вы получили доступ к аналитике.');
         }
 
-
-        abort(
-            403,
-            'Доступ запрещён.'
-        );
+        abort(403, 'Доступ запрещён.');
     }
 }
-

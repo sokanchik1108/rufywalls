@@ -7,22 +7,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
-
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
     :root {
@@ -43,9 +34,7 @@
         --radius-sm: 8px;
     }
 
-    * {
-        box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     html {
         -webkit-text-size-adjust: 100%;
@@ -70,10 +59,6 @@
         margin: 0 auto;
         padding: 0 0 30px;
     }
-
-    /* =========================================================
-       TOP
-    ========================================================= */
 
     #orderControls {
         position: sticky;
@@ -127,13 +112,7 @@
         box-shadow: 0 2px 6px rgba(10, 132, 255, .35);
     }
 
-    #finishOrder:hover {
-        background: #0074e6;
-    }
-
-    /* =========================================================
-       SECTIONS
-    ========================================================= */
+    #finishOrder:hover { background: #0074e6; }
 
     .section {
         margin: 0;
@@ -163,18 +142,12 @@
         letter-spacing: 0;
     }
 
-    /* =========================================================
-       FIELDS
-    ========================================================= */
-
     .field {
         padding: 9px 0;
         border-bottom: 1px solid var(--border);
     }
 
-    .field:last-child {
-        border-bottom: none;
-    }
+    .field:last-child { border-bottom: none; }
 
     .field-row {
         display: flex;
@@ -209,7 +182,6 @@
         font-weight: 600;
         line-height: 26px;
         outline: none;
-
         -webkit-text-size-adjust: 100%;
         text-size-adjust: 100%;
     }
@@ -228,10 +200,7 @@
         -webkit-appearance: none;
     }
 
-    input:focus,
-    select:focus {
-        outline: none;
-    }
+    input:focus, select:focus { outline: none; }
 
     .field:has(input:focus),
     .field:has(select:focus) {
@@ -254,10 +223,7 @@
     }
 
     input[type="datetime-local"]::-webkit-datetime-edit,
-    input[type="date"]::-webkit-datetime-edit {
-        padding: 0;
-    }
-
+    input[type="date"]::-webkit-datetime-edit,
     input[type="datetime-local"]::-webkit-datetime-edit-fields-wrapper,
     input[type="date"]::-webkit-datetime-edit-fields-wrapper {
         padding: 0;
@@ -272,10 +238,6 @@
         opacity: .55;
         cursor: pointer;
     }
-
-    /* =========================================================
-       ITEMS
-    ========================================================= */
 
     #itemsWrapper:empty {
         display: block;
@@ -296,9 +258,7 @@
         background: transparent;
     }
 
-    #itemsWrapper .order-item:last-child {
-        border-bottom: none;
-    }
+    #itemsWrapper .order-item:last-child { border-bottom: none; }
 
     .order-item .item-head {
         display: flex;
@@ -324,18 +284,6 @@
         margin-top: 2px;
         color: var(--ink-soft);
         font-size: 11.5px;
-    }
-
-    .return-label {
-        display: inline-block;
-        margin-left: 4px;
-        padding: 1px 6px;
-        color: var(--danger);
-        background: var(--danger-soft);
-        border-radius: 999px;
-        font-size: 9.5px;
-        font-weight: 700;
-        vertical-align: middle;
     }
 
     .remove-item {
@@ -395,7 +343,6 @@
         font-weight: 700;
         color: var(--ink);
         text-align: right;
-
         -webkit-text-size-adjust: 100%;
         text-size-adjust: 100%;
     }
@@ -438,13 +385,7 @@
         transition: .12s ease;
     }
 
-    #openProductModal:hover {
-        background: var(--accent-blue-hover);
-    }
-
-    /* =========================================================
-       TOTAL
-    ========================================================= */
+    #openProductModal:hover { background: var(--accent-blue-hover); }
 
     .total-line {
         display: flex;
@@ -497,10 +438,6 @@
         white-space: nowrap;
     }
 
-    /* =========================================================
-       PAYMENTS
-    ========================================================= */
-
     .payment-row {
         display: flex;
         align-items: center;
@@ -509,9 +446,7 @@
         border-bottom: 1px solid var(--border);
     }
 
-    #paymentsWrapper .payment-row:last-child {
-        border-bottom: none;
-    }
+    #paymentsWrapper .payment-row:last-child { border-bottom: none; }
 
     .payment-row select {
         flex: 1;
@@ -525,7 +460,6 @@
         text-align: right;
         font-weight: 700;
         border-bottom: 1px solid var(--border) !important;
-
         -webkit-text-size-adjust: 100%;
         text-size-adjust: 100%;
     }
@@ -560,9 +494,7 @@
         margin-top: 6px;
     }
 
-    #addPayment:hover {
-        background: var(--group-bg);
-    }
+    #addPayment:hover { background: var(--group-bg); }
 
     .payment-summary {
         display: grid;
@@ -582,30 +514,16 @@
         font-size: 11.5px;
     }
 
-    .payment-summary-row .label {
-        color: var(--ink-soft);
-    }
+    .payment-summary-row .label { color: var(--ink-soft); }
 
     .payment-summary-row .value {
         font-weight: 700;
         white-space: nowrap;
     }
 
-    #paymentRemaining {
-        font-weight: 800;
-    }
-
-    .payment-ok {
-        color: var(--success);
-    }
-
-    .payment-error {
-        color: var(--danger);
-    }
-
-    /* =========================================================
-       MODALS
-    ========================================================= */
+    #paymentRemaining { font-weight: 800; }
+    .payment-ok { color: var(--success); }
+    .payment-error { color: var(--danger); }
 
     .modal-fullscreen {
         max-width: 100%;
@@ -637,13 +555,8 @@
         color: var(--ink);
     }
 
-    .btn-close {
-        opacity: .5;
-    }
-
-    .btn-close:hover {
-        opacity: 1;
-    }
+    .btn-close { opacity: .5; }
+    .btn-close:hover { opacity: 1; }
 
     .modal-body {
         padding: 14px 15px 18px;
@@ -657,7 +570,6 @@
         border-radius: var(--radius-sm) !important;
         padding: 0 10px !important;
         background: var(--surface) !important;
-
         -webkit-text-size-adjust: 100%;
         text-size-adjust: 100%;
     }
@@ -678,9 +590,7 @@
         transition: .12s ease;
     }
 
-    .batch-card:hover {
-        background: #eef8fd;
-    }
+    .batch-card:hover { background: #eef8fd; }
 
     .batch-card .batch-info {
         flex: 1;
@@ -729,9 +639,7 @@
         vertical-align: middle;
     }
 
-    #batchDetailTable tbody tr:last-child td {
-        border-bottom: none;
-    }
+    #batchDetailTable tbody tr:last-child td { border-bottom: none; }
 
     .qty-input {
         width: 100%;
@@ -742,7 +650,6 @@
         font-weight: 700;
         font-family: inherit;
         background: var(--group-bg);
-
         -webkit-text-size-adjust: 100%;
         text-size-adjust: 100%;
     }
@@ -764,13 +671,7 @@
         padding: 12px;
     }
 
-    #addBatchToOrder:hover {
-        background: #0074e6;
-    }
-
-    /* =========================================================
-       AUTOCOMPLETE
-    ========================================================= */
+    #addBatchToOrder:hover { background: #0074e6; }
 
     .ui-autocomplete {
         border: 1px solid var(--border) !important;
@@ -795,52 +696,22 @@
         margin: 0 !important;
     }
 
-    /* =========================================================
-       MOBILE
-    ========================================================= */
-
     @media (max-width: 600px) {
-
-        .section {
-            padding: 9px 14px 11px;
-        }
+        .section { padding: 9px 14px 11px; }
 
         .section-label {
             margin: 2px -14px 8px;
             padding: 7px 14px;
         }
 
-        .field-row {
-            gap: 12px;
-        }
-
-        .price-input {
-            width: 82px !important;
-        }
-
-        .discount-part {
-            gap: 6px;
-        }
-
-        #discountInput {
-            width: 78px !important;
-        }
-
-        .total-label {
-            font-size: 13px;
-        }
-
-        #orderTotal {
-            font-size: 19px;
-        }
-
-        .payment-amount {
-            width: 106px !important;
-        }
-
-        .payment-summary {
-            gap: 5px;
-        }
+        .field-row { gap: 12px; }
+        .price-input { width: 82px !important; }
+        .discount-part { gap: 6px; }
+        #discountInput { width: 78px !important; }
+        .total-label { font-size: 13px; }
+        #orderTotal { font-size: 19px; }
+        .payment-amount { width: 106px !important; }
+        .payment-summary { gap: 5px; }
 
         .payment-summary-row {
             flex-direction: column;
@@ -848,14 +719,9 @@
             gap: 2px;
         }
 
-        .payment-summary-row .value {
-            font-size: 11px;
-        }
+        .payment-summary-row .value { font-size: 11px; }
 
-        input,
-        select,
-        textarea,
-        button {
+        input, select, textarea, button {
             -webkit-text-size-adjust: 100%;
             text-size-adjust: 100%;
         }
@@ -876,167 +742,71 @@
             text-size-adjust: 100%;
         }
 
-        /*
-         * Размеры шрифтов оставлены БЕЗ изменений.
-         */
-
-        input.form-control,
-        select.form-select {
-            font-size: 15px;
-        }
-
-        .price-input {
-            font-size: 14px !important;
-        }
-
-        .payment-amount {
-            font-size: 15px !important;
-        }
-
-        #discountInput {
-            font-size: 15px !important;
-        }
-
-        #modalSkuInput {
-            font-size: 15px !important;
-        }
-
-        .qty-input {
-            font-size: 14px !important;
-        }
+        input.form-control, select.form-select { font-size: 15px; }
+        .price-input { font-size: 14px !important; }
+        .payment-amount { font-size: 15px !important; }
+        #discountInput { font-size: 15px !important; }
+        #modalSkuInput { font-size: 15px !important; }
+        .qty-input { font-size: 14px !important; }
     }
 
     @media (max-width: 400px) {
-
-        .total-label {
-            display: none;
-        }
-
-        #discountInput {
-            width: 72px !important;
-        }
-
-        #orderTotal {
-            font-size: 18px;
-        }
-
-        .payment-amount {
-            width: 96px !important;
-        }
+        .total-label { display: none; }
+        #discountInput { width: 72px !important; }
+        #orderTotal { font-size: 18px; }
+        .payment-amount { width: 96px !important; }
     }
 </style>
 
 <div class="container">
 
-    <form
-        method="POST"
-        action="{{ route('admin.orders.store') }}"
-        id="orderForm">
-
+    <form method="POST" action="{{ route('admin.orders.store') }}" id="orderForm">
         @csrf
 
         <div id="orderControls">
-
-            <span id="cancelOrder">
-                &times;
-            </span>
-
+            <span id="cancelOrder">&times;</span>
             Создание заказа
 
-            <button
-                type="submit"
-                id="finishOrder">
-
-                <svg
-                    width="17"
-                    height="13"
-                    viewBox="0 0 17 13"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-
-                    <path
-                        d="M1 6.5L6 11.5L16 1.5"
-                        stroke="white"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round" />
-
+            <button type="submit" id="finishOrder">
+                <svg width="17" height="13" viewBox="0 0 17 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 6.5L6 11.5L16 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
-
             </button>
-
         </div>
 
         <div class="section">
-
             <div class="field-row">
-
                 <div class="field">
-
-                    <label class="field-label">
-                        Дата и время
-                    </label>
-
+                    <label class="field-label">Дата и время</label>
                     <input
                         type="datetime-local"
                         name="order_date"
                         class="form-control"
                         value="{{ old('order_date', now('Asia/Almaty')->format('Y-m-d\TH\:i')) }}"
                         required>
-
                 </div>
 
                 <div class="field">
-
-                    <label class="field-label">
-                        Точка продаж
-                    </label>
-
-                    <select
-                        name="point_of_sale_id"
-                        id="pointOfSaleSelect"
-                        class="form-select"
-                        required>
-
-                        <option value="">
-                            Выберите точку
-                        </option>
-
+                    <label class="field-label">Точка продаж</label>
+                    <select name="point_of_sale_id" id="pointOfSaleSelect" class="form-select" required>
+                        <option value="">Выберите точку</option>
                         @foreach($pointsOfSale as $point)
-
-                        <option
-                            value="{{ $point->id }}"
-                            {{ (int) old(
-                                    'point_of_sale_id',
-                                    $defaultPointOfSaleId ?? null
-                                ) === (int) $point->id ? 'selected' : '' }}>
-
-                            {{ $point->name }}
-
-                        </option>
-
+                            <option
+                                value="{{ $point->id }}"
+                                {{ (int) old('point_of_sale_id', $defaultPointOfSaleId ?? null) === (int) $point->id ? 'selected' : '' }}>
+                                {{ $point->name }}
+                            </option>
                         @endforeach
-
                     </select>
-
                 </div>
-
             </div>
-
         </div>
 
         <div class="section">
-
-            <div class="section-label">
-                Покупатель
-            </div>
+            <div class="section-label">Покупатель</div>
 
             <div class="field">
-
-                <label class="field-label">
-                    Имя клиента
-                </label>
-
+                <label class="field-label">Имя клиента</label>
                 <input
                     type="text"
                     name="name"
@@ -1044,15 +814,10 @@
                     value="{{ old('name') }}"
                     placeholder="Введите имя клиента"
                     required>
-
             </div>
 
             <div class="field">
-
-                <label class="field-label">
-                    Телефон
-                </label>
-
+                <label class="field-label">Телефон</label>
                 <input
                     type="tel"
                     name="phone"
@@ -1061,153 +826,55 @@
                     placeholder="+7 700 000 00 00"
                     autocomplete="tel"
                     required>
-
             </div>
 
             <div class="field">
-
-                <label class="field-label">
-                    Склад
-                </label>
-
-                <select
-                    id="warehouseSelect"
-                    class="form-select">
-
-                    <option value="">
-                        Все склады
-                    </option>
-
+                <label class="field-label">Склад</label>
+                <select id="warehouseSelect" class="form-select">
+                    <option value="">Все склады</option>
                     @foreach($warehouses as $warehouse)
-
-                    <option value="{{ $warehouse->id }}">
-                        {{ $warehouse->name }}
-                    </option>
-
+                        <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
                     @endforeach
-
                 </select>
-
             </div>
-
         </div>
 
         <div class="section">
-
             <div class="section-label">
-
-                <span>
-                    Позиции
-                </span>
-
-                <span
-                    class="count"
-                    id="positionsCount">
-
-                    (0)
-
-                </span>
-
+                <span>Позиции</span>
+                <span class="count" id="positionsCount">(0)</span>
             </div>
 
             <div id="itemsWrapper"></div>
 
-            <button
-                type="button"
-                id="openProductModal">
-
-                <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-
-                    <path
-                        d="M8 2.5V13.5M2.5 8H13.5"
-                        stroke="currentColor"
-                        stroke-width="1.7"
-                        stroke-linecap="round" />
-
+            <button type="button" id="openProductModal">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 2.5V13.5M2.5 8H13.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
                 </svg>
-
                 Добавить позицию
-
             </button>
-
         </div>
 
         <div class="section">
-
             <div class="total-line">
 
-                <div class="discount-part">
-
-                    <label
-                        class="field-label"
-                        for="discountInput">
-
-                        Скидка
-
-                    </label>
-
-                    <input
-                        type="text"
-                        id="discountInput"
-                        name="discount"
-                        class="form-control"
-                        value="{{ old('discount', 0) }}"
-                        inputmode="numeric"
-                        autocomplete="off">
-
-                </div>
-
                 <div class="total-part">
-
-                    <span class="total-label">
-                        Итого
-                    </span>
-
-                    <div id="orderTotal">
-                        0 тг
-                    </div>
-
+                    <span class="total-label">Итого</span>
+                    <div id="orderTotal">0 тг</div>
                 </div>
-
             </div>
-
         </div>
 
         <div class="section">
-
-            <div class="section-label">
-                Оплата
-            </div>
+            <div class="section-label">Оплата</div>
 
             <div id="paymentsWrapper">
-
                 <div class="payment-row">
-
-                    <select
-                        name="payments[0][payment_method]"
-                        class="form-select payment-method">
-
-                        <option
-                            value=""
-                            selected>
-
-                            Не указано
-
-                        </option>
-
+                    <select name="payments[0][payment_method]" class="form-select payment-method">
+                        <option value="" selected>Не указано</option>
                         @foreach($paymentMethods as $method)
-
-                        <option value="{{ $method->name }}">
-                            {{ $method->name }}
-                        </option>
-
+                            <option value="{{ $method->name }}">{{ $method->name }}</option>
                         @endforeach
-
                     </select>
 
                     <input
@@ -1219,108 +886,41 @@
                         placeholder="Сумма"
                         data-auto="1">
 
-                    <button
-                        type="button"
-                        class="remove-payment"
-                        title="Удалить">
-
-                        &times;
-
-                    </button>
-
+                    <button type="button" class="remove-payment" title="Удалить">&times;</button>
                 </div>
-
             </div>
 
-            <button
-                type="button"
-                id="addPayment">
-
-                + Добавить оплату
-
-            </button>
+            <button type="button" id="addPayment">+ Добавить оплату</button>
 
             <div class="payment-summary">
-
                 <div class="payment-summary-row">
-
-                    <span class="label">
-                        Итого
-                    </span>
-
-                    <span
-                        class="value"
-                        id="paymentOrderTotal">
-
-                        0 тг
-
-                    </span>
-
+                    <span class="label">Итого</span>
+                    <span class="value" id="paymentOrderTotal">0 тг</span>
                 </div>
 
                 <div class="payment-summary-row">
-
-                    <span class="label">
-                        Оплачено
-                    </span>
-
-                    <span
-                        class="value"
-                        id="paymentPaidTotal">
-
-                        0 тг
-
-                    </span>
-
+                    <span class="label">Оплачено</span>
+                    <span class="value" id="paymentPaidTotal">0 тг</span>
                 </div>
 
                 <div class="payment-summary-row">
-
-                    <span class="label">
-                        Осталось
-                    </span>
-
-                    <span
-                        class="value"
-                        id="paymentRemaining">
-
-                        0 тг
-
-                    </span>
-
+                    <span class="label">Осталось</span>
+                    <span class="value" id="paymentRemaining">0 тг</span>
                 </div>
-
             </div>
-
         </div>
-
     </form>
-
 </div>
 
-<div
-    class="modal fade modal-fullscreen"
-    id="productModal">
-
+<div class="modal fade modal-fullscreen" id="productModal">
     <div class="modal-dialog modal-dialog-centered modal-fullscreen">
-
         <div class="modal-content">
-
             <div class="modal-header">
-
-                <h5 class="modal-title">
-                    Выберите партию
-                </h5>
-
-                <button
-                    class="btn-close"
-                    data-bs-dismiss="modal">
-                </button>
-
+                <h5 class="modal-title">Выберите партию</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
             <div class="modal-body">
-
                 <input
                     type="text"
                     id="modalSkuInput"
@@ -1328,944 +928,519 @@
                     placeholder="Введите SKU">
 
                 <div id="modalBatchesSimple"></div>
-
             </div>
-
         </div>
-
     </div>
-
 </div>
 
-<div
-    class="modal fade modal-fullscreen"
-    id="batchDetailModal">
-
+<div class="modal fade modal-fullscreen" id="batchDetailModal">
     <div class="modal-dialog modal-dialog-centered modal-fullscreen">
-
         <div class="modal-content">
-
             <div class="modal-header">
-
-                <h5 class="modal-title">
-                    Введите количество (минус = возврат)
-                </h5>
-
-                <button
-                    class="btn-close"
-                    data-bs-dismiss="modal">
-                </button>
-
+                <h5 class="modal-title">Введите количество</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
             <div class="modal-body">
-
-                <table
-                    class="table table-sm"
-                    id="batchDetailTable">
-
+                <table class="table table-sm" id="batchDetailTable">
                     <thead>
-
                         <tr>
                             <th>Склад</th>
                             <th>Доступно</th>
                             <th>Количество</th>
                         </tr>
-
                     </thead>
-
                     <tbody></tbody>
-
                 </table>
 
-                <button
-                    class="btn w-100"
-                    id="addBatchToOrder">
-
+                <button type="button" class="btn w-100" id="addBatchToOrder">
                     Добавить
-
                 </button>
-
             </div>
-
         </div>
-
     </div>
-
 </div>
 
 <script>
-
     /*
-     * =========================================================
-     * ЗАЩИТА ОТ GESTURE ZOOM НА iOS
-     * =========================================================
+     * Защита от gesture zoom на iOS
      */
+    document.addEventListener('gesturestart', function(e) {
+        e.preventDefault();
+    }, { passive: false });
 
-    document.addEventListener(
-        'gesturestart',
-        function(e) {
-            e.preventDefault();
-        },
-        { passive: false }
-    );
+    document.addEventListener('gesturechange', function(e) {
+        e.preventDefault();
+    }, { passive: false });
 
-    document.addEventListener(
-        'gesturechange',
-        function(e) {
-            e.preventDefault();
-        },
-        { passive: false }
-    );
-
-    document.addEventListener(
-        'gestureend',
-        function(e) {
-            e.preventDefault();
-        },
-        { passive: false }
-    );
-
+    document.addEventListener('gestureend', function(e) {
+        e.preventDefault();
+    }, { passive: false });
 
     let itemIndex = 0;
     let paymentIndex = 1;
     let currentBatch = {};
     let batchesState = {};
 
-    /* =========================================================
-       ФОРМАТ СУММЫ
-    ========================================================= */
-
+    /*
+     * Формат суммы для отображения
+     */
     function formatAmount(amount) {
-
         amount = Math.round(Number(amount) || 0);
 
-        return amount
-            .toString()
-            .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     }
 
-    /* =========================================================
-       ПОЛУЧИТЬ ЧИСЛО
-    ========================================================= */
-
+    /*
+     * Преобразование суммы в число
+     */
     function parseAmount(value) {
-
-        return parseFloat(
-            String(value || '')
+        const cleaned = String(value || '')
             .replace(/\./g, '')
-            .replace(',', '.')
-        ) || 0;
+            .replace(/[^\d]/g, '');
+
+        return parseInt(cleaned, 10) || 0;
     }
 
-    /* =========================================================
-       ФОРМАТИРОВАНИЕ СУММЫ
-    ========================================================= */
-
+    /*
+     * Форматирование числового поля.
+     * Минус и прочие нецифровые символы удаляются.
+     */
     function formatInputAmount(input) {
-
-        let raw = String(input.val() || '')
-            .replace(/\D/g, '');
+        const raw = String(input.val() || '').replace(/\D/g, '');
 
         if (raw === '') {
             input.val('');
             return;
         }
 
-        input.val(
-            formatAmount(
-                parseInt(raw, 10)
-            )
-        );
+        input.val(formatAmount(parseInt(raw, 10)));
     }
 
-    /* =========================================================
-       ОПЛАТА С ОТРИЦАТЕЛЬНЫМ ЗНАКОМ
-    ========================================================= */
-
+    /*
+     * Сумма оплаты не может быть отрицательной
+     */
     function parsePaymentAmount(value) {
-
-        let str = String(value || '').trim();
-
-        if (str === '') {
-            return 0;
-        }
-
-        const isNegative = str.startsWith('-');
-
-        str = str.replace(/-/g, '');
-        str = str.replace(/\./g, '');
-        str = str.replace(',', '.');
-
-        const number = parseFloat(str) || 0;
-
-        return isNegative ? -number : number;
+        return parseAmount(value);
     }
-
-    /* =========================================================
-       ФОРМАТ ОПЛАТЫ
-    ========================================================= */
 
     function formatPaymentInputAmount(input) {
+        const raw = String(input.val() || '').replace(/\D/g, '');
 
-        let value = String(input.val() || '').trim();
-
-        if (value === '') {
+        if (raw === '') {
             input.val('');
             return;
         }
 
-        const isNegative = value.startsWith('-');
-
-        let raw = value.replace(/\D/g, '');
-
-        if (raw === '') {
-            input.val(isNegative ? '-' : '');
-            return;
-        }
-
-        let formatted = formatAmount(
-            parseInt(raw, 10)
-        );
-
-        if (isNegative) {
-            formatted = '-' + formatted;
-        }
-
-        input.val(formatted);
+        input.val(formatAmount(parseInt(raw, 10)));
     }
 
-    /* =========================================================
-       ОТКРЫТЬ ТОВАРЫ
-    ========================================================= */
-
-    $('#openProductModal').click(function() {
-
+    /*
+     * Открыть список товаров
+     */
+    $('#openProductModal').on('click', function() {
         $('#modalSkuInput').val('');
         $('#modalBatchesSimple').empty();
 
         bootstrap.Modal
-            .getOrCreateInstance(
-                document.getElementById('productModal')
-            )
+            .getOrCreateInstance(document.getElementById('productModal'))
             .show();
     });
 
-    /* =========================================================
-       ПОИСК SKU
-    ========================================================= */
-
+    /*
+     * Поиск SKU
+     */
     $('#modalSkuInput').autocomplete({
-
         source: '{{ route("admin.variants.autocomplete") }}',
-
         minLength: 1,
-
         appendTo: '#productModal',
 
         select: function(e, ui) {
-
-            loadBatchesSimple(
-                ui.item.value
-            );
+            loadBatchesSimple(ui.item.value);
         }
-
     });
 
-    /* =========================================================
-       ЗАГРУЗКА ПАРТИЙ
-    ========================================================= */
-
+    /*
+     * Загрузка партий товара
+     */
     function loadBatchesSimple(sku) {
-
         $.get(
-            '/admin/batches/by-sku/' +
-            encodeURIComponent(sku),
-
+            '/admin/batches/by-sku/' + encodeURIComponent(sku),
             function(data) {
-
-                let $list =
-                    $('#modalBatchesSimple').empty();
+                const $list = $('#modalBatchesSimple').empty();
 
                 data.forEach(batch => {
-
                     if (!batchesState[batch.id]) {
-
                         batchesState[batch.id] = {};
 
                         batch.warehouses.forEach(w => {
-
                             batchesState[batch.id][w.id] =
-                                w.pivot.quantity;
-
+                                Number(w.pivot.quantity) || 0;
                         });
-
                     }
 
-                    const totalQty =
-                        batch.warehouses.reduce(
-                            (sum, w) =>
-                            sum +
-                            batchesState[batch.id][w.id],
-                            0
-                        );
+                    const totalQty = batch.warehouses.reduce(
+                        (sum, w) => sum + (Number(batchesState[batch.id][w.id]) || 0),
+                        0
+                    );
 
                     $list.append(`
                         <div
                             class="batch-card batch-select"
                             data-batch='${JSON.stringify(batch)}'
-                            data-sku="${sku}"
-                        >
+                            data-sku="${sku}">
 
                             <div class="batch-info">
-
-                                <div class="batch-sku">
-                                    ${sku}
-                                </div>
-
+                                <div class="batch-sku">${sku}</div>
                                 <div class="batch-code">
                                     ( Партия ${batch.batch_code} )
                                 </div>
-
                             </div>
 
                             <div class="batch-qty">
                                 Доступно ${totalQty}
                             </div>
-
                         </div>
                     `);
-
                 });
-
             }
-        );
+        ).fail(function() {
+            alert('Не удалось загрузить партии товара.');
+        });
     }
 
-    /* =========================================================
-       ВЫБОР ПАРТИИ
-    ========================================================= */
+    /*
+     * Выбор партии
+     */
+    $(document).on('click', '.batch-select', function() {
+        currentBatch = JSON.parse($(this).attr('data-batch'));
+        currentBatch.sku = $(this).attr('data-sku');
 
-    $(document).on(
-        'click',
-        '.batch-select',
-        function() {
+        const selectedWarehouse = $('#warehouseSelect').val();
 
-            currentBatch =
-                JSON.parse(
-                    $(this).attr('data-batch')
-                );
+        const batchWarehouses = selectedWarehouse
+            ? currentBatch.warehouses.filter(w => String(w.id) === String(selectedWarehouse))
+            : currentBatch.warehouses;
 
-            currentBatch.sku =
-                $(this).attr('data-sku');
+        const $tbody = $('#batchDetailTable tbody').empty();
 
-            const selectedWarehouse =
-                $('#warehouseSelect').val();
+        batchWarehouses.forEach(w => {
+            const available = Number(batchesState[currentBatch.id][w.id]) || 0;
 
-            const batchWarehouses =
-                selectedWarehouse ?
-                currentBatch.warehouses.filter(
-                    w => w.id == selectedWarehouse
-                ) :
-                currentBatch.warehouses;
+            $tbody.append(`
+                <tr>
+                    <td>${w.name}</td>
+                    <td class="available-qty">${available}</td>
+                    <td>
+                        <input
+                            type="number"
+                            class="form-control qty-input"
+                            data-warehouse="${w.id}"
+                            min="1"
+                            max="${available}"
+                            step="1"
+                            inputmode="numeric"
+                            placeholder="Кол-во"
+                            ${available < 1 ? 'disabled' : ''}>
+                    </td>
+                </tr>
+            `);
+        });
 
-            const $tbody =
-                $('#batchDetailTable tbody').empty();
+        bootstrap.Modal
+            .getOrCreateInstance(document.getElementById('productModal'))
+            .hide();
 
-            batchWarehouses.forEach(w => {
+        bootstrap.Modal
+            .getOrCreateInstance(document.getElementById('batchDetailModal'))
+            .show();
+    });
 
-                const available =
-                    batchesState[
-                        currentBatch.id
-                    ][w.id];
-
-                $tbody.append(`
-                    <tr>
-
-                        <td>
-                            ${w.name}
-                        </td>
-
-                        <td>
-                            ${available}
-                        </td>
-
-                        <td>
-
-                            <input
-                                type="number"
-                                class="form-control qty-input"
-                                data-warehouse="${w.id}"
-                                min="-${available}"
-                                max="${available}"
-                                placeholder="Кол-во"
-                            >
-
-                        </td>
-
-                    </tr>
-                `);
-
-            });
-
-            bootstrap.Modal
-                .getOrCreateInstance(
-                    document.getElementById('productModal')
-                )
-                .hide();
-
-            bootstrap.Modal
-                .getOrCreateInstance(
-                    document.getElementById('batchDetailModal')
-                )
-                .show();
-
-        }
-    );
-
-    /* =========================================================
-       ДОБАВИТЬ ПАРТИЮ
-    ========================================================= */
-
-    $('#addBatchToOrder').click(function() {
-
+    /*
+     * Добавить выбранные количества в заказ.
+     * Сначала проверяем все строки, и только затем добавляем их,
+     * чтобы при ошибке не оставались частично добавленные позиции.
+     */
+    $('#addBatchToOrder').on('click', function() {
+        const rowsToAdd = [];
         let hasError = false;
 
-        $('#batchDetailTable tbody tr').each(
-            function() {
+        $('#batchDetailTable tbody tr').each(function() {
+            const $input = $(this).find('.qty-input');
+            const rawValue = String($input.val() || '').trim();
 
-                const $input =
-                    $(this).find('.qty-input');
-
-                let qty =
-                    parseInt($input.val());
-
-                if (
-                    isNaN(qty) ||
-                    qty === 0
-                ) {
-                    return;
-                }
-
-                const warehouseId =
-                    $input.data('warehouse');
-
-                const available =
-                    batchesState[
-                        currentBatch.id
-                    ][warehouseId];
-
-                if (qty > available) {
-
-                    alert(
-                        'Недостаточно товара'
-                    );
-
-                    hasError = true;
-
-                    return;
-                }
-
-                const warehouse =
-                    currentBatch.warehouses.find(
-                        w => w.id == warehouseId
-                    );
-
-                const warehouseName =
-                    warehouse.name;
-
-                const label =
-                    qty < 0 ?
-                    '<span class="return-label">ВОЗВРАТ</span>' :
-                    '';
-
-                $('#itemsWrapper').append(`
-
-                    <div class="order-item">
-
-                        <div class="item-head">
-
-                            <div>
-
-                                <div class="item-title">
-
-                                    ${currentBatch.sku}
-
-                                    <span class="meta">
-                                        · Партия
-                                        ${currentBatch.batch_code}
-                                    </span>
-
-                                    ${label}
-
-                                </div>
-
-                                <span class="warehouse">
-                                    ${warehouseName}
-                                </span>
-
-                            </div>
-
-                            <button
-                                type="button"
-                                class="remove-item"
-                            >
-                                &times;
-                            </button>
-
-                        </div>
-
-                        <div class="order-item-bottom">
-
-                            <span class="qty-times">
-
-                                ${qty} ×
-
-                                <span class="price-field">
-
-                                    <input
-                                        type="text"
-                                        name="items[${itemIndex}][price]"
-                                        class="price-input"
-                                        inputmode="numeric"
-                                        autocomplete="off"
-                                        placeholder="цена"
-                                    >
-
-                                </span>
-
-                            </span>
-
-                            <span>
-
-                                Сумма:
-
-                                <span class="item-total">
-                                    0 тг
-                                </span>
-
-                            </span>
-
-                        </div>
-
-                        <input
-                            type="hidden"
-                            name="items[${itemIndex}][sku]"
-                            value="${currentBatch.sku}"
-                        >
-
-                        <input
-                            type="hidden"
-                            name="items[${itemIndex}][batch_id]"
-                            value="${currentBatch.id}"
-                        >
-
-                        <input
-                            type="hidden"
-                            name="items[${itemIndex}][warehouse_id]"
-                            value="${warehouseId}"
-                        >
-
-                        <input
-                            type="hidden"
-                            name="items[${itemIndex}][quantity]"
-                            value="${qty}"
-                        >
-
-                        <input
-                            type="hidden"
-                            name="items[${itemIndex}][warehouse_name]"
-                            value="${warehouseName}"
-                        >
-
-                        <input
-                            type="hidden"
-                            name="items[${itemIndex}][batch_code]"
-                            value="${currentBatch.batch_code}"
-                        >
-
-                    </div>
-
-                `);
-
-                if (qty > 0) {
-
-                    batchesState[
-                        currentBatch.id
-                    ][warehouseId] -= qty;
-
-                }
-
-                itemIndex++;
-
+            if (rawValue === '') {
+                return;
             }
-        );
+
+            const qty = Number(rawValue);
+            const warehouseId = String($input.data('warehouse'));
+            const available = Number(batchesState[currentBatch.id][warehouseId]) || 0;
+
+            if (!Number.isInteger(qty) || qty < 1) {
+                alert('Количество должно быть целым числом не меньше 1.');
+                hasError = true;
+                return false;
+            }
+
+            if (qty > available) {
+                alert('Недостаточно товара на выбранном складе. Доступно: ' + available);
+                hasError = true;
+                return false;
+            }
+
+            const warehouse = currentBatch.warehouses.find(
+                w => String(w.id) === warehouseId
+            );
+
+            if (!warehouse) {
+                alert('Не удалось определить склад.');
+                hasError = true;
+                return false;
+            }
+
+            rowsToAdd.push({
+                qty: qty,
+                warehouseId: warehouseId,
+                warehouseName: warehouse.name
+            });
+        });
 
         if (hasError) {
             return;
         }
 
+        if (rowsToAdd.length === 0) {
+            alert('Введите количество товара не меньше 1.');
+            return;
+        }
+
+        rowsToAdd.forEach(row => {
+            const index = itemIndex++;
+
+            $('#itemsWrapper').append(`
+                <div class="order-item">
+                    <div class="item-head">
+                        <div>
+                            <div class="item-title">
+                                ${currentBatch.sku}
+                                <span class="meta">
+                                    · Партия ${currentBatch.batch_code}
+                                </span>
+                            </div>
+
+                            <span class="warehouse">${row.warehouseName}</span>
+                        </div>
+
+                        <button type="button" class="remove-item">&times;</button>
+                    </div>
+
+                    <div class="order-item-bottom">
+                        <span class="qty-times">
+                            ${row.qty} ×
+
+                            <span class="price-field">
+                                <input
+                                    type="text"
+                                    name="items[${index}][price]"
+                                    class="price-input"
+                                    inputmode="numeric"
+                                    autocomplete="off"
+                                    placeholder="цена">
+                            </span>
+                        </span>
+
+                        <span>
+                            Сумма:
+                            <span class="item-total">0 тг</span>
+                        </span>
+                    </div>
+
+                    <input type="hidden" name="items[${index}][sku]" value="${currentBatch.sku}">
+                    <input type="hidden" name="items[${index}][batch_id]" value="${currentBatch.id}">
+                    <input type="hidden" name="items[${index}][warehouse_id]" value="${row.warehouseId}">
+                    <input type="hidden" name="items[${index}][quantity]" value="${row.qty}">
+                    <input type="hidden" name="items[${index}][warehouse_name]" value="${row.warehouseName}">
+                    <input type="hidden" name="items[${index}][batch_code]" value="${currentBatch.batch_code}">
+                </div>
+            `);
+
+            batchesState[currentBatch.id][row.warehouseId] -= row.qty;
+        });
+
         bootstrap.Modal
-            .getOrCreateInstance(
-                document.getElementById('batchDetailModal')
-            )
+            .getOrCreateInstance(document.getElementById('batchDetailModal'))
             .hide();
 
         recalcOrderTotal();
 
-        $('#positionsCount')
-            .text(
-                '(' +
-                $('.order-item').length +
-                ')'
-            );
-
+        $('#positionsCount').text('(' + $('.order-item').length + ')');
     });
 
-    /* =========================================================
-       РАСЧЁТ ПОЗИЦИИ
-    ========================================================= */
-
+    /*
+     * Расчёт суммы позиции
+     */
     function recalcItemTotal($item) {
+        const price = parseAmount($item.find('.price-input').val());
 
-        const price =
-            parseAmount(
-                $item.find('.price-input').val()
-            );
+        const qty = parseInt(
+            $item.find('input[name$="[quantity]"]').val(),
+            10
+        ) || 0;
 
-        const qty =
-            parseInt(
-                $item.find(
-                    'input[name$="[quantity]"]'
-                ).val()
-            ) || 0;
+        const total = price * qty;
 
-        const total =
-            price * qty;
-
-        $item
-            .find('.item-total')
-            .text(
-                formatAmount(total) +
-                ' тг'
-            );
+        $item.find('.item-total').text(formatAmount(total) + ' тг');
 
         return total;
     }
 
-    /* =========================================================
-       ОБЩАЯ СУММА
-    ========================================================= */
-
+    /*
+     * Расчёт общей суммы заказа
+     */
     function recalcOrderTotal() {
-
         let sum = 0;
 
-        $('.order-item').each(
-            function() {
+        $('.order-item').each(function() {
+            sum += recalcItemTotal($(this));
+        });
 
-                sum +=
-                    recalcItemTotal(
-                        $(this)
-                    );
+        const discount = parseAmount($('#discountInput').val());
+        const final = Math.max(0, sum - discount);
 
-            }
-        );
-
-        const discount =
-            parseAmount(
-                $('#discountInput').val()
-            );
-
-        let final =
-            sum - discount;
-
-        if (
-            final < 0 &&
-            sum >= 0
-        ) {
-            final = 0;
-        }
-
-        $('#orderTotal')
-            .text(
-                formatAmount(final) +
-                ' тг'
-            );
+        $('#orderTotal').text(formatAmount(final) + ' тг');
 
         updatePaymentSummary();
     }
 
-    /* =========================================================
-       ИЗМЕНЕНИЕ ЦЕНЫ
-    ========================================================= */
+    /*
+     * Изменение цены позиции
+     */
+    $(document).on('input', '.price-input', function() {
+        formatInputAmount($(this));
+        recalcOrderTotal();
+    });
 
-    $(document).on(
-        'input',
-        '.price-input',
-        function() {
+    /*
+     * Изменение скидки
+     */
+    $(document).on('input', '#discountInput', function() {
+        formatInputAmount($(this));
+        recalcOrderTotal();
+    });
 
-            formatInputAmount(
-                $(this)
-            );
+    /*
+     * Удаление позиции
+     */
+    $(document).on('click', '.remove-item', function() {
+        $(this).closest('.order-item').remove();
 
-            recalcOrderTotal();
+        recalcOrderTotal();
 
-        }
-    );
+        $('#positionsCount').text('(' + $('.order-item').length + ')');
+    });
 
-    /* =========================================================
-       ИЗМЕНЕНИЕ СКИДКИ
-    ========================================================= */
-
-    $(document).on(
-        'input',
-        '#discountInput',
-        function() {
-
-            formatInputAmount(
-                $(this)
-            );
-
-            recalcOrderTotal();
-
-        }
-    );
-
-    /* =========================================================
-       УДАЛЕНИЕ ТОВАРА
-    ========================================================= */
-
-    $(document).on(
-        'click',
-        '.remove-item',
-        function() {
-
-            $(this)
-                .closest('.order-item')
-                .remove();
-
-            recalcOrderTotal();
-
-            $('#positionsCount')
-                .text(
-                    '(' +
-                    $('.order-item').length +
-                    ')'
-                );
-
-        }
-    );
-
-    /* =========================================================
-       ИТОГО ЗАКАЗА
-    ========================================================= */
-
+    /*
+     * Получить итог заказа
+     */
     function getOrderTotal() {
-
         let sum = 0;
 
-        $('.order-item').each(
-            function() {
+        $('.order-item').each(function() {
+            const price = parseAmount($(this).find('.price-input').val());
 
-                const price =
-                    parseAmount(
-                        $(this)
-                        .find('.price-input')
-                        .val()
-                    );
+            const qty = parseInt(
+                $(this).find('input[name$="[quantity]"]').val(),
+                10
+            ) || 0;
 
-                const qty =
-                    parseInt(
-                        $(this)
-                        .find(
-                            'input[name$="[quantity]"]'
-                        )
-                        .val()
-                    ) || 0;
+            sum += price * qty;
+        });
 
-                sum += price * qty;
+        const discount = parseAmount($('#discountInput').val());
 
-            }
-        );
-
-        const discount =
-            parseAmount(
-                $('#discountInput').val()
-            );
-
-        let total =
-            sum - discount;
-
-        if (
-            total < 0 &&
-            sum >= 0
-        ) {
-            total = 0;
-        }
-
-        return Math.round(total);
+        return Math.round(Math.max(0, sum - discount));
     }
 
-    /* =========================================================
-       СУММА ОПЛАТ
-    ========================================================= */
-
+    /*
+     * Сумма всех оплат
+     */
     function getPaymentsTotal() {
-
         let total = 0;
 
-        $('.payment-amount').each(
-            function() {
-
-                total +=
-                    parsePaymentAmount(
-                        $(this).val()
-                    );
-
-            }
-        );
+        $('.payment-amount').each(function() {
+            total += parsePaymentAmount($(this).val());
+        });
 
         return Math.round(total);
     }
 
-    /* =========================================================
-       ОБНОВЛЕНИЕ ОПЛАТЫ
-    ========================================================= */
-
+    /*
+     * Обновление блока оплаты
+     */
     function updatePaymentSummary() {
+        const orderTotal = getOrderTotal();
 
-        const orderTotal =
-            getOrderTotal();
-
-        const $firstPayment =
-            $('.payment-row:first .payment-amount');
+        const $firstPayment = $('.payment-row:first .payment-amount');
 
         if (
             $('.payment-row').length === 1 &&
             $firstPayment.length &&
             $firstPayment.attr('data-auto') === '1'
         ) {
-
-            $firstPayment.val(
-                formatAmount(orderTotal)
-            );
-
+            $firstPayment.val(formatAmount(orderTotal));
         }
 
-        const paidTotal =
-            getPaymentsTotal();
+        const paidTotal = getPaymentsTotal();
+        const remaining = orderTotal - paidTotal;
 
-        let remaining =
-            orderTotal - paidTotal;
+        $('#paymentOrderTotal').text(formatAmount(orderTotal) + ' тг');
+        $('#paymentPaidTotal').text(formatAmount(paidTotal) + ' тг');
+        $('#paymentRemaining').text(formatAmount(remaining) + ' тг');
 
-        if (Math.abs(remaining) < 1) {
-            remaining = 0;
-        }
-
-        $('#paymentOrderTotal')
-            .text(
-                formatAmount(orderTotal) +
-                ' тг'
-            );
-
-        $('#paymentPaidTotal')
-            .text(
-                formatAmount(paidTotal) +
-                ' тг'
-            );
-
-        $('#paymentRemaining')
-            .text(
-                formatAmount(remaining) +
-                ' тг'
-            );
-
-        $('#paymentRemaining')
-            .removeClass(
-                'payment-ok payment-error'
-            );
+        $('#paymentRemaining').removeClass('payment-ok payment-error');
 
         if (remaining === 0) {
-
-            $('#paymentRemaining')
-                .addClass(
-                    'payment-ok'
-                );
-
+            $('#paymentRemaining').addClass('payment-ok');
         } else {
-
-            $('#paymentRemaining')
-                .addClass(
-                    'payment-error'
-                );
-
+            $('#paymentRemaining').addClass('payment-error');
         }
     }
 
-    /* =========================================================
-       РУЧНАЯ ОПЛАТА
-    ========================================================= */
+    /*
+     * Ручное изменение оплаты
+     */
+    $(document).on('input', '.payment-amount', function() {
+        $(this).attr('data-auto', '0');
 
-    $(document).on(
-        'input',
-        '.payment-amount',
-        function() {
+        formatPaymentInputAmount($(this));
 
-            $(this)
-                .attr(
-                    'data-auto',
-                    '0'
-                );
+        updatePaymentSummary();
+    });
 
-            formatPaymentInputAmount(
-                $(this)
-            );
+    /*
+     * Добавить способ оплаты
+     */
+    $('#addPayment').on('click', function() {
+        const orderTotal = getOrderTotal();
+        const paidTotal = getPaymentsTotal();
+        const remaining = Math.max(0, orderTotal - paidTotal);
 
-            updatePaymentSummary();
-
-        }
-    );
-
-    /* =========================================================
-       ДОБАВИТЬ ОПЛАТУ
-    ========================================================= */
-
-    $('#addPayment').click(function() {
-
-        const orderTotal =
-            getOrderTotal();
-
-        const paidTotal =
-            getPaymentsTotal();
-
-        let remaining =
-            orderTotal - paidTotal;
-
-        const paymentMethods =
-            @json($paymentMethods);
+        const paymentMethods = @json($paymentMethods);
 
         $('#paymentsWrapper').append(`
-
             <div class="payment-row">
-
                 <select
                     name="payments[${paymentIndex}][payment_method]"
-                    class="form-select payment-method"
-                >
+                    class="form-select payment-method">
 
-                    <option value="" selected>
-                        Не указано
-                    </option>
+                    <option value="" selected>Не указано</option>
 
                     ${paymentMethods.map(method => `
-
-                        <option value="${method.name}">
-                            ${method.name}
+                        <option value="${$('<div>').text(method.name).html()}">
+                            ${$('<div>').text(method.name).html()}
                         </option>
-
                     `).join('')}
-
                 </select>
 
                 <input
@@ -2276,262 +1451,189 @@
                     autocomplete="off"
                     value="${formatAmount(remaining)}"
                     placeholder="Сумма"
-                    data-auto="1"
-                >
+                    data-auto="1">
 
-                <button
-                    type="button"
-                    class="remove-payment"
-                    title="Удалить"
-                >
+                <button type="button" class="remove-payment" title="Удалить">
                     &times;
                 </button>
-
             </div>
-
         `);
 
         paymentIndex++;
 
         updatePaymentSummary();
-
     });
 
-    /* =========================================================
-       УДАЛИТЬ ОПЛАТУ
-    ========================================================= */
+    /*
+     * Удалить оплату
+     */
+    $(document).on('click', '.remove-payment', function() {
+        const rows = $('.payment-row').length;
 
-    $(document).on(
-        'click',
-        '.remove-payment',
-        function() {
+        if (rows <= 1) {
+            const $input = $(this).closest('.payment-row').find('.payment-amount');
 
-            const rows =
-                $('.payment-row').length;
-
-            if (rows <= 1) {
-
-                const $input =
-                    $(this)
-                    .closest('.payment-row')
-                    .find('.payment-amount');
-
-                $input
-                    .val('0')
-                    .attr(
-                        'data-auto',
-                        '1'
-                    );
-
-                updatePaymentSummary();
-
-                return;
-            }
-
-            $(this)
-                .closest('.payment-row')
-                .remove();
+            $input.val('0').attr('data-auto', '1');
 
             updatePaymentSummary();
-
+            return;
         }
-    );
 
-    /* =========================================================
-       ПРОВЕРКА ПЕРЕД ОТПРАВКОЙ
-    ========================================================= */
+        $(this).closest('.payment-row').remove();
 
-    $('#orderForm').on(
-        'submit',
+        updatePaymentSummary();
+    });
+
+    /*
+     * Проверка перед сохранением заказа
+     */
+    $('#orderForm').on('submit', function(e) {
+        let valid = true;
+
+        /*
+         * Проверяем, что есть хотя бы одна позиция.
+         */
+        if ($('.order-item').length === 0) {
+            e.preventDefault();
+            alert('Добавьте хотя бы одну позицию.');
+            return;
+        }
+
+        /*
+         * Количество каждой позиции должно быть положительным целым.
+         */
+        let invalidQuantity = false;
+
+        $('.order-item').each(function() {
+            const $quantity = $(this).find('input[name$="[quantity]"]');
+            const qty = Number($quantity.val());
+
+            if (!Number.isInteger(qty) || qty < 1) {
+                invalidQuantity = true;
+            }
+        });
+
+        if (invalidQuantity) {
+            e.preventDefault();
+            alert('Количество товара должно быть целым числом не меньше 1.');
+            return;
+        }
+
+        /*
+         * Цена каждой позиции должна быть больше нуля.
+         */
+        $('.price-input').each(function() {
+            const val = parseAmount($(this).val());
+
+            if (val <= 0) {
+                valid = false;
+                $(this).css('border-color', '#e5484d');
+            } else {
+                $(this).css('border-color', 'var(--border)');
+            }
+        });
+
+        if (!valid) {
+            e.preventDefault();
+            alert('Заполните цену у всех позиций.');
+            return;
+        }
+
+        /*
+         * Проверяем способы оплаты.
+         */
+        let paymentMethodMissing = false;
+
+        $('.payment-method').each(function() {
+            if (!$(this).val()) {
+                paymentMethodMissing = true;
+                $(this).css('border-color', '#e5484d');
+            } else {
+                $(this).css('border-color', 'var(--border)');
+            }
+        });
+
+        if (paymentMethodMissing) {
+            e.preventDefault();
+            alert('Выберите способ оплаты перед сохранением заказа.');
+            return;
+        }
+
+        /*
+         * Проверяем, что сумма оплаты не отрицательная.
+         */
+        let negativePayment = false;
+
+        $('.payment-amount').each(function() {
+            if (parsePaymentAmount($(this).val()) < 0) {
+                negativePayment = true;
+            }
+        });
+
+        if (negativePayment) {
+            e.preventDefault();
+            alert('Сумма оплаты не может быть отрицательной.');
+            return;
+        }
+
+        /*
+         * Проверяем соответствие суммы оплат итогу заказа.
+         */
+        const orderTotal = getOrderTotal();
+        const paidTotal = getPaymentsTotal();
+        const difference = Math.abs(orderTotal - paidTotal);
+
+        if (difference > 0) {
+            e.preventDefault();
+
+            alert(
+                'Сумма оплат должна полностью совпадать с итогом заказа.\n\n' +
+                'Итого: ' + formatAmount(orderTotal) + ' тг\n' +
+                'Оплачено: ' + formatAmount(paidTotal) + ' тг\n' +
+                'Осталось: ' + formatAmount(orderTotal - paidTotal) + ' тг'
+            );
+
+            return;
+        }
+
+        /*
+         * Убираем форматирование перед отправкой.
+         */
+        $('.price-input').each(function() {
+            $(this).val(parseAmount($(this).val()));
+        });
+
+        $('#discountInput').val(parseAmount($('#discountInput').val()));
+
+        $('.payment-amount').each(function() {
+            $(this).val(parsePaymentAmount($(this).val()));
+        });
+    });
+
+    /*
+     * Блокируем ввод минуса в числовых полях
+     */
+    $(document).on(
+        'keydown',
+        '.qty-input, .price-input, .payment-amount, #discountInput',
         function(e) {
-
-            let valid = true;
-
-            $('.price-input').each(
-                function() {
-
-                    const val =
-                        parseAmount(
-                            $(this).val()
-                        );
-
-                    if (val <= 0) {
-
-                        valid = false;
-
-                        $(this)
-                            .css(
-                                'border-color',
-                                '#e5484d'
-                            );
-
-                    } else {
-
-                        $(this)
-                            .css(
-                                'border-color',
-                                'var(--border)'
-                            );
-
-                    }
-
-                }
-            );
-
-            if (!valid) {
-
+            if (e.key === '-' || e.key === 'Subtract') {
                 e.preventDefault();
-
-                alert(
-                    'Заполните цену у всех позиций'
-                );
-
-                return;
             }
-
-            if (
-                $('.order-item').length === 0
-            ) {
-
-                e.preventDefault();
-
-                alert(
-                    'Добавьте хотя бы одну позицию'
-                );
-
-                return;
-            }
-
-            let paymentMethodMissing = false;
-
-            $('.payment-method').each(
-                function() {
-
-                    if (!$(this).val()) {
-
-                        paymentMethodMissing = true;
-
-                        $(this).css(
-                            'border-color',
-                            '#e5484d'
-                        );
-
-                    } else {
-
-                        $(this).css(
-                            'border-color',
-                            'var(--border)'
-                        );
-
-                    }
-
-                }
-            );
-
-            if (paymentMethodMissing) {
-
-                e.preventDefault();
-
-                alert(
-                    'Выберите способ оплаты перед сохранением заказа'
-                );
-
-                return;
-            }
-
-            const orderTotal =
-                getOrderTotal();
-
-            const paidTotal =
-                getPaymentsTotal();
-
-            const difference =
-                Math.abs(
-                    orderTotal -
-                    paidTotal
-                );
-
-            if (
-                difference > 0
-            ) {
-
-                e.preventDefault();
-
-                alert(
-                    'Сумма оплат должна полностью совпадать с итогом заказа.\n\n' +
-
-                    'Итого: ' +
-                    formatAmount(orderTotal) +
-                    ' тг\n' +
-
-                    'Оплачено: ' +
-                    formatAmount(paidTotal) +
-                    ' тг\n' +
-
-                    'Осталось: ' +
-                    formatAmount(
-                        orderTotal -
-                        paidTotal
-                    ) +
-                    ' тг'
-                );
-
-                return;
-            }
-
-            /* Убираем форматирование перед отправкой */
-
-            $('.price-input').each(
-                function() {
-
-                    $(this).val(
-                        parseAmount(
-                            $(this).val()
-                        )
-                    );
-
-                }
-            );
-
-            $('#discountInput').val(
-                parseAmount(
-                    $('#discountInput').val()
-                )
-            );
-
-            $('.payment-amount').each(
-                function() {
-
-                    $(this).val(
-                        parsePaymentAmount(
-                            $(this).val()
-                        )
-                    );
-
-                }
-            );
-
         }
     );
 
-    /* =========================================================
-       ОТМЕНА
-    ========================================================= */
+    /*
+     * Отмена создания заказа
+     */
+    $('#cancelOrder').on('click', function() {
+        window.history.back();
+    });
 
-    $('#cancelOrder').click(
-        function() {
-
-            window.history.back();
-
-        }
-    );
-
-    /* =========================================================
-       ПЕРВИЧНЫЙ РАСЧЁТ
-    ========================================================= */
-
+    /*
+     * Первичный расчёт
+     */
     recalcOrderTotal();
-
 </script>
 
 @endsection

@@ -3,429 +3,312 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\ExpenseType;
 use App\Models\Order;
-use App\Models\OutgoingPayment;
 use App\Models\PointOfSale;
+use App\Models\ExpenseType;
+use App\Models\OutgoingPayment;
 use App\Models\StockMovement;
 use App\Services\FifoService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class FinancialAnalyticsController extends Controller
 {
-    public function index(
-        Request $request,
-        FifoService $fifoService
-    ) {
+    public function index(Request $request, FifoService $fifoService)
+    {
         if (!Auth::check() || !Auth::user()->can_view_analytics) {
-            abort(403, 'Доступ к аналитике запрещён');
+            abort(403);
         }
 
         $from = $request->filled('from')
-            ? Carbon::parse($request->from)->startOfDay()
-            : now()->startOfMonth();
+            ? Carbon::parse($request->input('from'))->startOfDay()
+            : now()->startOfMonth()->startOfDay();
 
         $to = $request->filled('to')
-            ? Carbon::parse($request->to)->endOfDay()
+            ? Carbon::parse($request->input('to'))->endOfDay()
             : now()->endOfDay();
+
+        $selectedPointOfSale = $request->filled('point_of_sale_id')
+            ? (int) $request->input('point_of_sale_id')
+            : null;
+
+        $revenue = 0.0;
+        $cost = 0.0;
+
+        /*
+        |--------------------------------------------------------------------------
+        | 1. Продажи и себестоимость по FIFO
+        |--------------------------------------------------------------------------
+        */
+
+        $ordersQuery = Order::with([
+            'items.variant.product',
+            'payments',
+        ])->whereBetween('order_date', [
+            $from->toDateTimeString(),
+            $to->toDateTimeString(),
+        ]);
+
+        if ($selectedPointOfSale) {
+            $ordersQuery->where(
+                'point_of_sale_id',
+                $selectedPointOfSale
+            );
+        }
+
+        $orders = $ordersQuery->get();
+
+        foreach ($orders as $order) {
+            foreach ($order->items as $item) {
+                $quantity = (float) $item->quantity;
+                $price = (float) $item->price;
+
+                // Возвраты учитываются отдельно.
+                if ($quantity <= 0) {
+                    continue;
+                }
+
+                $revenue += $quantity * $price;
+
+                $movements = StockMovement::with('allocations.layer')
+                    ->where('type', 'sale')
+                    ->where('source_id', $item->id)
+                    ->get();
+
+                foreach ($movements as $movement) {
+                    foreach ($movement->allocations as $allocation) {
+                        if (!$allocation->layer) {
+                            continue;
+                        }
+
+                        $unitCost = (float) $fifoService->getLayerUnitCost(
+                            $allocation->layer
+                        );
+
+                        $allocatedQuantity = abs(
+                            (float) $allocation->quantity
+                        );
+
+                        $cost += $allocatedQuantity * $unitCost;
+                    }
+                }
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 2. Возвраты покупателей
+        |--------------------------------------------------------------------------
+        */
+
+        $returnsQuery = DB::table('customer_returns as cr')
+            ->join(
+                'customer_return_items as cri',
+                'cri.customer_return_id',
+                '=',
+                'cr.id'
+            )
+            ->join('orders as o', 'o.id', '=', 'cr.order_id')
+            ->whereBetween('cr.return_date', [
+                $from->toDateTimeString(),
+                $to->toDateTimeString(),
+            ]);
+
+        if ($selectedPointOfSale) {
+            $returnsQuery->where(
+                'o.point_of_sale_id',
+                $selectedPointOfSale
+            );
+        }
+
+        $returnRevenue = (float) (clone $returnsQuery)
+            ->join(
+                'order_items as oi',
+                'oi.id',
+                '=',
+                'cri.order_item_id'
+            )
+            ->sum(DB::raw('cri.quantity * oi.price'));
+
+        $returnCost = (float) (clone $returnsQuery)
+            ->sum(DB::raw('cri.quantity * cri.unit_cost'));
+
+        /*
+        |--------------------------------------------------------------------------
+        | 3. Итоговые финансовые показатели
+        |--------------------------------------------------------------------------
+        */
+
+        $revenue -= $returnRevenue;
+        $cost -= $returnCost;
+
+        $salesProfit = $revenue - $cost;
+
+        /*
+        |--------------------------------------------------------------------------
+        | 4. Продажи по способам оплаты
+        |--------------------------------------------------------------------------
+        */
+
+        $salesPaymentMethodTotals = [];
+
+        foreach ($orders as $order) {
+            foreach ($order->payments as $payment) {
+                $method = $payment->payment_method
+                    ?? $payment->method
+                    ?? 'Не указан';
+
+                if (!isset($salesPaymentMethodTotals[$method])) {
+                    $salesPaymentMethodTotals[$method] = 0.0;
+                }
+
+                $salesPaymentMethodTotals[$method] +=
+                    (float) $payment->amount;
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 5. Возвраты по способам оплаты
+        |--------------------------------------------------------------------------
+        */
+
+        $returnPaymentMethodTotals = [];
+
+        $returnPaymentsQuery = DB::table('customer_return_payments as crp')
+            ->join(
+                'customer_returns as cr',
+                'cr.id',
+                '=',
+                'crp.customer_return_id'
+            )
+            ->join('orders as o', 'o.id', '=', 'cr.order_id')
+            ->join(
+                'payment_methods as pm',
+                'pm.id',
+                '=',
+                'crp.payment_method_id'
+            )
+            ->whereBetween('cr.return_date', [
+                $from->toDateTimeString(),
+                $to->toDateTimeString(),
+            ]);
+
+        if ($selectedPointOfSale) {
+            $returnPaymentsQuery->where(
+                'o.point_of_sale_id',
+                $selectedPointOfSale
+            );
+        }
+
+        $returnPayments = $returnPaymentsQuery
+            ->select([
+                'pm.name as payment_method',
+                'crp.amount',
+            ])
+            ->get();
+
+        foreach ($returnPayments as $payment) {
+            $method = $payment->payment_method ?: 'Не указан';
+
+            if (!isset($returnPaymentMethodTotals[$method])) {
+                $returnPaymentMethodTotals[$method] = 0.0;
+            }
+
+            $returnPaymentMethodTotals[$method] +=
+                (float) $payment->amount;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 6. Прочие расходы
+        |--------------------------------------------------------------------------
+        */
+
+        $outgoingPaymentsQuery = OutgoingPayment::with([
+            'expenseType',
+            'pointOfSale',
+        ])->whereBetween('payment_date', [
+            $from->toDateTimeString(),
+            $to->toDateTimeString(),
+        ]);
+
+        if ($selectedPointOfSale) {
+            $outgoingPaymentsQuery->where(
+                'point_of_sale_id',
+                $selectedPointOfSale
+            );
+        }
+
+        $outgoingPayments = $outgoingPaymentsQuery
+            ->orderByDesc('payment_date')
+            ->get();
+
+        $otherExpenses = (float) $outgoingPayments->sum('amount');
+
+        $netProfit = $salesProfit - $otherExpenses;
+
+        /*
+        |--------------------------------------------------------------------------
+        | 7. Справочники
+        |--------------------------------------------------------------------------
+        */
+
+        $expenseTypes = ExpenseType::orderBy('name')->get();
 
         $pointsOfSale = PointOfSale::orderBy('name')->get();
 
-        $selectedPointOfSale = $request->filled('point_of_sale_id')
-            ? (int) $request->point_of_sale_id
-            : null;
-
-        /*
-        |--------------------------------------------------------------------------
-        | ЗАКАЗЫ
-        |--------------------------------------------------------------------------
-        */
-
-        $orders = Order::with([
-            'items.variant.product',
-            'payments'
-        ])
-            ->when(
-                $selectedPointOfSale,
-                function ($query) use ($selectedPointOfSale) {
-                    $query->where(
-                        'point_of_sale_id',
-                        $selectedPointOfSale
-                    );
-                }
-            )
-            ->get();
-
-        /*
-        |--------------------------------------------------------------------------
-        | ПРОДАЖИ И FIFO-СЕБЕСТОИМОСТЬ
-        |--------------------------------------------------------------------------
-        */
-
-        $revenue = 0;
-        $cost = 0;
-
-        /*
-        |--------------------------------------------------------------------------
-        | Собираем ID позиций заказов,
-        | которые попадают в выбранный период.
-        |--------------------------------------------------------------------------
-        */
-
-        $orderItemIds = [];
-
-        foreach ($orders as $order) {
-
-            $orderDate = $order->order_date
-                ? Carbon::parse($order->order_date)
-                : Carbon::parse($order->created_at);
-
-            if (
-                $orderDate->lt($from) ||
-                $orderDate->gt($to)
-            ) {
-                continue;
-            }
-
-            foreach ($order->items as $item) {
-
-                if (
-                    !$item->variant ||
-                    !$item->variant->product
-                ) {
-                    continue;
-                }
-
-                $orderItemIds[] = $item->id;
-            }
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Все FIFO движения продаж одним запросом
-        |--------------------------------------------------------------------------
-        |
-        | source_id = order_items.id
-        |
-        */
-
-        $saleMovements = StockMovement::with([
-            'allocations.layer',
-        ])
-            ->where('type', 'sale')
-            ->whereIn('source_id', $orderItemIds)
-            ->get()
-            ->keyBy('source_id');
-
-        /*
-        |--------------------------------------------------------------------------
-        | Расчёт выручки и FIFO-себестоимости
-        |--------------------------------------------------------------------------
-        */
-
-        foreach ($orders as $order) {
-
-            $orderDate = $order->order_date
-                ? Carbon::parse($order->order_date)
-                : Carbon::parse($order->created_at);
-
-            if (
-                $orderDate->lt($from) ||
-                $orderDate->gt($to)
-            ) {
-                continue;
-            }
-
-            foreach ($order->items as $item) {
-
-                if (
-                    !$item->variant ||
-                    !$item->variant->product
-                ) {
-                    continue;
-                }
-
-                $quantity = (float) $item->quantity;
-
-                $salePrice = (float) $item->price;
-
-                /*
-                |--------------------------------------------------------------------------
-                | ВЫРУЧКА
-                |--------------------------------------------------------------------------
-                */
-
-                $revenue +=
-                    $quantity * $salePrice;
-
-                /*
-                |--------------------------------------------------------------------------
-                | FIFO-СЕБЕСТОИМОСТЬ
-                |--------------------------------------------------------------------------
-                */
-
-                $movement =
-                    $saleMovements->get($item->id);
-
-                if (!$movement) {
-                    continue;
-                }
-
-                foreach (
-                    $movement->allocations
-                    as $allocation
-                ) {
-
-                    $layer =
-                        $allocation->layer;
-
-                    if (!$layer) {
-                        continue;
-                    }
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Для initial:
-                    | текущая purchase_price товара
-                    |
-                    | Для receipt:
-                    | сохранённая цена конкретной поставки
-                    |--------------------------------------------------------------------------
-                    */
-
-                    $unitCost =
-                        $fifoService
-                            ->getLayerUnitCost($layer);
-
-                    $cost +=
-                        (int) $allocation->quantity
-                        * (float) $unitCost;
-                }
-            }
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | ПРИБЫЛЬ ОТ ПРОДАЖ
-        |--------------------------------------------------------------------------
-        */
-
-        $salesProfit =
-            $revenue - $cost;
-
-        /*
-        |--------------------------------------------------------------------------
-        | Способы оплаты
-        |--------------------------------------------------------------------------
-        */
-
-        $paymentMethodTotals = [];
-
-        foreach ($orders as $order) {
-
-            $orderDate = $order->order_date
-                ? Carbon::parse($order->order_date)
-                : Carbon::parse($order->created_at);
-
-            if (
-                $orderDate->lt($from) ||
-                $orderDate->gt($to)
-            ) {
-                continue;
-            }
-
-            foreach ($order->payments as $payment) {
-
-                $method =
-                    trim($payment->payment_method);
-
-                if ($method === '') {
-                    $method = 'Не указано';
-                }
-
-                if (
-                    !isset(
-                        $paymentMethodTotals[$method]
-                    )
-                ) {
-                    $paymentMethodTotals[$method] = 0;
-                }
-
-                $paymentMethodTotals[$method]
-                    += (float) $payment->amount;
-            }
-        }
-
-        arsort($paymentMethodTotals);
-
-        /*
-        |--------------------------------------------------------------------------
-        | Исходящие платежи / остальные расходы
-        |--------------------------------------------------------------------------
-        */
-
-        $outgoingPayments =
-            OutgoingPayment::with([
-                'expenseType',
-                'pointOfSale'
-            ])
-                ->whereBetween(
-                    'payment_date',
-                    [$from, $to]
-                )
-                ->when(
-                    $selectedPointOfSale,
-                    function ($query) use (
-                        $selectedPointOfSale
-                    ) {
-                        $query->where(
-                            'point_of_sale_id',
-                            $selectedPointOfSale
-                        );
-                    }
-                )
-                ->orderByDesc('payment_date')
-                ->orderByDesc('id')
-                ->get();
-
-        $otherExpenses =
-            $outgoingPayments->sum(
-                function ($payment) {
-                    return (float) $payment->amount;
-                }
-            );
-
-        /*
-        |--------------------------------------------------------------------------
-        | ЧИСТАЯ ПРИБЫЛЬ
-        |--------------------------------------------------------------------------
-        |
-        | QR Лезговко здесь НЕ вычитается.
-        |
-        | QR Лезговко влияет только на долг поставщика
-        | Артекс через SupplierDebtController.
-        |
-        */
-
-        $netProfit =
-            $salesProfit
-            - $otherExpenses;
-
-        /*
-        |--------------------------------------------------------------------------
-        | Виды расходов
-        |--------------------------------------------------------------------------
-        */
-
-        $expenseTypes =
-            ExpenseType::withCount([
-                'outgoingPayments as outgoing_payments_count'
-                    => function ($query) use (
-                        $from,
-                        $to,
-                        $selectedPointOfSale
-                    ) {
-
-                        $query->whereDate(
-                            'payment_date',
-                            '>=',
-                            $from->toDateString()
-                        )
-                            ->whereDate(
-                                'payment_date',
-                                '<=',
-                                $to->toDateString()
-                            )
-                            ->when(
-                                $selectedPointOfSale,
-                                function ($query) use (
-                                    $selectedPointOfSale
-                                ) {
-                                    $query->where(
-                                        'point_of_sale_id',
-                                        $selectedPointOfSale
-                                    );
-                                }
-                            );
-                    }
-            ])
-                ->orderBy('name')
-                ->get();
-
-        return view(
-            'admin.analytics.finance',
-            compact(
-                'from',
-                'to',
-                'revenue',
-                'cost',
-                'salesProfit',
-                'otherExpenses',
-                'netProfit',
-                'expenseTypes',
-                'outgoingPayments',
-                'pointsOfSale',
-                'selectedPointOfSale',
-                'paymentMethodTotals'
-            )
-        );
+        return view('admin.analytics.finance', compact(
+            'from',
+            'to',
+            'revenue',
+            'cost',
+            'salesProfit',
+            'otherExpenses',
+            'netProfit',
+            'expenseTypes',
+            'outgoingPayments',
+            'pointsOfSale',
+            'selectedPointOfSale',
+            'salesPaymentMethodTotals',
+            'returnPaymentMethodTotals',
+            'returnRevenue',
+            'returnCost'
+        ));
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Добавить вид расхода
-    |--------------------------------------------------------------------------
-    */
 
     public function storeExpenseType(Request $request)
     {
         if (!Auth::check() || !Auth::user()->can_view_analytics) {
-            abort(403, 'Доступ к аналитике запрещён');
+            abort(403);
         }
 
         $validated = $request->validate([
-            'name' => [
-                'required',
-                'string',
-                'max:255'
-            ],
+            'name' => ['required', 'string', 'max:255'],
         ]);
 
-        ExpenseType::create([
-            'name' => trim($validated['name']),
-        ]);
+        ExpenseType::create($validated);
 
         return back()->with(
             'success',
-            'Вид расхода добавлен.'
+            'Категория расходов добавлена.'
         );
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Удалить вид расхода
-    |--------------------------------------------------------------------------
-    */
-
-    public function destroyExpenseType(
-        ExpenseType $expenseType
-    ) {
+    public function destroyExpenseType($id)
+    {
         if (!Auth::check() || !Auth::user()->can_view_analytics) {
-            abort(403, 'Доступ к аналитике запрещён');
+            abort(403);
         }
 
-        if (
-            $expenseType
-                ->outgoingPayments()
-                ->exists()
-        ) {
+        $expenseType = ExpenseType::findOrFail($id);
+
+        if ($expenseType->outgoingPayments()->exists()) {
             return back()->with(
                 'error',
-                'Нельзя удалить этот вид расхода, потому что он используется в исходящих платежах.'
+                'Нельзя удалить категорию, к которой привязаны расходы.'
             );
         }
 
@@ -433,209 +316,160 @@ class FinancialAnalyticsController extends Controller
 
         return back()->with(
             'success',
-            'Вид расхода удалён.'
+            'Категория расходов удалена.'
         );
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Добавить исходящий платёж
-    |--------------------------------------------------------------------------
-    */
-
-    public function storeOutgoingPayment(
-        Request $request
-    ) {
+    public function storeOutgoingPayment(Request $request)
+    {
         if (!Auth::check() || !Auth::user()->can_view_analytics) {
-            abort(403, 'Доступ к аналитике запрещён');
+            abort(403);
         }
 
         $validated = $request->validate([
-            'expense_type_id' => [
-                'required',
-                'exists:expense_types,id'
-            ],
-
-            'point_of_sale_id' => [
-                'nullable',
-                'integer',
-                'exists:points_of_sale,id'
-            ],
-
-            'payment_date' => [
-                'required',
-                'date'
-            ],
-
-            'amount' => [
-                'required',
-                'numeric',
-                'min:0.01'
-            ],
-
-            'description' => [
-                'nullable',
-                'string',
-                'max:1000'
-            ],
+            'expense_type_id' => ['required', 'exists:expense_types,id'],
+            'point_of_sale_id' => ['nullable', 'exists:point_of_sales,id'],
+            'amount' => ['required', 'numeric', 'gt:0'],
+            'payment_date' => ['required', 'date'],
+            'comment' => ['nullable', 'string', 'max:2000'],
         ]);
 
-        OutgoingPayment::create(
-            $validated
-        );
+        OutgoingPayment::create($validated);
 
         return back()->with(
             'success',
-            'Исходящий платёж добавлен.'
+            'Расход добавлен.'
         );
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Удалить исходящий платёж
-    |--------------------------------------------------------------------------
-    */
-
-    public function destroyOutgoingPayment(
-        OutgoingPayment $outgoingPayment
-    ) {
+    public function destroyOutgoingPayment($id)
+    {
         if (!Auth::check() || !Auth::user()->can_view_analytics) {
-            abort(403, 'Доступ к аналитике запрещён');
+            abort(403);
         }
 
-        $outgoingPayment->delete();
+        $payment = OutgoingPayment::findOrFail($id);
+        $payment->delete();
 
         return back()->with(
             'success',
-            'Исходящий платёж удалён.'
+            'Расход удалён.'
         );
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Платежи
-    |--------------------------------------------------------------------------
-    */
 
     public function payments(Request $request)
     {
         if (!Auth::check() || !Auth::user()->can_view_analytics) {
-            abort(403, 'Доступ к аналитике запрещён');
+            abort(403);
         }
 
         $from = $request->filled('from')
-            ? Carbon::parse($request->from)->startOfDay()
-            : now()->startOfMonth();
+            ? Carbon::parse($request->input('from'))->startOfDay()
+            : now()->startOfMonth()->startOfDay();
 
         $to = $request->filled('to')
-            ? Carbon::parse($request->to)->endOfDay()
+            ? Carbon::parse($request->input('to'))->endOfDay()
             : now()->endOfDay();
 
-        /*
-        |--------------------------------------------------------------------------
-        | Точки продаж
-        |--------------------------------------------------------------------------
-        */
-
-        $pointsOfSale =
-            PointOfSale::orderBy('name')->get();
-
-        $selectedPointOfSale =
-            $request->filled('point_of_sale_id')
-                ? (int) $request->point_of_sale_id
-                : null;
+        $selectedPointOfSale = $request->filled('point_of_sale_id')
+            ? (int) $request->input('point_of_sale_id')
+            : null;
 
         /*
         |--------------------------------------------------------------------------
-        | Исходящие платежи
+        | Продажи по способам оплаты
         |--------------------------------------------------------------------------
         */
 
-        $outgoingPayments =
-            OutgoingPayment::with([
-                'expenseType',
-                'pointOfSale'
-            ])
-                ->whereDate(
-                    'payment_date',
-                    '>=',
-                    $from->toDateString()
-                )
-                ->whereDate(
-                    'payment_date',
-                    '<=',
-                    $to->toDateString()
-                )
-                ->when(
-                    $selectedPointOfSale,
-                    function ($query) use (
-                        $selectedPointOfSale
-                    ) {
-                        $query->where(
-                            'point_of_sale_id',
-                            $selectedPointOfSale
-                        );
-                    }
-                )
-                ->orderByDesc('payment_date')
-                ->orderByDesc('id')
-                ->get();
+        $ordersQuery = Order::with('payments')
+            ->whereBetween('order_date', [
+                $from->toDateTimeString(),
+                $to->toDateTimeString(),
+            ]);
+
+        if ($selectedPointOfSale) {
+            $ordersQuery->where(
+                'point_of_sale_id',
+                $selectedPointOfSale
+            );
+        }
+
+        $orders = $ordersQuery->get();
+
+        $salesPaymentMethodTotals = [];
+
+        foreach ($orders as $order) {
+            foreach ($order->payments as $payment) {
+                $method = $payment->payment_method
+                    ?? $payment->method
+                    ?? 'Не указан';
+
+                if (!isset($salesPaymentMethodTotals[$method])) {
+                    $salesPaymentMethodTotals[$method] = 0.0;
+                }
+
+                $salesPaymentMethodTotals[$method] +=
+                    (float) $payment->amount;
+            }
+        }
 
         /*
         |--------------------------------------------------------------------------
-        | Виды расходов
+        | Возвраты по способам оплаты
         |--------------------------------------------------------------------------
         */
 
-        $expenseTypes =
-            ExpenseType::withCount([
-                'outgoingPayments as outgoing_payments_count'
-                    => function ($query) use (
-                        $from,
-                        $to,
-                        $selectedPointOfSale
-                    ) {
-
-                        $query
-                            ->whereDate(
-                                'payment_date',
-                                '>=',
-                                $from->toDateString()
-                            )
-                            ->whereDate(
-                                'payment_date',
-                                '<=',
-                                $to->toDateString()
-                            )
-                            ->when(
-                                $selectedPointOfSale,
-                                function ($query) use (
-                                    $selectedPointOfSale
-                                ) {
-                                    $query->where(
-                                        'point_of_sale_id',
-                                        $selectedPointOfSale
-                                    );
-                                }
-                            );
-                    }
-            ])
-                ->orderBy('name')
-                ->get();
-
-        return view(
-            'admin.analytics.payments',
-            compact(
-                'from',
-                'to',
-                'outgoingPayments',
-                'expenseTypes',
-                'pointsOfSale',
-                'selectedPointOfSale'
+        $returnPaymentsQuery = DB::table('customer_return_payments as crp')
+            ->join(
+                'customer_returns as cr',
+                'cr.id',
+                '=',
+                'crp.customer_return_id'
             )
-        );
+            ->join('orders as o', 'o.id', '=', 'cr.order_id')
+            ->join(
+                'payment_methods as pm',
+                'pm.id',
+                '=',
+                'crp.payment_method_id'
+            )
+            ->whereBetween('cr.return_date', [
+                $from->toDateTimeString(),
+                $to->toDateTimeString(),
+            ]);
+
+        if ($selectedPointOfSale) {
+            $returnPaymentsQuery->where(
+                'o.point_of_sale_id',
+                $selectedPointOfSale
+            );
+        }
+
+        $returnPaymentMethodTotals = [];
+
+        $returnPayments = $returnPaymentsQuery
+            ->select([
+                'pm.name as payment_method',
+                'crp.amount',
+            ])
+            ->get();
+
+        foreach ($returnPayments as $payment) {
+            $method = $payment->payment_method ?: 'Не указан';
+
+            if (!isset($returnPaymentMethodTotals[$method])) {
+                $returnPaymentMethodTotals[$method] = 0.0;
+            }
+
+            $returnPaymentMethodTotals[$method] +=
+                (float) $payment->amount;
+        }
+
+        return response()->json([
+            'from' => $from->toDateString(),
+            'to' => $to->toDateString(),
+            'salesPaymentMethodTotals' => $salesPaymentMethodTotals,
+            'returnPaymentMethodTotals' => $returnPaymentMethodTotals,
+        ]);
     }
 }

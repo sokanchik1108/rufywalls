@@ -17,6 +17,7 @@ use App\Http\Controllers\WriteOffController;
 use App\Http\Controllers\Admin\PointOfSaleController;
 use App\Http\Controllers\AppropriationController;
 use App\Http\Controllers\SupplierDebtController;
+use App\Http\Controllers\CustomerReturnController;
 
 
 
@@ -153,7 +154,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::put('/products/{id}', [AdminController::class, 'update'])->name('products.update');
     Route::get('/orders', [AdminController::class, 'adminIndex'])->name('orders');
     Route::put('/orders/{id}/status', [AdminController::class, 'updateStatus'])->name('orders.updateStatus');
-    Route::delete('/orders/{id}', [AdminController::class, 'destroy'])->name('orders.destroy');
+    Route::delete('/orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
     Route::delete('/orders', [AdminController::class, 'clearAll'])->name('orders.clear');
     Route::get('/users', [AdminController::class, 'users'])->name('users');
     Route::post('/users/{user}/toggle-admin', [AdminController::class, 'toggleAdmin'])->name('toggleAdmin');
@@ -235,9 +236,36 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/orders/seller', [OrderController::class, 'indexSeller'])->name('orders.seller');
     Route::delete('/orders/destroy-all', [OrderController::class, 'destroyAll'])->name('orders.destroyAll');
     Route::get('/orders/search', [OrderController::class, 'search'])->name('orders.search');
+    Route::get(
+        '/orders/{order}/returns',
+        [CustomerReturnController::class, 'create']
+    )->name('orders.returns.create')->middleware('auth');
+
+    Route::post(
+        '/orders/{order}/returns',
+        [CustomerReturnController::class, 'store']
+    )->name('orders.returns.store')->middleware('auth');
     Route::get('/orders/{id}/edit', [OrderController::class, 'edit'])->name('orders.edit');
     Route::put('/orders/{id}', [OrderController::class, 'update'])->name('orders.update');
     Route::delete('/users/{user}', [AdminController::class, 'destroyUser'])->name('users.destroy');
+    Route::delete(
+        '/orders/returns/{customerReturn}',
+        [CustomerReturnController::class, 'destroy']
+    )->name('orders.returns.destroy');
+    Route::get(
+        '/orders/returns/{customerReturn}',
+        [CustomerReturnController::class, 'show']
+    )->name('orders.returns.show');
+
+    Route::put(
+        '/orders/returns/{customerReturn}',
+        [CustomerReturnController::class, 'update']
+    )->name('orders.returns.update');
+
+    Route::get(
+    '/orders/seller/sku-suggestions',
+    [OrderController::class, 'sellerSkuSuggestions']
+)->name('orders.seller.sku-suggestions');
 });
 
 

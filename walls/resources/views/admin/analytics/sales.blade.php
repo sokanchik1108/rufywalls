@@ -1,14 +1,10 @@
-<!DOCTYPE html>
 
+<!DOCTYPE html>
 <html lang="ru">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <title>Продажи по товарам</title>
 
@@ -26,12 +22,7 @@
             padding: 0;
             background: #f4f6f9;
             color: #111827;
-            font-family:
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                Arial,
-                sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
         }
 
         button,
@@ -40,10 +31,6 @@
             font: inherit;
         }
 
-        /* ==========================================================
-           PAGE
-        ========================================================== */
-
         .page {
             width: 100%;
             max-width: 1600px;
@@ -51,9 +38,7 @@
             padding: 24px;
         }
 
-        /* ==========================================================
-           HEADER
-        ========================================================== */
+        /* HEADER */
 
         .page-header {
             display: flex;
@@ -91,9 +76,7 @@
             font-size: 14px;
             font-weight: 600;
             white-space: nowrap;
-            transition:
-                background .15s ease,
-                transform .15s ease;
+            transition: background .15s ease, transform .15s ease;
         }
 
         .back-button:hover {
@@ -104,14 +87,16 @@
             transform: scale(.98);
         }
 
-        /* ==========================================================
-           FILTERS
-        ========================================================== */
+        /* FILTERS */
 
         .filters {
             display: grid;
             grid-template-columns:
-                minmax(150px, 180px) minmax(150px, 180px) minmax(200px, 260px) minmax(220px, 1fr) auto;
+                minmax(150px, 180px)
+                minmax(150px, 180px)
+                minmax(200px, 260px)
+                minmax(220px, 1fr)
+                auto;
             align-items: end;
             gap: 12px;
             padding: 16px;
@@ -148,23 +133,17 @@
             color: #111827;
             font-size: 14px;
             outline: none;
-            transition:
-                border-color .15s ease,
-                box-shadow .15s ease;
+            transition: border-color .15s ease, box-shadow .15s ease;
         }
 
-        /* ==========================================================
-           ДАТЫ — ОТ / ПО
-        ========================================================== */
-
-        .filters>.filter-group:nth-child(1),
-        .filters>.filter-group:nth-child(2) {
+        .filters > .filter-group:nth-child(1),
+        .filters > .filter-group:nth-child(2) {
             min-width: 0;
             width: 100%;
         }
 
-        .filters>.filter-group:nth-child(1) input[type="date"],
-        .filters>.filter-group:nth-child(2) input[type="date"] {
+        .filters > .filter-group:nth-child(1) input[type="date"],
+        .filters > .filter-group:nth-child(2) input[type="date"] {
             display: block;
             width: 100%;
             min-width: 0;
@@ -182,8 +161,8 @@
             appearance: none;
         }
 
-        .filters>.filter-group:nth-child(1) input[type="date"]::-webkit-calendar-picker-indicator,
-        .filters>.filter-group:nth-child(2) input[type="date"]::-webkit-calendar-picker-indicator {
+        .filters > .filter-group:nth-child(1) input[type="date"]::-webkit-calendar-picker-indicator,
+        .filters > .filter-group:nth-child(2) input[type="date"]::-webkit-calendar-picker-indicator {
             margin: 0;
             padding: 0;
             width: 18px;
@@ -196,9 +175,7 @@
             box-shadow: 0 0 0 3px rgba(1, 20, 47, .07);
         }
 
-        /* ==========================================================
-           SKU SEARCH
-        ========================================================== */
+        /* SKU SEARCH */
 
         .sku-search-wrapper {
             position: relative;
@@ -229,10 +206,7 @@
             font-size: 21px;
             line-height: 1;
             font-weight: 400;
-            transition:
-                background .15s ease,
-                color .15s ease,
-                transform .15s ease;
+            transition: background .15s ease, color .15s ease, transform .15s ease;
         }
 
         .clear-sku-button.visible {
@@ -258,9 +232,7 @@
             cursor: pointer;
             font-size: 14px;
             font-weight: 650;
-            transition:
-                background .15s ease,
-                transform .15s ease;
+            transition: background .15s ease, transform .15s ease;
         }
 
         .filter-button:hover {
@@ -271,9 +243,7 @@
             transform: scale(.98);
         }
 
-        /* ==========================================================
-           CARD
-        ========================================================== */
+        /* CARD */
 
         .card {
             background: #fff;
@@ -315,9 +285,7 @@
             color: #111827;
         }
 
-        /* ==========================================================
-           TABLE CONTAINER
-        ========================================================== */
+        /* TABLE */
 
         .table-wrapper {
             width: 100%;
@@ -376,9 +344,7 @@
             background: #f8fafc;
         }
 
-        /* ==========================================================
-           SORT
-        ========================================================== */
+        /* SORT */
 
         th.sortable {
             cursor: pointer;
@@ -415,9 +381,7 @@
             font-weight: 500;
         }
 
-        /* ==========================================================
-           SKU
-        ========================================================== */
+        /* SKU */
 
         .sku-link {
             color: #01142f;
@@ -429,9 +393,7 @@
             text-decoration: underline;
         }
 
-        /* ==========================================================
-           NUMBERS
-        ========================================================== */
+        /* NUMBERS */
 
         .number {
             font-variant-numeric: tabular-nums;
@@ -447,9 +409,22 @@
             font-weight: 650;
         }
 
-        /* ==========================================================
-           EMPTY
-        ========================================================== */
+        /* RETURN BADGE */
+
+        .return-badge {
+            display: inline-block;
+            margin-left: 7px;
+            padding: 4px 7px;
+            border-radius: 5px;
+            background: #fee2e2;
+            color: #b91c1c;
+            font-size: 11px;
+            line-height: 1.2;
+            font-weight: 700;
+            vertical-align: middle;
+        }
+
+        /* EMPTY */
 
         .empty {
             padding: 45px 20px !important;
@@ -458,9 +433,7 @@
             background: #fff !important;
         }
 
-        /* ==========================================================
-           DETAIL STATS
-        ========================================================== */
+        /* DETAIL STATS */
 
         .detail-grid {
             display: grid;
@@ -494,9 +467,7 @@
             font-variant-numeric: tabular-nums;
         }
 
-        /* ==========================================================
-           AJAX
-        ========================================================== */
+        /* AJAX */
 
         #sales-products-table {
             transition: opacity .15s ease;
@@ -507,15 +478,15 @@
             pointer-events: none;
         }
 
-        /* ==========================================================
-           MOBILE
-        ========================================================== */
+        /* MOBILE */
 
         @media (max-width: 1100px) {
-
             .filters {
                 grid-template-columns:
-                    minmax(140px, 180px) minmax(140px, 180px) minmax(200px, 260px) 1fr;
+                    minmax(140px, 180px)
+                    minmax(140px, 180px)
+                    minmax(200px, 260px)
+                    1fr;
             }
 
             .filter-button {
@@ -524,7 +495,6 @@
         }
 
         @media (max-width: 900px) {
-
             .page {
                 padding: 15px;
             }
@@ -552,7 +522,6 @@
         }
 
         @media (max-width: 650px) {
-
             body {
                 background: #f4f6f9;
             }
@@ -590,19 +559,19 @@
                 min-width: 0;
             }
 
-            .filters>.filter-group {
+            .filters > .filter-group {
                 width: 100%;
                 min-width: 0;
                 max-width: 100%;
             }
 
-            .filters>.filter-group:nth-child(1),
-            .filters>.filter-group:nth-child(2) {
+            .filters > .filter-group:nth-child(1),
+            .filters > .filter-group:nth-child(2) {
                 grid-column: span 1;
             }
 
-            .filters>.filter-group:nth-child(1) input[type="date"],
-            .filters>.filter-group:nth-child(2) input[type="date"] {
+            .filters > .filter-group:nth-child(1) input[type="date"],
+            .filters > .filter-group:nth-child(2) input[type="date"] {
                 width: 100%;
                 min-width: 0;
                 max-width: 100%;
@@ -610,12 +579,6 @@
                 padding: 0 7px;
                 font-size: 12px;
                 line-height: 40px;
-            }
-
-            .filters>.filter-group:nth-child(1),
-            .filters>.filter-group:nth-child(2) {
-                width: 100%;
-                min-width: 0;
             }
 
             .filter-group {
@@ -717,7 +680,6 @@
         }
 
         @media (max-width: 390px) {
-
             .page {
                 padding: 8px;
             }
@@ -743,8 +705,8 @@
                 gap: 7px;
             }
 
-            .filters>.filter-group,
-            .filters>.filter-group input[type="date"] {
+            .filters > .filter-group,
+            .filters > .filter-group input[type="date"] {
                 min-width: 0;
                 max-width: 100%;
                 width: 100%;
@@ -787,146 +749,90 @@
             .stat-value {
                 font-size: 13px;
             }
+
+            .return-badge {
+                font-size: 10px;
+                padding: 3px 5px;
+            }
         }
     </style>
-
 </head>
 
 <body>
-
     <div class="page">
 
-        {{-- ==========================================================
-         HEADER
-    ========================================================== --}}
+        {{-- HEADER --}}
 
         <div class="page-header">
-
             <div>
-
-                <h1 class="page-title">
-                    Продажи по товарам
-                </h1>
-
-                <div class="page-subtitle">
-                    Аналитика продаж и прибыли
-                </div>
-
+                <h1 class="page-title">Продажи по товарам</h1>
+                <div class="page-subtitle">Аналитика продаж и прибыли</div>
             </div>
 
             @if(isset($sku) && $sku !== null)
-
-            <a
-                href="{{ route('admin.analytics.sales', [
-                    'from' => $from->format('Y-m-d'),
-                    'to' => $to->format('Y-m-d'),
-                    'point_of_sale_id' => $pointOfSaleId ?? null,
-                ]) }}"
-                class="back-button">
-                ← Все товары
-            </a>
-
+                <a
+                    href="{{ route('admin.analytics.sales', [
+                        'from' => $from->format('Y-m-d'),
+                        'to' => $to->format('Y-m-d'),
+                        'point_of_sale_id' => $pointOfSaleId ?? null,
+                    ]) }}"
+                    class="back-button">
+                    ← Все товары
+                </a>
             @else
-
-            <a
-                href="{{ route('admin.analytics.profit') }}"
-                class="back-button">
-                ← Назад
-            </a>
-
+                <a href="{{ route('admin.analytics.profit') }}" class="back-button">
+                    ← Назад
+                </a>
             @endif
-
         </div>
 
-        {{-- ==========================================================
-         FILTERS
-    ========================================================== --}}
+        {{-- FILTERS --}}
 
         <form
             action="{{ isset($sku) && $sku !== null
-            ? route('admin.analytics.sales.product', ['sku' => $sku])
-            : route('admin.analytics.sales') }}"
+                ? route('admin.analytics.sales.product', ['sku' => $sku])
+                : route('admin.analytics.sales') }}"
             method="GET"
             class="filters"
             id="sales-filters">
 
-            {{-- ОТ --}}
-
             <div class="filter-group">
-
-                <label for="from">
-                    От
-                </label>
-
+                <label for="from">От</label>
                 <input
                     type="date"
                     name="from"
                     id="from"
                     value="{{ $from->format('Y-m-d') }}">
-
             </div>
 
-            {{-- ПО --}}
-
             <div class="filter-group">
-
-                <label for="to">
-                    По
-                </label>
-
+                <label for="to">По</label>
                 <input
                     type="date"
                     name="to"
                     id="to"
                     value="{{ $to->format('Y-m-d') }}">
-
             </div>
 
-            {{-- ТОЧКА ПРОДАЖ --}}
-
             <div class="filter-group">
-
-                <label for="point_of_sale_id">
-                    Точка продаж
-                </label>
-
-                <select
-                    name="point_of_sale_id"
-                    id="point_of_sale_id">
-
-                    <option value="">
-                        Все точки продаж
-                    </option>
+                <label for="point_of_sale_id">Точка продаж</label>
+                <select name="point_of_sale_id" id="point_of_sale_id">
+                    <option value="">Все точки продаж</option>
 
                     @foreach($pointsOfSale ?? [] as $point)
-
-                    <option
-                        value="{{ $point->id }}"
-                        @selected(
-                        (int) ($pointOfSaleId ?? 0)===(int) $point->id
-                        )
-                        >
-                        {{ $point->name }}
-                    </option>
-
+                        <option
+                            value="{{ $point->id }}"
+                            @selected((int) ($pointOfSaleId ?? 0) === (int) $point->id)>
+                            {{ $point->name }}
+                        </option>
                     @endforeach
-
                 </select>
-
             </div>
 
-            {{-- ======================================================
-             ПОИСК ПО АРТИКУЛУ
-        ======================================================= --}}
-
             <div class="filter-group">
-
-                <label for="sku">
-                    Поиск по артикулу
-                </label>
+                <label for="sku">Поиск по артикулу</label>
 
                 <div class="sku-search-wrapper">
-
                     <input
                         type="text"
                         id="sku"
@@ -942,829 +848,406 @@
                         title="Очистить поиск">
                         ×
                     </button>
-
                 </div>
-
             </div>
 
-            {{-- ======================================================
-             ПРИМЕНИТЬ
-        ======================================================= --}}
-
-            <button
-                type="submit"
-                class="filter-button">
-                Применить
-            </button>
-
+            <button type="submit" class="filter-button">Применить</button>
         </form>
 
-        {{-- ==========================================================
-         PRODUCT DETAIL
-    ========================================================== --}}
+        {{-- PRODUCT DETAIL --}}
 
         @if(isset($sku) && $sku !== null)
 
-        <div class="card">
-
-            <div class="card-header">
-
-                <div>
-
-                    <h2 class="card-title">
-                        {{ $variant->sku }}
-                    </h2>
-
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title">{{ $variant->sku }}</h2>
+                    </div>
                 </div>
 
+                <div class="detail-grid">
+                    <div class="stat">
+                        <div class="stat-label">Продано</div>
+                        <div class="stat-value">
+                            {{ number_format($totalQuantity, 0, ',', ' ') }}
+                        </div>
+                    </div>
+
+                    <div class="stat">
+                        <div class="stat-label">Сумма продаж</div>
+                        <div class="stat-value">
+                            {{ number_format($totalSales, 2, ',', ' ') }} ₸
+                        </div>
+                    </div>
+
+                    <div class="stat">
+                        <div class="stat-label">Себестоимость</div>
+                        <div class="stat-value">
+                            {{ number_format($totalCost, 2, ',', ' ') }} ₸
+                        </div>
+                    </div>
+
+                    <div class="stat">
+                        <div class="stat-label">Средняя цена продажи</div>
+                        <div class="stat-value">
+                            {{ number_format($averageSalePrice, 2, ',', ' ') }} ₸
+                        </div>
+                    </div>
+
+                    <div class="stat">
+                        <div class="stat-label">Средняя себестоимость</div>
+                        <div class="stat-value">
+                            {{ number_format($averageCost, 2, ',', ' ') }} ₸
+                        </div>
+                    </div>
+
+                    <div class="stat">
+                        <div class="stat-label">Прибыль</div>
+                        <div class="stat-value {{ $profit >= 0 ? 'positive' : 'negative' }}">
+                            {{ number_format($profit, 2, ',', ' ') }} ₸
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Заказ</th>
+                                <th>Дата</th>
+                                <th>Время</th>
+                                <th>Количество</th>
+                                <th>Цена продажи</th>
+                                <th>Средняя себестоимость</th>
+                                <th>Сумма продажи</th>
+                                <th>Себестоимость</th>
+                                <th>Прибыль</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @php
+                                /*
+                                 * Объединяем строки одного заказа,
+                                 * даты, времени и типа операции.
+                                 *
+                                 * Если у товара несколько FIFO-слоёв
+                                 * с разной себестоимостью, они отображаются
+                                 * одной строкой со средневзвешенной себестоимостью.
+                                 */
+                                $displayRows = collect($rows)
+                                    ->groupBy(function ($row) {
+                                        $quantity = (float) ($row['quantity'] ?? 0);
+
+                                        return implode('|', [
+                                            $row['order_id'] ?? '',
+                                            $row['date'] ?? '',
+                                            $row['time'] ?? '',
+                                            $quantity < 0 ? 'return' : 'sale',
+                                        ]);
+                                    })
+                                    ->map(function ($group) {
+                                        $first = $group->first();
+
+                                        $quantity = $group->sum(
+                                            fn ($row) => (float) ($row['quantity'] ?? 0)
+                                        );
+
+                                        $totalQuantity = $group->sum(
+                                            fn ($row) => abs((float) ($row['quantity'] ?? 0))
+                                        );
+
+                                        $salesAmount = $group->sum(
+                                            fn ($row) => (float) ($row['sales_amount'] ?? 0)
+                                        );
+
+                                        $costAmount = $group->sum(
+                                            fn ($row) => (float) ($row['cost_amount'] ?? 0)
+                                        );
+
+                                        $profit = $group->sum(
+                                            fn ($row) => (float) ($row['profit'] ?? 0)
+                                        );
+
+                                        $salePrice = $totalQuantity > 0
+                                            ? $group->sum(function ($row) {
+                                                return abs((float) ($row['quantity'] ?? 0))
+                                                    * (float) ($row['sale_price'] ?? 0);
+                                            }) / $totalQuantity
+                                            : 0;
+
+                                        /*
+                                         * Средняя себестоимость взвешивается
+                                         * по количеству каждой исходной строки.
+                                         */
+                                        $averageCost = $totalQuantity > 0
+                                            ? $group->sum(function ($row) {
+                                                return abs((float) ($row['quantity'] ?? 0))
+                                                    * (float) ($row['average_cost'] ?? 0);
+                                            }) / $totalQuantity
+                                            : 0;
+
+                                        return array_merge($first, [
+                                            'quantity' => $quantity,
+                                            'sale_price' => $salePrice,
+                                            'average_cost' => $averageCost,
+                                            'sales_amount' => $salesAmount,
+                                            'cost_amount' => $costAmount,
+                                            'profit' => $profit,
+                                        ]);
+                                    })
+                                    ->values();
+                            @endphp
+
+                            @forelse($displayRows as $row)
+                                @php
+                                    $isReturn = (float) ($row['quantity'] ?? 0) < 0;
+                                @endphp
+
+                                <tr>
+                                    <td>
+                                        #{{ $row['order_id'] }}
+
+                                        @if($isReturn)
+                                            <span class="return-badge">Возврат</span>
+                                        @endif
+                                    </td>
+
+                                    <td>{{ $row['date'] }}</td>
+                                    <td>{{ $row['time'] }}</td>
+
+                                    <td class="number {{ $isReturn ? 'negative' : '' }}">
+                                        {{ number_format($row['quantity'], 0, ',', ' ') }}
+                                    </td>
+
+                                    <td class="number">
+                                        {{ number_format($row['sale_price'], 2, ',', ' ') }} ₸
+                                    </td>
+
+                                    <td class="number">
+                                        {{ number_format($row['average_cost'], 2, ',', ' ') }} ₸
+                                    </td>
+
+                                    <td class="number {{ ($row['sales_amount'] ?? 0) < 0 ? 'negative' : '' }}">
+                                        {{ number_format($row['sales_amount'], 2, ',', ' ') }} ₸
+                                    </td>
+
+                                    <td class="number {{ ($row['cost_amount'] ?? 0) < 0 ? 'negative' : '' }}">
+                                        {{ number_format($row['cost_amount'], 2, ',', ' ') }} ₸
+                                    </td>
+
+                                    <td class="number {{ ($row['profit'] ?? 0) >= 0 ? 'positive' : 'negative' }}">
+                                        {{ number_format($row['profit'], 2, ',', ' ') }} ₸
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="9" class="empty">
+                                        Продаж за выбранный период нет
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
-
-            <div class="detail-grid">
-
-                <div class="stat">
-
-                    <div class="stat-label">
-                        Продано
-                    </div>
-
-                    <div class="stat-value">
-
-                        {{ number_format(
-                            $totalQuantity,
-                            0,
-                            ',',
-                            ' '
-                        ) }}
-
-                    </div>
-
-                </div>
-
-                <div class="stat">
-
-                    <div class="stat-label">
-                        Сумма продаж
-                    </div>
-
-                    <div class="stat-value">
-
-                        {{ number_format(
-                            $totalSales,
-                            2,
-                            ',',
-                            ' '
-                        ) }} ₸
-
-                    </div>
-
-                </div>
-
-                <div class="stat">
-
-                    <div class="stat-label">
-                        Себестоимость
-                    </div>
-
-                    <div class="stat-value">
-
-                        {{ number_format(
-                            $totalCost,
-                            2,
-                            ',',
-                            ' '
-                        ) }} ₸
-
-                    </div>
-
-                </div>
-
-                <div class="stat">
-
-                    <div class="stat-label">
-                        Средняя цена продажи
-                    </div>
-
-                    <div class="stat-value">
-
-                        {{ number_format(
-                            $averageSalePrice,
-                            2,
-                            ',',
-                            ' '
-                        ) }} ₸
-
-                    </div>
-
-                </div>
-
-                <div class="stat">
-
-                    <div class="stat-label">
-                        Средняя себестоимость
-                    </div>
-
-                    <div class="stat-value">
-
-                        {{ number_format(
-                            $averageCost,
-                            2,
-                            ',',
-                            ' '
-                        ) }} ₸
-
-                    </div>
-
-                </div>
-
-                <div class="stat">
-
-                    <div class="stat-label">
-                        Прибыль
-                    </div>
-
-                    <div
-                        class="stat-value {{ $profit >= 0 ? 'positive' : 'negative' }}">
-
-                        {{ number_format(
-                            $profit,
-                            2,
-                            ',',
-                            ' '
-                        ) }} ₸
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="table-wrapper">
-
-                <table>
-
-                    <thead>
-
-                        <tr>
-
-                            <th>
-                                Заказ
-                            </th>
-
-                            <th>
-                                Дата
-                            </th>
-
-                            <th>
-                                Время
-                            </th>
-
-                            <th>
-                                Количество
-                            </th>
-
-                            <th>
-                                Цена продажи
-                            </th>
-
-                            <th>
-                                Средняя себестоимость
-                            </th>
-
-                            <th>
-                                Сумма продажи
-                            </th>
-
-                            <th>
-                                Себестоимость
-                            </th>
-
-                            <th>
-                                Прибыль
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        @forelse($rows as $row)
-
-                        <tr>
-
-                            <td>
-                                #{{ $row['order_id'] }}
-                            </td>
-
-                            <td>
-                                {{ $row['date'] }}
-                            </td>
-
-                            <td>
-                                {{ $row['time'] }}
-                            </td>
-
-                            <td class="number">
-
-                                {{ number_format(
-                                        $row['quantity'],
-                                        0,
-                                        ',',
-                                        ' '
-                                    ) }}
-
-                            </td>
-
-                            <td class="number">
-
-                                {{ number_format(
-                                        $row['sale_price'],
-                                        2,
-                                        ',',
-                                        ' '
-                                    ) }} ₸
-
-                            </td>
-
-                            <td class="number">
-
-                                {{ number_format(
-                                        $row['average_cost'],
-                                        2,
-                                        ',',
-                                        ' '
-                                    ) }} ₸
-
-                            </td>
-
-                            <td class="number">
-
-                                {{ number_format(
-                                        $row['sales_amount'],
-                                        2,
-                                        ',',
-                                        ' '
-                                    ) }} ₸
-
-                            </td>
-
-                            <td class="number">
-
-                                {{ number_format(
-                                        $row['cost_amount'],
-                                        2,
-                                        ',',
-                                        ' '
-                                    ) }} ₸
-
-                            </td>
-
-                            <td
-                                class="number {{ $row['profit'] >= 0
-                                        ? 'positive'
-                                        : 'negative' }}">
-
-                                {{ number_format(
-                                        $row['profit'],
-                                        2,
-                                        ',',
-                                        ' '
-                                    ) }} ₸
-
-                            </td>
-
-                        </tr>
-
-                        @empty
-
-                        <tr>
-
-                            <td
-                                colspan="9"
-                                class="empty">
-                                Продаж за выбранный период нет
-                            </td>
-
-                        </tr>
-
-                        @endforelse
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
 
         @else
 
-        {{-- ======================================================
-             ALL PRODUCTS
-        ======================================================= --}}
+            {{-- ALL PRODUCTS --}}
 
-        <div class="card">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title">Все товары</h2>
 
-            <div class="card-header">
-
-                <div>
-
-                    <h2 class="card-title">
-                        Все товары
-                    </h2>
-
-                    <div class="card-period">
-
-                        Период:
-                        {{ $from->format('d.m.Y') }}
-                        —
-                        {{ $to->format('d.m.Y') }}
-
+                        <div class="card-period">
+                            Период:
+                            {{ $from->format('d.m.Y') }}
+                            —
+                            {{ $to->format('d.m.Y') }}
+                        </div>
                     </div>
-
                 </div>
 
+                <div id="sales-products-table" class="table-wrapper">
+                    @include(
+                        'admin.analytics.partials.sales-products-table',
+                        [
+                            'products' => $products,
+                            'sortBy' => 'sales',
+                            'sortDirection' => 'desc',
+                        ]
+                    )
+                </div>
             </div>
-
-            {{-- ==================================================
-                 AJAX TABLE
-            ================================================== --}}
-
-            <div
-                id="sales-products-table"
-                class="table-wrapper">
-
-                @include(
-                'admin.analytics.partials.sales-products-table',
-                [
-                'products' => $products,
-                'sortBy' => 'sales',
-                'sortDirection' => 'desc',
-                ]
-                )
-
-            </div>
-
-        </div>
 
         @endif
-
     </div>
 
-    {{-- ==============================================================
-     AJAX SORTING + SEARCH
-================================================================= --}}
+    {{-- AJAX SORTING + SEARCH --}}
 
     @if(!isset($sku) || $sku === null)
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const tableContainer = document.getElementById('sales-products-table');
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-            const tableContainer =
-                document.getElementById('sales-products-table');
-
-            if (!tableContainer) {
-                return;
-            }
-
-            /*
-            |--------------------------------------------------------------------------
-            | СОСТОЯНИЕ СОРТИРОВКИ
-            |--------------------------------------------------------------------------
-            */
-
-            let currentSort = 'sales';
-            let currentDirection = 'desc';
-
-            /*
-            |--------------------------------------------------------------------------
-            | ЭЛЕМЕНТЫ
-            |--------------------------------------------------------------------------
-            */
-
-            const skuInput =
-                document.getElementById('sku');
-
-            const clearSkuButton =
-                document.getElementById('clearSkuSearch');
-
-            const filters =
-                document.getElementById('sales-filters');
-
-            const fromInput =
-                document.getElementById('from');
-
-            const toInput =
-                document.getElementById('to');
-
-            const pointOfSaleInput =
-                document.getElementById('point_of_sale_id');
-
-            /*
-            |--------------------------------------------------------------------------
-            | TIMER ПОИСКА
-            |--------------------------------------------------------------------------
-            */
-
-            let skuSearchTimer = null;
-
-            /*
-            |--------------------------------------------------------------------------
-            | ПОКАЗАТЬ / СКРЫТЬ КРЕСТИК
-            |--------------------------------------------------------------------------
-            */
-
-            function updateClearSkuButton() {
-
-                if (!skuInput || !clearSkuButton) {
+                if (!tableContainer) {
                     return;
                 }
 
-                clearSkuButton.classList.toggle(
-                    'visible',
-                    skuInput.value.trim() !== ''
-                );
-            }
+                let currentSort = 'sales';
+                let currentDirection = 'desc';
 
-            /*
-            |--------------------------------------------------------------------------
-            | AJAX ЗАГРУЗКА ТАБЛИЦЫ
-            |--------------------------------------------------------------------------
-            */
+                const skuInput = document.getElementById('sku');
+                const clearSkuButton = document.getElementById('clearSkuSearch');
+                const filters = document.getElementById('sales-filters');
+                const fromInput = document.getElementById('from');
+                const toInput = document.getElementById('to');
+                const pointOfSaleInput = document.getElementById('point_of_sale_id');
 
-            async function loadProductsTable(
-                sortBy = currentSort,
-                sortDirection = currentDirection
-            ) {
+                let skuSearchTimer = null;
 
-                const params =
-                    new URLSearchParams();
-
-                /*
-                |--------------------------------------------------------------------------
-                | ДАТА ОТ
-                |--------------------------------------------------------------------------
-                */
-
-                if (
-                    fromInput &&
-                    fromInput.value
-                ) {
-
-                    params.set(
-                        'from',
-                        fromInput.value
-                    );
-                }
-
-                /*
-                |--------------------------------------------------------------------------
-                | ДАТА ДО
-                |--------------------------------------------------------------------------
-                */
-
-                if (
-                    toInput &&
-                    toInput.value
-                ) {
-
-                    params.set(
-                        'to',
-                        toInput.value
-                    );
-                }
-
-                /*
-                |--------------------------------------------------------------------------
-                | ТОЧКА ПРОДАЖ
-                |--------------------------------------------------------------------------
-                */
-
-                if (
-                    pointOfSaleInput &&
-                    pointOfSaleInput.value
-                ) {
-
-                    params.set(
-                        'point_of_sale_id',
-                        pointOfSaleInput.value
-                    );
-                }
-
-                /*
-                |--------------------------------------------------------------------------
-                | ПОИСК ПО АРТИКУЛУ
-                |--------------------------------------------------------------------------
-                */
-
-                if (
-                    skuInput &&
-                    skuInput.value.trim() !== ''
-                ) {
-
-                    params.set(
-                        'sku',
-                        skuInput.value.trim()
-                    );
-                }
-
-                /*
-                |--------------------------------------------------------------------------
-                | СОРТИРОВКА
-                |--------------------------------------------------------------------------
-                */
-
-                params.set(
-                    'sort_by',
-                    sortBy
-                );
-
-                params.set(
-                    'sort_direction',
-                    sortDirection
-                );
-
-                /*
-                |--------------------------------------------------------------------------
-                | LOADING
-                |--------------------------------------------------------------------------
-                */
-
-                tableContainer.classList.add(
-                    'ajax-loading'
-                );
-
-                try {
-
-                    const url =
-                        '{{ route("admin.analytics.sales.product.table") }}' +
-                        '?' +
-                        params.toString();
-
-                    const response =
-                        await fetch(
-                            url, {
-                                method: 'GET',
-
-                                headers: {
-                                    'X-Requested-With': 'XMLHttpRequest',
-
-                                    'Accept': 'text/html'
-                                }
-                            }
-                        );
-
-                    if (!response.ok) {
-
-                        throw new Error(
-                            'HTTP ' +
-                            response.status
-                        );
+                function updateClearSkuButton() {
+                    if (!skuInput || !clearSkuButton) {
+                        return;
                     }
 
-                    const html =
-                        await response.text();
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | ЗАМЕНЯЕМ ТАБЛИЦУ
-                    |--------------------------------------------------------------------------
-                    */
-
-                    tableContainer.innerHTML =
-                        html;
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | СОХРАНЯЕМ СОРТИРОВКУ
-                    |--------------------------------------------------------------------------
-                    */
-
-                    currentSort =
-                        sortBy;
-
-                    currentDirection =
-                        sortDirection;
-
-                } catch (error) {
-
-                    console.error(
-                        'AJAX ошибка:',
-                        error
-                    );
-
-                    alert(
-                        'Не удалось обновить таблицу.\n\n' +
-                        error.message
-                    );
-
-                } finally {
-
-                    tableContainer.classList.remove(
-                        'ajax-loading'
+                    clearSkuButton.classList.toggle(
+                        'visible',
+                        skuInput.value.trim() !== ''
                     );
                 }
-            }
 
-            /*
-            |--------------------------------------------------------------------------
-            | ПОИСК ПО АРТИКУЛУ
-            |--------------------------------------------------------------------------
-            |
-            | При вводе SKU таблица обновляется автоматически.
-            | Кнопка "Применить" здесь не нужна.
-            |
-            */
+                async function loadProductsTable(
+                    sortBy = currentSort,
+                    sortDirection = currentDirection
+                ) {
+                    const params = new URLSearchParams();
 
-            if (skuInput) {
+                    if (fromInput && fromInput.value) {
+                        params.set('from', fromInput.value);
+                    }
 
-                skuInput.addEventListener(
-                    'input',
-                    function() {
+                    if (toInput && toInput.value) {
+                        params.set('to', toInput.value);
+                    }
 
+                    if (pointOfSaleInput && pointOfSaleInput.value) {
+                        params.set('point_of_sale_id', pointOfSaleInput.value);
+                    }
+
+                    if (skuInput && skuInput.value.trim() !== '') {
+                        params.set('sku', skuInput.value.trim());
+                    }
+
+                    params.set('sort_by', sortBy);
+                    params.set('sort_direction', sortDirection);
+
+                    tableContainer.classList.add('ajax-loading');
+
+                    try {
+                        const url =
+                            '{{ route("admin.analytics.sales.product.table") }}' +
+                            '?' +
+                            params.toString();
+
+                        const response = await fetch(url, {
+                            method: 'GET',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'text/html'
+                            }
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('HTTP ' + response.status);
+                        }
+
+                        const html = await response.text();
+
+                        tableContainer.innerHTML = html;
+
+                        currentSort = sortBy;
+                        currentDirection = sortDirection;
+
+                    } catch (error) {
+                        console.error('AJAX ошибка:', error);
+
+                        alert(
+                            'Не удалось обновить таблицу.\n\n' +
+                            error.message
+                        );
+                    } finally {
+                        tableContainer.classList.remove('ajax-loading');
+                    }
+                }
+
+                if (skuInput) {
+                    skuInput.addEventListener('input', function () {
                         updateClearSkuButton();
 
-                        clearTimeout(
-                            skuSearchTimer
-                        );
+                        clearTimeout(skuSearchTimer);
 
-                        skuSearchTimer =
-                            setTimeout(
-                                function() {
+                        skuSearchTimer = setTimeout(function () {
+                            loadProductsTable(currentSort, currentDirection);
+                        }, 300);
+                    });
+                }
 
-                                    loadProductsTable(
-                                        currentSort,
-                                        currentDirection
-                                    );
-
-                                },
-                                300
-                            );
-                    }
-                );
-            }
-
-            /*
-            |--------------------------------------------------------------------------
-            | КРЕСТИК — ОЧИСТИТЬ ПОИСК
-            |--------------------------------------------------------------------------
-            */
-
-            if (
-                skuInput &&
-                clearSkuButton
-            ) {
-
-                clearSkuButton.addEventListener(
-                    'click',
-                    function(event) {
-
+                if (skuInput && clearSkuButton) {
+                    clearSkuButton.addEventListener('click', function (event) {
                         event.preventDefault();
                         event.stopPropagation();
 
-                        clearTimeout(
-                            skuSearchTimer
-                        );
-
+                        clearTimeout(skuSearchTimer);
                         skuInput.value = '';
 
                         updateClearSkuButton();
 
-                        loadProductsTable(
-                            currentSort,
-                            currentDirection
-                        );
+                        loadProductsTable(currentSort, currentDirection);
 
                         skuInput.focus();
-                    }
-                );
+                    });
 
-                updateClearSkuButton();
-            }
+                    updateClearSkuButton();
+                }
 
-            /*
-            |--------------------------------------------------------------------------
-            | КНОПКА "ПРИМЕНИТЬ"
-            |--------------------------------------------------------------------------
-            |
-            | ВАЖНО:
-            |
-            | Здесь теперь event.preventDefault().
-            |
-            | Поэтому обычная GET-форма НЕ отправляется.
-            | Страница НЕ перезагружается.
-            | URL НЕ меняется.
-            |
-            | AJAX получает:
-            |
-            | from
-            | to
-            | point_of_sale_id
-            | sku
-            | sort_by
-            | sort_direction
-            |
-            */
-
-            if (filters) {
-
-                filters.addEventListener(
-                    'submit',
-                    function(event) {
-
+                if (filters) {
+                    filters.addEventListener('submit', function (event) {
                         event.preventDefault();
 
-                        /*
-                        |--------------------------------------------------------------------------
-                        | Если пользователь быстро печатал SKU,
-                        | отменяем отложенный поиск.
-                        |--------------------------------------------------------------------------
-                        */
+                        clearTimeout(skuSearchTimer);
 
-                        clearTimeout(
-                            skuSearchTimer
-                        );
+                        loadProductsTable(currentSort, currentDirection);
+                    });
+                }
 
-                        /*
-                        |--------------------------------------------------------------------------
-                        | Применяем период + точку продаж
-                        | через AJAX.
-                        |
-                        | Текущий SKU тоже сохраняется.
-                        |--------------------------------------------------------------------------
-                        */
-
-                        loadProductsTable(
-                            currentSort,
-                            currentDirection
-                        );
-                    }
-                );
-            }
-
-            /*
-            |--------------------------------------------------------------------------
-            | СОРТИРОВКА ПО ЗАГОЛОВКУ
-            |--------------------------------------------------------------------------
-            */
-
-            tableContainer.addEventListener(
-                'click',
-                function(event) {
-
-                    const header =
-                        event.target.closest(
-                            '.sortable'
-                        );
+                tableContainer.addEventListener('click', function (event) {
+                    const header = event.target.closest('.sortable');
 
                     if (!header) {
                         return;
                     }
 
-                    const sortBy =
-                        header.dataset.sort;
+                    const sortBy = header.dataset.sort;
 
                     if (!sortBy) {
                         return;
                     }
 
-                    let direction =
-                        'desc';
+                    let direction = 'desc';
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Если нажали на ту же колонку —
-                    | меняем направление
-                    |--------------------------------------------------------------------------
-                    */
-
-                    if (
-                        currentSort === sortBy
-                    ) {
-
+                    if (currentSort === sortBy) {
                         direction =
-                            currentDirection === 'asc' ?
-                            'desc' :
-                            'asc';
+                            currentDirection === 'asc' ? 'desc' : 'asc';
                     }
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Сортировка AJAX
-                    |--------------------------------------------------------------------------
-                    */
-
-                    loadProductsTable(
-                        sortBy,
-                        direction
-                    );
-                }
-            );
-
-        });
-    </script>
+                    loadProductsTable(sortBy, direction);
+                });
+            });
+        </script>
     @endif
-
 </body>
 
 </html>

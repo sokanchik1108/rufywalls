@@ -10,10 +10,12 @@ class FifoAllocation extends Model
         'stock_movement_id',
         'inventory_layer_id',
         'quantity',
+        'unit_cost',
     ];
 
     protected $casts = [
         'quantity' => 'integer',
+        'unit_cost' => 'decimal:2',
     ];
 
     public function movement()

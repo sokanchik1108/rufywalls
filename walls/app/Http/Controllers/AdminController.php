@@ -370,18 +370,7 @@ class AdminController extends Controller
         return back()->with('success', 'Статус заказа обновлен.');
     }
 
-    public function destroy($id)
-    {
 
-        if (!Auth::check() || !Auth::user()->is_admin) {
-            abort(403, 'Доступ запрещён');
-        }
-
-        $order = Order::findOrFail($id);
-        $order->delete();
-
-        return back()->with('success', 'Заказ удален.');
-    }
 
     public function clearAll()
     {

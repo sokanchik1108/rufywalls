@@ -1,13 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Финансы</title>
 
@@ -31,9 +28,7 @@
             font-family: sans-serif;
         }
 
-        /* =========================
-           NAVIGATION
-        ========================= */
+        /* NAVIGATION */
 
         .analytics-navigation {
             margin-bottom: 18px;
@@ -61,9 +56,7 @@
             color: #111827;
         }
 
-        /* =========================
-           HEADER
-        ========================= */
+        /* HEADER */
 
         .finance-header {
             display: flex;
@@ -78,7 +71,7 @@
             font-size: 25px;
             line-height: 1.2;
             font-weight: 700;
-            letter-spacing: -0.4px;
+            letter-spacing: -.4px;
         }
 
         .finance-title p {
@@ -87,9 +80,7 @@
             font-size: 13px;
         }
 
-        /* =========================
-           FILTER
-        ========================= */
+        /* FILTER */
 
         .filter-box {
             display: flex;
@@ -132,9 +123,7 @@
             border-color: #9ca3af;
         }
 
-        /* =========================
-           DATE FIELDS
-        ========================= */
+        /* DATE FIELDS */
 
         .filter-box > .field:nth-child(1),
         .filter-box > .field:nth-child(2) {
@@ -152,9 +141,7 @@
             max-width: 100%;
             height: 38px;
             min-height: 38px;
-            box-sizing: border-box;
             padding: 0 8px;
-            -webkit-appearance: none;
             appearance: none;
             font-family: sans-serif;
             font-size: 13px;
@@ -165,16 +152,7 @@
         }
 
         .filter-box > .field:nth-child(1) input[type="date"]::-webkit-datetime-edit,
-        .filter-box > .field:nth-child(2) input[type="date"]::-webkit-datetime-edit {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            padding: 0;
-            margin: 0;
-            line-height: normal;
-        }
-
+        .filter-box > .field:nth-child(2) input[type="date"]::-webkit-datetime-edit,
         .filter-box > .field:nth-child(1) input[type="date"]::-webkit-datetime-edit-fields-wrapper,
         .filter-box > .field:nth-child(2) input[type="date"]::-webkit-datetime-edit-fields-wrapper {
             display: flex;
@@ -212,9 +190,7 @@
             min-width: 150px;
         }
 
-        /* =========================
-           BUTTON
-        ========================= */
+        /* BUTTON */
 
         .btn {
             height: 38px;
@@ -236,13 +212,11 @@
             background: #02214b;
         }
 
-        /* =========================
-           FINANCIAL CARDS
-        ========================= */
+        /* FINANCIAL CARDS */
 
         .finance-cards {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(5, minmax(0, 1fr));
             gap: 10px;
             margin-bottom: 12px;
         }
@@ -264,8 +238,8 @@
         .finance-card-value {
             font-size: 21px;
             font-weight: 700;
-            letter-spacing: -0.4px;
-            white-space: nowrap;
+            letter-spacing: -.4px;
+            overflow-wrap: anywhere;
         }
 
         .finance-card-value.blue {
@@ -284,9 +258,7 @@
             border-color: #dfe3e8;
         }
 
-        /* =========================
-           SECTION
-        ========================= */
+        /* SECTION */
 
         .section {
             background: #fff;
@@ -300,12 +272,10 @@
             margin: 0 0 16px;
             font-size: 16px;
             font-weight: 650;
-            letter-spacing: -0.2px;
+            letter-spacing: -.2px;
         }
 
-        /* =========================
-           TABLE
-        ========================= */
+        /* TABLE */
 
         .table-wrapper {
             overflow-x: auto;
@@ -329,6 +299,7 @@
             letter-spacing: .3px;
             padding: 10px 9px;
             border-bottom: 1px solid #eef0f2;
+            white-space: nowrap;
         }
 
         .payment-table td {
@@ -341,6 +312,21 @@
 
         .payment-table tbody tr:last-child td {
             border-bottom: 0;
+        }
+
+        .payment-table tbody tr {
+            transition: background .15s ease;
+        }
+
+        .payment-table tbody tr:hover {
+            background: #fafafa;
+        }
+
+        .payment-table tfoot td {
+            padding: 14px 9px;
+            border-top: 2px solid #e5e7eb;
+            border-bottom: 0;
+            background: #fafafa;
         }
 
         .payment-amount {
@@ -356,17 +342,7 @@
             white-space: nowrap;
         }
 
-        .payment-table tbody tr {
-            transition: background .15s ease;
-        }
-
-        .payment-table tbody tr:hover {
-            background: #fafafa;
-        }
-
-        /* =========================
-           TOTAL
-        ========================= */
+        /* TOTAL */
 
         .payments-total {
             display: flex;
@@ -390,9 +366,7 @@
             white-space: nowrap;
         }
 
-        /* =========================
-           EMPTY
-        ========================= */
+        /* EMPTY */
 
         .empty {
             padding: 28px 10px;
@@ -401,9 +375,7 @@
             font-size: 13px;
         }
 
-        /* =========================
-           ALERTS
-        ========================= */
+        /* ALERTS */
 
         .alert {
             padding: 11px 13px;
@@ -422,13 +394,11 @@
             color: #991b1b;
         }
 
-        /* =========================
-           TABLET
-        ========================= */
+        /* TABLET */
 
         @media (max-width: 1200px) {
             .finance-cards {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(3, minmax(0, 1fr));
             }
 
             .filter-box {
@@ -440,9 +410,7 @@
             }
         }
 
-        /* =========================
-           MOBILE
-        ========================= */
+        /* MOBILE */
 
         @media (max-width: 800px) {
             .finance-page {
@@ -471,16 +439,11 @@
                 font-size: 22px;
             }
 
-            /* FILTER */
-
             .filter-box {
                 width: 100%;
                 max-width: 100%;
-                box-sizing: border-box;
                 display: grid;
-                grid-template-columns:
-                    minmax(0, 1fr)
-                    minmax(0, 1fr);
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
                 gap: 8px;
             }
 
@@ -494,12 +457,9 @@
                 width: 100%;
                 max-width: 100%;
                 min-width: 0;
-                box-sizing: border-box;
                 padding: 0 6px;
                 font-size: 13px;
             }
-
-            /* ОТ / ПО */
 
             .filter-box > .field:nth-child(1),
             .filter-box > .field:nth-child(2) {
@@ -510,15 +470,11 @@
 
             .filter-box > .field:nth-child(1) input[type="date"],
             .filter-box > .field:nth-child(2) input[type="date"] {
-                display: flex;
-                align-items: center;
-                justify-content: center;
                 width: 100%;
                 min-width: 0;
                 max-width: 100%;
                 height: 38px;
                 min-height: 38px;
-                box-sizing: border-box;
                 padding: 0 6px;
                 font-size: 13px;
                 line-height: normal;
@@ -526,35 +482,13 @@
             }
 
             .filter-box > .field:nth-child(1) input[type="date"]::-webkit-datetime-edit,
-            .filter-box > .field:nth-child(2) input[type="date"]::-webkit-datetime-edit {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 100%;
-                padding: 0;
-                margin: 0;
-                line-height: normal;
-            }
-
+            .filter-box > .field:nth-child(2) input[type="date"]::-webkit-datetime-edit,
             .filter-box > .field:nth-child(1) input[type="date"]::-webkit-datetime-edit-fields-wrapper,
             .filter-box > .field:nth-child(2) input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+                height: 100%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                height: 100%;
-                padding: 0;
-                margin: 0;
-                line-height: normal;
-            }
-
-            .filter-box > .field:nth-child(1) input[type="date"]::-webkit-datetime-edit-text,
-            .filter-box > .field:nth-child(1) input[type="date"]::-webkit-datetime-edit-month-field,
-            .filter-box > .field:nth-child(1) input[type="date"]::-webkit-datetime-edit-day-field,
-            .filter-box > .field:nth-child(1) input[type="date"]::-webkit-datetime-edit-year-field,
-            .filter-box > .field:nth-child(2) input[type="date"]::-webkit-datetime-edit-text,
-            .filter-box > .field:nth-child(2) input[type="date"]::-webkit-datetime-edit-month-field,
-            .filter-box > .field:nth-child(2) input[type="date"]::-webkit-datetime-edit-day-field,
-            .filter-box > .field:nth-child(2) input[type="date"]::-webkit-datetime-edit-year-field {
                 padding: 0;
                 margin: 0;
                 line-height: normal;
@@ -568,24 +502,18 @@
                 padding: 0;
             }
 
-            /* POINT OF SALE */
-
             .point-field {
                 grid-column: 1 / -1;
                 min-width: 0;
             }
-
-            /* BUTTON */
 
             .filter-box .btn {
                 grid-column: 1 / -1;
                 width: 100%;
             }
 
-            /* CARDS */
-
             .finance-cards {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: 8px;
             }
 
@@ -607,8 +535,6 @@
                 font-size: 18px;
             }
 
-            /* SECTION */
-
             .section {
                 padding: 15px;
                 border-radius: 11px;
@@ -618,8 +544,6 @@
                 font-size: 15px;
                 margin-bottom: 14px;
             }
-
-            /* TABLE */
 
             .table-wrapper {
                 margin: 0 -15px;
@@ -631,39 +555,22 @@
             }
         }
 
-        /* =========================
-           SMALL MOBILE
-        ========================= */
+        /* SMALL MOBILE */
 
         @media (max-width: 480px) {
             .payment-table {
-                min-width: 0;
-                width: max-content;
-                table-layout: auto;
+                min-width: 680px;
             }
 
             .payment-table th,
             .payment-table td {
-                padding: 8px 17px;
+                padding: 9px 12px;
                 font-size: 12px;
                 white-space: nowrap;
             }
 
-            .payment-table th:first-child,
-            .payment-table td:first-child,
-            .payment-table th:nth-child(2),
-            .payment-table td:nth-child(2),
-            .payment-table th:nth-child(3),
-            .payment-table td:nth-child(3),
-            .payment-table th:nth-child(4),
-            .payment-table td:nth-child(4),
-            .payment-table th:nth-child(5),
-            .payment-table td:nth-child(5) {
-                width: auto;
-            }
-
             .payment-description {
-                max-width: 100%;
+                max-width: 220px;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
@@ -674,31 +581,17 @@
                 -webkit-overflow-scrolling: touch;
             }
 
-            /* DATE — FINAL MOBILE FIX */
-
             .filter-box > .field:nth-child(1) input[type="date"],
             .filter-box > .field:nth-child(2) input[type="date"] {
                 height: 38px;
                 min-height: 38px;
                 padding: 0 6px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
                 line-height: normal;
                 text-align: center;
             }
 
             .filter-box > .field:nth-child(1) input[type="date"]::-webkit-datetime-edit,
-            .filter-box > .field:nth-child(2) input[type="date"]::-webkit-datetime-edit {
-                height: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 0;
-                margin: 0;
-                line-height: normal;
-            }
-
+            .filter-box > .field:nth-child(2) input[type="date"]::-webkit-datetime-edit,
             .filter-box > .field:nth-child(1) input[type="date"]::-webkit-datetime-edit-fields-wrapper,
             .filter-box > .field:nth-child(2) input[type="date"]::-webkit-datetime-edit-fields-wrapper {
                 height: 100%;
@@ -731,9 +624,7 @@
     <div class="finance-header">
 
         <div class="finance-title">
-            <h1>
-                Финансы
-            </h1>
+            <h1>Финансы</h1>
 
             <p>
                 {{ $from->format('d.m.Y') }}
@@ -748,17 +639,10 @@
         </div>
 
         {{-- ФИЛЬТР --}}
-        <form
-            method="GET"
-            class="filter-box"
-        >
+        <form method="GET" class="filter-box">
 
-            {{-- ДАТА ОТ --}}
             <div class="field">
-                <label>
-                    С
-                </label>
-
+                <label>С</label>
                 <input
                     type="date"
                     name="from"
@@ -766,12 +650,8 @@
                 >
             </div>
 
-            {{-- ДАТА ДО --}}
             <div class="field">
-                <label>
-                    По
-                </label>
-
+                <label>По</label>
                 <input
                     type="date"
                     name="to"
@@ -779,36 +659,24 @@
                 >
             </div>
 
-            {{-- ТОЧКА ПРОДАЖ --}}
             <div class="field point-field">
-                <label>
-                    Точка продаж
-                </label>
+                <label>Точка продаж</label>
 
                 <select name="point_of_sale_id">
-
-                    <option value="">
-                        Все точки
-                    </option>
+                    <option value="">Все точки</option>
 
                     @foreach($pointsOfSale as $point)
-
                         <option
                             value="{{ $point->id }}"
                             @selected($selectedPointOfSale == $point->id)
                         >
                             {{ $point->name }}
                         </option>
-
                     @endforeach
-
                 </select>
             </div>
 
-            <button
-                type="submit"
-                class="btn btn-primary"
-            >
+            <button type="submit" class="btn btn-primary">
                 Применить
             </button>
 
@@ -817,7 +685,6 @@
     </div>
 
     {{-- СООБЩЕНИЯ --}}
-
     @if(session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
@@ -830,96 +697,68 @@
         </div>
     @endif
 
-
     {{-- ФИНАНСОВЫЕ ПОКАЗАТЕЛИ --}}
-
     <div class="finance-cards">
 
-        {{-- ВЫРУЧКА --}}
         <div class="finance-card">
-
-            <div class="finance-card-title">
-                Выручка
-            </div>
-
+            <div class="finance-card-title">Выручка</div>
             <div class="finance-card-value blue">
                 {{ number_format($revenue, 0, ',', ' ') }} ₸
             </div>
-
         </div>
 
-
-        {{-- СЕБЕСТОИМОСТЬ --}}
         <div class="finance-card">
-
-            <div class="finance-card-title">
-                Себестоимость товара
-            </div>
-
+            <div class="finance-card-title">Себестоимость товара</div>
             <div class="finance-card-value">
                 {{ number_format($cost, 0, ',', ' ') }} ₸
             </div>
-
         </div>
 
-
-        {{-- ПРИБЫЛЬ С ПРОДАЖ --}}
         <div class="finance-card">
-
-            <div class="finance-card-title">
-                Прибыль с продаж
-            </div>
-
+            <div class="finance-card-title">Прибыль с продаж</div>
             <div class="finance-card-value {{ $salesProfit >= 0 ? 'green' : 'red' }}">
                 {{ number_format($salesProfit, 0, ',', ' ') }} ₸
             </div>
-
         </div>
 
-
-        {{-- ОСТАЛЬНЫЕ РАСХОДЫ --}}
         <div class="finance-card">
-
-            <div class="finance-card-title">
-                Остальные расходы
-            </div>
-
+            <div class="finance-card-title">Остальные расходы</div>
             <div class="finance-card-value red">
                 {{ number_format($otherExpenses, 0, ',', ' ') }} ₸
             </div>
-
         </div>
 
-
-        {{-- ЧИСТАЯ ПРИБЫЛЬ --}}
         <div class="finance-card net-profit">
-
-            <div class="finance-card-title">
-                Чистая прибыль
-            </div>
-
+            <div class="finance-card-title">Чистая прибыль</div>
             <div class="finance-card-value {{ $netProfit >= 0 ? 'green' : 'red' }}">
                 {{ number_format($netProfit, 0, ',', ' ') }} ₸
             </div>
-
         </div>
 
     </div>
 
-
-    {{-- СПОСОБЫ ОПЛАТЫ --}}
-
+    {{-- СПОСОБЫ ОПЛАТЫ: ПРОДАЖИ, ВОЗВРАТЫ, ИТОГО --}}
     <div class="section">
 
-        <h2>
-            Способы оплаты
-        </h2>
+        <h2>Способы оплаты</h2>
 
-        @if(count($paymentMethodTotals) > 0)
+        @php
+            $salesPaymentMethodTotals = $salesPaymentMethodTotals ?? [];
+            $returnPaymentMethodTotals = $returnPaymentMethodTotals ?? [];
 
-            @php
-                $totalPayments = array_sum($paymentMethodTotals);
-            @endphp
+            $allPaymentMethods = array_unique(array_merge(
+                array_keys($salesPaymentMethodTotals),
+                array_keys($returnPaymentMethodTotals)
+            ));
+
+            sort($allPaymentMethods);
+
+            $totalSalesPayments = 0.0;
+            $totalReturnPayments = 0.0;
+            $totalNetPayments = 0.0;
+        @endphp
+
+        @if(count($allPaymentMethods) > 0)
 
             <div class="table-wrapper">
 
@@ -927,41 +766,80 @@
 
                     <thead>
                         <tr>
-                            <th>
-                                Способ оплаты
-                            </th>
-
-                            <th>
-                                Сумма
-                            </th>
+                            <th>Способ оплаты</th>
+                            <th>Сумма продаж</th>
+                            <th>Сумма возвратов</th>
+                            <th>Итого</th>
                         </tr>
                     </thead>
 
                     <tbody>
 
-                        @foreach($paymentMethodTotals as $method => $amount)
+                        @foreach($allPaymentMethods as $method)
 
                             @php
-                                $percentage = $totalPayments > 0
-                                    ? ($amount / $totalPayments) * 100
-                                    : 0;
+                                $salesAmount = (float) (
+                                    $salesPaymentMethodTotals[$method] ?? 0
+                                );
+
+                                $returnAmount = (float) (
+                                    $returnPaymentMethodTotals[$method] ?? 0
+                                );
+
+                                $netAmount = $salesAmount - $returnAmount;
+
+                                $totalSalesPayments += $salesAmount;
+                                $totalReturnPayments += $returnAmount;
+                                $totalNetPayments += $netAmount;
                             @endphp
 
                             <tr>
-
                                 <td>
                                     {{ $method }}
                                 </td>
 
-                                <td class="payment-amount">
-                                    {{ number_format($amount, 0, ',', ' ') }} ₸
+                                <td class="payment-amount" style="color:#15803d;">
+                                    {{ number_format($salesAmount, 0, ',', ' ') }} ₸
                                 </td>
 
+                                <td class="payment-amount" style="color:#dc2626;">
+                                    {{ number_format($returnAmount, 0, ',', ' ') }} ₸
+                                </td>
+
+                                <td
+                                    class="payment-amount"
+                                    style="color:{{ $netAmount >= 0 ? '#15803d' : '#dc2626' }};"
+                                >
+                                    {{ number_format($netAmount, 0, ',', ' ') }} ₸
+                                </td>
                             </tr>
 
                         @endforeach
 
                     </tbody>
+
+                    <tfoot>
+                        <tr>
+                            <td style="font-weight:700;">
+                                Общий итог
+                            </td>
+
+                            <td class="payment-amount" style="color:#15803d;">
+                                {{ number_format($totalSalesPayments, 0, ',', ' ') }} ₸
+                            </td>
+
+                            <td class="payment-amount" style="color:#dc2626;">
+                                {{ number_format($totalReturnPayments, 0, ',', ' ') }} ₸
+                            </td>
+
+                            <td
+                                class="payment-amount"
+                                style="color:{{ $totalNetPayments >= 0 ? '#15803d' : '#dc2626' }};"
+                            >
+                                {{ number_format($totalNetPayments, 0, ',', ' ') }} ₸
+                            </td>
+                        </tr>
+                    </tfoot>
 
                 </table>
 
@@ -970,21 +848,17 @@
         @else
 
             <div class="empty">
-                За выбранный период оплат нет.
+                За выбранный период оплат и возвратов нет.
             </div>
 
         @endif
 
     </div>
 
-
     {{-- ИСХОДЯЩИЕ ПЛАТЕЖИ --}}
-
     <div class="section">
 
-        <h2>
-            Исходящие платежи
-        </h2>
+        <h2>Исходящие платежи</h2>
 
         <div class="table-wrapper">
 
@@ -992,27 +866,11 @@
 
                 <thead>
                     <tr>
-
-                        <th>
-                            Дата
-                        </th>
-
-                        <th>
-                            Вид расхода
-                        </th>
-
-                        <th>
-                            Сумма
-                        </th>
-
-                        <th>
-                            Точка продаж
-                        </th>
-
-                        <th>
-                            Описание
-                        </th>
-
+                        <th>Дата</th>
+                        <th>Вид расхода</th>
+                        <th>Сумма</th>
+                        <th>Точка продаж</th>
+                        <th>Описание</th>
                     </tr>
                 </thead>
 
@@ -1021,7 +879,6 @@
                     @forelse($outgoingPayments as $payment)
 
                         <tr>
-
                             <td>
                                 {{ $payment->payment_date->format('d.m.Y') }}
                             </td>
@@ -1041,21 +898,16 @@
                             <td class="payment-description">
                                 {{ $payment->description ?: '—' }}
                             </td>
-
                         </tr>
 
                     @empty
 
                         <tr>
-
                             <td colspan="5">
-
                                 <div class="empty">
                                     За выбранный период исходящих платежей нет.
                                 </div>
-
                             </td>
-
                         </tr>
 
                     @endforelse
@@ -1066,9 +918,7 @@
 
         </div>
 
-
         {{-- ИТОГО ПЛАТЕЖЕЙ --}}
-
         <div class="payments-total">
 
             <div class="payments-total-label">
@@ -1087,4 +937,3 @@
 
 </body>
 </html>
-
