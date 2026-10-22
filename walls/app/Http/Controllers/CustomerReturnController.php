@@ -39,10 +39,10 @@ class CustomerReturnController extends Controller
                 ->get();
 
             $allocations = $movements
-                ->flatMap(fn($movement) => $movement->allocations)
+                ->flatMap(fn ($movement) => $movement->allocations)
                 ->filter(
-                    fn($allocation) =>
-                    $allocation->layer && $allocation->layer->batch
+                    fn ($allocation) =>
+                        $allocation->layer && $allocation->layer->batch
                 )
                 ->sortByDesc('id')
                 ->values();
@@ -111,14 +111,46 @@ class CustomerReturnController extends Controller
 
         $paymentMethods = PaymentMethod::orderBy('name')->get();
 
+        $orderItemsTotal = (float) $order->items->sum(
+            fn ($item) => (float) $item->price * (int) $item->quantity
+        );
+
+        $returnState = $this->getOrderReturnState($order);
+
+        $orderNetTotal = max(
+            0,
+            round($orderItemsTotal - (float) ($order->discount ?? 0), 2)
+        );
+
+        $fullOrderRefundAmount = max(
+            0,
+            round(
+                $orderNetTotal - $returnState['previous_refund_total'],
+                2
+            )
+        );
+
         return view(
             'admin.orders.returns.create',
-            compact('order', 'rows', 'paymentMethods')
+            compact(
+                'order',
+                'rows',
+                'paymentMethods',
+                'fullOrderRefundAmount'
+            )
         );
     }
 
     /**
      * Создание возврата товаров и денег.
+     *
+     * Частичный возврат:
+     * возвращаем полную стоимость возвращаемых товаров,
+     * но не больше оставшейся суммы, доступной к возврату.
+     *
+     * Последний возврат:
+     * возвращаем остаток суммы заказа после скидки
+     * за вычетом ранее возвращённых денег.
      */
     public function store(Request $request, Order $order)
     {
@@ -159,17 +191,17 @@ class CustomerReturnController extends Controller
             'payments.*.payment_method_id.required' => 'Выбери способ оплаты.',
             'payments.*.payment_method_id.exists' => 'Способ оплаты не существует.',
             'payments.*.payment_method_id.distinct' =>
-            'Один способ оплаты нельзя добавлять несколько раз.',
+                'Один способ оплаты нельзя добавлять несколько раз.',
             'payments.*.amount.required' => 'Укажи сумму возврата.',
             'payments.*.amount.numeric' => 'Сумма должна быть числом.',
             'payments.*.amount.gt' => 'Сумма должна быть больше нуля.',
         ]);
 
         $requestedItems = collect($validated['items'])
-            ->mapWithKeys(fn($quantity, $id) => [
+            ->mapWithKeys(fn ($quantity, $id) => [
                 (int) $id => (int) ($quantity ?? 0),
             ])
-            ->filter(fn($quantity) => $quantity > 0);
+            ->filter(fn ($quantity) => $quantity > 0);
 
         if ($requestedItems->isEmpty()) {
             throw ValidationException::withMessages([
@@ -189,6 +221,7 @@ class CustomerReturnController extends Controller
             ->keyBy('id');
 
         $itemsTotal = 0;
+        $requestedByOrderItem = [];
 
         foreach ($requestedItems as $allocationId => $quantity) {
             $allocation = $allocationsForCalculation->get($allocationId);
@@ -199,7 +232,9 @@ class CustomerReturnController extends Controller
                 ]);
             }
 
-            $orderItem = $orderItems->get($allocation->movement->source_id);
+            $orderItem = $orderItems->get(
+                $allocation->movement->source_id
+            );
 
             if (!$orderItem) {
                 throw ValidationException::withMessages([
@@ -208,26 +243,53 @@ class CustomerReturnController extends Controller
             }
 
             $itemsTotal += (float) $orderItem->price * $quantity;
+
+            $orderItemId = (int) $orderItem->id;
+
+            $requestedByOrderItem[$orderItemId] =
+                ($requestedByOrderItem[$orderItemId] ?? 0) + $quantity;
         }
 
         $originalItemsTotal = (float) $orderItems->sum(
-            fn($item) => (float) $item->price * (int) $item->quantity
+            fn ($item) => (float) $item->price * (int) $item->quantity
         );
 
-        $discount = (float) ($order->discount ?? 0);
-
-        $discountRatio = $originalItemsTotal > 0
-            ? min(1, max(0, $discount / $originalItemsTotal))
-            : 0;
-
-        $expectedRefund = round(
-            $itemsTotal * (1 - $discountRatio),
-            2
+        $orderNetTotal = max(
+            0,
+            round($originalItemsTotal - (float) ($order->discount ?? 0), 2)
         );
+
+        $returnState = $this->getOrderReturnState($order);
+
+        $completesOrder = $this->doesReturnCompleteOrder(
+            $orderItems,
+            $returnState['returned_quantities'],
+            $requestedByOrderItem
+        );
+
+        $remainingRefundable = max(
+            0,
+            round(
+                $orderNetTotal - $returnState['previous_refund_total'],
+                2
+            )
+        );
+
+        $expectedRefund = $completesOrder
+            ? $remainingRefundable
+            : min(round($itemsTotal, 2), $remainingRefundable);
+
+        $expectedRefund = round($expectedRefund, 2);
+
+        if ($expectedRefund <= 0) {
+            throw ValidationException::withMessages([
+                'payments' => 'По этому заказу больше нет суммы, доступной к возврату.',
+            ]);
+        }
 
         $paymentsTotal = round(
             collect($validated['payments'])
-                ->sum(fn($payment) => (float) $payment['amount']),
+                ->sum(fn ($payment) => (float) $payment['amount']),
             2
         );
 
@@ -301,7 +363,7 @@ class CustomerReturnController extends Controller
             foreach ($groups as &$groupAllocations) {
                 usort(
                     $groupAllocations,
-                    fn($a, $b) => $b->id <=> $a->id
+                    fn ($a, $b) => $b->id <=> $a->id
                 );
             }
             unset($groupAllocations);
@@ -314,7 +376,7 @@ class CustomerReturnController extends Controller
 
                 if (!$selectedAllocation) {
                     throw ValidationException::withMessages([
-                        'items' => 'позиция не относится к этому заказу.',
+                        'items' => 'Позиция не относится к этому заказу.',
                     ]);
                 }
 
@@ -449,32 +511,59 @@ class CustomerReturnController extends Controller
             }
 
             $actualItemsTotal = 0;
+            $actualRequestedByOrderItem = [];
 
             foreach ($prepared as $item) {
+                $orderItemId = (int) $item['order_item']->id;
+                $quantity = (int) $item['quantity'];
+
                 $actualItemsTotal +=
-                    (float) $item['order_item']->price *
-                    (int) $item['quantity'];
+                    (float) $item['order_item']->price * $quantity;
+
+                $actualRequestedByOrderItem[$orderItemId] =
+                    ($actualRequestedByOrderItem[$orderItemId] ?? 0) + $quantity;
             }
 
             $originalItemsTotal = (float) $orderItems->sum(
-                fn($item) => (float) $item->price * (int) $item->quantity
+                fn ($item) => (float) $item->price * (int) $item->quantity
             );
 
-            $discountRatio = $originalItemsTotal > 0
-                ? min(
-                    1,
-                    max(0, (float) ($lockedOrder->discount ?? 0) / $originalItemsTotal)
+            $orderNetTotal = max(
+                0,
+                round(
+                    $originalItemsTotal - (float) ($lockedOrder->discount ?? 0),
+                    2
                 )
-                : 0;
-
-            $actualRefund = round(
-                $actualItemsTotal * (1 - $discountRatio),
-                2
             );
 
-            if (abs($actualRefund - $expectedRefund) > 0.01) {
+            $returnState = $this->getOrderReturnState($lockedOrder);
+
+            $completesOrder = $this->doesReturnCompleteOrder(
+                $orderItems,
+                $returnState['returned_quantities'],
+                $actualRequestedByOrderItem
+            );
+
+            $remainingRefundable = max(
+                0,
+                round(
+                    $orderNetTotal - $returnState['previous_refund_total'],
+                    2
+                )
+            );
+
+            $actualRefund = $completesOrder
+                ? $remainingRefundable
+                : min(round($actualItemsTotal, 2), $remainingRefundable);
+
+            $actualRefund = round($actualRefund, 2);
+
+            if (
+                $actualRefund <= 0 ||
+                abs($actualRefund - $expectedRefund) > 0.01
+            ) {
                 throw ValidationException::withMessages([
-                    'items' => 'Сумма возврата изменилась. Обнови страницу.',
+                    'items' => 'Сумма возврата изменилась. Обнови страницу и проверь сумму.',
                 ]);
             }
 
@@ -558,7 +647,6 @@ class CustomerReturnController extends Controller
     /**
      * Просмотр возврата и подготовка данных для редактирования.
      */
-
     public function show(CustomerReturn $customerReturn)
     {
         $customerReturn->load([
@@ -573,10 +661,14 @@ class CustomerReturnController extends Controller
 
         $grouped = [];
 
-        // 1. Формируем строки возврата, которые уже существуют.
         foreach ($customerReturn->items as $item) {
             $allocation = FifoAllocation::query()
-                ->with(['movement', 'layer.batch', 'layer.warehouse', 'layer.variant.product'])
+                ->with([
+                    'movement',
+                    'layer.batch',
+                    'layer.warehouse',
+                    'layer.variant.product',
+                ])
                 ->find($item->original_fifo_allocation_id);
 
             $layer = $allocation?->layer;
@@ -613,7 +705,6 @@ class CustomerReturnController extends Controller
             }
         }
 
-        // 2. Находим все строки заказа, затронутые этим возвратом.
         $orderItemIds = $customerReturn->items
             ->pluck('order_item_id')
             ->filter()
@@ -621,7 +712,6 @@ class CustomerReturnController extends Controller
             ->values();
 
         if ($orderItemIds->isNotEmpty()) {
-            // Получаем все FIFO-списания продажи, включая слои с другой себестоимостью.
             $allocations = FifoAllocation::query()
                 ->with([
                     'movement',
@@ -640,7 +730,6 @@ class CustomerReturnController extends Controller
                 ->unique()
                 ->values();
 
-            // Учитываем возвраты из других документов, но не текущий возврат.
             $otherReturned = collect();
 
             if ($allocationIds->isNotEmpty()) {
@@ -655,7 +744,6 @@ class CustomerReturnController extends Controller
                     ->keyBy('original_fifo_allocation_id');
             }
 
-            // 3. Суммируем доступное количество по всей партии и складу.
             foreach ($allocations as $allocation) {
                 $layer = $allocation->layer;
                 $movement = $allocation->movement;
@@ -676,7 +764,6 @@ class CustomerReturnController extends Controller
                     $warehouseId,
                 ]);
 
-                // Показываем только группы, которые уже есть в текущем возврате.
                 if (!isset($grouped[$key])) {
                     continue;
                 }
@@ -714,9 +801,9 @@ class CustomerReturnController extends Controller
         );
     }
 
-
-
-
+    /**
+     * Обновление существующего возврата.
+     */
     public function update(Request $request, CustomerReturn $customerReturn)
     {
         $paymentsInput = collect($request->input('payments', []))
@@ -788,10 +875,6 @@ class CustomerReturnController extends Controller
                     ]);
                 };
 
-                /*
-             * Группы существующих позиций возврата.
-             * Ключ соответствует ключу в show() и Blade.
-             */
                 $groups = [];
 
                 foreach ($returnItems as $item) {
@@ -834,9 +917,6 @@ class CustomerReturnController extends Controller
                     ]);
                 }
 
-                /*
-             * Проверяем переданные количества групп.
-             */
                 $requested = [];
 
                 foreach ($validated['items'] as $submitted) {
@@ -869,9 +949,6 @@ class CustomerReturnController extends Controller
                     ]);
                 }
 
-                /*
-             * Исходные позиции заказа.
-             */
                 $orderItems = OrderItem::query()
                     ->where('order_id', $order->id)
                     ->get()
@@ -883,9 +960,6 @@ class CustomerReturnController extends Controller
                     ]);
                 }
 
-                /*
-             * Получаем FIFO-списания исходной продажи.
-             */
                 $saleMovements = StockMovement::query()
                     ->where('type', 'sale')
                     ->whereIn('source_id', $orderItems->keys())
@@ -935,9 +1009,6 @@ class CustomerReturnController extends Controller
                     }
                 }
 
-                /*
-             * Количество, возвращённое в других возвратах.
-             */
                 $allocationIds = $allAllocations->keys()->all();
 
                 $otherReturned = collect();
@@ -956,12 +1027,9 @@ class CustomerReturnController extends Controller
                         );
                 }
 
-                /*
-             * Распределяем количество по FIFO.
-             * Себестоимость не используется для группировки.
-             */
                 $desiredByAllocation = [];
                 $grossReturnTotal = 0;
+                $requestedByOrderItem = [];
 
                 foreach ($groups as $key => $group) {
                     $requestedQuantity = $requested[$key];
@@ -1041,22 +1109,25 @@ class CustomerReturnController extends Controller
 
                     $grossReturnTotal +=
                         (float) $orderItem->price * $requestedQuantity;
+
+                    $orderItemId = (int) $group['order_item_id'];
+
+                    $requestedByOrderItem[$orderItemId] =
+                        ($requestedByOrderItem[$orderItemId] ?? 0)
+                        + $requestedQuantity;
                 }
 
-                /*
-             * Проверяем платежи: должны передаваться существующие ID.
-             */
                 $submittedPayments = $validated['payments'];
 
                 $existingPaymentIds = $returnPayments
                     ->pluck('id')
-                    ->map(fn($id) => (int) $id)
+                    ->map(fn ($id) => (int) $id)
                     ->sort()
                     ->values()
                     ->all();
 
                 $submittedPaymentIds = collect(array_keys($submittedPayments))
-                    ->map(fn($id) => (int) $id)
+                    ->map(fn ($id) => (int) $id)
                     ->sort()
                     ->values()
                     ->all();
@@ -1069,30 +1140,55 @@ class CustomerReturnController extends Controller
 
                 $paymentTotal = round(
                     collect($submittedPayments)->sum(
-                        fn($payment) => (float) $payment['amount']
+                        fn ($payment) => (float) $payment['amount']
                     ),
                     2
                 );
 
-                /*
-             * Скидка здесь трактуется как сумма, а не процент.
-             * Формула соответствует варианту store(), описанному ранее.
-             */
                 $originalItemsTotal = (float) $orderItems->sum(
-                    fn($item) =>
-                    (float) $item->price * (int) $item->quantity
+                    fn ($item) =>
+                        (float) $item->price * (int) $item->quantity
                 );
 
-                $discountAmount = (float) ($order->discount ?? 0);
-
-                $discountRatio = $originalItemsTotal > 0
-                    ? min(1, max(0, $discountAmount / $originalItemsTotal))
-                    : 0;
-
-                $expectedRefund = round(
-                    $grossReturnTotal * (1 - $discountRatio),
-                    2
+                $orderNetTotal = max(
+                    0,
+                    round(
+                        $originalItemsTotal - (float) ($order->discount ?? 0),
+                        2
+                    )
                 );
+
+                // Исключаем редактируемый возврат из подсчёта предыдущих возвратов.
+                $returnState = $this->getOrderReturnState(
+                    $order,
+                    (int) $return->id
+                );
+
+                $completesOrder = $this->doesReturnCompleteOrder(
+                    $orderItems,
+                    $returnState['returned_quantities'],
+                    $requestedByOrderItem
+                );
+
+                $remainingRefundable = max(
+                    0,
+                    round(
+                        $orderNetTotal - $returnState['previous_refund_total'],
+                        2
+                    )
+                );
+
+                $expectedRefund = $completesOrder
+                    ? $remainingRefundable
+                    : min(round($grossReturnTotal, 2), $remainingRefundable);
+
+                $expectedRefund = round($expectedRefund, 2);
+
+                if ($expectedRefund <= 0) {
+                    throw ValidationException::withMessages([
+                        'payments' => 'По этому заказу больше нет суммы, доступной к возврату.',
+                    ]);
+                }
 
                 if (abs($paymentTotal - $expectedRefund) > 0.01) {
                     throw ValidationException::withMessages([
@@ -1104,9 +1200,6 @@ class CustomerReturnController extends Controller
                     ]);
                 }
 
-                /*
-             * Индексируем текущие строки по исходному FIFO-списанию.
-             */
                 $existingByAllocation = [];
 
                 foreach ($returnItems as $item) {
@@ -1332,9 +1425,6 @@ class CustomerReturnController extends Controller
                     ]);
                 }
 
-                /*
-             * Обновляем существующие платежи.
-             */
                 foreach ($returnPayments as $payment) {
                     $data = $submittedPayments[$payment->id]
                         ?? $submittedPayments[(string) $payment->id]
@@ -1369,12 +1459,6 @@ class CustomerReturnController extends Controller
                 ->with('error', 'Не удалось обновить возврат: ' . $e->getMessage());
         }
     }
-
-
-
-    /**
-     * Удаление возврата с отменой складских операций.
-     */
 
     /**
      * Удаление возврата с отменой складских операций.
@@ -1435,7 +1519,6 @@ class CustomerReturnController extends Controller
                         );
                     }
 
-                    // Проверяем, использовался ли слой возврата в последующих продажах.
                     $allocatedFromLayer = (int) FifoAllocation::query()
                         ->where('inventory_layer_id', $layer->id)
                         ->sum('quantity');
@@ -1459,7 +1542,6 @@ class CustomerReturnController extends Controller
                         );
                     }
 
-                    // Убираем количество из той же партии и того же склада.
                     $fifoService->changeWarehouseQuantity(
                         $batch,
                         (int) $layer->warehouse_id,
@@ -1493,6 +1575,81 @@ class CustomerReturnController extends Controller
         }
     }
 
+    /**
+     * Возвращает сумму денег, выплаченную по другим возвратам заказа,
+     * и количество товара, возвращённое по другим возвратам.
+     *
+     * $excludeReturnId используется при редактировании возврата,
+     * чтобы не учитывать его старые платежи и количества.
+     */
+    private function getOrderReturnState(
+        Order $order,
+        ?int $excludeReturnId = null
+    ): array {
+        $returnsQuery = CustomerReturn::query()
+            ->where('order_id', $order->id);
+
+        if ($excludeReturnId !== null) {
+            $returnsQuery->where('id', '!=', $excludeReturnId);
+        }
+
+        $returnIds = $returnsQuery->pluck('id');
+
+        if ($returnIds->isEmpty()) {
+            return [
+                'previous_refund_total' => 0.0,
+                'returned_quantities' => [],
+            ];
+        }
+
+        $previousRefundTotal = (float) CustomerReturnPayment::query()
+            ->whereIn('customer_return_id', $returnIds)
+            ->sum('amount');
+
+        $returnedQuantities = CustomerReturnItem::query()
+            ->whereIn('customer_return_id', $returnIds)
+            ->selectRaw('order_item_id, SUM(quantity) as total_quantity')
+            ->groupBy('order_item_id')
+            ->pluck('total_quantity', 'order_item_id')
+            ->map(fn ($quantity) => (int) $quantity)
+            ->all();
+
+        return [
+            'previous_refund_total' => round($previousRefundTotal, 2),
+            'returned_quantities' => $returnedQuantities,
+        ];
+    }
+
+    /**
+     * Проверяет, возвращены ли все товары заказа с учётом
+     * предыдущих возвратов и количества в текущем возврате.
+     */
+    private function doesReturnCompleteOrder(
+        $orderItems,
+        array $previousReturnedQuantities,
+        array $requestedByOrderItem
+    ): bool {
+        foreach ($orderItems as $orderItem) {
+            $orderItemId = (int) $orderItem->id;
+
+            $alreadyReturned = (int) (
+                $previousReturnedQuantities[$orderItemId] ?? 0
+            );
+
+            $requestedNow = (int) (
+                $requestedByOrderItem[$orderItemId] ?? 0
+            );
+
+            $totalReturned = $alreadyReturned + $requestedNow;
+            $orderedQuantity = (int) $orderItem->quantity;
+
+            if ($totalReturned < $orderedQuantity) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     /**
      * Ключ группы FIFO: исходная позиция + вариант + партия + склад.
@@ -1535,9 +1692,9 @@ class CustomerReturnController extends Controller
         }
 
         throw new RuntimeException(
-            'Не удалось определить историческую себестоимость возврата. ' .
-                'FIFO allocation #' . $allocation->id .
-                ', слой #' . $layer->id . '.'
+            'Не удалось определить историческую себестоимость возврата. '
+                . 'FIFO allocation #' . $allocation->id
+                . ', слой #' . $layer->id . '.'
         );
     }
 }

@@ -1,3 +1,4 @@
+```blade
 @extends('layouts.app')
 
 @section('title', 'Возврат №' . $customerReturn->id)
@@ -16,19 +17,93 @@
 
     $customerName = $order?->name ?? '—';
     $customerPhone = $order?->phone;
+    $orderItems = $order?->items ?? collect();
 
-    $paymentsTotal = (float) $customerReturn->payments->sum('amount');
-
-    $returnDate = $customerReturn->return_date
-        ? \Carbon\Carbon::parse($customerReturn->return_date)->format('Y-m-d\TH:i')
-        : $customerReturn->created_at?->format('Y-m-d\TH:i');
+    $orderDiscount = max(0, (float) ($order?->discount ?? 0));
 
     $itemsTotal = 0;
 
     foreach ($rows as $row) {
-        $itemsTotal += (float) ($row['item']->orderItem?->price ?? 0)
-            * (int) ($row['quantity'] ?? 0);
+        $orderItem = $row['item']->orderItem;
+        $quantity = max(0, (int) ($row['quantity'] ?? 0));
+        $price = max(0, (float) ($orderItem?->price ?? 0));
+
+        $itemsTotal += $price * $quantity;
     }
+
+    $itemsTotal = round($itemsTotal, 2);
+
+    // Сумма платежей, сохранённых именно в текущем документе.
+    $paymentsTotal = round(
+        (float) $customerReturn->payments->sum('amount'),
+        2
+    );
+
+    // Определяем количество, возвращённое в других документах.
+    $otherReturns = \App\Models\CustomerReturnItem::query()
+        ->whereHas('customerReturn', function ($query) use ($customerReturn) {
+            $query->where('order_id', $customerReturn->order_id)
+                ->where('id', '!=', $customerReturn->id);
+        })
+        ->selectRaw('order_item_id, SUM(quantity) as returned_quantity')
+        ->groupBy('order_item_id')
+        ->get()
+        ->keyBy('order_item_id');
+
+    $orderQuantities = [];
+    $previouslyReturned = [];
+    $currentQuantities = [];
+
+    foreach ($orderItems as $orderItem) {
+        $key = (string) $orderItem->id;
+
+        $orderQuantities[$key] = max(0, (int) $orderItem->quantity);
+
+        $previouslyReturned[$key] = max(
+            0,
+            (int) ($otherReturns->get($orderItem->id)?->returned_quantity ?? 0)
+        );
+    }
+
+    foreach ($rows as $row) {
+        $orderItem = $row['item']->orderItem;
+
+        if (!$orderItem) {
+            continue;
+        }
+
+        $key = (string) $orderItem->id;
+
+        $currentQuantities[$key] = ($currentQuantities[$key] ?? 0)
+            + max(0, (int) ($row['quantity'] ?? 0));
+    }
+
+    $isFullReturn = $orderItems->isNotEmpty();
+
+    foreach ($orderItems as $orderItem) {
+        $key = (string) $orderItem->id;
+
+        $returnedTotal = ($previouslyReturned[$key] ?? 0)
+            + ($currentQuantities[$key] ?? 0);
+
+        if ($returnedTotal < max(0, (int) $orderItem->quantity)) {
+            $isFullReturn = false;
+            break;
+        }
+    }
+
+    // Для первоначального отображения берём уже сохранённые платежи.
+    // Не пересчитываем старый документ по текущему состоянию других возвратов.
+    $discountToDeduct = min(
+        $orderDiscount,
+        max(0, $itemsTotal - $paymentsTotal)
+    );
+
+    $returnTotal = $paymentsTotal;
+
+    $returnDate = $customerReturn->return_date
+        ? \Carbon\Carbon::parse($customerReturn->return_date)->format('Y-m-d\TH:i')
+        : $customerReturn->created_at?->format('Y-m-d\TH:i');
 @endphp
 
 <style>
@@ -45,15 +120,12 @@
     font-size: 14px;
 }
 .return-page * { box-sizing: border-box; }
-
 .return-page .return-header {
     display: flex;
     align-items: center;
     gap: 10px;
     margin-bottom: 16px;
-    min-width: 0;
 }
-
 .return-page .back-button {
     display: inline-flex;
     align-items: center;
@@ -67,26 +139,18 @@
     color: var(--text);
     text-decoration: none;
 }
-
 .return-page .page-title {
     margin: 0;
     font-size: 20px;
     line-height: 1.3;
     font-weight: 650;
-    min-width: 0;
     overflow-wrap: anywhere;
 }
-
-.return-page .header-spacer {
-    flex: 1;
-    min-width: 4px;
-}
-
+.return-page .header-spacer { flex: 1; }
 .return-page .btn-delete {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
     min-height: 36px;
     padding: 8px 12px;
     border: 1px solid #dc3545;
@@ -99,12 +163,7 @@
     cursor: pointer;
     white-space: nowrap;
 }
-
-.return-page .btn-delete:hover {
-    background: #dc3545;
-    color: #fff;
-}
-
+.return-page .btn-delete:hover { background: #dc3545; color: #fff; }
 .return-page .info-grid {
     display: grid;
     grid-template-columns: 1.2fr 1fr 1fr;
@@ -113,24 +172,19 @@
     border-block: 1px solid var(--line);
     margin-bottom: 18px;
 }
-
 .return-page .info-item { min-width: 0; }
-
 .return-page .info-label {
     display: block;
     margin-bottom: 3px;
     color: var(--muted);
     font-size: 11px;
 }
-
 .return-page .info-value {
-    color: var(--text);
     font-size: 12px;
     line-height: 1.4;
     font-weight: 600;
     overflow-wrap: anywhere;
 }
-
 .return-page .customer-phone {
     display: block;
     margin-top: 2px;
@@ -138,7 +192,6 @@
     font-size: 10px;
     font-weight: 400;
 }
-
 .return-page .notice {
     padding: 10px 12px;
     margin-bottom: 12px;
@@ -146,26 +199,10 @@
     border-radius: 7px;
     font-size: 12px;
     line-height: 1.5;
-    overflow-wrap: anywhere;
 }
-
-.return-page .notice-success {
-    color: #16834a;
-    background: #edf9f1;
-    border-color: #ccebd6;
-}
-
-.return-page .notice-error {
-    color: #c53030;
-    background: #fff1f1;
-    border-color: #f5cccc;
-}
-
-.return-page .notice ul {
-    margin: 5px 0 0;
-    padding-left: 18px;
-}
-
+.return-page .notice-success { color: #16834a; background: #edf9f1; border-color: #ccebd6; }
+.return-page .notice-error { color: #c53030; background: #fff1f1; border-color: #f5cccc; }
+.return-page .notice ul { margin: 5px 0 0; padding-left: 18px; }
 .return-page .section-heading {
     display: flex;
     align-items: center;
@@ -178,13 +215,7 @@
     letter-spacing: .4px;
     text-transform: uppercase;
 }
-
-.return-page .product-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
+.return-page .product-list { display: flex; flex-direction: column; gap: 8px; }
 .return-page .product-card {
     min-width: 0;
     padding: 10px 12px;
@@ -192,7 +223,6 @@
     border-radius: 8px;
     background: #fff;
 }
-
 .return-page .product-top {
     display: grid;
     grid-template-columns: minmax(0,1fr) auto;
@@ -200,43 +230,11 @@
     gap: 8px;
     margin-bottom: 9px;
 }
-
-.return-page .product-sku {
-    min-width: 0;
-    font-size: 13px;
-    line-height: 1.4;
-    font-weight: 650;
-    overflow-wrap: anywhere;
-}
-
-.return-page .product-name {
-    margin-top: 3px;
-    color: var(--muted);
-    font-size: 11px;
-    font-weight: 400;
-}
-
-.return-page .product-meta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 4px;
-    min-width: 0;
-}
-
-.return-page .product-warehouse {
-    color: var(--muted);
-    font-size: 12px;
-    text-align: right;
-}
-
-.return-page .product-available {
-    color: #16834a;
-    font-size: 11px;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
+.return-page .product-sku { min-width: 0; font-size: 13px; line-height: 1.4; font-weight: 650; overflow-wrap: anywhere; }
+.return-page .product-name { margin-top: 3px; color: var(--muted); font-size: 11px; font-weight: 400; }
+.return-page .product-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.return-page .product-warehouse { color: var(--muted); font-size: 12px; text-align: right; }
+.return-page .product-available { color: #16834a; font-size: 11px; font-weight: 600; white-space: nowrap; }
 .return-page .product-bottom {
     display: grid;
     grid-template-columns: minmax(0,1fr) 75px minmax(0,1fr);
@@ -245,12 +243,7 @@
     padding-top: 8px;
     border-top: 1px solid #f0f2f5;
 }
-
-.return-page .price-note {
-    color: var(--muted);
-    font-size: 11px;
-}
-
+.return-page .price-note { color: var(--muted); font-size: 11px; }
 .return-page .qty-input {
     width: 75px;
     height: 32px;
@@ -268,30 +261,11 @@
     appearance: textfield;
     -moz-appearance: textfield;
 }
-
 .return-page .qty-input::-webkit-inner-spin-button,
-.return-page .qty-input::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-.return-page .qty-input:focus {
-    border-bottom: 2px solid var(--blue);
-}
-
-.return-page .qty-view {
-    text-align: center;
-    font-weight: 650;
-}
-
-.return-page .line-total {
-    min-width: 0;
-    text-align: right;
-    font-size: 13px;
-    font-weight: 650;
-    white-space: nowrap;
-}
-
+.return-page .qty-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.return-page .qty-input:focus { border-bottom: 2px solid var(--blue); }
+.return-page .qty-view { text-align: center; font-weight: 650; }
+.return-page .line-total { min-width: 0; text-align: right; font-size: 13px; font-weight: 650; white-space: nowrap; }
 .return-page .total-panel {
     display: flex;
     align-items: center;
@@ -303,20 +277,9 @@
     border-radius: 8px;
     background: var(--soft);
 }
-
-.return-page .total-label {
-    color: var(--muted);
-    font-size: 12px;
-}
-
-.return-page .total-value {
-    font-size: 21px;
-    font-weight: 700;
-    white-space: nowrap;
-}
-
+.return-page .total-label { color: var(--muted); font-size: 12px; }
+.return-page .total-value { font-size: 21px; font-weight: 700; white-space: nowrap; }
 .return-page .section { margin-top: 21px; }
-
 .return-page .form-control,
 .return-page .form-select {
     width: 100%;
@@ -331,61 +294,19 @@
     font-size: 12px;
     box-shadow: none;
 }
-
 .return-page .form-control:focus,
-.return-page .form-select:focus {
-    border-color: var(--blue);
-    outline: none;
-}
-
-.return-page .payment-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.return-page .payment-row {
-    display: grid;
-    grid-template-columns: minmax(0,1fr) minmax(0,1fr);
-    gap: 8px;
-}
-
-.return-page .payment-summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-top: 12px;
-    color: var(--muted);
-    font-size: 12px;
-}
-
-.return-page .payment-summary strong {
-    color: var(--text);
-    font-size: 13px;
-}
-
+.return-page .form-select:focus { border-color: var(--blue); outline: none; }
+.return-page .payment-list { display: flex; flex-direction: column; gap: 8px; }
+.return-page .payment-row { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 8px; }
+.return-page .payment-summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; color: var(--muted); font-size: 12px; }
+.return-page .payment-summary strong { color: var(--text); font-size: 13px; }
 .return-page .is-valid { color: #16834a !important; }
 .return-page .is-invalid { color: #cf3333 !important; }
-
-.return-page .form-error {
-    margin-top: 6px;
-    color: #cf3333;
-    font-size: 12px;
-}
-
+.return-page .form-error { margin-top: 6px; color: #cf3333; font-size: 12px; }
 .return-page .edit-input { display: none; }
 .return-page.editing .view-value { display: none; }
 .return-page.editing .edit-input { display: block; }
-
-.return-page .bottom-actions {
-    display: flex;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 22px;
-}
-
+.return-page .bottom-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
 .return-page .btn-cancel,
 .return-page .btn-submit,
 .return-page .btn-edit {
@@ -401,84 +322,34 @@
     cursor: pointer;
     text-decoration: none;
 }
-
-.return-page .btn-cancel {
-    border: 1px solid var(--line);
-    background: #fff;
-    color: #536074;
-}
-
-.return-page .btn-edit {
-    border: 1px solid var(--blue);
-    background: #fff;
-    color: var(--blue);
-}
-
-.return-page .btn-submit {
-    border: 1px solid var(--blue);
-    background: var(--blue);
-    color: #fff;
-}
-
+.return-page .btn-cancel { border: 1px solid var(--line); background: #fff; color: #536074; }
+.return-page .btn-edit { border: 1px solid var(--blue); background: #fff; color: var(--blue); }
+.return-page .btn-submit { border: 1px solid var(--blue); background: var(--blue); color: #fff; }
 .return-page .hidden { display: none !important; }
 
 @media (max-width: 600px) {
     .return-page { padding: 9px 10px 22px; }
-
     .return-page .return-header { gap: 7px; }
-
     .return-page .page-title { font-size: 16px; }
-
-    .return-page .btn-delete {
-        min-height: 32px;
-        padding: 6px 8px;
-        font-size: 11px;
-    }
-
-    .return-page .info-grid {
-        grid-template-columns: 1.2fr .9fr .9fr;
-        gap: 7px;
-        padding: 10px 0;
-    }
-
+    .return-page .btn-delete { min-height: 32px; padding: 6px 8px; font-size: 11px; }
+    .return-page .info-grid { grid-template-columns: 1.2fr .9fr .9fr; gap: 7px; padding: 10px 0; }
     .return-page .info-label { font-size: 10px; }
     .return-page .info-value { font-size: 11px; }
-
     .return-page .product-card { padding: 9px 10px; }
     .return-page .product-sku { font-size: 12px; }
     .return-page .product-warehouse { font-size: 11px; }
     .return-page .product-available { font-size: 10px; }
-
-    .return-page .product-bottom {
-        grid-template-columns: minmax(0,1fr) 58px minmax(0,1fr);
-        gap: 5px;
-    }
-
+    .return-page .product-bottom { grid-template-columns: minmax(0,1fr) 58px minmax(0,1fr); gap: 5px; }
     .return-page .qty-input { width: 58px; }
     .return-page .line-total { font-size: 12px; }
     .return-page .total-value { font-size: 19px; }
-
     .return-page .form-control,
-    .return-page .form-select {
-        min-height: 36px;
-        padding: 6px;
-        font-size: 11px;
-    }
-
-    .return-page .bottom-actions {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-    }
-
+    .return-page .form-select { min-height: 36px; padding: 6px; font-size: 11px; }
+    .return-page .bottom-actions { display: grid; grid-template-columns: 1fr 1fr; }
     .return-page .bottom-actions > * { min-width: 0; }
-
     .return-page .btn-cancel,
     .return-page .btn-submit,
-    .return-page .btn-edit {
-        width: 100%;
-        padding: 9px 6px;
-        font-size: 12px;
-    }
+    .return-page .btn-edit { width: 100%; padding: 9px 6px; font-size: 12px; }
 }
 </style>
 
@@ -492,9 +363,7 @@
 
         <div class="header-spacer"></div>
 
-        <button type="submit"
-                class="btn-delete"
-                form="deleteReturnForm">
+        <button type="submit" class="btn-delete" form="deleteReturnForm">
             Удалить
         </button>
     </div>
@@ -555,9 +424,9 @@
             @forelse($rows as $index => $row)
                 @php
                     $item = $row['item'];
+                    $orderItem = $item->orderItem;
                     $variant = $item->variant;
                     $product = $variant?->product;
-                    $orderItem = $item->orderItem;
 
                     $sku = $variant?->sku ?? '—';
                     $productName = $product?->name ?? '—';
@@ -568,9 +437,9 @@
                     $batchCode = $batch?->batch_code ?? $batch?->code ?? '—';
                     $warehouseName = $warehouse?->name ?? '—';
 
-                    $price = (float) ($orderItem?->price ?? 0);
-                    $quantity = (int) ($row['quantity'] ?? 0);
-                    $maxQuantity = (int) ($row['available_quantity'] ?? 0);
+                    $price = max(0, (float) ($orderItem?->price ?? 0));
+                    $quantity = max(0, (int) ($row['quantity'] ?? 0));
+                    $maxQuantity = max(0, (int) ($row['available_quantity'] ?? 0));
                     $groupKey = (string) ($row['key'] ?? '');
 
                     $fieldName = 'items.' . $index . '.quantity';
@@ -580,6 +449,7 @@
                 <div class="product-card"
                      data-product-card
                      data-price="{{ $price }}"
+                     data-order-item-id="{{ $orderItem?->id }}"
                      data-max="{{ $maxQuantity }}">
 
                     <input type="hidden"
@@ -602,9 +472,9 @@
 
                     <div class="product-bottom">
                         <div>
-                            <div class="price-note">Цена продажи за рулон</div>
+                            <div class="price-note">Цена продажи</div>
                             <div class="price-note">
-                                {{ number_format($price, 0, '.', ' ') }} ₸
+                                {{ number_format($price, 2, '.', ' ') }} ₸
                             </div>
                         </div>
 
@@ -625,21 +495,38 @@
                         </div>
 
                         <div class="line-total" data-line-total>
-                            {{ number_format($price * $quantity, 0, '.', ' ') }} ₸
+                            {{ number_format($price * $quantity, 2, '.', ' ') }} ₸
                         </div>
                     </div>
                 </div>
             @empty
-                <div class="notice notice-error">
-                    В возврате нет товарных позиций.
-                </div>
+                <div class="notice notice-error">В возврате нет товарных позиций.</div>
             @endforelse
         </div>
 
+        <div class="payment-summary">
+            <span>Сумма товаров</span>
+            <strong id="returnSubtotal">
+                {{ number_format($itemsTotal, 2, '.', ' ') }} ₸
+            </strong>
+        </div>
+
+        <div class="payment-summary">
+            <span>
+                Скидка заказа
+                <span id="discountCondition">
+                    {{ $discountToDeduct > 0 ? '(сохранённая скидка)' : '(не вычиталась)' }}
+                </span>
+            </span>
+            <strong id="returnDiscount">
+                −{{ number_format($discountToDeduct, 2, '.', ' ') }} ₸
+            </strong>
+        </div>
+
         <div class="total-panel">
-            <div class="total-label">Итого по товарам</div>
+            <div class="total-label">Итого к возврату</div>
             <div class="total-value" id="returnTotal">
-                {{ number_format((float) $itemsTotal, 0, '.', ' ') }} ₸
+                {{ number_format($returnTotal, 2, '.', ' ') }} ₸
             </div>
         </div>
 
@@ -714,17 +601,17 @@
             <div class="payment-summary">
                 <span>Всего возвращено</span>
                 <strong id="paymentTotal">
-                    {{ number_format((float) $paymentsTotal, 2, ',', ' ') }} ₸
+                    {{ number_format($paymentsTotal, 2, ',', ' ') }} ₸
                 </strong>
             </div>
 
             <div class="payment-summary">
-                <span>Разница с суммой товаров</span>
-                <strong id="paymentDifference">—</strong>
+                <span>Разница с итогом возврата</span>
+                <strong id="paymentDifference">0,00 ₸</strong>
             </div>
 
             <div class="form-error" id="paymentError" hidden>
-                Сумма платежей должна совпадать с суммой возврата.
+                Сумма платежей отличается от итоговой суммы возврата.
             </div>
         </div>
 
@@ -743,23 +630,9 @@
         </div>
 
         <div class="bottom-actions">
-            <button type="button"
-                    class="btn-cancel hidden"
-                    id="cancelEdit">
-                Отмена
-            </button>
-
-            <button type="button"
-                    class="btn-edit"
-                    id="editButton">
-                Редактировать
-            </button>
-
-            <button type="submit"
-                    class="btn-submit hidden"
-                    id="saveButton">
-                Сохранить изменения
-            </button>
+            <button type="button" class="btn-cancel hidden" id="cancelEdit">Отмена</button>
+            <button type="button" class="btn-edit" id="editButton">Редактировать</button>
+            <button type="submit" class="btn-submit hidden" id="saveButton">Сохранить изменения</button>
         </div>
     </form>
 
@@ -783,17 +656,23 @@
     const cancelButton = document.getElementById('cancelEdit');
     const saveButton = document.getElementById('saveButton');
 
+    const subtotalElement = document.getElementById('returnSubtotal');
+    const discountElement = document.getElementById('returnDiscount');
+    const discountCondition = document.getElementById('discountCondition');
     const totalElement = document.getElementById('returnTotal');
+
     const paymentTotalElement = document.getElementById('paymentTotal');
     const differenceElement = document.getElementById('paymentDifference');
     const paymentError = document.getElementById('paymentError');
 
+    const orderQuantities = @json($orderQuantities);
+    const previouslyReturned = @json($previouslyReturned);
+    const orderDiscount = Number(@json($orderDiscount)) || 0;
+
     const initialValues = new Map();
 
     form.querySelectorAll('input, textarea, select').forEach(field => {
-        if (field.name) {
-            initialValues.set(field.name, field.value);
-        }
+        if (field.name) initialValues.set(field.name, field.value);
     });
 
     const number = value => {
@@ -803,11 +682,44 @@
 
     const money = value => new Intl.NumberFormat('ru-RU', {
         maximumFractionDigits: 2,
-        minimumFractionDigits: 0
+        minimumFractionDigits: 2
     }).format(value) + ' ₸';
 
+    function getCurrentQuantities() {
+        const quantities = {};
+
+        page.querySelectorAll('[data-product-card]').forEach(card => {
+            const id = String(card.dataset.orderItemId || '');
+            const input = card.querySelector('[data-quantity]');
+
+            if (!id || !input) return;
+
+            const quantity = Math.max(
+                0,
+                Math.floor(number(input.value))
+            );
+
+            quantities[id] = (quantities[id] || 0) + quantity;
+        });
+
+        return quantities;
+    }
+
+    function isFullReturn() {
+        const current = getCurrentQuantities();
+        const ids = Object.keys(orderQuantities);
+
+        return ids.length > 0 && ids.every(id => {
+            const sold = number(orderQuantities[id]);
+            const returnedBefore = number(previouslyReturned[id]);
+            const returnedNow = number(current[id]);
+
+            return returnedBefore + returnedNow >= sold;
+        });
+    }
+
     function calculateItems() {
-        let total = 0;
+        let subtotal = 0;
 
         page.querySelectorAll('[data-product-card]').forEach(card => {
             const price = number(card.dataset.price);
@@ -821,14 +733,17 @@
                 input.value = String(quantity);
             }
 
-            const lineTotal = price * quantity;
-            total += lineTotal;
+            const lineTotal = Math.round(
+                (price * quantity + Number.EPSILON) * 100
+            ) / 100;
+
+            subtotal += lineTotal;
 
             card.querySelector('[data-line-total]').textContent = money(lineTotal);
             card.querySelector('.qty-view').textContent = String(quantity);
         });
 
-        return Math.round((total + Number.EPSILON) * 100) / 100;
+        return Math.round((subtotal + Number.EPSILON) * 100) / 100;
     }
 
     function calculatePayments() {
@@ -842,16 +757,34 @@
     }
 
     function calculate() {
-        const itemTotal = calculateItems();
+        const subtotal = calculateItems();
         const paymentTotal = calculatePayments();
+        const fullReturn = isFullReturn();
+
+        // При редактировании проверяем полноту возврата заново.
+        // Если возвращён весь заказ, скидка вычитается из суммы товаров.
+        const discount = fullReturn
+            ? Math.min(orderDiscount, subtotal)
+            : 0;
+
+        const total = Math.max(0, Math.round(
+            (subtotal - discount + Number.EPSILON) * 100
+        ) / 100);
 
         const difference = Math.round(
-            (itemTotal - paymentTotal + Number.EPSILON) * 100
+            (total - paymentTotal + Number.EPSILON) * 100
         ) / 100;
 
         const balanced = Math.abs(difference) < 0.01;
 
-        totalElement.textContent = money(itemTotal);
+        subtotalElement.textContent = money(subtotal);
+        discountElement.textContent = '−' + money(discount);
+        totalElement.textContent = money(total);
+
+        discountCondition.textContent = fullReturn
+            ? '(полный возврат)'
+            : '(частичный возврат)';
+
         paymentTotalElement.textContent = money(paymentTotal);
         differenceElement.textContent = money(difference);
 
@@ -872,24 +805,19 @@
         cancelButton.classList.toggle('hidden', !editing);
         saveButton.classList.toggle('hidden', !editing);
 
-        if (!editing) calculate();
+        calculate();
     }
 
-    editButton.addEventListener('click', () => {
-        setEditing(true);
-    });
+    editButton.addEventListener('click', () => setEditing(true));
 
     cancelButton.addEventListener('click', () => {
         initialValues.forEach((value, name) => {
             form.querySelectorAll('[name]').forEach(field => {
-                if (field.name === name) {
-                    field.value = value;
-                }
+                if (field.name === name) field.value = value;
             });
         });
 
         setEditing(false);
-        calculate();
     });
 
     page.addEventListener('input', event => {
@@ -941,3 +869,4 @@
 })();
 </script>
 @endsection
+```

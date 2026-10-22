@@ -12,7 +12,7 @@
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin href="https://fonts.gstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
@@ -855,13 +855,31 @@
             </button>
         </div>
 
+        {{-- ИТОГО И СКИДКА --}}
         <div class="section">
             <div class="total-line">
+
+                <div class="discount-part">
+                    <label for="discountInput">Скидка</label>
+
+                    <div class="price-field">
+                        <input
+                            type="text"
+                            id="discountInput"
+                            name="discount"
+                            class="form-control"
+                            inputmode="numeric"
+                            autocomplete="off"
+                            placeholder="0"
+                            value="{{ old('discount', 0) }}">
+                    </div>
+                </div>
 
                 <div class="total-part">
                     <span class="total-label">Итого</span>
                     <div id="orderTotal">0 тг</div>
                 </div>
+
             </div>
         </div>
 
@@ -1158,8 +1176,6 @@
 
     /*
      * Добавить выбранные количества в заказ.
-     * Сначала проверяем все строки, и только затем добавляем их,
-     * чтобы при ошибке не оставались частично добавленные позиции.
      */
     $('#addBatchToOrder').on('click', function() {
         const rowsToAdd = [];
@@ -1296,15 +1312,23 @@
     }
 
     /*
-     * Расчёт общей суммы заказа
+     * Сумма позиций без скидки
      */
-    function recalcOrderTotal() {
+    function getItemsSubtotal() {
         let sum = 0;
 
         $('.order-item').each(function() {
             sum += recalcItemTotal($(this));
         });
 
+        return Math.round(sum);
+    }
+
+    /*
+     * Расчёт общей суммы заказа с учётом скидки
+     */
+    function recalcOrderTotal() {
+        const sum = getItemsSubtotal();
         const discount = parseAmount($('#discountInput').val());
         const final = Math.max(0, sum - discount);
 
@@ -1341,22 +1365,10 @@
     });
 
     /*
-     * Получить итог заказа
+     * Получить итог заказа с учётом скидки
      */
     function getOrderTotal() {
-        let sum = 0;
-
-        $('.order-item').each(function() {
-            const price = parseAmount($(this).find('.price-input').val());
-
-            const qty = parseInt(
-                $(this).find('input[name$="[quantity]"]').val(),
-                10
-            ) || 0;
-
-            sum += price * qty;
-        });
-
+        const sum = getItemsSubtotal();
         const discount = parseAmount($('#discountInput').val());
 
         return Math.round(Math.max(0, sum - discount));
@@ -1540,6 +1552,19 @@
         }
 
         /*
+         * Скидка не может быть отрицательной
+         * или больше общей стоимости позиций.
+         */
+        const itemsSubtotal = getItemsSubtotal();
+        const discount = parseAmount($('#discountInput').val());
+
+        if (discount < 0 || discount > itemsSubtotal) {
+            e.preventDefault();
+            alert('Скидка не может быть больше общей стоимости позиций.');
+            return;
+        }
+
+        /*
          * Проверяем способы оплаты.
          */
         let paymentMethodMissing = false;
@@ -1577,7 +1602,8 @@
         }
 
         /*
-         * Проверяем соответствие суммы оплат итогу заказа.
+         * Проверяем соответствие суммы оплат итогу заказа
+         * с уже вычтенной скидкой.
          */
         const orderTotal = getOrderTotal();
         const paidTotal = getPaymentsTotal();
@@ -1588,7 +1614,7 @@
 
             alert(
                 'Сумма оплат должна полностью совпадать с итогом заказа.\n\n' +
-                'Итого: ' + formatAmount(orderTotal) + ' тг\n' +
+                'Итого со скидкой: ' + formatAmount(orderTotal) + ' тг\n' +
                 'Оплачено: ' + formatAmount(paidTotal) + ' тг\n' +
                 'Осталось: ' + formatAmount(orderTotal - paidTotal) + ' тг'
             );
