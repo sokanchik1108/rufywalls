@@ -1,4 +1,3 @@
-```blade
 @extends('layouts.app')
 
 @section('title', 'Возврат №' . $customerReturn->id)
@@ -869,4 +868,3 @@
 })();
 </script>
 @endsection
-```

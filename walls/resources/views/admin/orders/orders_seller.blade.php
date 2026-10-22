@@ -1,4 +1,3 @@
-```blade
 @extends('layouts.app')
 
 @section('title', 'Заказы продавцов')
@@ -1037,4 +1036,3 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 @endsection
-```

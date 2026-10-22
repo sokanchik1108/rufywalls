@@ -227,7 +227,13 @@ class OrderController extends Controller
             ]);
         }
 
-        // Нормализация сумм оплат.
+        /*
+        |--------------------------------------------------------------------------
+        | НОРМАЛИЗАЦИЯ СУММ ОПЛАТ
+        |--------------------------------------------------------------------------
+        | Отрицательные суммы оплат также запрещены.
+        */
+
         if ($request->has('payments')) {
             $payments = $request->input('payments', []);
 
@@ -243,6 +249,12 @@ class OrderController extends Controller
 
             $request->merge(['payments' => $payments]);
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | ВАЛИДАЦИЯ
+        |--------------------------------------------------------------------------
+        */
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -282,6 +294,12 @@ class OrderController extends Controller
             'payments.*.amount.required' => 'Введите сумму оплаты.',
         ]);
 
+        /*
+        |--------------------------------------------------------------------------
+        | СУММА ЗАКАЗА
+        |--------------------------------------------------------------------------
+        */
+
         $itemsTotal = 0;
 
         foreach ($request->items as $item) {
@@ -307,6 +325,12 @@ class OrderController extends Controller
             );
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | СУММА ОПЛАТ
+        |--------------------------------------------------------------------------
+        */
+
         $paymentsTotal = collect($request->input('payments', []))
             ->sum(fn($payment) => (float) ($payment['amount'] ?? 0));
 
@@ -327,6 +351,12 @@ class OrderController extends Controller
                     ' ₸).'
             );
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | СОЗДАНИЕ ЗАКАЗА И СПИСАНИЕ ТОВАРА
+        |--------------------------------------------------------------------------
+        */
 
         try {
             DB::transaction(function () use ($request, $fifoService) {
@@ -386,6 +416,7 @@ class OrderController extends Controller
                         'warehouse_name' => $item['warehouse_name'] ?? '',
                     ]);
 
+                    // Только обычная продажа. Возвратов в этом методе нет.
                     $fifoService->consume(
                         (int) $item['warehouse_id'],
                         (int) $variant->id,
@@ -417,7 +448,7 @@ class OrderController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | УДАЛЕНИЕ ЗАКАЗА
+    | ЗАКАЗЫ ПРОДАВЦОВ
     |--------------------------------------------------------------------------
     */
 
@@ -434,12 +465,14 @@ class OrderController extends Controller
                     ->lockForUpdate()
                     ->firstOrFail();
 
+                // Получаем позиции заказа до его удаления.
                 $items = OrderItem::query()
                     ->where('order_id', $order->id)
                     ->lockForUpdate()
                     ->get();
 
                 foreach ($items as $item) {
+                    // Находим FIFO-списания конкретной позиции заказа.
                     $movements = StockMovement::query()
                         ->where('type', 'sale')
                         ->where('source_id', $item->id)
@@ -447,10 +480,12 @@ class OrderController extends Controller
                         ->get();
 
                     foreach ($movements as $movement) {
-                        app(FifoService::class)->reverseMovement($movement);
+                        app(\App\Services\FifoService::class)
+                            ->reverseMovement($movement);
                     }
                 }
 
+                // Удаляем заказ только после отмены списаний.
                 $order->delete();
             });
 
@@ -465,11 +500,7 @@ class OrderController extends Controller
         }
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | ЗАКАЗЫ ПРОДАВЦОВ
-    |--------------------------------------------------------------------------
-    */
+
 
     public function indexSeller(Request $request)
     {
@@ -492,7 +523,13 @@ class OrderController extends Controller
         ]);
 
         if ($isSearching) {
-            // Поиск по всей истории заказов — без ограничения в 30 дней.
+            $monthStart = now('Asia/Almaty')->subDays(29)->startOfDay();
+            $monthEnd = now('Asia/Almaty')->endOfDay();
+
+            $ordersQuery->whereBetween(
+                DB::raw('COALESCE(order_date, created_at)'),
+                [$monthStart, $monthEnd]
+            );
 
             if ($sku !== '') {
                 // Артикул ищется строго, без частичных совпадений.
@@ -531,6 +568,7 @@ class OrderController extends Controller
                     }
 
                     // Текстовый поиск по имени.
+                    // Для запроса только из цифр имя не проверяется.
                     if (!$isNumericSearch && $search !== '') {
                         if ($hasCondition) {
                             $query->orWhere(
@@ -549,7 +587,7 @@ class OrderController extends Controller
                         $hasCondition = true;
                     }
 
-                    // Телефон проверяется по полному номеру.
+                    // Телефон проверяется только по полному номеру.
                     if (strlen($phoneDigits) >= 7) {
                         $phoneCondition = function ($phoneQuery) use ($phoneDigits) {
                             $phoneQuery->whereRaw(
@@ -567,7 +605,6 @@ class OrderController extends Controller
                 });
             }
         } else {
-            // Без поискового запроса показываем заказы выбранного дня.
             $ordersQuery->whereBetween(
                 DB::raw('COALESCE(order_date, created_at)'),
                 [$start, $end]
@@ -642,12 +679,10 @@ class OrderController extends Controller
         ));
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | АВТОДОПОЛНЕНИЕ АРТИКУЛОВ — ВСЕ ЗАКАЗЫ
-    |--------------------------------------------------------------------------
-    */
 
+    /**
+     * Автодополнение артикулов по заказам за последние 30 дней.
+     */
     public function sellerSkuSuggestions(Request $request)
     {
         $term = trim((string) $request->query('q', ''));
@@ -656,8 +691,14 @@ class OrderController extends Controller
             return response()->json([]);
         }
 
-        // Убрано ограничение по дате: ищем артикулы за всё время.
+        $monthStart = now('Asia/Almaty')->subDays(29)->startOfDay();
+        $monthEnd = now('Asia/Almaty')->endOfDay();
+
         $orders = Order::with('items.variant')
+            ->whereBetween(
+                DB::raw('COALESCE(order_date, created_at)'),
+                [$monthStart, $monthEnd]
+            )
             ->whereHas('items.variant', function ($query) use ($term) {
                 $query->where('sku', 'like', '%' . $term . '%');
             })
@@ -675,6 +716,8 @@ class OrderController extends Controller
 
         return response()->json($skus);
     }
+
+
 
     /*
     |--------------------------------------------------------------------------
@@ -771,7 +814,12 @@ class OrderController extends Controller
     {
         $order = Order::with(['items', 'payments'])->findOrFail($id);
 
-        // Нормализация сумм оплат.
+        /*
+        |--------------------------------------------------------------------------
+        | НОРМАЛИЗАЦИЯ СУММ ОПЛАТ
+        |--------------------------------------------------------------------------
+        */
+
         if ($request->has('payments')) {
             $payments = $request->input('payments', []);
 
@@ -787,6 +835,12 @@ class OrderController extends Controller
 
             $request->merge(['payments' => $payments]);
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | ВАЛИДАЦИЯ
+        |--------------------------------------------------------------------------
+        */
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -820,7 +874,12 @@ class OrderController extends Controller
             'payments.*.amount.min' => 'Сумма оплаты не может быть отрицательной.',
         ]);
 
-        // Проверяем, можно ли менять количество в уже проведённой продаже.
+        /*
+        |--------------------------------------------------------------------------
+        | ПРОВЕРКА ПОЗИЦИЙ ЗАКАЗА
+        |--------------------------------------------------------------------------
+        */
+
         foreach ($request->items as $itemData) {
             $orderItem = $order->items()->find($itemData['id']);
 
@@ -842,6 +901,12 @@ class OrderController extends Controller
                 }
             }
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | ОБНОВЛЕНИЕ ЗАКАЗА
+        |--------------------------------------------------------------------------
+        */
 
         DB::transaction(function () use ($request, $order) {
             $order->update([
