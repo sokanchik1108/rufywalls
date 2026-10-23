@@ -51,7 +51,6 @@ $oldPayments = old('payments', [
 
 
 <style>
-
     .return-page {
 
         --blue: #0878e8;
@@ -614,7 +613,9 @@ $oldPayments = old('payments', [
 
         white-space: nowrap;
 
-    }    .return-page .total-value {
+    }
+
+    .return-page .total-value {
 
         color: var(--text);
 
@@ -1189,6 +1190,15 @@ $oldPayments = old('payments', [
 
     }
 
+
+    @media (max-width: 600px) {
+
+        .return-page input,
+        .return-page select,
+        .return-page textarea {
+            font-size: 16px !important;
+        }
+    }
 </style>
 
 
@@ -1511,7 +1521,7 @@ $oldPayments = old('payments', [
 
 
 
-                <div class="total-panel total-panel-breakdown">
+        <div class="total-panel total-panel-breakdown">
             <div class="total-breakdown-row">
                 <span class="total-label">Стоимость выбранных товаров</span>
                 <strong class="total-breakdown-value" id="returnSubtotal">0 ₸</strong>
@@ -1560,7 +1570,7 @@ $oldPayments = old('payments', [
 
                             value="{{ $method->id }}"
 
-                            @selected((string) ($payment['payment_method_id'] ?? '') === (string) $method->id)
+                            @selected((string) ($payment['payment_method_id'] ?? '' )===(string) $method->id)
 
                             >
 
@@ -1681,7 +1691,6 @@ $oldPayments = old('payments', [
 
 
 <script>
-
     (function() {
 
         'use strict';
@@ -2226,7 +2235,6 @@ $oldPayments = old('payments', [
         recalculate();
 
     })();
-
 </script>
 
 @endsection

@@ -350,6 +350,17 @@
     .return-page .btn-submit,
     .return-page .btn-edit { width: 100%; padding: 9px 6px; font-size: 12px; }
 }
+
+
+@media (max-width: 600px) {
+    .return-page input,
+    .return-page select,
+    .return-page textarea {
+        font-size: 16px !important;
+    }
+}
+
+
 </style>
 
 <div class="return-page" id="returnPage">
