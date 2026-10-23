@@ -39,10 +39,10 @@ class CustomerReturnController extends Controller
                 ->get();
 
             $allocations = $movements
-                ->flatMap(fn ($movement) => $movement->allocations)
+                ->flatMap(fn($movement) => $movement->allocations)
                 ->filter(
-                    fn ($allocation) =>
-                        $allocation->layer && $allocation->layer->batch
+                    fn($allocation) =>
+                    $allocation->layer && $allocation->layer->batch
                 )
                 ->sortByDesc('id')
                 ->values();
@@ -112,7 +112,7 @@ class CustomerReturnController extends Controller
         $paymentMethods = PaymentMethod::orderBy('name')->get();
 
         $orderItemsTotal = (float) $order->items->sum(
-            fn ($item) => (float) $item->price * (int) $item->quantity
+            fn($item) => (float) $item->price * (int) $item->quantity
         );
 
         $returnState = $this->getOrderReturnState($order);
@@ -191,17 +191,17 @@ class CustomerReturnController extends Controller
             'payments.*.payment_method_id.required' => 'Выбери способ оплаты.',
             'payments.*.payment_method_id.exists' => 'Способ оплаты не существует.',
             'payments.*.payment_method_id.distinct' =>
-                'Один способ оплаты нельзя добавлять несколько раз.',
+            'Один способ оплаты нельзя добавлять несколько раз.',
             'payments.*.amount.required' => 'Укажи сумму возврата.',
             'payments.*.amount.numeric' => 'Сумма должна быть числом.',
             'payments.*.amount.gt' => 'Сумма должна быть больше нуля.',
         ]);
 
         $requestedItems = collect($validated['items'])
-            ->mapWithKeys(fn ($quantity, $id) => [
+            ->mapWithKeys(fn($quantity, $id) => [
                 (int) $id => (int) ($quantity ?? 0),
             ])
-            ->filter(fn ($quantity) => $quantity > 0);
+            ->filter(fn($quantity) => $quantity > 0);
 
         if ($requestedItems->isEmpty()) {
             throw ValidationException::withMessages([
@@ -251,7 +251,7 @@ class CustomerReturnController extends Controller
         }
 
         $originalItemsTotal = (float) $orderItems->sum(
-            fn ($item) => (float) $item->price * (int) $item->quantity
+            fn($item) => (float) $item->price * (int) $item->quantity
         );
 
         $orderNetTotal = max(
@@ -289,7 +289,7 @@ class CustomerReturnController extends Controller
 
         $paymentsTotal = round(
             collect($validated['payments'])
-                ->sum(fn ($payment) => (float) $payment['amount']),
+                ->sum(fn($payment) => (float) $payment['amount']),
             2
         );
 
@@ -363,7 +363,7 @@ class CustomerReturnController extends Controller
             foreach ($groups as &$groupAllocations) {
                 usort(
                     $groupAllocations,
-                    fn ($a, $b) => $b->id <=> $a->id
+                    fn($a, $b) => $b->id <=> $a->id
                 );
             }
             unset($groupAllocations);
@@ -525,7 +525,7 @@ class CustomerReturnController extends Controller
             }
 
             $originalItemsTotal = (float) $orderItems->sum(
-                fn ($item) => (float) $item->price * (int) $item->quantity
+                fn($item) => (float) $item->price * (int) $item->quantity
             );
 
             $orderNetTotal = max(
@@ -1121,13 +1121,13 @@ class CustomerReturnController extends Controller
 
                 $existingPaymentIds = $returnPayments
                     ->pluck('id')
-                    ->map(fn ($id) => (int) $id)
+                    ->map(fn($id) => (int) $id)
                     ->sort()
                     ->values()
                     ->all();
 
                 $submittedPaymentIds = collect(array_keys($submittedPayments))
-                    ->map(fn ($id) => (int) $id)
+                    ->map(fn($id) => (int) $id)
                     ->sort()
                     ->values()
                     ->all();
@@ -1140,14 +1140,14 @@ class CustomerReturnController extends Controller
 
                 $paymentTotal = round(
                     collect($submittedPayments)->sum(
-                        fn ($payment) => (float) $payment['amount']
+                        fn($payment) => (float) $payment['amount']
                     ),
                     2
                 );
 
                 $originalItemsTotal = (float) $orderItems->sum(
-                    fn ($item) =>
-                        (float) $item->price * (int) $item->quantity
+                    fn($item) =>
+                    (float) $item->price * (int) $item->quantity
                 );
 
                 $orderNetTotal = max(
@@ -1611,7 +1611,7 @@ class CustomerReturnController extends Controller
             ->selectRaw('order_item_id, SUM(quantity) as total_quantity')
             ->groupBy('order_item_id')
             ->pluck('total_quantity', 'order_item_id')
-            ->map(fn ($quantity) => (int) $quantity)
+            ->map(fn($quantity) => (int) $quantity)
             ->all();
 
         return [
@@ -1696,5 +1696,88 @@ class CustomerReturnController extends Controller
                 . 'FIFO allocation #' . $allocation->id
                 . ', слой #' . $layer->id . '.'
         );
+    }
+
+
+    /**
+     * Страница со всеми возвратами.
+     */
+    public function index(Request $request)
+    {
+        $validated = $request->validate([
+            'search' => ['nullable', 'string', 'max:255'],
+            'date_from' => ['nullable', 'date'],
+            'date_to' => ['nullable', 'date', 'after_or_equal:date_from'],
+        ]);
+
+        $search = trim((string) ($validated['search'] ?? ''));
+        $dateFrom = $validated['date_from'] ?? null;
+        $dateTo = $validated['date_to'] ?? null;
+
+        $query = CustomerReturn::query()
+            ->with([
+                'order.pointOfSale',
+                'user',
+                'items.orderItem',
+                'items.variant.product',
+                'items.batch',
+                'items.warehouse',
+                'payments.paymentMethod',
+            ]);
+
+        if ($dateFrom) {
+            $query->whereDate('return_date', '>=', $dateFrom);
+        }
+
+        if ($dateTo) {
+            $query->whereDate('return_date', '<=', $dateTo);
+        }
+
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                if (ctype_digit($search)) {
+                    $q->where('id', (int) $search)
+                        ->orWhere('order_id', (int) $search);
+                }
+
+                $q->orWhere('comment', 'like', '%' . $search . '%')
+                    ->orWhereHas('items.variant', function ($variantQuery) use ($search) {
+                        $variantQuery->where('sku', 'like', '%' . $search . '%')
+                            ->orWhereHas('product', function ($productQuery) use ($search) {
+                                $productQuery->where(
+                                    'name',
+                                    'like',
+                                    '%' . $search . '%'
+                                );
+                            });
+                    });
+            });
+        }
+
+        // Сводные показатели по всем возвратам, подходящим под фильтры.
+        $totalReturns = (clone $query)->count();
+
+        $totalRefundAmount = CustomerReturnPayment::query()
+            ->whereIn(
+                'customer_return_id',
+                (clone $query)->select('id')
+            )
+            ->sum('amount');
+
+        // Последние возвраты показываем первыми.
+        $returns = $query
+            ->orderByDesc('return_date')
+            ->orderByDesc('id')
+            ->paginate(30)
+            ->withQueryString();
+
+        return view('admin.orders.returns.index', [
+            'returns' => $returns,
+            'search' => $search,
+            'dateFrom' => $dateFrom,
+            'dateTo' => $dateTo,
+            'totalReturns' => $totalReturns,
+            'totalRefundAmount' => (float) $totalRefundAmount,
+        ]);
     }
 }

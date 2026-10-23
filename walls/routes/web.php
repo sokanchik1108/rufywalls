@@ -266,6 +266,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     '/orders/seller/sku-suggestions',
     [OrderController::class, 'sellerSkuSuggestions']
 )->name('orders.seller.sku-suggestions');
+
+Route::get('/returns', [CustomerReturnController::class, 'index'])
+    ->middleware('auth')
+    ->name('returns.index');
 });
 
 
